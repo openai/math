@@ -1,0 +1,14 @@
+{
+  "challenge_module": "ComparatorChallenges.VPVNP",
+  "solution_module": "OAI.Computability.VPVNP.ClassSeparation",
+  "theorem_names": [
+    "OAI.Computability.VPVNP.Standalone.vp_ne_vnp"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

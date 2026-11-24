@@ -1,0 +1,543 @@
+diff --git a/lean/Lemmata/FockCircuits/Duality.lean b/lean/Lemmata/FockCircuits/Duality.lean
+index 7ee82e8..92e9f35 100644
+--- a/lean/Lemmata/FockCircuits/Duality.lean
++++ b/lean/Lemmata/FockCircuits/Duality.lean
+@@ -27,8 +27,7 @@ noncomputable def rightProjection : Fock R →ₐ[R] Fock R :=
+ 
+ @[simp] theorem rightProjection_left (i : ℕ) :
+     rightProjection R (TwoColour.left R i) = 0 := by
+-  have hm : (2 * i) % 2 ≠ 1 := by omega
+-  simp [rightProjection, TwoColour.left, Fock.generator, rightParticle, hm]
++  simp [rightProjection, TwoColour.left, Fock.generator, rightParticle]
+ 
+ @[simp] theorem rightProjection_right (i : ℕ) :
+     rightProjection R (TwoColour.right R i) = Fock.generator R i := by
+@@ -50,7 +49,7 @@ theorem rightProjection_left_word (I : Finset ℕ) :
+       intro hI
+       subst I
+       simp at h
+-    simp [h, hI, Function.comp_def]
++    simp [hI, Function.comp_def]
+ 
+ theorem rightProjection_right_word (I : Finset ℕ) :
+     rightProjection R (colourBasis R (colourIndex ∅ I)) = Fock.basis R I := by
+@@ -206,7 +205,7 @@ theorem dualState_energy {L : ℕ} (I : Finset ℕ) (J : Index L)
+     (hJ : doubledEnergy I < doubledEnergy J.val) : dualState R L I J = 0 := by
+   have h := congrArg (fun x : Fock R => (Fock.basis R).repr x J.val)
+     (Fock.pascalExteriorInverse_basis_energy R I)
+-  rw [Fock.energyProjection_coefficient, if_neg (by omega)] at h
++  rw [Fock.energyProjection_coefficient, ite_eq_right (by omega)] at h
+   exact h.symm
+ 
+ theorem dualState_parity {L : ℕ} (I : Finset ℕ) (J : Index L)
+@@ -214,7 +213,7 @@ theorem dualState_parity {L : ℕ} (I : Finset ℕ) (J : Index L)
+     (hJ : doubledEnergy J.val % 2 ≠ doubledEnergy I % 2) : dualState R L I J = 0 := by
+   have h := congrArg (fun x : Fock R => (Fock.basis R).repr x J.val)
+     (Fock.pascalExteriorInverse_basis_parity R I hI)
+-  rw [Fock.parityProjection_coefficient, if_neg hJ] at h
++  rw [Fock.parityProjection_coefficient, ite_eq_right hJ] at h
+   exact h.symm
+ 
+ theorem dualState_supported {L : ℕ} (I : Index L) (J : Index L)
+@@ -240,7 +239,7 @@ theorem dual_kernel_coefficient {L : ℕ} (I J : Index L)
+       Finset.mem_range.mp (Finset.mem_powerset.mp I.property hi))]
+   have h := congrArg (fun x : Fock R => (Fock.basis R).repr x J.val)
+     (Fock.finitePascal_homogeneous_diagonal R L I.val)
+-  rw [Fock.energyProjection_coefficient, if_pos (by omega)] at h
++  rw [Fock.energyProjection_coefficient, ite_eq_left (by omega)] at h
+   simpa only [Module.Basis.repr_self_apply, Subtype.val_inj, eq_comm] using h
+ 
+ theorem dual_matrix_vacuum {L : ℕ} (I J : Index L)
+diff --git a/lean/Lemmata/FockCircuits/EnergyProjection.lean b/lean/Lemmata/FockCircuits/EnergyProjection.lean
+index bd241e8..b656ec0 100644
+--- a/lean/Lemmata/FockCircuits/EnergyProjection.lean
++++ b/lean/Lemmata/FockCircuits/EnergyProjection.lean
+@@ -83,7 +83,7 @@ private theorem selected_basis_coefficient (P : Finset ℕ → Prop) [DecidableP
+     intro I
+     by_cases hJ : P J <;>
+       by_cases hI : P I <;>
+-      by_cases hIJ : I = J <;> simp_all [F, G, Finsupp.single_apply]
++      by_cases hIJ : I = J <;> simp_all [F, G]
+   by_cases hJ : P J <;>
+     simpa [F, G, hJ] using LinearMap.congr_fun h x
+ 
+diff --git a/lean/Lemmata/FockCircuits/ExteriorMatching.lean b/lean/Lemmata/FockCircuits/ExteriorMatching.lean
+index b93a827..83bfec2 100644
+--- a/lean/Lemmata/FockCircuits/ExteriorMatching.lean
++++ b/lean/Lemmata/FockCircuits/ExteriorMatching.lean
+@@ -54,7 +54,7 @@ theorem contract_word (x : α → M) (d : Module.Dual R M) (A : List α) :
+     conv_rhs => rw [Fin.sum_univ_succ]
+     simp only [Fin.getElem_fin, Fin.val_zero, pow_zero, one_mul, List.getElem_cons_zero,
+       List.eraseIdx_cons_zero, Fin.val_succ, List.getElem_cons_succ,
+-      List.eraseIdx_cons_succ, word_cons, Finset.mul_sum, Finset.smul_sum,
++      List.eraseIdx_cons_succ, word_cons, Finset.mul_sum,
+       Algebra.mul_smul_comm, pow_succ, mul_neg, neg_mul, mul_one, neg_smul,
+       Finset.sum_neg_distrib]
+     module
+diff --git a/lean/Lemmata/FockCircuits/FiniteIdentity.lean b/lean/Lemmata/FockCircuits/FiniteIdentity.lean
+index d372a52..abbfdab 100644
+--- a/lean/Lemmata/FockCircuits/FiniteIdentity.lean
++++ b/lean/Lemmata/FockCircuits/FiniteIdentity.lean
+@@ -4,7 +4,7 @@ public import Lemmata.FockCircuits.Kernel
+ public import Lemmata.FockCircuits.BasisAction
+ public import Mathlib.Algebra.Polynomial.Laurent
+ public import Mathlib.Logic.Equiv.Nat
+-public import Mathlib.Order.Sum.Order
++public import Mathlib.Data.Sum.Order
+ public import Mathlib.Order.Interval.Finset.Nat
+ public import Mathlib.Algebra.Polynomial.Div
+ public import Mathlib.RingTheory.PowerSeries.Trunc
+diff --git a/lean/Lemmata/FockCircuits/Kernel.lean b/lean/Lemmata/FockCircuits/Kernel.lean
+index e20a79d..b9433d0 100644
+--- a/lean/Lemmata/FockCircuits/Kernel.lean
++++ b/lean/Lemmata/FockCircuits/Kernel.lean
+@@ -177,7 +177,7 @@ theorem normalList_create_of_orthogonal
+       smul_neg, smul_add, smul_smul, hs, one_smul, map_add]
+     match_scalars <;>
+       rcases neg_one_pow_eq_or R L.length with hsign | hsign <;>
+-      simp [hsign] <;> ring
++      simp [hsign]
+ 
+ noncomputable def colouredList (N : ℕ) (L : List ((Fin N → R) × (Fin N → R))) :
+     List (OneParticle R × OneParticle R) :=
+diff --git a/lean/Lemmata/FockCircuits/KernelCoevaluation.lean b/lean/Lemmata/FockCircuits/KernelCoevaluation.lean
+index edbbf1a..82a4043 100644
+--- a/lean/Lemmata/FockCircuits/KernelCoevaluation.lean
++++ b/lean/Lemmata/FockCircuits/KernelCoevaluation.lean
+@@ -64,8 +64,7 @@ theorem colourBasis_left_word (I : Finset ℕ) :
+   rw [sort_image_strictMono (fun i : ℕ => toLex (Sum.inl i : ℕ ⊕ ℕ))
+     (fun _ _ h => Sum.Lex.inl h) I]
+   simp [List.map_map, Function.comp_def, Module.Basis.reindex_apply,
+-    Finsupp.coe_basisSingleOne, Equiv.natSumNatEquivNat_apply,
+-    TwoColour.left, Fock.generator]
++    Finsupp.coe_basisSingleOne, Equiv.natSumNatEquivNat_apply]
+   rfl
+ 
+ theorem colourBasis_right_word (I : Finset ℕ) :
+@@ -76,8 +75,7 @@ theorem colourBasis_right_word (I : Finset ℕ) :
+   rw [sort_image_strictMono (fun i : ℕ => toLex (Sum.inr i : ℕ ⊕ ℕ))
+     (fun _ _ h => Sum.Lex.inr h) I]
+   simp [List.map_map, Function.comp_def, Module.Basis.reindex_apply,
+-    Finsupp.coe_basisSingleOne, Equiv.natSumNatEquivNat_apply,
+-    TwoColour.right, Fock.generator]
++    Finsupp.coe_basisSingleOne, Equiv.natSumNatEquivNat_apply]
+   rfl
+ 
+ noncomputable def leftParticle : OneParticle R →ₗ[R] OneParticle R :=
+@@ -271,8 +269,8 @@ theorem matrix_vacuum (L : ℕ) :
+     have hs : (dualSign I.val : R) * (dualSign I.val : R) = 1 := by
+       have h := congrArg (fun z : ℤ => (z : R)) (dualSign_mul_self I.val)
+       simpa only [Int.cast_mul, Int.cast_one] using h
+-    simp [Matrix.one_apply, hsub, hs]
++    simp [hsub, hs]
+   · have hval : I.val ≠ J.val := fun h => hIJ (Subtype.ext h)
+-    simp [Matrix.one_apply, hIJ, hval]
++    simp [hIJ, hval]
+ 
+ end Lemmata.FockCircuits.FiniteIdentity
+diff --git a/lean/Lemmata/FockCircuits/KernelOperators.lean b/lean/Lemmata/FockCircuits/KernelOperators.lean
+index e043b4d..a16b736 100644
+--- a/lean/Lemmata/FockCircuits/KernelOperators.lean
++++ b/lean/Lemmata/FockCircuits/KernelOperators.lean
+@@ -26,7 +26,7 @@ theorem leftParticle_even (v : OneParticle R) (i : ℕ) :
+     · subst j
+       simp [Finsupp.lapply_apply]
+     · have hne : 2 * j ≠ 2 * i := by omega
+-      simp [Finsupp.lapply_apply, Finsupp.single_apply, hji, hne]
++      simp [Finsupp.lapply_apply, hji, hne]
+   exact LinearMap.congr_fun h v
+ 
+ theorem contract_right_word (i : ℕ) (J : List ℕ) :
+@@ -68,7 +68,7 @@ noncomputable def finiteVector (L : ℕ) (a : Fin L → R) : OneParticle R :=
+ 
+ @[simp] theorem finiteVector_apply (L : ℕ) (a : Fin L → R) (i : Fin L) :
+     finiteVector R L a i = a i := by
+-  simp [finiteVector, Finsupp.finsetSum_apply, Finsupp.smul_apply,
++  simp [finiteVector, Finsupp.finsetSum_apply,
+     Finsupp.single_apply, smul_eq_mul, Fin.val_inj]
+ 
+ theorem coordinateDual_finiteVector (L : ℕ) (a b : Fin L → R) :
+@@ -81,7 +81,7 @@ theorem coordinateDual_finiteVector (L : ℕ) (a b : Fin L → R) :
+ 
+ theorem leftParticle_finiteVector (L : ℕ) (a : Fin L → R) :
+     leftParticle R (finiteVector R L a) = TwoColour.leftVector R L a := by
+-  simp [finiteVector, TwoColour.leftVector, smul_smul]
++  simp [finiteVector, TwoColour.leftVector]
+ 
+ theorem contractVector_finiteVector (L : ℕ) (a : Fin L → R) (x : Fock R) :
+     Fock.contractVector R (finiteVector R L a) x =
+@@ -167,7 +167,7 @@ theorem normalList_kernel_coefficient (L : ℕ)
+   rw [normalList_kernel_coevaluation]
+   simp only [map_sum, map_smul, Finsupp.finsetSum_apply, Finsupp.smul_apply,
+     smul_eq_mul, leftInclusion_right_coefficient]
+-  simp [Finset.mem_powerset.mp J.property]
++  simp
+ 
+ theorem matrix_single_eq_normalList (L : ℕ) (A I J : Index L) (c : R) :
+     matrix R L (Pi.single A c) I J = c *
+@@ -216,18 +216,20 @@ theorem state_eq_sum_single (L : ℕ) (v : State R L) :
+     v = ∑ A : Index L, v A • Pi.single A (1 : R) := by
+   classical
+   ext A
+-  simp [Pi.single_apply, eq_comm]
++  simp [Pi.single_apply]
+ 
+ theorem matrix_eq_sum_single (L : ℕ) (v : State R L) :
+     matrix R L v = ∑ A : Index L, v A • matrix R L (Pi.single A (1 : R)) := by
+   change matrixLinear R L v = _
+   conv_lhs => rw [state_eq_sum_single R L v]
+-  simp only [map_sum, map_smul] <;> rfl
++  simp only [map_sum, map_smul]
++  rfl
+ 
+ theorem diagonal_eq_sum_single (L : ℕ) (r : ℤ) (v : State R L) :
+     diagonal R L r v = ∑ A : Index L, v A • diagonal R L r (Pi.single A (1 : R)) := by
+   change diagonalLinear R L r v = _
+   conv_lhs => rw [state_eq_sum_single R L v]
+-  simp only [map_sum, map_smul] <;> rfl
++  simp only [map_sum, map_smul]
++  rfl
+ 
+ end Lemmata.FockCircuits.FiniteIdentity
+diff --git a/lean/Lemmata/FockCircuits/KernelRectangle.lean b/lean/Lemmata/FockCircuits/KernelRectangle.lean
+index df35de4..fbbb36e 100644
+--- a/lean/Lemmata/FockCircuits/KernelRectangle.lean
++++ b/lean/Lemmata/FockCircuits/KernelRectangle.lean
+@@ -37,7 +37,7 @@ def projection (b : Module.Basis E R M) (index : D → E) : M →ₗ[R] M where
+ theorem projection_basis_outside (b : Module.Basis E R M) (index : D → E)
+     {e : E} (he : ∀ d, e ≠ index d) : projection b index (b e) = 0 := by
+   classical
+-  simp [projection_apply, Module.Basis.repr_self_apply, he]
++  simp [projection_apply, he]
+ 
+ @[simp] theorem repr_projection (b : Module.Basis E R M) (index : D → E)
+     (hinj : Function.Injective index) (v : M) (d : D) :
+diff --git a/lean/Lemmata/FockCircuits/KernelScaling.lean b/lean/Lemmata/FockCircuits/KernelScaling.lean
+index e57df90..e2c23a4 100644
+--- a/lean/Lemmata/FockCircuits/KernelScaling.lean
++++ b/lean/Lemmata/FockCircuits/KernelScaling.lean
+@@ -167,7 +167,7 @@ theorem dilation_kernel (L : ℕ) :
+     congr 1
+     simp only [TwoColour.factor, map_add, map_one, map_mul, dilation_left, dilation_right,
+       smul_mul_assoc, mul_smul_comm, smul_smul, ← LaurentPolynomial.T_add,
+-      add_neg_cancel, neg_add_cancel, LaurentPolynomial.T_zero, one_smul]
++      neg_add_cancel, LaurentPolynomial.T_zero, one_smul]
+ 
+ noncomputable def plainSymbol (L m : ℕ) : Fock R :=
+   ExteriorAlgebra.ι R (TwoColour.leftVector R L (fun k => (positiveCoefficient m k : R))) +
+diff --git a/lean/Lemmata/FockCircuits/LaurentExterior.lean b/lean/Lemmata/FockCircuits/LaurentExterior.lean
+index f51fe5c..bb0b7fd 100644
+--- a/lean/Lemmata/FockCircuits/LaurentExterior.lean
++++ b/lean/Lemmata/FockCircuits/LaurentExterior.lean
+@@ -248,7 +248,7 @@ theorem colourBasis_left_singleton (k : ℕ) :
+   rw [ExteriorAlgebra.basis_apply_ofCard _ (Finset.card_singleton _)]
+   simp [ExteriorAlgebra.ιMulti_family, ExteriorAlgebra.ιMulti_succ_apply,
+     Set.powersetCard.ofFinEmbEquiv_symm_apply, colourParticleBasis,
+-    Module.Basis.reindex_apply, Finsupp.coe_basisSingleOne,
++    Finsupp.coe_basisSingleOne,
+     Equiv.natSumNatEquivNat_apply, TwoColour.left, Fock.generator]
+ 
+ theorem colourBasis_right_singleton (k : ℕ) :
+@@ -257,7 +257,7 @@ theorem colourBasis_right_singleton (k : ℕ) :
+   rw [ExteriorAlgebra.basis_apply_ofCard _ (Finset.card_singleton _)]
+   simp [ExteriorAlgebra.ιMulti_family, ExteriorAlgebra.ιMulti_succ_apply,
+     Set.powersetCard.ofFinEmbEquiv_symm_apply, colourParticleBasis,
+-    Module.Basis.reindex_apply, Finsupp.coe_basisSingleOne,
++    Finsupp.coe_basisSingleOne,
+     Equiv.natSumNatEquivNat_apply, TwoColour.right, Fock.generator]
+ 
+ theorem sourceBound_left_monomial (k : ℕ) (a : ℤ) (c : R) (e : ℤ)
+diff --git a/lean/Lemmata/FockCircuits/MatchingResidue.lean b/lean/Lemmata/FockCircuits/MatchingResidue.lean
+index 6801873..4c3dd87 100644
+--- a/lean/Lemmata/FockCircuits/MatchingResidue.lean
++++ b/lean/Lemmata/FockCircuits/MatchingResidue.lean
+@@ -1,7 +1,7 @@
+ module
+ 
+ public import Lemmata.FockCircuits.ExteriorMatching
+-public import Mathlib.LinearAlgebra.ExteriorAlgebra.BaseChange
++public import Mathlib.RingTheory.TensorProduct.Maps
+ public import Mathlib.LinearAlgebra.TensorProduct.Basis
+ public import Mathlib.Algebra.Polynomial.Coeff
+ 
+@@ -23,7 +23,7 @@ theorem poleSelector_monomial (s c : R) (d j : ℕ) :
+       if j ≤ d then s ^ (d - j) * c else 0 := by
+   classical
+   simp [poleSelector, Polynomial.lcoeff_apply, Polynomial.coeff_monomial,
+-    Finset.mem_range, Nat.lt_succ_iff, smul_eq_mul]
++    Finset.mem_range, smul_eq_mul]
+ 
+ variable {α : Type*}
+ 
+@@ -46,27 +46,49 @@ theorem sourceNormalMap_word (x : α → OneParticle R × OneParticle R) (A : Li
+       ExteriorAlgebra.map_apply_ι, Finsupp.linearCombination_single, one_smul]
+   rw [he, Fock.normalSymbol_word]
+ 
++/-- Extend each source generator to polynomial coefficients, leaving its exterior factor
++over the original ring. -/
++noncomputable def sourceExteriorMap :
++    ExteriorAlgebra (Polynomial R) (Polynomial R ⊗[R] (α →₀ R)) →ₐ[Polynomial R]
++      Polynomial R ⊗[R] ExteriorAlgebra R (α →₀ R) := by
++  let gen := (ExteriorAlgebra.ι R (M := α →₀ R)).baseChange (Polynomial R)
++  have anti (x y : Polynomial R ⊗[R] (α →₀ R)) :
++      gen x * gen y + gen y * gen x = 0 := by
++    induction x using TensorProduct.inductionOn with
++    | tmul p a =>
++      induction y using TensorProduct.inductionOn with
++      | tmul q b =>
++        simp [gen, Algebra.TensorProduct.tmul_mul_tmul, mul_comm q p,
++          ← TensorProduct.tmul_add, ExteriorAlgebra.ι_add_mul_swap]
++      | add y z hy hz =>
++        rw [map_add, mul_add, add_mul, add_add_add_comm, hy, hz, add_zero]
++    | add x z hx hz =>
++      rw [map_add, add_mul, mul_add, add_add_add_comm, hx, hz, add_zero]
++  refine ExteriorAlgebra.lift _ ⟨gen, fun x ↦ ?_⟩
++  induction x using TensorProduct.inductionOn with
++  | tmul p a => simp [gen, Algebra.TensorProduct.tmul_mul_tmul]
++  | add x y hx hy =>
++    rw [map_add, mul_add, add_mul, add_mul, hx, hy, zero_add, add_zero, anti]
++
+ noncomputable def residueMap (s : R) (d : ℕ) (x : α → OneParticle R × OneParticle R) :
+     ExteriorAlgebra (Polynomial R) (Polynomial R ⊗[R] (α →₀ R)) →ₗ[R]
+       Module.End R (Fock R) :=
+   (TensorProduct.lid R (Module.End R (Fock R))).toLinearMap.comp
+     ((TensorProduct.map (poleSelector R s d) (sourceNormalMap R x)).comp
+       (LinearMap.restrictScalars R
+-        (ExteriorAlgebra.baseChangeEquiv R (α →₀ R) (Polynomial R)).symm.toLinearMap))
++        (sourceExteriorMap R (α := α)).toLinearMap))
+ 
+ noncomputable def extendedSource (i : α) : Polynomial R ⊗[R] (α →₀ R) :=
+   (1 : Polynomial R) ⊗ₜ[R] Finsupp.single i 1
+ 
+ theorem baseChange_generator (i : α) :
+-    (ExteriorAlgebra.baseChangeEquiv R (α →₀ R) (Polynomial R)).symm
++    (sourceExteriorMap R (α := α))
+         (ExteriorAlgebra.ι (Polynomial R) (extendedSource R i)) =
+       (1 : Polynomial R) ⊗ₜ[R] ExteriorAlgebra.ι R (Finsupp.single i 1) := by
+-  simpa only [extendedSource] using
+-    ExteriorAlgebra.baseChangeEquiv_symm_apply R (α →₀ R) (Polynomial R)
+-      (1 : Polynomial R) (Finsupp.single i 1)
++  simp [sourceExteriorMap, extendedSource]
+ 
+ theorem baseChange_word (A : List α) :
+-    (ExteriorAlgebra.baseChangeEquiv R (α →₀ R) (Polynomial R)).symm
++    (sourceExteriorMap R (α := α))
+         (word (Polynomial R) (extendedSource R) A) =
+       (1 : Polynomial R) ⊗ₜ[R] word R (fun i => Finsupp.single i 1) A := by
+   induction A with
+@@ -81,7 +103,7 @@ theorem residueMap_smul_word (s : R) (d : ℕ)
+       poleSelector R s d p • Fock.normalList R (A.map x) := by
+   unfold residueMap
+   simp only [LinearMap.comp_apply, LinearMap.restrictScalars_apply,
+-    AlgEquiv.toLinearMap_apply, map_smul, baseChange_word,
++    AlgHom.toLinearMap_apply, map_smul, baseChange_word,
+     TensorProduct.smul_tmul', smul_eq_mul, mul_one, TensorProduct.map_tmul,
+     sourceNormalMap_word]
+   rfl
+diff --git a/lean/Lemmata/FockCircuits/NormalSymbol.lean b/lean/Lemmata/FockCircuits/NormalSymbol.lean
+index b063fbb..b1414f6 100644
+--- a/lean/Lemmata/FockCircuits/NormalSymbol.lean
++++ b/lean/Lemmata/FockCircuits/NormalSymbol.lean
+@@ -118,17 +118,13 @@ theorem normalPair_word (L : List (OneParticle R × OneParticle R)) :
+       rfl
+     · apply LinearMap.ext
+       intro x
+-      have hs : (-1 : R) ^ L.length * (-1 : R) ^ L.length = 1 := by
+-        rw [← mul_pow]
+-        simp
+       change -createVector R a.1 (((-1 : R) ^ L.length) • normalList R L x) -
+         normalList R L (contractVector R a.2 x) = _
+       simp only [normalList_cons, List.length_cons, LinearMap.smul_apply,
+-        map_smul, smul_add, smul_smul, pow_succ, mul_neg, mul_one, neg_smul,
+-        hs, one_smul]
++        map_smul, smul_add, smul_smul, pow_succ, mul_neg, mul_one, neg_smul]
+       match_scalars <;>
+         rcases neg_one_pow_eq_or R L.length with hsign | hsign <;>
+-        simp [hsign] <;> ring
++        simp [hsign]
+ 
+ theorem normalSymbol_word (L : List (OneParticle R × OneParticle R)) :
+     normalSymbol R (L.map (ExteriorAlgebra.ι R)).prod = normalList R L := by
+diff --git a/lean/Lemmata/FockCircuits/PascalShears.lean b/lean/Lemmata/FockCircuits/PascalShears.lean
+index 6198a4d..d6b5d52 100644
+--- a/lean/Lemmata/FockCircuits/PascalShears.lean
++++ b/lean/Lemmata/FockCircuits/PascalShears.lean
+@@ -62,7 +62,7 @@ theorem raisingStage_single (L m : ℕ) :
+         (if m < L then (L.choose m : R) else 0) • Finsupp.single L 1 := by
+   rw [raisingStage_apply]
+   congr 2
+-  simp [Finsupp.single_apply, eq_comm]
++  simp [Finsupp.single_apply]
+ 
+ noncomputable def finitePascal (L : ℕ) : OneParticle R →ₗ[R] OneParticle R :=
+   Finsupp.linearCombination R fun m =>
+@@ -80,7 +80,7 @@ theorem finitePascal_single_apply (L m k : ℕ) :
+       if m < L then (if k < L then (k.choose m : R) else 0)
+       else if m = k then 1 else 0 := by
+   rw [finitePascal_single]
+-  split_ifs <;> simp_all [Finsupp.finsetSum_apply, Finsupp.smul_apply,
++  split_ifs <;> simp_all [Finsupp.finsetSum_apply,
+     Finsupp.single_apply, smul_eq_mul, eq_comm]
+ 
+ theorem finitePascal_succ (L : ℕ) :
+@@ -96,19 +96,22 @@ theorem finitePascal_succ (L : ℕ) :
+     finitePascal_single_apply]
+   by_cases hm : m < L
+   · by_cases hk : k < L
+-    · simp [hm, hk, show m < L + 1 by omega, show L ≠ k by omega] <;> omega
++    · simp [hm, hk, show m < L + 1 by omega, show L ≠ k by omega]
++      omega
+     · by_cases hkl : k = L
+       · subst k
+-        simp [hm] <;> omega
+-      · simp [hm, hk, hkl, show ¬ k < L + 1 by omega, Ne.symm hkl] <;> omega
++        simp [hm]
++        omega
++      · simp [hm, hk, show ¬ k < L + 1 by omega, Ne.symm hkl]
++        omega
+   · by_cases hml : m = L
+     · subst m
+       by_cases hk : k < L
+-      · simp [hk, Nat.choose_eq_zero_of_lt hk, show L ≠ k by omega]
++      · simp [Nat.choose_eq_zero_of_lt hk, show L ≠ k by omega]
+       · by_cases hkl : k = L
+         · subst k; simp
+-        · simp [hk, hkl, Ne.symm hkl, show ¬ k < L + 1 by omega]
+-    · simp [hm, hml, show ¬ m < L + 1 by omega]
++        · simp [Ne.symm hkl, show ¬ k < L + 1 by omega]
++    · simp [hm, show ¬ m < L + 1 by omega]
+ 
+ noncomputable def raisingSteps : ℕ → List (ℕ × ℕ × R)
+   | 0 => []
+diff --git a/lean/Lemmata/FockCircuits/Shear.lean b/lean/Lemmata/FockCircuits/Shear.lean
+index 968c544..177b285 100644
+--- a/lean/Lemmata/FockCircuits/Shear.lean
++++ b/lean/Lemmata/FockCircuits/Shear.lean
+@@ -19,7 +19,7 @@ theorem shearLinear_apply (a : R) (i j : ℕ) (v : OneParticle R) :
+   ext k
+   by_cases hj : j = k <;>
+     simp [shearLinear, Finsupp.lsingle_apply, Finsupp.lapply_apply,
+-      Finsupp.single_apply, hj, smul_eq_mul, mul_assoc]
++      hj, smul_eq_mul]
+ 
+ noncomputable def shear (a : R) (i j : ℕ) : Fock R →ₐ[R] Fock R :=
+   ExteriorAlgebra.map (shearLinear R a i j)
+@@ -49,9 +49,9 @@ theorem shear_apply (a : R) (i j : ℕ) (x : Fock R) :
+       apply eq_neg_iff_add_eq_zero.mpr
+       exact ExteriorAlgebra.ι_add_mul_swap (R := R) (Finsupp.single j 1) v
+     rw [map_mul, shear_ι, ih, hd]
+-    simp only [add_mul, mul_add, mul_sub, smul_add, smul_sub,
++    simp only [add_mul, mul_add, mul_sub, smul_sub,
+       smul_mul_assoc, mul_smul_comm, smul_smul, ← mul_assoc,
+-      generator_sq, zero_mul, smul_zero, add_zero, hc, neg_mul, smul_neg]
++      generator_sq, smul_zero, add_zero, hc, neg_mul, smul_neg]
+     module
+ 
+ theorem doubledEnergy_replace {i j : ℕ} {I : Finset ℕ}
+diff --git a/lean/Lemmata/FockCircuits/SignedKernel.lean b/lean/Lemmata/FockCircuits/SignedKernel.lean
+index 6fbab9b..4974df8 100644
+--- a/lean/Lemmata/FockCircuits/SignedKernel.lean
++++ b/lean/Lemmata/FockCircuits/SignedKernel.lean
+@@ -575,7 +575,7 @@ theorem reverse_common_coefficient {A B : List ℕ} {t : Matching.Term SourceInd
+   obtain ⟨m, hm, hj⟩ := List.mem_map.mp h.2
+   have hp' : p = (Sum.inr n, Sum.inl m) := Prod.ext hi.symm hj.symm
+   rw [hp']
+-  simp [Matching.crossGamma, orientPair, derivative, pairConstant]
++  simp [Matching.crossGamma, orientPair, pairConstant]
+ 
+ theorem constantTerm_weighted_C (c : R) (s p v : LaurentPolynomial R) :
+     (s * (LaurentPolynomial.C c * p) * v).coeff 0 = c * (s * p * v).coeff 0 := by
+@@ -606,7 +606,7 @@ theorem forward_term_constantTerm (L : ℕ) {A B : List ℕ} {t : Matching.Term
+       Finsupp.zero_apply]
+   · have hp := forward_partial_pole ht hempty d hdegree
+     rw [actualTerm, forward_matching_coefficient R L ht,
+-      constantTerm_weighted_C, commonTerm, if_pos hp,
++      constantTerm_weighted_C, commonTerm, ite_eq_left hp,
+       forward_common_coefficient R ht, constantTerm_weighted_C]
+     rw [forward_term_replacement R L ht hempty d hdegree hw I J hIJ hcut]
+ 
+@@ -634,9 +634,9 @@ theorem reverse_term_constantTerm (L : ℕ) {A B : List ℕ} {t : Matching.Term
+       Finsupp.zero_apply, reverseScalar, hempty, ite_true, zero_add]
+   · have hp := reverse_partial_pole ht hempty d hdegree
+     rw [actualTerm, reverse_matching_coefficient R L ht,
+-      constantTerm_weighted_C, commonTerm, if_pos hp,
++      constantTerm_weighted_C, commonTerm, ite_eq_left hp,
+       reverse_common_coefficient R ht, constantTerm_weighted_C,
+-      reverseScalar, if_neg hempty, add_zero]
++      reverseScalar, ite_eq_right hempty, add_zero]
+     rw [reverse_term_replacement R L ht hempty d hdegree hw I J hIJ hcut]
+ 
+ noncomputable def colourEntry (I J : Finset ℕ) :
+@@ -825,7 +825,7 @@ theorem vacuumSource_left_list (L : ℕ) (A : Index L) :
+ theorem vacuumSource_right_vacuum (L : ℕ) (B : Index L) :
+     Fock.normalList R ((B.val.sort.map Sum.inr).map (vacuumSource R L)) 1 = Fock.basis R B.val := by
+   rw [Fock.normalList_one, Fock.basis_eq_sorted_prod]
+-  simp only [List.map_map, Function.comp_def, vacuumSource, Fock.generator]
++  simp only [List.map_map, Function.comp_def, vacuumSource]
+   rfl
+ 
+ theorem vacuum_matching_coefficient (L : ℕ) (A B : Index L) {t : Matching.Term SourceIndex}
+@@ -885,7 +885,7 @@ theorem reverse_gamma_coefficient {A B : List ℕ} {t : Matching.Term SourceInde
+   obtain ⟨m, hm, hj⟩ := List.mem_map.mp h.2
+   have hp' : p = (Sum.inr n, Sum.inl m) := Prod.ext hi.symm hj.symm
+   rw [hp']
+-  simp only [Matching.crossGamma, Function.comp_def, orientPair, derivative]
++  simp only [Matching.crossGamma, Function.comp_def, orientPair]
+ 
+ theorem neg_contraction_product (P : List (ℕ × ℕ)) :
+     (P.map fun p => -(Fock.contractionCoefficient p.1 p.2 : R)).prod =
+@@ -916,7 +916,7 @@ theorem reverse_fullMatchingSum (A B : List ℕ) (d : ℕ)
+   intro t ht
+   by_cases hempty : t.remaining = []
+   · have hp := reverse_full_pole ht hempty d hdegree
+-    rw [if_pos hempty, if_pos hempty, reverse_gamma_coefficient R ht,
++    rw [ite_eq_left hempty, ite_eq_left hempty, reverse_gamma_coefficient R ht,
+       neg_contraction_product, hp]
+     ring
+   · simp only [hempty, ite_false, mul_zero]
+@@ -1019,7 +1019,7 @@ theorem normalLists_kernel_coefficient {L : ℕ}
+   simp only [map_sum, map_smul, normalList_leftInclusion_mul_right,
+     Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul,
+     leftInclusion_right_coefficient]
+-  simp [Finset.mem_powerset.mp J.property]
++  simp
+ 
+ theorem normalMatrix_scaled {L : ℕ} (A I J : Index L) :
+     normalMatrix (LaurentPolynomial R) L
+diff --git a/lean/Lemmata/FockCircuits/SparseCircuit.lean b/lean/Lemmata/FockCircuits/SparseCircuit.lean
+index 8117294..cb87737 100644
+--- a/lean/Lemmata/FockCircuits/SparseCircuit.lean
++++ b/lean/Lemmata/FockCircuits/SparseCircuit.lean
+@@ -113,7 +113,7 @@ theorem scatter_realizes_linearMap [CommRing R] [Fintype D] [DecidableEq D]
+   rw [Finset.sum_comm]
+   apply Finset.sum_congr rfl
+   intro j hj
+-  simp [ite_smul, eq_comm]
++  simp [ite_smul]
+ 
+ theorem scatter_matrix [CommSemiring R] [Fintype D] [DecidableEq D]
+     {A : Type*} [Semiring A] [Algebra R A]
+@@ -135,8 +135,8 @@ theorem scatter_matrix [CommSemiring R] [Fintype D] [DecidableEq D]
+       · simp only [ite_eq_left hji, ite_eq_right hit, map_one, map_zero,
+           mul_one, mul_zero, add_zero]
+     · by_cases hit : i = target j
+-      · simp only [ite_eq_right hji, ite_eq_left hit, map_one, map_zero,
+-          mul_one, mul_zero, zero_add]
++      · simp only [ite_eq_right hji, ite_eq_left hit, map_zero,
++          mul_zero, zero_add]
+       · simp only [ite_eq_right hji, ite_eq_right hit, map_zero, mul_zero, add_zero]
+   simp_rw [ht]
+   rw [Finset.sum_add_distrib, eval_scatter]
+diff --git a/lean/Lemmata/FockCircuits/Wick.lean b/lean/Lemmata/FockCircuits/Wick.lean
+index f68d1ab..45087f8 100644
+--- a/lean/Lemmata/FockCircuits/Wick.lean
++++ b/lean/Lemmata/FockCircuits/Wick.lean
+@@ -113,7 +113,7 @@ theorem wickDerivative_eq_sum (v : OneParticle R)
+               congrArg (fun n : ℕ => (-1 : R) ^ n) hlen.symm
+             _ = _ := by rw [pow_succ]; simp
+         rw [hs, normalList_cons]
+-        simp only [Fin.getElem_fin, Fin.val_succ, List.getElem_cons_succ,
++        simp only [Fin.getElem_fin,
+           map_smul, smul_add, smul_smul, pow_succ]
+         module
+ 

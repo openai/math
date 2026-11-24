@@ -1,0 +1,30 @@
+diff --git a/Complexity/Computability/Circuit/Bird.lean b/Complexity/Computability/Circuit/Bird.lean
+index a39c61a..ea33a70 100644
+--- a/Complexity/Computability/Circuit/Bird.lean
++++ b/Complexity/Computability/Circuit/Bird.lean
+@@ -8,7 +8,7 @@ module
+ -- upstream: candidate
+ 
+ public import Complexity.Init
+-public import Mathlib.LinearAlgebra.Matrix.Array
++public import Mathlib.LinearAlgebra.Matrix.Defs
+ public import Mathlib.LinearAlgebra.Matrix.Determinant.Bird.Defs
+ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+ import Mathlib.Algebra.Order.BigOperators.Group.LocallyFinite
+diff --git a/lakefile.toml b/lakefile.toml
+index 7752f5b50..4b373406e 100644
+--- a/lakefile.toml
++++ b/lakefile.toml
+@@ -3,12 +3,6 @@ version = "0.2.0"
+ defaultTargets = ["Complexity", "ComplexityResults"]
+ testDriver = "ComplexityTests"
+ lintDriver = "batteries/runLinter"
+-# Share build outputs between local checkouts (worktrees, agent sandboxes) through Lake's
+-# content-addressed artifact cache, so a module built in one checkout is reused by every other
+-# checkout with the same inputs. Restoring hard-links cached outputs back into `.lake/build`, so
+-# tools and CI caches that read the build directory still see a complete tree.
+-enableArtifactCache = true
+-restoreAllArtifacts = true
+ # The library has no native code, so its build outputs are the same on every platform and the
+ # remote cache (see `scripts/cache/README.md`) built on Linux CI also serves macOS checkouts.
+ platformIndependent = true

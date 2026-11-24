@@ -13,7 +13,7 @@ In our view, these manuscripts are best understood as a form of raw research dat
 
 ## Navigating the collection
 
-The current catalogue contains 721 manuscripts organized into 373 families. A family groups related papers, which may include a principal result, companion arguments, consequences, or alternative proofs. Each family is classified by mathematical discipline.
+The current catalogue contains 722 manuscripts organized into 374 families. A family groups related papers, which may include a principal result, companion arguments, consequences, or alternative proofs. Each family is classified by mathematical discipline.
 
 - Start with the [overview](overview.pdf) for descriptions of the families.
 - Use the [manuscript map](CONTENTS.md) to find individual papers and their supporting materials.

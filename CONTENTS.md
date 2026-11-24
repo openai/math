@@ -1,6 +1,6 @@
 # Mathematics manuscript collection
 
-**721 manuscripts covering 373 result families.**
+**722 manuscripts covering 374 result families.**
 
 [**Read the overview PDF**](overview.pdf).
 
@@ -9161,6 +9161,22 @@ We prove a uniform interior $`C^{1,\alpha_d}`$ estimate for bounded infinity-har
 &emsp;[The Exponential Time Hypothesis is False](preprints/The-Exponential-Time-Hypothesis-is-False-October-25-2026/paper.pdf)
 
 We give a deterministic algorithm for exactly counting the satisfying assignments of an arbitrary $`k`$-CNF formula. For every fixed $`k\ge2`$, on a formula with $`n`$ variables and $`m`$ clauses, our algorithm uses space polynomial in $`n`$ and $`m`$ and runs in time $`(n+m)^{O_k(1)}2^{n/(\log n)^{1/2+o(1)}}`$. Our algorithm refutes the Exponential Time Hypothesis (ETH), which postulates that deciding 3-SAT on $`n`$ variables requires $`2^{\Omega(n)}`$ time in the worst case.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+**379. Separation of VP and VNP over every field.** An explicit VNP family requires border arithmetic circuits of size at least $`\exp(\Omega((\log n)^{5/4}))`$ over every field. The same bound holds for the directed Hamiltonian cycle polynomial over every field and for the permanent outside characteristic two. ([Lean](lean/docs/379.md))
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[VP and VNP are different](preprints/VP-and-VNP-are-different-November-23-2026/paper.pdf)
+
+We prove that VP differs from VNP over every field. The lower bound holds for border circuits and is superpolynomial, of the form $`\exp(\Omega((\log n)^{5/4}))`$. In particular it applies to the permanent outside characteristic two. The proof trades two kinds of hardness against one another: the rigidity of tensor networks priced in Euclidean space, and the ability to diagonalize even against degenerating nonuniform circuits by replaying their computations inside a wire budget.
 
 </td>
 </tr></tbody>
