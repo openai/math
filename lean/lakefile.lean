@@ -69,6 +69,13 @@ require «formal-schemes» from git
 require «belyi» from git
   "https://github.com/lana-agents/belyi.git" @ "9ce4d3f793d3bc831f2fc7214b7dbad90ea012d8"
 
+require complexitylib from git
+  "https://github.com/cslib-community/complexitylib.git" @ "242879e6913ca3b29005f7c48536896983d2ad2f"
+require cslib from git
+  "https://github.com/leanprover/cslib" @ "254e30e6d4299c51323aaeaf5f51a4763b375d4a"
+require lemmata from git
+  "https://github.com/ZIB-IOL/lemmata.git" @ "a2dd430f283febd755a6ee6932d0b0fdabfb330c" / "lean"
+
 -- Declare shared dependencies last: Lake resolves later requirements first.
 -- These pins override the older versions in the upstream packages' manifests.
 require PrimeNumberTheoremAnd from git
@@ -319,7 +326,7 @@ post_update pkg do
 
   -- Preflight every dependency before changing any of them.
   let mut plans := #[]
-  for name in #[`«fixed-point-theorems», `PrimeNumberTheoremAnd, `Zeta3Irrational,
+  for name in #[`complexitylib, `lemmata, `«fixed-point-theorems», `PrimeNumberTheoremAnd, `Zeta3Irrational,
       `«rellich-kondrachov», `carleson, `StrongPNT, `AbsorptionCutoff, `AINTLIB,
       `ClassFieldTheory, `«schoenflies-lean», `SphereEversion, `gromov] do
     let label := name.toString (escape := false)
@@ -329,7 +336,7 @@ post_update pkg do
       | error s!"Missing direct dependency declaration for {label}."
     let some (.git _ (some revision) _) := declaration.src?
       | error s!"{label} must be pinned to a Git commit."
-    let patchDirectory := dep.dir
+    let patchDirectory := if name == `lemmata then dep.dir / ".." else dep.dir
     let head ← patchGit patchDirectory #["rev-parse", "HEAD"]
     unless head.exitCode == 0 && head.stdout.trimAscii.toString == revision do
       error s!"{label}: expected commit {revision}, got {head.stdout}\n{head.stderr}"

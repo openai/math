@@ -2,6 +2,12 @@
 
 For any withdrawn papers, their README files explain the gap and link to the retracted manuscript. For any updated papers, previously published editions remain accessible through the version notes in their README.
 
+## November 23, 2026
+
+**New Results Added**
+
+- *VP and VNP are different*. This result was obtained on November 6, 2026.
+
 ## October 29, 2026
 
 **Formalization Fix**

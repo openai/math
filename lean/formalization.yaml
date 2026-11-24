@@ -884,6 +884,11 @@ sources:
     id: ../preprints/Universal-cover-splitting-for-compact-Kahler-manifolds-September-23-2026/paper.pdf
     type: article
 
+  - title: "VP and VNP are different"
+    authors: ["OpenAI"]
+    id: ../preprints/VP-and-VNP-are-different-November-23-2026/paper.pdf
+    type: article
+
   - title: "Weak Hessian bounds along every geodesic in RCD spaces"
     authors: ["OpenAI"]
     id: ../preprints/Weak-Hessian-bounds-along-every-geodesic-in-RCD-spaces-September-24-2026/weak-hessian-geodesics.pdf
@@ -1799,6 +1804,10 @@ status:
     - comparator_config: ComparatorChallenges/UniversalFInfinity.json
       declaration: OAI.UniversalFInfinity.universal_group_of_type_FInfinity
       file: OAI/GroupTheory/UniversalGroup/Main.lean
+
+    - comparator_config: ComparatorChallenges/VPVNP.json
+      declaration: OAI.Computability.VPVNP.Standalone.vp_ne_vnp
+      file: OAI/Computability/VPVNP/ClassSeparation.lean
 
     - comparator_config: ComparatorChallenges/VertexCover.json
       declaration: OAI.VertexCover.every_fixed_factor_below_two
