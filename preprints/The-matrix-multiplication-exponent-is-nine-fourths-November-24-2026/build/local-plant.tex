@@ -1,0 +1,293 @@
+\section{Planting the wiring at marked points}\label{subsec:planting}
+
+A station in the input may have wires to many other stations. To move it
+as one insertion, we encode its ends of those wires in a single leg.
+The sphere form must then test whether the bits at opposite ends agree.
+We implement that test separately in each occupied cell of each network.
+
+There are two sphere forms in a cell. The form $A$ carries the station
+legs and the seams to neighboring cells. Extra marks on $A$ supply a
+joint state that tests the wiring. The private form $B$ realizes this
+joint state through a separate insertion table at each extra mark.
+Thus, after planting, each insertion has just one leg on each sphere,
+along with any exposed or control bits. At original stations and seams
+the $B$ leg is the vacuum. Figure~\ref{fig:stack} shows the two kinds
+of insertions.
+
+\begin{figure}[htb]\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+  strip/.style={draw=ink,rounded corners=3pt,line width=.65pt},
+  ins/.style={draw=ink,rounded corners=2pt,fill=white,inner xsep=7pt,inner ysep=4pt},
+  leg/.style={draw=ink,line width=.8pt}]
+\draw[strip,fill=ink!10] (-4.35,.98) rectangle (4.35,1.55);
+\draw[strip,fill=ink!5] (-4.35,-1.55) rectangle (4.35,-.98);
+\node[anchor=west] at (-4.22,1.26) {Sewn sphere \(A\)};
+\node[anchor=east] at (4.22,1.26) {\(R\) species};
+\node[anchor=west] at (-4.22,-1.26) {Private sphere \(B\)};
+\node[anchor=east] at (4.22,-1.26) {\(R/b\) species};
+\draw[leg] (-5.35,1.26)--(-4.35,1.26);
+\draw[leg] (4.35,1.26)--(5.35,1.26);
+\node[above,font=\footnotesize] at (-4.85,1.26) {seam};
+\node[above,font=\footnotesize] at (4.85,1.26) {seam};
+\node[ins] (sta) at (-2.15,0) {original station};
+\node[ins] (aux) at (2.0,0) {auxiliary insertion};
+\draw[leg] (sta.north)--(-2.15,.98);
+\draw[leg,densely dotted] (sta.south)--(-2.15,-.98);
+\node[anchor=west,font=\footnotesize] at (-2.1,-.6) {vacuum};
+\draw[leg] (aux.north)--(2.0,.98);
+\draw[leg] (aux.south)--(2.0,-.98);
+\node[anchor=west] at (2.05,.62) {\(z^P\)};
+\node[anchor=west] at (2.05,-.62) {\(z\)};
+\foreach \x/\y in {-2.15/.98,2.0/.98,2.0/-.98}
+    \fill[ink] (\x,\y) circle (1.5pt);
+\draw[draw=ink,fill=white] (-2.15,-.98) circle (1.5pt);
+\end{tikzpicture}
+\caption{The station table encodes its incident internal wire bits on \(A\).
+The auxiliary tables couple \(A\) to \(B\) and together impose equality
+along the wires. Only \(A\) is sewn to neighboring cells.}\label{fig:stack}
+\end{figure}
+
+A mark at $z$ on $B$ corresponds to the mark at $z^P$ on $A$, where $P$
+is a power of the characteristic. Moving $z$ by $t$ moves $z^P$ by $t^P$.
+In units of the Laurent order on $A$, the energy of the pair is therefore
+$e_A+P^{-1}e_B$. A given energy budget allows $P$ times as much energy
+on $B$. We keep the corresponding leg narrow by using fewer species on
+$B$. This will bound the width left behind when a station crosses a seam.
+
+Fix $g,\ell$ as in Lemma~\ref{lem:local}. Let $F$ be the first
+characteristic power at least $D^{1000(\ell+1)}$ and let $a=\lceil F^3\rceil$.
+For a chunk count $M$ and a sufficiently large characteristic power $b>F$,
+take $R$ to be the largest multiple of $bM$ at most $T/a$. Set
+\begin{equation}\label{eq:plant-scales}
+ R'=R/b,\qquad P=b/F,\qquad \kappa=P^{-1},\qquad H=Ra^2 .
+\end{equation}
+Here $R$ and $R'$ count the species on $A$ and $B$, respectively, and
+$T/(2a)\le R\le T/a$ for sufficiently large $T$. If $e_A+\kappa e_B\le h$,
+Equation~\eqref{eq:local-width} bounds the widths by constant multiples
+of $\sqrt{Rh}$ and $\sqrt{R'Ph}=\sqrt{Rh/F}$. In bits, up to rounding,
+\begin{equation}\label{eq:plant-widths}
+ w_A=O\bigl(T\sqrt{h/H}\bigr),\qquad
+ w_B=O\bigl(T\sqrt{h/(FH)}\bigr).
+\end{equation}
+
+\subsection{The wiring form for one species}
+
+Combine the wires between each pair of distinct stations into one ordered
+bundle, absorbing endpoint permutations into the station tables. Contract
+self-loops in those tables first. Split each internal bundle into packets
+of $R$ bits, padding the last packet with zeros. Species $s$ will carry
+bit $s$ of every packet. A station meets $O_g(D)$ bundles, and a cell
+together with its incident edges meets $O_g(D^2)$. At a station of
+arity $t_i$, one species therefore carries at most $t_i/R+O_g(D)$ bits.
+
+Choose distinct wedge basis states at an integer energy $h_i$ to encode
+the bit strings at station $i$. The logarithm of the single-species
+dimension is asymptotic to $(\pi/\sqrt3)\sqrt{h_i}$ through integer
+levels by Lemma~\ref{lem:dimension}. Since $R\ge T/(2a)$ and $a\ge D$,
+we may take
+\[
+                 h_i=O_g\bigl(a^2(1+t_i/T)^2\bigr).
+\]
+At seam $j$ the packets across the interface contribute
+$O_g(DT/R+D^2)=O_g(Da)$ bits to one species. An integer energy
+$q_j=O_g(D^2a^2)$ suffices. The two cells use the same bit order and
+the same basis codes there. For fixed $D$ the packet counts per
+species, energies and codes range over finite sets.
+
+Define the multilinear form $L$ on these station and seam levels by
+its coefficients. Give a basis tuple coefficient one if all codes are
+valid and both ends of every bit agree. For a wire to another cell,
+compare its station end with its seam end. Every other coefficient
+is zero. We will sew a multispecies seam at a fixed \emph{total}
+energy. To recover the correct energy in each individual species,
+put $Q=\sum_j q_j$ and extend $L$ by zero to all other tuples of
+nonnegative half-integer seam energies of sum at most $Q$. The station
+energies stay fixed.
+
+\begin{lemma}[Auxiliary marks of bounded weight]\label{lem:plant-probes}
+Inserting a joint state at polynomially many extra marks on a
+single-species sphere realizes the extended form $L$. At each extra
+mark the state uses only the vacuum and $\psi_0$. In every word in its
+support the number of occupied marks is even and at most $O_g(Da)$.
+\end{lemma}
+\begin{proof}
+A wedge of length $d$ has energy at least
+$\tfrac12+\tfrac32+\cdots+(d-\tfrac12)=d^2/2$. At the stations the
+total length is $O_g(a\sum_i(1+t_i/T))=O_g(Da)$. At the at most $g$
+seams the same bound follows from Cauchy--Schwarz and their total
+energy bound $Q=O_g(D^2a^2)$. List all pairs $(v,m)$ of original
+marks and modes occurring in the resulting input spaces. The list
+has polynomial size in $D,a$.
+
+An insertion of $\psi_0$ at a new point $z$ pairs with those modes by
+the covector with coordinates $(z-z_v)^{-m-1}$. Distinct principal
+parts give linearly independent rational functions in every
+characteristic. Choose distinct regular points whose covectors span
+the dual mode space. Indeed, a nonzero linear combination annihilated
+by the points already chosen is nonzero at some unused point of the
+algebraic closure. At most one point per listed mode is needed, all
+in a finite extension. Add vacua if necessary to obtain at least
+three auxiliary marks.
+
+For a subset of $d$ new marks, insert $\psi_0$ there and the vacuum
+at the others. Consider first the part of the resulting Pfaffian
+in which every auxiliary generator pairs with an original generator.
+This part is itself a linear combination of insertion tests on at
+most $d$ marks. Indeed, order all auxiliary generators last and group
+the matchings by their exact set of internal auxiliary pairs. Each
+nonempty set contributes its contracted scalar, with a sign depending
+only on those paired positions, times the part on the remaining marks
+with no internal auxiliary pairs. Subtracting these contributions
+inductively isolates the desired part.
+
+Now take a nonzero vector in the even part of the direct sum of input
+spaces, and let $d$ be its greatest nonzero total wedge length. A test
+on $d$ marks with no internal auxiliary pairs vanishes on every shorter
+wedge. On the length-$d$ component it evaluates the exterior product of
+the chosen $d$ covectors, up to a common sign. The original basis
+tuples are distinct basis wedges in the exterior algebra on the list
+of pairs $(v,m)$. Some choice of $d$ covectors therefore detects the
+component. The resulting even tests span the full dual of the even
+part. Each actual insertion used has even weight at most $d=O_g(Da)$
+and vanishes on odd vectors. The prescribed integer energies give
+even lengths, so the zero extension of $L$ also vanishes on the odd
+part. A linear combination of insertion tests now gives the required
+joint state.
+\end{proof}
+
+Use one copy of this state in each of the $R$ species. At station $i$
+the insertion table enforces level $h_i$ in every species, decodes the
+packets, checks that padded bits are zero and supplies the original
+table entry, with its exposed bits. At seam $j$ we sew by basis
+equality at total energy $Rq_j$. To see why this recovers the original
+wiring, group the Pfaffian by species. Order the original and auxiliary
+marks in two consecutive lists and reorder each list by species.
+The auxiliary reordering sign can be absorbed in the joint state.
+Interleaving the lists costs no further sign because every species
+has even auxiliary weight. The original reordering sign depends only on
+the input wedges. In any nonzero product after the auxiliary state has
+been contracted, the seam tuple of each species
+is either the prescribed tuple or has sum greater than $Q$, by the zero
+extension. The sums over all species add to $RQ$, so every species
+has the prescribed tuple. All the original wedges then have even
+length and the remaining reordering sign is one. The product tests
+exactly the equality of the bits along each wire. We also place one
+vacuum collector in each cell for the motion step.
+
+\subsection{Realizing the joint auxiliary state}\label{subsec:plant-private}
+
+Lemma~\ref{lem:plant-probes} prescribes one tensor shared by all
+auxiliary marks. For motion we need a separate insertion table at
+each mark. The private sphere supplies the shared tensor through
+local maps. One $B$ species will serve a block of $b$ species on $A$.
+
+Partition the $R$ sewn species into $R'$ consecutive blocks. A block
+has \emph{type} $\tau=(d_i)_{i=1}^m$ if $d_i$ of its modes $\psi_0$
+are occupied at auxiliary mark $i$. Projecting the block tensor onto
+these local subspaces gives a tensor $J_\tau$, including the sign
+for reordering within the block. Its $i$th leg has dimension
+$\binom b{d_i}$. For a fixed ordered word of block types, the joint
+tensor is the product of the $J_\tau$ up to a known sign. Exchanging
+two site lists from different blocks contributes only the product of
+their lengths modulo two to the sign exponent. Retain the types with
+$J_\tau\ne0$.
+
+Write $H_2$ for binary entropy in bits, with $H_2(0)=H_2(1)=0$.
+Round each $H_2(d_i/b)$ up to a strictly larger point $u_i$ of a
+fixed positive grid of mesh $1/m$. Then
+\begin{equation}\label{eq:plant-ent}
+ \log_2\binom b{d_i}\le b u_i,\qquad
+ \max_i u_i\le 2,\qquad \sum_i u_i=O_{g,\ell}(Da\log D).
+\end{equation}
+Indeed, Lemma~\ref{lem:plant-probes} gives $s=\sum_i d_i/b=O_g(Da)$.
+Concavity bounds the sum of the entropies by $s\log_2(em/s)$,
+with value zero at $s=0$. The $m$ marks are polynomially many in $D$
+for fixed $\ell$ and characteristic, and rounding adds at most one
+to the sum.
+
+At the corresponding $B$ marks, take the direct sum $S_\tau$ of all
+nonzero single-species sphere forms with energy at most $C(bu_i)^2$
+at site $i$, where $C$ is an absolute constant chosen below. For
+sufficiently large $b$ there is a constant $c_\tau$ such that for
+every $d\ge1$ a product of local linear maps gives
+\begin{equation}\label{eq:plant-comparison}
+ \bigoplus_{s=1}^{c_\tau} S_\tau^{\otimes d}
+                    \longrightarrow J_\tau^{\otimes d}.
+\end{equation}
+The independence of $c_\tau$ from $d$ will let one selector index
+serve every occurrence of the type.
+
+For the comparison, take natural logarithms and work over the
+algebraic closure, where the exponent is still strictly below $9/4$.
+For a normalized spectral price at $x_1,\ldots,x_m$ put
+$M_u=\inf_o\sum_i u_i\,d(o,x_i)$. Preparing $J_\tau$ at $o$ and
+transporting its legs bounds its price by $b(\log 2)\sum_i u_i d(o,x_i)$
+by Equation~\eqref{eq:plant-ent}. Taking the infimum gives $b(\log 2)M_u$. Applying the same transport bound to
+the size-two diagonal, whose price is $\log 2$, gives
+$\inf_o\sum_i d(o,x_i)\ge1$. Hence $M_u\ge\min_i u_i>0$.
+Apply Corollary~\ref{cor:universal} at scale $N=b$ with width caps
+$c_0\sqrt C\,u_i$. Its comparison tensor is precisely $S_\tau$,
+whose price is $b(c_0\sqrt C\,M_u+o(1))$ uniformly in the normalized
+price.
+Choose $c_0\sqrt C>2\log 2$. For fixed $D$ there are finitely many
+grid vectors and choices of $A$ positions, all defined over a fixed
+finite extension. Taking $P$th roots permutes that field, so the
+possible $B$ positions also range over a finite set as $b$ varies.
+It follows that $S_\tau$ strictly dominates $J_\tau$ in every price
+for all sufficiently large characteristic powers $b$.
+The field-extension and strict comparison results of
+Section~\ref{sec:prices-background} give Equation~\eqref{eq:plant-comparison}
+over the fixed field of definition. The maps extend to the field of
+the input tables.
+
+Fix the type word. For each type of multiplicity $d>0$, expand the
+restriction in Equation~\eqref{eq:plant-comparison} by choosing one
+copy index $s$ and one $B$-energy tuple for each of the $d$ factors.
+Assign the factors to private species in the original block order.
+Their product is the multispecies sphere form up to the sign for
+permuting the homogeneous lists. Each site map now supplies a local
+table coupling the $A$ and $B$ legs at that mark. It may act jointly
+on all blocks of a given type \emph{at that mark}. Summing the choices
+and type words produces the required auxiliary tensor. The $B$ legs
+at the original stations and seams stay in the vacuum.
+
+\paragraph{Control and storage.}
+A \emph{private selector} records the ordered type word, the
+per-block $B$ energies and one index $s$ per occurring type. A single
+table checks validity, including zero padding of unused slots, and
+supplies the permutation sign. The types and twice the energies cost
+$O(m\log(2b))$ bits per block, since $d_i\le b$ and the doubled
+energies are $O(b^2)$. The copy indices cost $O_{D,b}(1)$ bits in
+total. With $R/b$ blocks, choosing first $b$ and then $T$ large makes
+the selector shorter than $\epsilon T$ for any fixed $\epsilon>0$.
+
+On $A$ every occupied auxiliary mode costs energy $1/2$, giving
+total auxiliary energy $O_g(RDa)$. On one $B$ species the sum of
+the caps is $O(b^2\sum_i u_i^2)=O_{g,\ell}(b^2 Da\log D)$ by
+Equation~\eqref{eq:plant-ent}. Multiplying by $R'$ and converting to
+$A$ units gives the cell bound
+\[
+ \sum_i(e_{A,i}+\kappa e_{B,i})
+    =O_{g,\ell}(RDa+F RDa\log D)\le D H
+\]
+for sufficiently large $D$, since $H=Ra^2$ and $a\ge F^3$.
+For storage, use the actual spaces of the selected block. At mark $i$
+either leg needs only $O(bu_i+1)$ bits, by
+Equations~\eqref{eq:plant-ent} and~\eqref{eq:local-width}.
+Over all blocks, each auxiliary insertion needs $O(R)=O(T/a)$ bits
+for these two legs. Summed over the marks, this costs
+$O_{g,\ell}(DT\log D)$, taking $b\ge m$ to absorb rounding.
+
+The selector is summed inside the network, but the outer layout must
+know the energy and width at each mark. Split the blocks into $M$ equal
+consecutive chunks. In the outer sum, specify for each chunk the
+histogram of its pairs (type, $B$-energy tuple). A histogram records
+the multiplicities of the pairs, while the private selector records
+their order. The alphabet is fixed independently of $T$, so the
+histograms cost $O_{D,b,M}(\log(T+1))$ bits per cell. They fix the
+energy and the concatenated code length of each leg in each chunk.
+The table checks the histograms against the selector and uses its block
+order to decode. Each valid selector occurs in exactly one outer term.
+Thus $M$ can be chosen for the chunk layout, then $\epsilon$ for its
+selector routing, and finally $b$ for the comparison and selector width,
+all before $T$ grows.

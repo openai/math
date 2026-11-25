@@ -1,0 +1,607 @@
+\section{The calculus of prices}\label{sec:spectra}
+Every spectral point on a fixed set of parties gives a pseudometric on
+those parties. The distance between two parties is the logarithm of the
+spectral point's value on their binary wire. We first show how the same invariant evaluates tensors on subsets of the
+parties and controls the cost of moving their indices. All logarithms are to
+base two unless indicated otherwise.
+
+\subsection{Spectral points and prices}
+Fix a field $k$ and a finite set $J$ of at least two parties. A tensor has
+one finite-dimensional vector space at each party. We use bases throughout,
+and contraction is bilinear. Write $X\le Y$ when local linear maps, one at
+each party, take $Y$ to $X$. Such a transformation is a \emph{restriction}.
+Two operations combine tensors on $J$. In a tensor product we group the
+corresponding factors at each party. In a direct sum $X\oplus Y$ we take the
+direct sum of the local spaces at every party, so the two summands occupy
+separate blocks. Up to mutual restriction, these operations make the tensors
+a commutative semiring. Its integer $r$ is the diagonal tensor
+\[
+                 \Delta_J(r)=\sum_{s=1}^r\bigotimes_{j\in J}e_s.
+\]
+A nonzero tensor $T$ of rank $R(T)$ satisfies $1\le T\le R(T)$.
+
+A \emph{spectral point} $F$ assigns a nonnegative real number to each tensor.
+It preserves $0$ and $1$, is monotone under restriction, and satisfies
+\[
+       F(X\otimes Y)=F(X)F(Y),\qquad F(X\oplus Y)=F(X)+F(Y).
+\]
+In particular $F(\Delta_J(r))=r$. Matrix rank after flattening across a
+fixed nontrivial cut of $J$ is one example. We call $H(T)=\log_2 F(T)$
+the \emph{price} of a nonzero tensor. Tensor products then add prices,
+and local maps can only decrease them. The spectral points form a compact
+space in the topology of pointwise convergence. Indeed, in standard
+coordinate spaces their axioms define a closed subset of the product of
+the intervals $[0,R(T)]$.
+
+\subsection{Placement}
+For a nonempty $S\subseteq J$, let $\Delta_S(q)$ be the diagonal tensor
+sharing a common $q$-valued label among the parties in $S$, with
+one-dimensional spaces elsewhere. A singleton diagonal is a nonzero local
+vector. For $a\ne b$, the two-party diagonal $E_{ab}(q)=\Delta_{\{a,b\}}(q)$
+is a wire of dimension $q$. A wire whose two ends lie at the same party
+is also a nonzero local vector. Set
+\[
+     \delta(S)=H(\Delta_S(2)),\qquad d(a,b)=H(E_{ab}(2)).
+\]
+Tensoring diagonals multiplies their dimensions, and restriction can
+reduce a dimension to any smaller value. Comparing powers of $q$ with
+powers of two therefore gives $H(\Delta_S(q))=\delta(S)\log_2 q$.
+For a flattening rank, $d(a,b)$ is one when the cut separates $a$ and $b$
+and zero otherwise.
+
+For every spectral point, $d$ is a pseudometric. The triangle inequality
+comes from joining two wires by contraction at their common endpoint.
+A diagonal restricts to a wire between any two of its parties. Conversely,
+suppose a tree joins the sites of $S$, possibly through auxiliary vertices.
+At each vertex a local map equates its incident wire labels, retaining the
+common label at vertices in $S$. Applying these maps to the product of
+binary wires produces $\Delta_S(2)$. Hence
+\begin{equation}\label{eq:span-price}
+ \operatorname{diam}(S)\ \le\ \delta(S)\ \le\
+ \sum_{ab\text{ in the tree}} d(a,b).
+\end{equation}
+
+A \emph{placement} $x=(x_1,\ldots,x_r)$ assigns the indices of a nonzero
+tensor $T$ to parties. We group the indices at each party and write $H(T;x)$ for the
+resulting price. Changing a placement keeps the coefficient array of $T$
+fixed. To move its $i$th index from $x_i$ to $y_i$, supply a wire of the
+index dimension $q_i$ and contract one end with that index at $x_i$.
+The same construction moves it back. Thus
+\begin{equation}\label{eq:move}
+ |H(T;x)-H(T;y)|\ \le\ \sum_{i=1}^r d(x_i,y_i)\log_2 q_i .
+\end{equation}
+Sites at distance zero may therefore be identified. A nonzero tensor
+whose indices are all at one site has price zero.
+
+A \emph{spectral space} is a metric space equipped with prices $H(T;x)$
+for all finite placements over $k$. Inserting trivial slots leaves prices
+unchanged, and a binary wire has price equal to the distance between its
+ends. On each finite set $S$ of positive diameter, all prices must have
+the form $\delta(S)\log_2 F_S(T)$ for one spectral point $F_S$ on $S$.
+The scale $\delta(S)$ is the price of $\Delta_S(2)$, since
+$F_S(\Delta_S(2))=2$. Multiplying all nonzero tensor prices and all
+distances by the same positive constant gives another spectral space.
+We set $H(0)=-\infty$. Nonzero tensors at a single site and nonzero
+scalars on no legs have price zero.
+
+\paragraph{Normalization on subsets.}
+Fix a spectral point $F$ on $J$ and a subset $S$ of at least two parties.
+Extend tensors on $S$ to $J$ by adjoining trivial slots, and denote the
+resulting evaluation by $G$. We have $G(\Delta_S(q))=q^e$ for
+$e=\delta(S)$. If $e=0$, the rank bound on $S$ gives $G(T)=1$ for
+every nonzero $T$. If $e>0$, the evaluation $G^{1/e}$ is a spectral
+point on $S$. Only additivity needs proof, since direct sum on $S$ and
+direct sum on $J$ separate blocks at different sets of parties.
+
+Group the terms of $(U\oplus V)^{\otimes n}$ by the number $j$ of
+$U$-factors. After local changes of coordinates the $j$th block is
+$U^{\otimes j}V^{\otimes(n-j)}\Delta_S(\binom nj)$. Each block is a
+restriction of the full tensor. Conversely, the full tensor is the
+ordinary sum of the blocks in the ambient spaces. Since an ordinary sum
+is a restriction of a direct sum on $J$, $G(U\oplus V)^n$ lies between
+the largest block value and $n+1$ times that value. The $1/e$ powers
+of the block values are precisely the terms of the binomial expansion
+of $(G(U)^{1/e}+G(V)^{1/e})^n$. Their sum lies between the largest
+term and $n+1$ times that term. Taking $1/(en)$ powers in the bounds
+for $G(U\oplus V)^n$ and letting $n\to\infty$ therefore gives
+$G(U\oplus V)^{1/e}=G(U)^{1/e}+G(V)^{1/e}$.
+
+The same normalization works for a list of parties in which several
+indices occupy one site. Grouping the indices of a direct sum at that
+site introduces additional zero blocks. Deleting those blocks by local
+projection gives the direct sum of the grouped tensors, and local
+inclusions recover the padded tensor. Equation~\eqref{eq:move} allows
+indices at distance zero to move to a common representative without
+changing their price. The resulting spectral space on the metric
+quotient therefore retains all the original log prices.
+
+\paragraph{Ordinary sums.}
+If a product of tensors supplies $T$ by local maps and contractions,
+then $H(T)$ is at most the sum of their prices. Suppose instead that
+several constructions produce tensors $T_i$ with the same output
+spaces on a finite set $S$ of positive diameter. Their auxiliary sites
+may differ. Addition in the output spaces is a restriction of a direct
+sum on $S$, so the normalized spectral point on $S$ gives
+\begin{equation}\label{eq:price-ordinary-sum}
+ H\!\left(\sum_i T_i\right)
+ \le \delta(S)\log_2\sum_i 2^{H(T_i)/\delta(S)}
+ \le \max_i H(T_i)+\delta(S)\log_2\#\{i\}.
+\end{equation}
+Here $2^{-\infty}=0$. At a single output site every nonzero sum has price
+zero. These bounds also apply when terms cancel.
+
+\begin{lemma}[Closure at a fixed placement]\label{lem:spectral-closure}\label{lem:border-test}
+In a fixed finite tensor format, if $H(U;x)\le B$ for all nonzero $U$
+in a set $\mathcal A$, the same bound holds at every nonzero point of its
+Zariski closure.
+For geometric closure one takes the tensors and spectral point over an
+algebraically closed field \cite[Corollary~2.4]{SpectralSublevels}.
+\end{lemma}
+
+\begin{proof}
+Write $D$ for the dimension of the ambient tensor space. For every $n$
+the map $U\mapsto U^{\otimes n}$ is polynomial. The span of its values
+on $\mathcal A$ contains its values on the closure, and has dimension
+at most $\binom{n+D-1}{D-1}$ by expanding in monomials in the coordinates
+of $U$. Thus for $T$ in the closure, $T^{\otimes n}$ is an ordinary sum of
+at most that many scalar multiples of powers from $\mathcal A$.
+Apply \eqref{eq:price-ordinary-sum} at the placement $x$ and divide by $n$.
+The error tends to zero with the format and placement fixed.
+\end{proof}
+
+\subsection{Limits of spectral spaces}\label{sec:limits}
+Two limiting operations preserve these data. For metric completion take
+the limit of every fixed tensor price along convergent placements,
+using \eqref{eq:move}. For a pointed metric ultralimit, possibly after
+rescaling, take the ultralimit of prices of the representing placements.
+For each fixed nonzero tensor these numbers are bounded by \eqref{eq:move}
+because its indices are a bounded distance from the basepoint.
+The same bound gives independence of representatives and agreement when
+two parties merge. On a finite limit set of positive diameter, the
+multipliers $\delta(S)$ are bounded above and away from zero by
+\eqref{eq:span-price}. Dividing by them and passing to the limit preserves
+all spectral point axioms. Thus the limits carry simultaneous values
+for every tensor, including tensors over uncountable fields.
+
+
+\subsection{Turning prices into restrictions}
+Monotonicity gives a necessary condition for a tensor restriction.
+A strict inequality at every spectral point has a converse for powers
+of the tensors. We use the following form of Strassen's asymptotic
+spectral theory \cite{Strassen1988} (see also \cite{Fritz,WZ}).
+\begin{lemma}[Strict spectral comparison]\label{lem:spectral-comparison}
+Suppose that $X,Y$ are nonzero and $F(X)<F(Y)$ for every spectral
+point on $J$. There is an integer $K\ge 1$ such that
+$K Y^m\ge X^m$ for every $m\ge 1$.
+\end{lemma}
+\begin{proof}
+The proof separates an element from the cone of restrictions by a
+spectral point, then clears the denominators in the resulting cone
+inequality. Pass to the additive group completion of the tensor semiring
+$S_J$ and localize at all
+nonzero tensors, obtaining a commutative $\mathbb Q$-algebra
+$A$. Nonzero tensors form a multiplicative set, and flattening rank
+extends to this localization. Let $P$ be the cone of finite sums of
+$(a-b)/s$ with $a\ge b$ and $s$ a nonzero tensor. This rational
+convex cone is closed under multiplication by tensor fractions $t/s$.
+Write $v\le_P w$ if $w-v\in P$. Every element of $A$ is between
+integer bounds in this order, since $0\le_P t/s\le_P t$.
+Evaluating at a flattening rank shows that $-1\notin P$.
+
+We claim that $z\notin P$ implies the existence of a spectral point
+whose extension to $A$ takes a nonpositive value at $z$. Indeed,
+$P'=P-\mathbb Q_{\ge0}z$ also excludes $-1$, since $-1=p-qz$
+with $p\in P$ would give $q>0$ and $z=(1+p)/q\in P$.
+Extend the identity on $\mathbb Q1$ to a rational-linear functional
+on $A$ positive on $P'$ (where positive means nonnegative on the
+cone). For the extension by a new direction $h$, prescribe a value
+between the supremum on old vectors bounded above by $h$ and the
+infimum on old vectors bounded below by $h$, using the order of $P'$.
+Integer bounds make the two sets nonempty, positivity orders their
+values, and rational rescaling verifies the extension. Well-ordering $A$
+gives the functional, with value at $z$ at most zero.
+
+The rational-linear functionals positive on $P$ with value one at the
+unit form a compact convex set, by the integer bounds. Minimize
+evaluation at $z$, then (taking intersections at limit stages) minimize successively on a well-ordered list of
+all coordinates in the preceding minimizing faces. The nested compact
+faces have a unique common member $\ell$, which is extreme and has
+$\ell(z)\le0$. For any nonzero tensor $s$, put $u=s/(1+s)$ and
+$v=1/(1+s)$. Multiplication by either preserves $P$, and $u+v=1$.
+If $s\le r$, both $u,v$ are at least $1/(r+1)$ in the cone order,
+using $s\ge1$. Thus the functionals $\ell(u\,\cdot)$ and
+$\ell(v\,\cdot)$ normalize to states and decompose $\ell$ with
+positive coefficients. Extremality gives
+$\ell(uh)=\ell(u)\ell(h)$ and $\ell(vh)=\ell(v)\ell(h)$.
+As $vs=u$, it follows that $\ell(sh)=\ell(s)\ell(h)$.
+The restriction of $\ell$ to tensors is the desired spectral point,
+and the same identity determines its extension to fractions.
+
+By compactness choose an integer $b$ with
+$b F(Y)>(b+1)F(X)$ at every spectral point. The claim gives
+$bY-(b+1)X\in P$. Collecting denominators and clearing the
+localization gives $cbY-c(b+1)X=a-a'$ in the additive group
+completion, for some nonzero tensor $c$ and tensors $a\ge a'$.
+Equality in the completion allows addition of a common tensor in
+$S_J$, so $cbY+w\ge c(b+1)X+w$ for some $w$ (absorb $a'$ into
+$w$). Choose $q$ with $qcY\ge w$, possible since $cY\ge1$.
+Trading $q$ times while retaining $w$ gives
+\[
+ q(b+1)cY\ \ge\ qbcY+w\ \ge\ q(b+1)cX+w\ \ge\ q(b+1)cX .
+\]
+Consequently $c'Y\ge c'X$ with $c'=q(b+1)c$. Reusing $c'$ gives
+$c'Y^m\ge c'X^m$ for every $m$. Any integer $K\ge c'$ works.
+\end{proof}
+
+
+Strict comparison also lets us change the ground field without losing
+prescribed spectral values (see \cite{Strassen1988,CVZ}).
+\begin{lemma}\label{lem:comparison}
+For $k\subseteq K$, the possible joint values of spectral points on
+any family of tensors defined over $k$ are the same over the two fields.
+\end{lemma}
+
+\begin{proof}
+Restricting spectral points over $K$ to tensors over $k$ gives a compact
+subset of the spectrum over $k$. If this subset misses $F$, there are
+finitely many tensor evaluations whose values at $F$ do not occur
+jointly in the subset. Choose a rational polynomial in those evaluations
+which is negative at $F$ and positive on the compact image. For example,
+approximate the squared distance to the tuple at $F$, minus a small
+positive constant. After clearing denominators, the polynomial is the
+difference in evaluation of two nonzero tensors $Y,X$. Monomials
+correspond to tensor products, and adding $1$ to both parts ensures
+that $X$ and $Y$ are nonzero.
+
+By Lemma~\ref{lem:spectral-comparison} over $K$ there is a fixed integer
+$C$ such that $X^m\le C Y^m$ for all $m$. Fix $m$. The finitely many
+coefficients of the local maps generate a $k$-algebra. Taking its
+quotient by a maximal ideal specializes the restriction to a finite
+extension $L/k$ by Zariski's lemma. The $n$th power of this restriction
+is still given by one linear map per party over $L$. Expand each map
+in a $k$-basis of $L$ and apply a $k$-linear functional $L\to k$ that
+takes $1$ to $1$. This expresses $X^{mn}$ over $k$ as an ordinary sum
+of at most $[L:k]^{|J|}$ scaled restrictions of $(CY^m)^n$. Hence
+\[
+              F(X)^{mn}\le [L:k]^{|J|} C^nF(Y)^{mn}.
+\]
+Taking $n$th roots and letting $n\to\infty$ gives
+$F(X)^m\le C F(Y)^m$. Since $C$ is independent of $m$, this contradicts
+$F(X)>F(Y)$.
+\end{proof}
+\section{Geodesic extension}
+\label{sec:geodesic}
+Can one insert a point between two existing sites while preserving the
+prices of all tensors on the old sites? The next theorem gives such an
+extension for every division of the distance between the sites. Its
+second assertion adds a site at the center of a star and identifies the
+least possible weighted sum of the new wire lengths. We then use an
+exterior-algebra identity to control tensor prices as one or more
+indices move between sites.
+\subsection{Extending a spectral point by one party}
+
+For an additional party $p$, let $\iota$ embed old tensors by the
+trivial leg at $p$. We say $F'$ \emph{extends} $F$ if
+$F'(\iota T)=F(T)$ for every old tensor. This condition fixes the
+old spectrum values, including those of tensors with many
+nontrivial legs.
+
+\begin{theorem}[Exact extension]\label{thm:extension}
+Let $F$ be a spectral point on $J$ over $k$, and write
+$d_F(a,b)=\log_2 F(E_{ab}(2))$.
+\begin{enumerate}
+\item For $a\ne b$ in $J$ and any nonnegative $\lambda_a,\lambda_b$ with
+$\lambda_a+\lambda_b=d_F(a,b)$ there is an extension by $p$ such
+that $d_{F'}(a,p)=\lambda_a$ and $d_{F'}(p,b)=\lambda_b$.
+\item For integers $w_i\ge 0$ on $J$, put
+\[
+ g_F(w)=\sup_{h\ge1,\ T\ne0}
+                  \frac{\log_2 F(T)}h ,
+ \qquad T\in\bigotimes_{i\in J} k^{2^{hw_i}},
+ \quad h\in\mathbb Z.
+\]
+Then
+\begin{equation}\label{eq:spectral-star}
+                 g_F(w)=\min_{F'\text{ extends }F}
+                             \sum_{i\in J} w_i d_{F'}(p,i).
+\end{equation}
+For each width profile $w$ the minimum is attained by an extension
+whose center $p$ may depend on $w$. Taking $w$ to be the indicator
+of a subset gives the equal-dimension star.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Use the embedded nonzero old tensors as generators with prescribed
+targets $f(\iota T)=F(T)$. For the first assertion add generators
+$E_{pa}(2),E_{pb}(2)$ with targets $2^{\lambda_a},2^{\lambda_b}$.
+For the second add the single generator
+$S_w=\prod_i E_{pi}(2^{w_i})$ with target $2^{g_F(w)}$.
+The rank bound gives $0\le g_F(w)\le\sum_i w_i$.
+Targets multiply on formal monomials in the selected generators.
+
+Contract the new leg of such a monomial $M$ by a covector. The old
+spectral value of the result is at most $f(M)$. The old factors pass
+unchanged through the contraction. In the first case the remaining
+tensor is a matrix of rank at most $2^{\min(u,v)}$, where $u,v$ are
+the respective wire multiplicities. Its value is at most
+$2^{d_F(a,b)\min(u,v)}\le 2^{u\lambda_a+v\lambda_b}$.
+In the second case a covector on the center of $S_w^u$ gives exactly
+an arbitrary tensor of dimensions $2^{uw_i}$, whence the bound.
+This also shows $g_F(w)\le\sum_i w_i d_{F'}(p,i)$ for every
+extending $F'$.
+
+Let $C_m$ be the supremum of the old spectral values of contractions of
+$M^m$ at $p$. In the first case with $u=v$, choosing the identity
+matrix gives $C_m=f(M)^m$. In the star case write
+$M=(\iota T_0)S_w^u$, combining the embedded old factors into $T_0$.
+Fix $h\ge1$ and a nonzero tensor $T$ of local dimensions $2^{hw_i}$.
+For every $m$, take $\lfloor um/h\rfloor$ copies of $T$ and pad the
+remaining dimensions by a nonzero simple tensor. The result is a
+contraction of $S_w^{um}$, so
+\[
+  F(T_0)^m F(T)^{\lfloor um/h\rfloor}\le C_m\le f(M)^m .
+\]
+Taking the lower limit of $m$th roots gives
+$\liminf_m C_m^{1/m}\ge F(T_0)F(T)^{u/h}$. Taking the supremum over
+$h,T$ gives $C_m^{1/m}\to f(M)$, including when $u=0$.
+
+We have bounded the spectral value of every contraction by its monomial
+target. The bound is sharp in exponential rate for a monomial with balanced
+wire multiplicities in the first case and for every star monomial in the
+second. We now use strict spectral comparison to show that the targets
+are attained simultaneously.
+Suppose no spectral point attains them all. Compactness then gives a finite list $G_1,\ldots,G_s$, including
+the added generators, and $\delta>0$ such that every spectral point
+$F'$ on $J\cup\{p\}$ has some ratio $F'(G_i)/f(G_i)$ or its inverse
+at least $1+\delta$. Let $M=\prod_i G_i^e$ and let
+$M_1,\ldots,M_{2s}$ be the variants obtained by changing exactly one
+exponent either from $e$ to $0$ or from $e$ to $2e$. Take $e$ large
+enough that $(1+\delta)^e>8s$. Choose positive integers $L,c_j$ by
+rational approximation so that
+\[
+ \frac1{8s}<\frac{c_j f(M_j)}{L f(M)}<\frac1{4s}
+ \qquad(1\le j\le 2s).
+\]
+For any $F'$, the violating index and the choice of sign give an
+index $j$ with $c_jF'(M_j)>L F'(M)$. By
+Lemma~\ref{lem:spectral-comparison} there is a fixed $K$ with
+\[
+ (L M)^m\ \le\ K\biggl(\bigoplus_{j=1}^{2s} c_jM_j\biggr)^m
+ \qquad(m\ge1).
+\]
+On the left apply at $p$ the all-ones covector on the $L^m$-copy
+factor, times a covector on $M^m$ whose contraction has old spectral
+value greater than $C_m/2$. Such a covector exists since $0<C_m<\infty$. The
+copy factor becomes the full $L^m$-fold diagonal on the old parties.
+The equal multiplicities required in the first case hold for $M$.
+The resulting old values therefore approach $L f(M)$ after taking
+$m$th roots. On the right, pull the covector back through the restriction at
+$p$ and restrict it to each direct-sum branch. On a branch the input
+is a monomial $(\iota T_*)V$, with $T_*$ the product of its old
+tensors. Its leg at $p$ is just that of $V$, so an arbitrary covector
+$\xi$ there gives the old tensor $T_*\,\xi(V)$ before applying the
+old-party maps. Those maps commute with contraction at $p$ and can
+only decrease the value. The contraction bound above applies jointly
+to $V$, using its total wire multiplicities. A star power gives a
+single tensor of the prescribed local dimensions and the split wires
+give a single matrix of bounded rank. Thus each branch is bounded by
+its monomial target without a factorization assumption on $\xi$.
+Summing over branches by ordinary subadditivity bounds the old value by
+$K(\sum_j c_j f(M_j))^m$. Since $\sum_j c_j f(M_j)<L f(M)/2$,
+this is impossible for large $m$. The spectral point matching the
+targets proves both assertions.
+\end{proof}
+
+Theorem~\ref{thm:extension} extends to arbitrary spectral spaces.
+Apply the finite theorem, with the appropriate scale, on each finite
+subset containing the specified sites. For the star give weight zero
+to any additional sites and use prices in place of log spectral
+values. Take the pointed ultralimit from Section~\ref{sec:limits}
+along an ultrafilter containing all tails of this directed family.
+Take a specified site as basepoint, choosing one of positive weight
+for a star. The prescribed distance or the bound on the star sum keeps
+the new point at bounded distance from the basepoint. The limit therefore
+contains the new point and preserves every old price. Repeated sites
+in a star are handled by adding their weights. For zero weights
+throughout, or a singleton space, any old site serves as center.
+\subsection{Relocating one tensor index}
+
+To interpolate the price of a tensor, we first move a single index.
+On an auxiliary exterior algebra, the sum of two operator products
+in opposite orders recovers the original tensor index. Related fermionic constructions occur in
+the crossing identity \cite{Anthropic,Khoruzhii} used in
+Section~\ref{sec:crossing}.
+Fix a spectral point $F$ and write $d=d_F$. Consider a tensor with a
+specified local factor $k^q$. Write $T_A$ for its coefficient array
+with that factor placed at $A$ and every other factor in its original
+position. Moving the factor from $B$ to $A$ is a restriction after
+supplying a $q$-dimensional wire between $A$ and $B$. Consequently
+\[
+                         F(T_A)\le q^{d(A,B)}F(T_B).
+\]
+Two indices of a wire at the same party give a nonzero local vector,
+equivalent by restriction to the unit, even if the characteristic
+divides $q$. Thus the estimate holds also for repeated parties, and
+moving a factor a distance zero preserves its value.
+
+On the exterior algebra $\bigwedge k^Q$, for integers $Q\ge2$, write
+$L_i$ for left exterior multiplication by the $i$th basis vector
+and $D_j$ for contraction by the $j$th dual basis vector. Explicitly,
+\[
+ D_j(v_1\wedge\cdots\wedge v_b)
+   =\sum_{a=1}^b(-1)^{a-1}(v_a)_j\,
+      v_1\wedge\cdots\wedge\widehat{v_a}\wedge\cdots\wedge v_b .
+\]
+In particular $D_j(e_i\wedge v)=\delta_{ij}v-e_i\wedge D_jv$, or
+\begin{equation}\label{eq:wire-exterior}
+                       D_j L_i+L_i D_j=\delta_{ij}I .
+\end{equation}
+This identity holds over the integers in the ordered subset basis, so
+also in characteristic two. On $\bigwedge^b k^Q$ write
+$R=\binom Qb$ and $R_\pm=\binom Q{b\pm1}$. For each fixed
+$s\in[-1,1]$ we may take $1\le b\le Q-1$ so that, as $Q\to\infty$,
+\begin{equation}\label{eq:wire-binomial}
+                   R_+/R=Q^{s+o(1)},\qquad R_-/R=Q^{-s+o(1)} .
+\end{equation}
+For $s>0$ use $b=\lfloor Q^{1-s}\rfloor$ for sufficiently large
+$Q$, for $s<0$ take the complementary level for $-s$, and for $s=0$
+use a middle level. The ratios are $(Q-b)/(b+1)$ and $b/(Q-b+1)$.
+
+\begin{lemma}[One index]\label{lem:wire-one-index}
+Let $0\le u\le1$ and suppose $d(A,C)=u\,d(A,B)$ and
+$d(C,B)=(1-u)d(A,B)$. Every nonzero tensor with a marked index
+satisfies $F(T_C)\le F(T_A)^{1-u}F(T_B)^u$.
+\end{lemma}
+\begin{proof}
+Put $t=d(A,B)$. The index-moving estimate handles $t=0$ and
+$u\in\{0,1\}$. A one-dimensional index is trivial, so assume $q\ge2$
+and $0<u<1$. In the $n$th power the marked index has dimension $Q=q^n$.
+Using the matrices in Equation~\eqref{eq:wire-exterior}, replace the
+marked index $j$ by a fresh index $i$ of the same dimension, with row
+and column indices $\beta,\alpha$ on $\bigwedge^b k^Q$ at $B,A$.
+The two arrays have entries
+\[
+   \sum_j(D_jL_i)_{\beta\alpha}(T^n)_{\ldots j\ldots}
+   \quad\text{and}\quad
+   \sum_j(L_iD_j)_{\beta\alpha}(T^n)_{\ldots j\ldots}.
+\]
+Their sum, with $i$ at $C$, is $T_C^n E_{AB}(R)$.
+The two arrays have local implementations with the following wire
+dimensions. In both rows $\alpha$ starts at $A$, $\beta$ ends at $B$,
+and the new index $i$ is at $C$.
+\[
+\begin{array}{ccccc}
+ A && C && B\\[2pt]
+ \alpha & \xrightarrow{\ R\ } & L_i & \xrightarrow{\ R_+\ } & D_j\\[2pt]
+ D_j & \xrightarrow{\ R_-\ } & L_i & \xrightarrow{\ R\ } & \beta
+\end{array}
+\]
+Contraction by $D_j$ uses the old index of $T_B^n$ in the first row
+and that of $T_A^n$ in the second. Both implementations are local
+restrictions even when sites coincide. Subadditivity, $d(A,C)=ut$ and $d(C,B)=(1-u)t$
+give
+\[
+ F(T_C)^n\le F(T_B)^n(R_+/R)^{(1-u)t}
+                    +F(T_A)^n(R_-/R)^{ut}.
+\]
+Set $s=t^{-1}\log_q(F(T_A)/F(T_B))$, which lies in $[-1,1]$ by the
+index-moving estimate. Use Equation~\eqref{eq:wire-binomial} and take
+$n$th roots. The two candidate limits for the maximum are
+$F(T_B)q^{(1-u)ts}$ and $F(T_A)q^{-uts}$, both equal to
+$F(T_A)^{1-u}F(T_B)^u$.
+\end{proof}
+
+\subsection{Moving several indices together}
+Consider a binary wire whose ends both move from $a$ to $b$ and occupy
+the same site at fraction $t$ of the journey. Its price there is zero.
+Interpolating one end at a time compares its price with the average
+for two independent endpoint choices, namely $2t(1-t)d(a,b)$. Choosing
+the same endpoint for both ends gives the sharp bound zero. Such
+synchronized choices are available for every tensor. More generally,
+the endpoint choices can have any joint law with the prescribed marginals.
+\begin{proposition}[Joint convexity of placement]\label{prop:joint-convexity}
+For each marked index $i$ let $z_i$ have distances
+$t_i d_i,(1-t_i)d_i$ to $a_i,b_i$, respectively, where
+$d_i=d(a_i,b_i)$ and $0\le t_i\le1$. For any probability law $\mu$
+on endpoint choices choosing $b_i$ with probability $t_i$
+and $a_i$ otherwise, with $x_i$ the chosen position,
+\[
+                 H(T;z)\le \mathbb E_\mu H(T;x).
+\]
+Unmarked indices keep their positions.
+\end{proposition}
+
+\begin{proof}
+The assertion is immediate for $T=0$ or if every move is constant.
+Omit constant moves and one-dimensional marks, and normalize prices by
+the scale on the finite set of all positions. Successive applications
+of Lemma~\ref{lem:wire-one-index} give the bound when the endpoint
+choices are independent. Under any coupling with the same marginals,
+a function of the form $c_0+\sum_i f_i(x_i)$ has the same expectation.
+We use the exterior identity to decompose $T^{\otimes n}$ into terms
+whose bounds at the endpoints approach functions of this form.
+
+Divide log prices by $n$. Each term has the original marked positions
+and some auxiliary indices at fixed sites. We record an upper bound
+$N(x)$ for its normalized price at each endpoint configuration $x$,
+after subtracting the normalized prices of the auxiliary wires adjoined
+along its branch. These bounds may have an error $o(1)$ as $n\to\infty$.
+The initial table for $T^{\otimes n}$ is $N(x)=H(T;x)$.
+
+Choose one mark of original dimension $q$, with endpoints $a,b$ at
+distance $d>0$. Its current dimension is $Q=q^n$. On exterior
+degree $l$ of $k^Q$, multiplication by a basis vector $i$ and
+contraction by the dual vector $j$ satisfy
+\[
+                 D_jL_i+L_iD_j=\mathbf 1_{i=j} I .
+\]
+Adjoin the $ab$-wire of dimension $R=\binom Ql$. Use this identity on
+it, summing against the old index $j$ and leaving the new index $i$
+marked. The two terms form two child nodes. At either endpoint a child
+can be made using both operators there and the $R$-wire. In the first
+term, with the new index at $a$, one may instead put creation at $a$
+and the old index with contraction at $b$, using a wire of dimension
+$R_+=\binom Q{l+1}$. In the second term the reversed placement uses
+$R_-=\binom Q{l-1}$ between the operators.
+
+Write $N_0,N_1$ for the two slices at $a,b$. For any
+$|c|\le d\log_2 q$ choose $l$ so that
+$(d/n)\log_2(R_\pm/R)=\pm c+o(1)$. For $s=c/(d\log_2 q)>0$ take
+$l=\lfloor Q^{1-s}\rfloor$, for $s<0$ take the complementary level
+for $-s$, and for $s=0$ take a middle level. After subtracting the
+price of the adjoined wire the child tables may therefore be taken as
+\[
+ \bigl(\min\{N_0,N_1+c\},N_1\bigr),\qquad
+ \bigl(N_0,\min\{N_1,N_0-c\}\bigr),
+\]
+with entrywise minima. The passage from $N_1$ to $N_1+c$, for instance, is precisely the alternative $R_+$ implementation at $a$.
+A zero child may be discarded.
+Choose $c$ midway between the extreme entries of $N_0-N_1$. Writing $D=N_0-N_1$, the new differences are $\min(D,c)$ and
+$\max(D,c)$. Thus the range of differences starts in
+$[-d\log_2 q,d\log_2 q]$ by \eqref{eq:move}, and each split reduces
+its width by at least half. The bounds on differences along every other
+coordinate are preserved, since entrywise minimum is monotone and
+commutes with addition of a constant.
+
+After sufficiently many rounds with every mark, the variation of each
+coordinate difference in any leaf table is at most $\epsilon$.
+Consequently each such table with $r$ marks lies within $r\epsilon$
+of a function of the form $c_0+\sum_i f_i(x_i)$, by telescoping
+coordinate changes from one corner. The means of this latter function
+under the product law and $\mu$ agree. Apply independent relocation to
+the leaf tensor, with auxiliary indices fixed, and subtract the accumulated
+wire prices. Its price is bounded by the $\mu$-mean of its table plus
+$2r\epsilon+o(1)$, hence by the same expression using the original table,
+as entries only decreased. At each split the new wire's price cancels
+and ordinary subadditivity costs at most $1/n$ in the normalized log.
+For fixed $\epsilon$ the depth is fixed. Let $n\to\infty$ and then
+$\epsilon\downarrow0$.
+\end{proof}
+
+
+Write $[a,b]_t$ for a point at distances $t\,d(a,b)$ from $a$ and
+$(1-t)d(a,b)$ from $b$.
+\begin{corollary}[Geodesic extension]\label{cor:spectral-geodesic}
+Every spectral space embeds with prices unchanged into a complete uniquely geodesic spectral space.
+Prices are convex along simultaneous geodesics. In particular in any spectral space,
+if the two interval points exist,
+\begin{equation}\label{eq:wire-busemann}
+ d([a,b]_t,[c,e]_t)\le (1-t)d(a,c)+t d(b,e)
+                       \qquad (0\le t\le1).
+\end{equation}
+\end{corollary}
+\begin{proof}
+Apply Proposition~\ref{prop:joint-convexity} to the ends of a binary
+wire with the same endpoint choice for both ends. At a common fraction
+$t$ the distance between interval points is bounded by
+$(1-t)d(a,a')+t d(b,b')$ for their endpoint pairs $(a,b),(a',b')$.
+This implies uniqueness of each interval point. Use
+Theorem~\ref{thm:extension} and its infinite-space version to insert midpoints for all pairs, taking
+successive extensions and their union for an infinite set of pairs.
+Repeat in countably many rounds, then take the completion. The midpoint
+estimate extends midpoints to the completion, and iterated bisection
+gives constant-speed segments. Propagating prices through these steps as
+above gives a complete geodesic spectral space $X$. On such a space
+the synchronized endpoint choice in Proposition~\ref{prop:joint-convexity}
+gives convexity of every price along simultaneous geodesics.
+\end{proof}

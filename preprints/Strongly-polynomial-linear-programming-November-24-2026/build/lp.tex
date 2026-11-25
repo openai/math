@@ -1,0 +1,331 @@
+\section{Linear programming by pricing}\label{sec:lp}
+
+For a subspace \(C\subseteq\RR^N\), consider the two nonnegative cones in
+\(C\) and \(C^\perp\). At each coordinate \(i\), exactly one of these cones
+contains a vector positive at \(i\). In the homogenized slack space of a
+linear program, the two possibilities at the homogenizing coordinate
+give a feasible point and a certificate of infeasibility, respectively.
+We first determine which cone contains the witness, then recover the
+witness itself with inclusion-minimal support.
+
+Call \(C\) the positive side and \(C^\perp\) the negative side.
+Orthogonality excludes simultaneous witnesses at \(i\). If the system
+\(v\in C,\ v\ge e_i\) is infeasible, Farkas' lemma gives a nonnegative
+vector in \(C^\perp\) positive at \(i\), proving that one side always
+has a witness. Moreover, a witness \(u\) of inclusion-minimal support
+is a circuit. If there were a second independent vector on its support
+in the same subspace, a linear combination would give a nonzero
+direction supported there and vanishing at \(i\). Move from \(u\)
+along that direction, choosing the sign that decreases some entry,
+until the first entry vanishes. This yields a witness with smaller
+support. For the relation with elementary vectors and the classical
+theorems of Minty and Tucker, see~\cite[Theorem~6 and its corollary]{Rock}
+and~\cite{Tuc}.
+
+\subsection{Reciprocal scaling and visibility}
+
+To use Theorem~\ref{thm:prices}, we need a label at each coordinate of
+each queried price vector. Scale coordinate \(i\) on the positive side
+by a positive factor and on the negative side by its reciprocal. This
+preserves orthogonality and can bring a small circuit entry into view.
+The following theorem chooses the effective scaling for each query
+and describes its effect using a rational matrix of short bit length.
+
+Write \(\Slots=[N]\times\{-1,+1\}\) and abbreviate the slots
+\((i,\pm1)\) by \(i\pm\). A \emph{reciprocal scaling} is a positive
+diagonal matrix \(D\) on these slots with \(D_{i+}D_{i-}=1\) for all
+\(i\). For row vectors, scaling acts by right multiplication. The
+scale for a query \(p\) will make every slot maximizing surplus visible,
+even when the factors \(2^{-p_i},2^{p_i}\) would be too costly to represent.
+
+\begin{theorem}[Calibration]\label{thm:cal}
+Given an ordered row basis \(B_0\) of a real subspace \(W\)
+on the paired slots of \([N]\), \(N\ge1\), and an integer precision
+parameter \(P\ge1\), there is a deterministic procedure answering
+online price queries \(p\in\QQ^N\) by rational matrices \(B\).
+On a query it may instead declare a restart.
+
+At any time, all answers since the most recent restart, or since
+initialization, admit the same assignment of demands. For each circuit
+\(u\) of \(W\) the assignment gives an integer \(a_s\in[1,R]\) at each
+slot \(s\) in its support.
+For each such answer \(B\) at prices \(p\),
+there is a reciprocal scaling \(D\) with the following properties.
+\begin{itemize}
+ \item \(B\) approximates a true row basis \(B_*=L B_0D\) of \(WD\)
+ to within \(2^{-P}\) entrywise, with \(L\) lower triangular with
+ positive diagonal. Entries of \(B_*\) have absolute value at most
+ \(2\). Any vector in \(WD\) of sup norm one has row coefficients
+ in this basis of absolute value at most \(2^{100N^2}\).
+ \item For every circuit \(u\), at each slot \(s=(i,h)\) maximizing
+ surplus \(a_s-hp_i\) on the support of \(u\),
+ \[
+       |(uD)_s|\ \ge\ \tfrac13\|uD\|_\infty .
+ \]
+\end{itemize}
+
+The integer bound \(R=2^{\poly(N,P)}\) is available at initialization,
+and the total number of restarts is polynomial in \(N,P\). The
+procedure is strongly polynomial when the value of \(P\), the number
+of queries, and the bit lengths of the prices count as additional
+discrete input size. It returns the answers in explicit binary form.
+\end{theorem}
+
+The algorithm receives the approximate basis \(B\). The true basis
+\(B_*\), the scaling \(D\), and the demands certify the properties of
+that answer. The triangular factor \(L\) will also preserve the row
+order and orientation needed in Section~\ref{sec:quadratic}.
+
+\subsection{From approximate labels to exact witnesses}
+
+Embed the two sides in \(W=C\times C^\perp\), with \(C\) on the positive
+slots and \(C^\perp\) on the negative slots. A witness circuit of either
+side is still a circuit in \(W\) after extension by zero on the other
+side. The quadratic form
+\[
+ Q(y)=\sum_{i=1}^N y_{i+}y_{i-}
+\]
+vanishes on \(W\) and on every reciprocally scaled space \(WD\).
+This identity lets us label a coordinate even though calibration returns
+only an approximate basis.
+
+\paragraph{Testing one side.}
+Apply Theorem~\ref{thm:cal} to a row basis of \(W\), taking
+\begin{equation}\label{eq:labelpars}
+ H=2^{100N^2},\qquad \epsilon=H^{-10},\qquad 2^{-P}=H^{-100}.
+\end{equation}
+Run the algorithm of Theorem~\ref{thm:prices} with the resulting bound
+\(R\). At each price query, request the calibrated basis. If calibration
+declares a restart, begin a fresh price search, retaining the state of
+the calibration procedure. Otherwise let \(B\) be the matrix returned.
+Form the convex set
+\begin{equation}\label{eq:box}
+ \mathcal B(B)=\{y=\xi B:\|\xi\|_\infty\le H,\quad
+                     -\epsilon\le y_s\le2\quad(s\in\Slots)\}.
+\end{equation}
+Give label \(+\) at \(i\) if some \(y\in\mathcal B(B)\) has
+\(y_{i+}\ge1/4\), and give label \(-\) otherwise.
+Each test is linear feasibility on explicit short rational data, so
+ordinary bit-polynomial LP suffices~\cite{Khach,GLS}.
+
+To see why testing the positive slot suffices, write a candidate
+as \(y=\xi B\) and compare it with \(y_*=\xi B_*\) in the true
+scaled space. There are at most \(2N\) rows, so
+\(\|y-y_*\|_\infty\le 2NH2^{-P}<\epsilon^2\).
+Since \(Q(y_*)=0\) and the entries of \(y\) belong to
+\([-\epsilon,2]\), we have \(Q(y)\le5N\epsilon^2\le H^{-1}\).
+The following observation will also apply in quadratic programming.
+
+\begin{lemma}\label{lem:mid}
+Let \(K\) be a convex set of vectors on the paired slots, with
+\(-\epsilon\le y_s\le2\) and \(Q(y)\le H^{-1}\) for every \(y\in K\).
+For each \(i\), at most one of its two slots attains \(1/4\) or more
+anywhere in \(K\).
+\end{lemma}
+\begin{proof}
+If a vector attaining the threshold exists at each slot, their
+midpoint has both entries at least \((1/4-\epsilon)/2\ge1/10\).
+Every other pair contributes at least \(-2\epsilon\). Thus the
+midpoint belongs to \(K\) and has
+\(Q\ge10^{-2}-2N\epsilon>H^{-1}\), a contradiction.
+\end{proof}
+
+\paragraph{Deciding all coordinates.}
+In the final run between restarts, calibration supplies a common
+assignment of positive demands to every circuit.
+Fix a nonnegative circuit \(u\) and consider any query \(p\). If the
+slot \(s=(i,h)\) maximizes the surplus of this circuit, its normalized
+scaled vector
+\[
+ y_*=uD/\|uD\|_\infty=\xi B_*
+\]
+has \((y_*)_s\ge1/3\) and admits coefficients with
+\(\|\xi\|_\infty\le H\). All entries of \(y_*\) lie in \([0,1]\).
+The same approximation estimate shows that \(\xi B\) belongs to
+\(\mathcal B(B)\) and attains at least \(1/4\) at \(s\). For \(h=+1\)
+the positive test therefore succeeds. For \(h=-1\) Lemma~\ref{lem:mid}
+forces the positive test to fail. In either case the returned label at
+\(i\) equals \(h\).
+
+Thus the slots and demands of each nonnegative circuit form a
+consistent hypothesis for Theorem~\ref{thm:prices}. The returned
+prices \(x\) satisfy \(hx_i\ge a_s\ge1\) at \emph{every} slot of that
+circuit. Every coordinate has a witness circuit, so \(\sgn(x_i)\)
+identifies the side of every coordinate. Calibration restarts only
+polynomially often. In each run Theorem~\ref{thm:prices} bounds
+the number of queries and their bit lengths by a polynomial in
+\(N,\log(R+1)\). The calibrated answers and the rational label tests
+then have strongly polynomial total cost by Theorem~\ref{thm:cal}.
+
+\paragraph{Recovering one circuit.}
+Fix a target coordinate \(i\) and take the subspace on its indicated
+side. For each coordinate \(j\ne i\) in turn, tentatively impose
+\(v_j=0\) on the current subspace. Keep the restriction exactly when
+the side decision for this smaller subspace says it still contains
+a nonnegative vector positive at \(i\). A rejected restriction can
+never become feasible later, since each remaining step shrinks the
+subspace. Consequently every final witness is positive on every
+unrestricted coordinate. The direction argument at the start of this
+section now shows that the final subspace is a line. Linear algebra
+recovers its generator, oriented to be positive at \(i\), and hence
+a witness circuit in the original subspace. At each trial we compute
+a basis from the original input and the retained zero coordinates.
+The bit bounds are given in Section~\ref{sec:arithmetic}.
+
+\subsection{Certificates for a linear program}
+
+\begin{proof}[Proof of Theorem~\ref{thm:lp}]
+For \(Ax\le b\) use the homogenized slack space and its orthogonal
+complement,
+\[
+ \begin{aligned}
+ C      &=\{(\alpha b-Ax,\alpha): x\in\RR^n,\ \alpha\in\RR\},\\
+ C^\perp&=\{(y,-b^\top y): A^\top y=0\}.
+ \end{aligned}
+\]
+Recover a witness circuit at the last coordinate. On the positive
+side, divide the witness by its last coordinate and solve for \(x\)
+by linear algebra. This gives \(Ax\le b\). On the negative side,
+the witness gives \(y\ge0\), \(A^\top y=0\), and \(b^\top y<0\).
+The codimension of \(C^\perp\) is \(1+\rank A\). A circuit in a
+space of codimension \(k\) has at most \(k+1\) entries in its
+support, since its support indexes a minimally dependent set of
+columns of a defining matrix. The last entry of this circuit is
+positive, leaving at most \(1+\rank A\) entries for \(y\).
+
+This also solves feasibility with both strict and weak inequalities.
+Homogenize with a variable \(\alpha\), require \(\alpha\ge1\), and
+require each slack belonging to a strict inequality to be at least
+one. A solution of the original mixed system can be scaled to meet all
+these lower bounds. Dividing by \(\alpha\) gives the converse.
+
+For a feasible program, test \(Ar\le0,\ c^\top r>0\) by this
+procedure. A solution, together with the feasible point already
+found, certifies unboundedness. Otherwise LP duality gives finite
+primal and dual optima with a common value \(v\). Strict
+complementarity~\cite{GT} ensures that some optimal pair satisfies
+\(b-Ax+y>0\). For completeness, take a coordinate \(i\) whose slack
+is zero at every primal optimum. Maximize that slack subject to
+\(Ax\le b\) and \(c^\top x\ge v\). Duality for this auxiliary
+program, which has value zero, gives \(u\ge0\) and \(\lambda\ge0\)
+with
+\[
+ A^\top(u+e_i)=\lambda c,\qquad b^\top(u+e_i)=\lambda v .
+\]
+If \(\lambda>0\), dividing \(u+e_i\) by \(\lambda\) gives a dual
+optimum positive at \(i\). If \(\lambda=0\), adding \(u+e_i\) to
+any dual optimum has the same effect. Averaging the primal witnesses
+for the coordinates admitting positive slack, and the dual witnesses
+for those with necessarily zero slack, gives a strictly complementary
+pair. If one of these collections is empty, any optimum on that side
+suffices.
+
+The algorithm recovers the pair directly, without knowing \(v\).
+Solve the single mixed linear feasibility problem
+\[
+ Ax\le b,\quad y\ge0,\quad A^\top y=c,\quad
+ b^\top y=c^\top x,\quad b-Ax+y>0.
+\]
+The equality makes the duality gap \((b-Ax)^\top y\) zero. This
+returns the optimal pair with the required strict complementarity.
+\end{proof}
+
+\subsection{Arithmetic and bit lengths}\label{sec:arithmetic}
+
+The bounds used above apply to one uniform program for all input dimensions.
+Our control operations on explicit strings (indices or
+short rationals generated by the algorithm)
+are charged full bit cost, and can use any polynomial-time
+bit algorithm on strings of polynomial length in the dimension.
+We take standard explicit input with dimensions and a nonzero end marker
+(so size is at least the dimensions, also in the bit bounds).
+To simulate the algorithms on the real machine of~\cite{BSS}, store
+each explicit bit in a cell. Even sequential memory scans that
+increment or reset indices and copy cells incur only polynomial
+overhead. All polynomial bounds are fixed and effective. When such a
+bound is used as an algorithmic parameter, one can fix it by
+composing the estimates in the proof.
+Logarithms are to base two unless indicated by \(\ln\).
+
+We can implement all scalar arithmetic using pairs
+\((u,v)\), meaning \(u/v\) (\(v>0\)),
+and perform only ring operations and comparisons aside from
+possible final divisions.
+This representation admits two input conventions.
+\begin{itemize}
+  \item Input a scalar \(x\) directly, starting with \((x,1)\).
+    Measure bit lengths on rational data by \emph{reduced} fractions
+    (of the entries \(u,v\) themselves, and similarly for intermediates).
+  \item Give each rational scalar as numerator and denominator
+    (integer scalars). Compute with integer pairs and return the
+    resulting unreduced pair for each output scalar.
+    Measure bit lengths by the full sizes of these integers.
+    This uses only the most restrictive division convention
+    in~\cite[\S1.3]{GLS}.
+    See also~\cite{DKNOV} for a discussion of arithmetic models.
+\end{itemize}
+These bounds give a polynomial-time Turing simulation. A simulation
+may reduce fractions in the first model and store the integer pairs as given
+in the second. Neither algorithm
+itself uses fraction reduction in scalar arithmetic. Short rationals \emph{given or constructed in
+bits} may be freely placed in scalar computations by setting up their
+numerators and denominators bit by bit.
+
+To cover both versions, on rational data take as a pair's log height
+the log of the least bound on absolute numerators and denominator
+for writing \(u,v\) with one positive denominator.
+All results and intermediates must have log height polynomial
+in total input length (including bit sizes of any input pairs).
+The usual pair operations incur log height at most the sum for their
+arguments plus one (take the product of their two common denominators),
+including for cross-products when comparing.
+This gives the bit bound for arithmetic by polynomial-size formulas
+(size counting all leaf occurrences).
+
+We use ordinary linear algebra on explicit real matrices.
+We give the determinant routine explicitly because repeated unreduced
+fraction arithmetic in elimination could increase the bit lengths
+(see also~\cite[\S1.4]{GLS}).
+Multiply the given \(k\times k\) matrix by the product \(D\)
+of all pair-denominators \(v\), forming each new entry by multiplying its numerator
+by all denominators except its own. Thus the resulting matrix is
+\(M=D B\), where \(B\) denotes the input matrix. Compute \(k!\det M\)
+by Newton's identities. If \(c_i\) is the coefficient of \(t^i\)
+in \(\det(I+tM)\), the recurrence is
+\[
+ i!c_i=\sum_{j=1}^i (-1)^{j-1}
+ \frac{(i-1)!}{(i-j)!}
+ \big((i-j)!c_{i-j}\big)\tr(M^j),\qquad 1\le i\le k.
+\]
+Use these division-free ring operations (factorial ratios are
+products) and return \((k!c_k,k!D^k)\).
+On rational data all entries of \(M\) and \(D\) have
+a common denominator \(U\) of polynomial bit length with
+polynomial-bit numerators. The degree \(i\) results here
+can use denominator \(U^i\), with polynomial-bit numerators
+(by determinant expansion for the \(c_i\), and similarly for
+matrix powers and then partial results in the recurrence).
+The algorithm applies the recurrence to the scalar entries of \(M\)
+using ring arithmetic. The common denominator \(U\) serves only to bound
+reduced bit lengths in the first input model. In the integer-pair model
+all entries of \(M\) are integers, so \(U=1\).
+
+Use bordered minor tests to pivot for rank (an invertible minor of
+order less than the matrix rank can be enlarged, by the Schur
+complement), and Cramer's rule for solving and obtaining bases.
+A fixed number of successive linear-algebra computations and
+polynomial-size formulas therefore preserves polynomial bit length.
+In witness recovery the number of coordinate restrictions can grow with
+the dimension. Each basis there is computed from the original input and
+the current list of zero coordinates, which keeps the number of successive
+linear-algebra computations on the scalars bounded.
+
+\paragraph{Ordered fields.}
+For any fixed input shape, unroll the field algorithm to its uniform
+step bound. Each computation branch and its output conditions can
+be expressed in the language of ordered rings, with division by a
+nonzero denominator expressed by multiplication. Tarski's transfer
+principle thus gives correctness with the same step bound over every
+real closed field. For an arbitrary ordered field, run the argument in
+a real closure. All operations on inputs from the original field stay
+in that field, so the same certificates are obtained there.

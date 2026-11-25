@@ -1,0 +1,505 @@
+\section{Products inside a class of Hadamard spaces}\label{sec:product}
+
+Two placements of the same labels can be combined in an $\ell_2$ product.
+For $0<\lambda<1$, scale the factors by $\sqrt{\lambda}$ and $\sqrt{1-\lambda}$. Then
+the squared distances of the combined placement are the weighted averages
+of the two squared distance tables. Section~\ref{sec:lamps} uses this
+operation twice, first to place the lamps under individual edge constraints,
+then to obtain one placement that gives a saving for every balanced cut.
+Both applications require the product to belong to the class of test
+spaces for the characteristic.
+
+Recall that for a regular multigraph $G$ and a placement of its vertices,
+$V$ is the mean squared distance of two independent uniform vertices and
+$E_G$ is the mean squared distance along a uniform directed arc. A class
+has \emph{ports} if some graphs of fixed degree and unbounded order
+satisfy $V\le C E_G$ for every placement in the class, with a common $C$.
+
+\begin{theorem}[Product theorem]\label{prod:main}
+Let $\mathcal C$ be a nonempty isometry-invariant class of Hadamard spaces,
+closed under positive rescaling, closed convex subspaces and pointed
+ultralimits. If $\mathcal C$ has no ports, it contains a nonempty subclass
+with those same properties and no ports that is also closed under finite
+$\ell_2$ products.
+\end{theorem}
+
+The proof works with finite configurations. A \emph{table} on $A$ is
+the array of distances of an $A$-indexed tuple, whose points may coincide.
+A table is \emph{allowed} if some space of $\mathcal C$ realizes it.
+At each arity the allowed tables are closed under coordinatewise limits,
+by closure under pointed ultralimits. Conversely, if all finite tables
+of a Hadamard space $X$ are allowed, then $X\in\mathcal C$. Fix a
+basepoint in $X$, realize each finite subset containing it, and take an
+ultralimit over those subsets along an ultrafilter containing every tail.
+This gives an isometric copy of $X$. Its image is closed by completeness
+and convex by uniqueness of geodesics. Throughout we allow pointed
+ultralimits over arbitrary index sets.
+
+Call a table $d$ on $A$ \emph{power-realizable} if for every $s\ge1$
+the table on $A^s$ with squared distances $\sum_{i=1}^s d(a_i,b_i)^2$
+is allowed. We first show that no fixed-degree family of unbounded order can expand
+on all power-realizable tables. The entropy obstruction supplies grids of words
+with large pair variance per coordinate. Averaging pairs of slices makes
+these grids flat in the limit. In a flat grid several coordinates can
+still move in a common Euclidean direction. Lemma~\ref{prod:extract}
+separates that motion from a power-realizable table. If the Euclidean part satisfies a proposed bound on $V/E_G$, a
+profile violating that bound must violate it on the power-realizable
+part. We extend these tables to entire Hadamard spaces
+and use minimality to pass from powers of one table to products of two
+different tables.
+
+\subsection{Flat grids and extraction of powers}
+
+A change in one coordinate and a change in a disjoint block trace the
+four sides of a quadrilateral. For four points in cyclic order $(a,b,e,c)$,
+write $\Delta$ for the sum of the four squared sides minus the sum of
+the two squared diagonals. The squared midpoint inequality gives
+$\Delta\ge0$ and
+\begin{equation}\label{prod:drop}
+ d\bigl(\operatorname{mid}(a,c),\operatorname{mid}(b,e)\bigr)^2
+ \le \tfrac12\bigl(d(a,b)^2+d(c,e)^2\bigr)-\tfrac14\Delta .
+\end{equation}
+Thus taking pointwise midpoints of two parallel slices lowers squared
+lengths on average, strictly so wherever $\Delta>0$.
+
+Call a quadrilateral \emph{flat} if $\Delta=0$. Its sides and the points
+on them have the distances of a Euclidean parallelogram, possibly
+degenerate. Indeed, four times the squared distance between the diagonal
+midpoints is at most $\Delta$. When $\Delta=0$ the diagonals have a common
+midpoint, and equality holds in each comparison of a vertex with the
+midpoint of the opposite diagonal. The Euclidean median identities give
+equal opposite sides and hence a parallelogram distance table.
+Equality at the midpoint implies equality everywhere along that diagonal
+by comparison on subintervals. First variation at an endpoint then
+gives equality of the angle with its comparison angle, so the corner
+triangle is flat. The four corner angles sum to $2\pi$ and the flat
+quadrilateral theorem applies. The collinear case follows from equality
+in the triangle inequality
+\cite[Chapter II.2, Proposition 2.9, Exercise 2.10 and Theorem 2.11]{BH}.
+
+We also use two averaging inequalities. The Cartan barycenter minimizes
+mean squared distance and the distance between two barycenters is at most
+the mean distance under any coupling of the two laws, by Jensen's
+inequality on the product space \cite{Sturm}. For independent exchangeable
+pairs $(X_i,X'_i)$, write $X^{(i)}$ for $X$ with coordinate $i$ replaced
+by $X'_i$. The coordinate-exchange inequality, Equation~\eqref{eq:product-exchange},
+bounds the cost of changing all coordinates by
+\begin{equation}\label{prod:exchange}
+ \mathbb E d(f(X),f(X'))^2
+ \le\sum_i\mathbb E d(f(X),f(X^{(i)}))^2
+\end{equation}
+for every Hadamard-valued placement $f$.
+
+A grid of dimension $s$ is a placement of $A^s$ in a space of
+$\mathcal C$. To average slices while keeping track of limits, include
+in its distance table all formal iterated midpoints of the grid vertices.
+There are countably many such labels. Their distances are bounded by
+the diameter of the grid, by convexity. At fixed dimension the enlarged
+tables of diameter at most $R$ form a compact set in the coordinatewise
+topology, since any limit is realized in a pointed ultralimit.
+
+A \emph{system} assigns a law of these tables to each dimension. Its
+laws are invariant under permutations of coordinates. They are also
+consistent in the following sense. Fixing a coordinate to an independent
+uniform letter in an $(s+1)$-grid gives the law of the $s$-grid.
+Uniform tightness of diameters at each fixed dimension therefore permits
+subsequential limits of systems by diagonal extraction.
+
+Let $V_s$ be the expected uniform pair variance of the $s$-grid. Given
+a coupling of the uniform law on $A^j$ with itself, draw $(u,v)$ from
+that coupling independently of a $(j+s)$-grid. Take pointwise midpoints
+of its two $s$-dimensional slices at $u,v$. Doing this in each dimension
+defines a new system. By consistency both slices have the old law,
+so Equation~\eqref{prod:drop} shows that every $V_s$ weakly decreases.
+If a finite $V_s$ stays unchanged, its nonnegative mean deficit vanishes.
+Almost surely the square for every supported $(u,v)$ and every transition
+in the other $s$ coordinates is then flat. A system is \emph{flat} when
+almost surely this holds for every pair of disjoint blocks and every
+choice of transitions in them.
+
+\begin{lemma}\label{prod:extract}
+If the one-coordinate distance profile of a flat system belongs with positive
+probability to a compact set $\mathcal K$, some $d\in\mathcal K$ admits
+a decomposition
+\[
+ d(a,b)^2=\rho(a,b)^2+\|v_b-v_a\|^2 ,
+\]
+where $\rho$ is power-realizable and the $v_a$ belong to a Euclidean space.
+\end{lemma}
+
+Homogeneous coordinates in a large flat grid have two kinds of motion.
+Aligned increments in the common direction contribute a term quadratic
+in their number to the squared distance. The remaining contributions
+add coordinatewise. Auxiliary coordinates will cancel the common
+direction and realize powers of the remaining table.
+
+\begin{proof}
+On a flat grid a distance depends only on the coordinates that change and
+their transitions, since opposite sides of a flat square are equal. For a
+transition $u=(a,b)$ in coordinate $i$ write $d_i(u)$ for its length.
+For two transitions in distinct coordinates $i<j$ define $B_{ij}(u,v)$
+by subtracting $d_i(u)^2+d_j(v)^2$ from the squared distance of the joint
+change and dividing by two. Reversing either transition changes its sign.
+For any list of transitions the squared distance is
+\begin{equation}\label{prod:gram}
+ \sum_i d_i(u_i)^2+2\sum_{i<j} B_{ij}(u_i,u_j).
+\end{equation}
+To see this, partition the active coordinates into two nonempty blocks.
+The parallelogram identity says that the squared length of the joint
+change plus its squared length with one block reversed equals twice
+the sum of the two block lengths squared. The right-hand side of
+Equation~\eqref{prod:gram} satisfies the same identity. By induction on
+the number of active coordinates, the error consequently changes sign
+on reversing any proper nonempty block. For three or more coordinates,
+reversing two of them together changes its sign, while reversing them
+one at a time preserves it. The error is zero. For one or two coordinates
+the formula holds by definition.
+
+Let $p_0>0$ be the probability that a single-coordinate profile lies
+in $\mathcal K$. An $m$-grid has $mp_0$ such coordinates in expectation,
+so there exist flat grids with arbitrarily many of them. Their
+one- and two-coordinate coefficients are bounded by compactness of
+$\mathcal K$ and the triangle inequality. Color each coordinate by the
+mesh cell of its profile and each pair $i<j$ by that of its ordered
+coefficient array. Finite Ramsey theory gives, for every $m$, $m$
+coordinates on which each of these colors is constant at mesh size
+$1/m$. Take a convergent subsequence of the representative coefficient
+arrays. The limits are a single $d\in\mathcal K$ and a single kernel $B$.
+For each fixed dimension the restricted grids converge to the table
+in Equation~\eqref{prod:gram} with $d_i=d$ and $B_{ij}=B$ for
+all $i<j$. Closedness realizes that grid.
+
+The kernel $B$ on ordered transitions is symmetric. In
+Equation~\eqref{prod:gram} use $u,v,-u,-v$ in four successive blocks of equal
+length $l$, where minus denotes reversal. The coefficient of $l^2$ is
+$2(B(u,v)-B(v,u))$ and must be nonnegative. Exchanging $u,v$ gives the
+reverse inequality. For any integer combination of transitions, use $l$
+times the absolute multiplicities and reverse the transitions with negative
+multiplicity. The $l^2$ coefficient is the corresponding quadratic form
+of $B$. Homogeneity and density now imply positive semidefiniteness over
+the reals. Represent $B$ by Gram vectors $v_{ab}$, with $v_{ba}=-v_{ab}$.
+The change $(a^l,b^l,c^l)\to(b^l,c^l,a^l)$ is a product of two
+block transpositions. Each transposition has zero $l^2$ coefficient
+because its two transitions are reverses. Its length is $O(\sqrt l)$.
+The triangle inequality therefore forces
+$v_{ab}+v_{bc}+v_{ca}=0$ in the direct change. Hence $v_{ab}=v_b-v_a$.
+Two opposite transitions on distinct coordinates show that
+$\rho(a,b)^2=d(a,b)^2-\|v_b-v_a\|^2$ is nonnegative. Equation~\eqref{prod:gram} is now the sum of the residual squares in each coordinate
+plus the squared norm of the sum of its vector increments.
+
+It remains to cancel the shared vector increment. In one auxiliary
+coordinate replace the transition $a\to b$ by its geodesic interval
+parametrized by $[0,1]$. Suppose the background coordinates change with
+residual squared cost $R$ and vector increment $W$. The two copies of
+the interval bound a flat parallelogram. Its diagonal formula gives
+the scalar product of the background side with the interval side as
+$\langle W,v_b-v_a\rangle$. Interpolating on the two sides at parameters
+with signed difference $t$ therefore gives squared distance
+\[
+ R+t^2\rho(a,b)^2+\|W+t(v_b-v_a)\|^2 .
+\]
+This formula satisfies the parallelogram identity on disjoint changes,
+so we may interpolate further auxiliary coordinates in turn.
+
+Set $v_o=0$ at one reference letter. For each original coordinate and
+each letter $a\ne o$, adjoin $M$ intervals directed from $a$ to $o$.
+When that coordinate reads $a$, use parameter $1/M$ on its $M$
+intervals for $a$ and zero on the others. Relative to the zero-parameter
+settings, the auxiliary increment is the negative of the original
+word's vector. Thus the shared term vanishes between any two words. At fixed $s$ the total
+residual cost of the auxiliary changes is $O(1/M)$, since $O(M)$
+intervals change by $1/M$. Closedness as $M\to\infty$ realizes the
+table with squared distances $\sum_{i=1}^s\rho(a_i,b_i)^2$ on $A^s$.
+In particular $\rho$ is a pseudometric.
+
+\end{proof}
+
+\subsection{The graph obstruction on power-realizable tables}
+
+\begin{lemma}\label{prod:power-obstruction}
+If $\mathcal C$ has no ports, no fixed-degree graph family of unbounded
+order has a common Poincar\'e bound on its power-realizable tables.
+\end{lemma}
+\begin{proof}
+Suppose a family had such a bound. At the same orders superpose
+bounded-degree scalar expanders, available as regular multigraphs at all
+sufficiently large orders \cite{HLW}. Their scalar inequality extends
+to Euclidean placements by summing over coordinates. The new graph
+energies dominate those of either constituent up to the ratio of the
+degrees. Thus there is a common bound $C_0$ on both Euclidean and
+power-realizable tables. Fix one resulting graph $G$ of degree $D$ on
+$A$, with $n=|A|$ large, and put
+\[
+ h=c\frac{\log n}{\log(2D)}
+\]
+for a sufficiently small absolute $c>0$. We will construct a flat
+system with $V_1\ge h$ and expected one-coordinate $G$-energy at
+most one. To retain this lower bound after averaging away defects, we
+first need grids with pair variance proportional to their dimension.
+In the entropy calculation logarithms are to base two.
+
+On words in $A^p$, update a uniformly chosen coordinate by one $G$-step.
+Identify words that differ by a cyclic rotation. Lifting a placement
+of these orbits back to words gives every coordinate the same energy,
+while passing to orbits loses at most $\log p$ bits of word entropy.
+Let $\pi$ be the orbit law induced by the uniform word, and let $\beta$
+be the supremum, over placements in $\mathcal C$, of the ratio of
+independent $\pi$-pair energy to stationary one-step energy, enlarged
+to one if necessary. The quotient is connected, so $\beta$ is finite.
+
+For $t=2\lceil\beta\rceil$, Lemma~\ref{lem:power} bounds the same
+comparison by an absolute constant against the lazy Ces\`aro walk
+of at most $t$ steps. Apply Theorem~\ref{thm:entropy} to this smoothed
+walk, independent demand and the identity labeling of the orbits.
+The demand has conditional entropy $H(\pi)\ge p\log n-\log p$.
+For the walk, the entropy rate is the one-step conditional entropy.
+Given a starting orbit, fix one representative word. To describe any
+endpoint, record the number of updates in each coordinate and the
+local arcs in their order within that coordinate. Updates in different
+coordinates commute, and holds may be omitted. There are at most
+$\binom{p+t}{p}$ count vectors and at most $D^t$ choices of arcs
+for each vector. Theorem~\ref{thm:entropy} therefore gives
+\[
+ p\log n-\log p\ \le\
+ C\left(1+\log\binom{p+t}{p}+t\log D\right).
+\]
+Using $\binom{p+t}{p}\le2^{p+t}$ and $t=2\lceil\beta\rceil$ now gives
+$\beta\gtrsim p\log n/\log(2D)$, first taking $n$ sufficiently large
+and then $p$ large. Lift a placement attaining at least half this ratio
+to a rotation-invariant placement of $A^p$. Rescale it so that the
+mean $G$-arc energy in each coordinate, averaged over the background
+word, is one. For the choice of $c$ above, its uniform pair variance
+is at least $4ph$.
+
+Passage to a system requires uniform integrability of squared distances
+on fixed-dimensional slices. Smooth a placement $f$ by independently
+resampling each letter with probability $\epsilon$ and assigning to
+each word $x$ the barycenter of the resulting images. At a fixed
+one-coordinate transition the old mean squared distance over background
+words is $O_G(1)$, by following a fixed path between the two letters and
+using the arc-energy normalization. Equation~\eqref{prod:exchange}
+then bounds the expected squared distance between the old image of a
+uniform word and its resampled image by $O_G(\epsilon p)$. Jensen's
+inequality gives the same bound for the displacement to its barycenter.
+By the triangle inequality in $L^2$, choosing $\epsilon>0$ sufficiently
+small at fixed $G$ leaves pair variance at least $ph$.
+
+To compare two smoothed words differing in one coordinate, resample
+their other letters identically. In the changed coordinate either keep
+both old letters or replace both by the same fresh letter. Barycenter
+contraction bounds the new transition distance by the scalar noise
+operator on the background coordinates applied to the old distance.
+Consequently the expected $G$-arc energy in each coordinate is at most one.
+
+On the fixed alphabet the noise operator
+$T_\epsilon f=(1-\epsilon)f+\epsilon\mathbb E f$ satisfies
+$\|T_\epsilon f\|_{2+\eta}\le\|f\|_2$ for some $\eta>0$
+(see \cite{odon} for background). By positivity it suffices to verify
+this for nonnegative functions. The $L^2$ contraction is strict away from constants,
+uniformly on compact subsets of the unit sphere disjoint from constants.
+Near the constant $1$, factor out the mean and expand the squared
+output norm at $1+g$ with $\mathbb E g=0$. The quadratic coefficient
+of $\mathbb E g^2$ is $(1+\eta)(1-\epsilon)^2<1$ for small $\eta$,
+and the remainder is uniform on the finite alphabet. This proves
+the contraction, which tensorizes by Minkowski's inequality. Every
+smoothed one-coordinate transition thus has bounded $(2+\eta)$-moment
+uniformly in the word length $p$.
+
+Randomly permute the coordinates and fix the unused letters uniformly.
+At every fixed dimension the diameter has bounded $(2+\eta)$-moment,
+by connecting grid vertices along the finitely many one-coordinate edges.
+Take $p\to\infty$ along factorials and extract a limit at every dimension.
+Before passage to the limit, partition the coordinates into blocks of
+size $k$, for any $k$ dividing $p$. Equation~\eqref{prod:exchange}
+gives $V_p\le(p/k)V_k$. Uniform integrability on the restricted grids
+gives $V_k\ge kh$ in the limit. The system also retains the upper bound
+of one on the expected single-coordinate $G$-energy and uniform
+$(2+\eta)$-moment bounds for the single-coordinate transition lengths.
+
+Among systems obeying these three bounds, minimize
+$\sum_{k\ge1}2^{-k}V_k$. The diameter moment bounds give tightness
+of the grid laws in each dimension, and consistency passes to limits.
+Uniform integrability preserves second moments, while lower
+semicontinuity preserves the upper $(2+\eta)$-moment bounds. Since
+$V_k\le kV_1=O_G(k)$ by Equation~\eqref{prod:exchange}, the objective
+is continuous on this compact set.
+
+In the minimizing system take pointwise midpoints of slices at two
+independent uniform settings on $j$ extra coordinates. Convexity and
+Jensen's inequality preserve the two upper bounds. For the lower bound,
+let $V'_l$ be the new variance in dimension $l$. Couple the new grid
+with its first slice. At a uniform word the point moves by half the
+length of the segment between the slices, so its mean squared
+displacement is $V_j/4$. Comparing two uniform words gives
+$\sqrt{V'_l}\ge\sqrt{V_l}-\sqrt{V_j}$ by the triangle inequality
+in $L^2$. For each $k$, partition the $l$ coordinates into blocks of
+size $k$ to get $V'_k\ge(k/l)V'_l$. Let $l\to\infty$ through multiples
+of $k$. Since $V_l\ge lh$, this gives $V'_k\ge kh$.
+
+The smoothed system is therefore a competitor in the minimization.
+Every variance weakly decreases, so minimality forces equality in
+every dimension. The two slice settings have full support. By
+Equation~\eqref{prod:drop}, every square with one change in those $j$
+coordinates and one change in the others is flat almost surely.
+Varying $j$ gives a flat system.
+
+Take $n$ sufficiently large that $h>C_0$. Since $V_1\ge h$ and
+the expected $G$-energy is at most one, the one-coordinate table $d$
+satisfies $V(d)>C_0E_G(d)$ with positive probability. Some compact
+subset of that event still has positive probability.
+Lemma~\ref{prod:extract} decomposes one table in this subset into
+squared distances of a power-realizable table and a Euclidean table.
+Both satisfy the comparison with constant $C_0$. Adding their
+inequalities gives the same comparison for $d$, a contradiction.
+\end{proof}
+
+\subsection{Midpoint extensions and minimality}
+
+To find a subclass of spaces using only power-realizable tables, we
+must enlarge each such table to a complete convex space. Restrictions,
+repeated labels, positive rescalings and coordinatewise limits preserve
+power-realizability. The issue is adding midpoints. For the midpoint of
+$a,b$ we know the two half lengths in advance. Its distances to the
+other labels must be chosen consistently across every power.
+
+\begin{lemma}\label{prod:midextend}
+Any power-realizable table admits a power-realizable extension by a midpoint
+of any specified pair of its labels.
+\end{lemma}
+\begin{proof}
+Adjoin a letter $z$ to the old alphabet. Prescribe all old distances
+and $d(a,z)=d(z,b)=d(a,b)/2$. Call two letters \emph{linked} if they
+are equal or their distance is prescribed. Two words are linked if
+their letters are linked coordinatewise. Prescribe the squared distance of each linked pair of words as the sum
+of its prescribed coordinate squares.
+
+These requirements can be realized in every dimension. Start with a
+power of the old table and insert $z$ in one coordinate at a time as
+the midpoint of the $ab$ segment for each setting of the other
+coordinates. If two such settings are linked, the six prescribed
+distances at the ends of their $ab$ segments give a Euclidean rectangle,
+possibly degenerate. Interpolating on these segments therefore gives
+the required distances between two new midpoints and between a midpoint
+and either linked endpoint.
+
+Permute coordinates uniformly and pass to a system limit. The diameter
+of each grid is bounded by a constant times its dimension, by connecting
+words through linked changes. Among systems realizing the partial table,
+minimize $\sum_{k\ge1}2^{-k}V_k$. The diameter bound gives compactness
+and continuity as in the proof of Lemma~\ref{prod:power-obstruction}.
+
+We apply midpoint averaging twice to this minimizer. First, on $j$
+extra coordinates choose a coupling of uniform settings supported on
+linked pairs, with positive probability on every such pair. To construct
+it, put a small equal mass on each off-diagonal linked pair and fill
+the row marginals on the diagonal. Symmetry gives the column marginals.
+For a linked change in the remaining coordinates, the four slice
+vertices form a rectangle by the prescribed distances. Averaging
+along its opposite sides preserves their separation. Thus the smoothed
+system still realizes the partial table. By minimality all variances are unchanged. Equation~\eqref{prod:drop}
+therefore forces flatness in the original system for every square with
+one linked change and \emph{any} disjoint change.
+
+Second, average slices of the same original minimizer at independent
+uniform settings. For each linked change in the remaining coordinates,
+the preceding flatness gives a parallelogram, so the distance between
+midpoints is again the required length. This smoothing also preserves
+the partial table. Equality of all variances, now with full support
+on settings, gives a flat system.
+
+Extract homogeneous flat grids as in Lemma~\ref{prod:extract}. Linked
+distances survive restriction and limits. Repeating a linked transition
+$u=(x,y)$ in two coordinates gives squared length $2d(x,y)^2$.
+Equation~\eqref{prod:gram} thus gives $B(u,u)=\|v_y-v_x\|^2=0$.
+Linked pairs connect the alphabet, so all the shared vectors are equal.
+The one-coordinate table itself is power-realizable. In any realization,
+the two prescribed half lengths place $z$ at the midpoint of $a,b$.
+\end{proof}
+
+Iterate Lemma~\ref{prod:midextend}, eventually adjoining a midpoint
+for every pair of labels so obtained. Realize all these nested tables
+together in a pointed ultralimit. The closure of their union is
+midpoint-closed by continuity and hence convex by dyadic approximation.
+All its finite tables are power-realizable by approximation. The
+subclass of $\mathcal C$ consisting of spaces whose every finite table
+is power-realizable therefore realizes \emph{every} power-realizable
+table. It is closed under isometry, positive rescaling, closed convex
+subspaces and pointed ultralimits, by the corresponding properties of
+the tables. Lemma~\ref{prod:power-obstruction} now shows that this
+subclass has no ports.
+
+\begin{proof}[Proof of Theorem~\ref{prod:main}]
+Choose a minimal subclass $\mathcal M\subseteq\mathcal C$ with the
+stated closure properties and without ports. We justify this choice
+using Zorn's lemma on the systems of allowed finite tables, which
+determine their classes. Consider a chain decreasing by inclusion.
+For a table common to the chain, realize the tuple at every stage
+and take a pointed ultralimit along an ultrafilter containing every
+tail towards smaller classes, with basepoint in the tuple. The table
+is realized in the limit, whose finite tables all belong to every
+stage by closedness. Thus the intersection class realizes every table
+in the intersection of the systems.
+
+Every class in the chain realizes the unit two-point table, since it
+contains a nontrivial space and is closed under rescaling. This remains
+true in the intersection. For a fixed connected $D$-regular graph on
+$n$ vertices, Theorem~\ref{thm:loggraph} bounds the Poincar\'e constant of each class below
+by $c_0\log n/\log(1+D)$. The tables of edge energy one are bounded
+by connectedness. Compactness gives a
+witness for this lower bound in each class, and nested compactness
+gives one in the intersection. A disconnected graph fails any finite
+comparison on the unit two-point table, by placing its components
+at different points. Thus the intersection has no ports.
+
+Apply the preceding construction of the subclass with power-realizable
+tables inside $\mathcal M$. It has no ports, so minimality makes it
+all of $\mathcal M$. This deals with powers of a single table. To
+combine two different tables, we first put their shapes approximately
+in the same space. For each nonzero table choose an open neighborhood
+of its diameter-one normalization among tables of its arity. The
+spaces in $\mathcal M$ avoiding that neighborhood among their normalized
+tables form a proper subclass with the same closure properties. For
+ultralimits this follows because a table of positive diameter with
+normalization in the open set is approximated by tables whose
+normalizations also lie there. By minimality each avoiding subclass
+has ports.
+
+We need a common port family for the two avoiding subclasses. In
+any class with ports, take a graph of degree $D$ and order $q$ in its
+port family with the common comparison bound $b\ge1$. Choose $q$ so
+large that an even $t\ge2Bb$ satisfies $(2D+1)^t\le q/2$, with $B$
+as in the proof of Theorem~\ref{thm:loggraph}. The iteration in that
+proof gives graphs of degree $2D$ with bounded comparison on every
+order $q^k$. To obtain every intermediate order $m$, take the least
+such power $N\ge m$ and distribute its vertices onto $m$ fibers of
+sizes $\lfloor N/m\rfloor$ and $\lceil N/m\rceil$. The pushforward
+of the uniform measure dominates half the uniform measure on $m$
+vertices. Retain the arc multiplicities between the fibers and pad
+with loops to degree $2qD$, which suffices since $N<qm$ for $m>1$.
+For any placement on the quotient the new arc energy is $N/(qm)$
+times the arc energy of its pullback, and the new pair variance is
+at most four times that of the pullback. The comparison bound
+increases by a factor of at most $4q$. We may therefore take port
+graphs at the same orders for both subclasses. Superposing them gives
+a common port family, since each constituent arc energy is bounded
+by the new arc energy times the ratio of degrees. An empty subclass
+imposes no constraints.
+
+If the two avoiding subclasses covered $\mathcal M$, their common
+family would give ports for $\mathcal M$. Hence some space in
+$\mathcal M$ realizes tuples approximating both prescribed shapes,
+possibly at different scales. Take their union as one finite table
+and use its power-realizability. In a large power vary copies of the
+first tuple in one block of coordinates and copies of the second in
+a disjoint block. This realizes the product of the two tuples, with
+their squared scales multiplied by the respective block lengths.
+The ratio of those lengths can approximate any positive number.
+A common rescaling and a limit therefore give any desired ratio of
+diameters. Shrinking both neighborhoods gives the exact product table
+by closedness. A zero-diameter factor only repeats labels.
+
+Every finite table in a product of two spaces of $\mathcal M$ is the
+restriction of a product of two allowed tables, obtained by projecting
+its labels to the two factors. The product Hadamard space thus belongs
+to $\mathcal M$, and induction gives all finite $\ell_2$ products.
+\end{proof}

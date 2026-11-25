@@ -1,0 +1,37 @@
+\documentclass[11pt]{article}
+\input{style}
+\articletitle{Paths, trees and grids \titlebreak separate Valiant's hierarchy}{Paths, trees and grids}
+\hypersetup{pdfsubject={Paths-trees-and-grids-separate-Valiants-hierarchy-November-24-2026}}
+
+\newcommand\VF{\mathsf{VF}_F}
+\newcommand\VBP{\mathsf{VBP}_F}
+\newcommand\VP{\mathsf{VP}_F}
+\newcommand\VNP{\mathsf{VNP}_F}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We prove that \(\mathsf{VP}\ne\mathsf{VNP}\) over every field. Our
+witness is the state sum on an \(n\times n\) square grid. It belongs
+to \(\mathsf{VNP}\) and requires arithmetic circuits of size
+\(n^{\Omega((\log n)^{1/12})}\). On binary trees and paths, the same
+construction separates arithmetic circuits from algebraic branching
+programs and branching programs from formulas, respectively. All
+three lower bounds hold in degree-component border complexity. We
+also characterize the graph families whose state sums have polynomial
+size in each model.
+\end{abstract}
+
+\input{intro}
+\input{models}
+\input{cuts}
+\input{grid}
+\input{tree}
+\input{path}
+\input{coda}
+
+\bibliographystyle{plainnat}
+\bookmarksetup{startatroot}
+\bibliography{references}
+\end{document}

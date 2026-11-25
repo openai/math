@@ -1,0 +1,57 @@
+\subsection{Compacting active records}
+
+The amplification step corrects a sparse set of records. It has a
+fixed array of possible correction slots, but the active positions depend
+on the input. We connect the slots to a smaller array of targets in
+advance. If at most half the targets are needed, the control can assign
+every active slot to a distinct target along these fixed links. Bounded
+degree keeps the number of physical alternatives per position constant.
+The construction uses probabilistic expansion (see \cite{HLW}).
+
+\begin{lemma}[Compaction with slack]\label{lem:slack-compaction}
+Fix $C\ge1$. For $m\le CK$ slots and $K$ targets there is a bipartite
+graph with degrees bounded in terms of $C$, on which any set of at most
+$K/2$ active slots has an injective assignment to neighboring targets.
+Given the graph as fixed advice, the assignment can be chosen
+deterministically in $O_C(K)$ word operations on $O(\log(2K))$-bit words.
+\end{lemma}
+
+\begin{proof}
+For bounded $K$ use the complete bipartite graph. For large $K$, fix a small $\Delta>0$ depending
+on $C$. Keep $R=\lfloor K/4\rfloor$ targets in reserve. A bounded-choice
+graph on the other targets can make every $\lceil\Delta K\rceil$ slots
+meet every set of $\lceil K/5\rceil$ targets. Indeed, give each slot
+$d$ random choices. The probability of missing a fixed pair of sets
+is at most $(1-1/5)^{d\lceil\Delta K\rceil}$, and there are at most
+$2^{(C+1)K}$ pairs. Choose $d$ large enough. Process the active
+slots in order, taking the first free neighbor if there is one.
+At least $K/5$ targets remain permanently free on this side. No
+unmatched slot is adjacent to any of them, so fewer than
+$\lceil\Delta K\rceil$ slots remain.
+
+Independently give each slot eight choices in the reserve. For
+$1\le l\le\Delta K$, the probability that some $l$ slots have at most
+$4l$ distinct neighbors is at most
+\[
+   \binom{m}{l}\binom{R}{4l}(4l/R)^{8l}
+          \le \bigl(C_1(l/K)^3\bigr)^l
+\]
+after increasing $C_1=C_1(C)$. Here the exponent is $8-4-1=3$. Take $\Delta$ small enough that
+$4\Delta K\le R$ and $C_1\Delta^3<1/2$ for large $K$.
+Splitting the sum at $l=\sqrt K$ shows its convergence to zero.
+To bound the target degrees in both random constructions, partition
+the slots in each choice layer into blocks the size of the relevant
+target set. Use an independent random permutation within each padded block. Within each block, sampling without replacement bounds the probability of
+landing entirely in a given subset by the corresponding with-replacement
+probability. Thus both bounds still hold, and a target occurs at most once
+per block per layer.
+
+Among $l>0$ remaining slots in the reserve graph some target has
+degree one on their incidences, since there are more than $4l$
+neighbors and only $8l$ incidences. Assign its unique slot to it
+and delete that slot with its incidences. A fixed-order queue of
+degree-one targets and incidence lists maintain this operation in
+linear time, skipping stale queue entries. The assigned targets are
+distinct. The queue, the incidence scans and the greedy first pass fit the word
+bounds of Definition~\ref{def:protocol}.
+\end{proof}

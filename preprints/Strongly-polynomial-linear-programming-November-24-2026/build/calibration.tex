@@ -1,0 +1,268 @@
+\section{Calibrating the geometry to prices}\label{sec:calibration}
+
+Theorem~\ref{thm:cal} asks for two guarantees from one scaling.
+Elimination must produce a basis with bounded entries and bounded
+expansion coefficients for unit vectors, and every
+circuit must have a large coordinate wherever its assigned surplus is
+maximal. The same matrix minors govern both requirements. We first
+express them as comparisons of minor magnitudes, then show how to make
+these comparisons using only short rational data.
+
+\subsection{Cofactors for elimination and for circuits}
+
+Let \(B_0\) be the given ordered basis, with \(r\) rows. Index its
+nonzero minors by their row and column sets \(u\), and write \(\ell_u\)
+for the base-two logarithm of the absolute determinant. For a list
+\(T\) of \(j-1\) distinct columns, \(1\le j\le r\), define a row
+vector \(c\) by
+\begin{equation}\label{eq:cofactor}
+ c_s=\det B_0\big[[j],(T,s)\big].
+\end{equation}
+The entry vanishes when \(s\) repeats a column of \(T\). Expansion
+along the last column expresses \(c\) as a combination of the first
+\(j\) rows of \(B_0\). The coefficient on row \(j\) is
+\(\det B_0[[j-1],T]\), with the empty determinant equal to one.
+
+There are two uses for this formula. In elimination, \(T\) is the
+list of earlier pivots. Its determinant is nonzero, so \(c\) supplies
+the next elimination row, with zeros at all earlier pivots. For a
+circuit, take \(j=r\). The vectors of \(W\) supported on that circuit
+form a line, so the columns outside its support have rank \(r-1\).
+Choosing \(r-1\) independent columns there gives a cofactor vector
+that vanishes outside the circuit. It is nonzero because \(B_0\) has
+rank \(r\), and hence represents the circuit up to a scalar.
+
+Consider for the moment the reciprocal scaling
+\(D(p)_{i,h}=2^{-hp_i}\). Given a cofactor list \(T\) and a slot
+\(s=(i,h)\) on its support, let \(u(s)\) be the associated minor
+index. For a vector \(y\) of values on the minor indices, set
+\begin{equation}\label{eq:rho}
+ \rho_s(y,p)=y_{u(s)}-hp_i,\qquad
+ \rho_s(\ell,p)=\log |(cD(p))_s|.
+\end{equation}
+Consequently a maximizing slot is a largest entry in absolute value,
+and the difference from that maximum gives the logarithm of a
+normalized entry magnitude.
+
+The algorithm makes the comparisons using short rational substitutes
+\(f_u\) for the logs. These substitutes need not have the same
+numerical size as the logs. What we require is that for each query
+\(p\) there exist prices \(\widehat p\) at which the true normalized
+entry magnitudes agree, to the requested absolute accuracy, with
+those computed from \((f,p)\). One vector \(\widehat p\) must work for
+all the cofactor rows at that query, including circuits on which the
+algorithm never requests a minor. Our construction will prove
+existence of \(\widehat p\) by projecting a system of linear
+inequalities.
+
+\subsection{Linear types and online compression}
+
+For two real vectors \(y,y'\) on the same finite index set, write
+\(y\sim_M y'\) when every integer affine form of coefficient
+\(1\)-norm at most \(M\), including its constant, has the same sign
+in \(\{-1,0,1\}\) on \(y\) and \(y'\). This agreement of linear
+types lets us transfer feasibility from one parameter vector to the
+other. Compare the use of Frank--Tardos rounding in
+\cite[Lemma~(6.6.1)]{GLS}.
+
+\begin{lemma}[Projection]\label{lem:projection}
+Consider a finite system of linear inequalities, strict or weak,
+in \(k\) real unknowns and additional parameters \(y\).
+Let all its affine forms have integer coefficients and
+coefficient \(1\)-norm (including constant) at most \(A\), where \(A\ge2\).
+Then feasibility is the same at any two parameter
+vectors with \(y\sim_M y'\), where
+\(M=(k+1) A^{k+1}\).
+
+If there are no parameters and the system is feasible,
+it has a solution with both a common positive denominator and the absolute
+numerators at most \((A+1)^{k+1}\).
+\end{lemma}
+\begin{proof}
+Fix the parameters. Give every strict inequality a common additional
+margin \(\delta\) and write the resulting inequalities weakly. The
+original system is feasible precisely when this weak system is
+feasible for some \(\delta>0\). For fixed \(\delta\), Farkas' lemma
+reduces feasibility to testing nonnegative combinations of the
+inequalities that eliminate the \(k\) unknowns. It suffices to test
+the extreme rays of this cone of multipliers.
+
+On the support of an extreme ray the multiplier kernel has dimension
+one. Its support thus has size at most \(k+1\), and subdeterminants
+give an integral generator whose entries are at most \(A^k\) by
+Hadamard's inequality. Each resulting affine form on the parameters,
+with \(\delta\) set to zero, has coefficient norm at most
+\((k+1)A^{k+1}\). Require the projected inequality to be strict if a
+strict input inequality has a positive multiplier, and weak otherwise.
+These conditions are necessary. They are also sufficient, since the
+cone has finitely many extreme rays and one sufficiently small
+\(\delta>0\) preserves every margin required by a strict combination.
+Agreement of linear types preserves all these tests.
+
+For the second assertion, let \(\delta\) be a new unknown and add
+\(0\le\delta\le1\) to the system with margins. Intersect with a
+closed orthant containing a solution with \(\delta>0\).
+The new polyhedron is pointed and has a vertex maximizing \(\delta\).
+Its constraint rows, with constants, have coefficient \(1\)-norm at
+most \(A+1\). Cramer's rule and Hadamard's inequality now give the
+claimed common denominator and numerator bounds.
+\end{proof}
+
+The next theorem, proved in Section~\ref{sec:compression}, furnishes
+substitutes that agree in linear type with a small perturbation of
+the true logs. A price query will use only the entries requested
+during elimination. The guarantee for all the remaining minors is
+what makes the conclusion about unseen circuits possible.
+
+\begin{theorem}[Online compression]\label{thm:compression}
+Given an \(r\times d\) real matrix (\(0\le r\le d\), \(d\ge1\))
+and \(K\ge1\) an integer,
+index its nonzero minors by \(u\) (specifying row and column sets)
+and let
+\(\ell_u\) be the base-two logarithm of their absolute values.
+There is a deterministic procedure that, on request of an
+individual index \(u\), supplies a rational \(f_u\)
+or declares a restart.
+
+At any time the answers since the most recent restart (if no restart,
+all answers) admit a common assignment \(f\) of rationals to
+\emph{all} the indices with a common positive denominator and absolute
+numerators each bounded by \(F=2^{\poly(d,K)}\), such that
+\begin{equation}\label{eq:compress}
+ f\sim_{2^K} g\quad\text{for some }g\text{ with }
+ \|g-\ell\|_\infty\le2^{-K}.
+\end{equation}
+The total number of restarts is bounded by a polynomial in \(d\).
+Initialization and each request (including responses with explicit
+bits or restarts) take strongly polynomial time,
+counting the value of \(K\) as additional input size. The integer bound \(F\)
+is available at initialization.
+\end{theorem}
+
+\subsection{The common lift}
+
+For \(P\) in Theorem~\ref{thm:cal}, set
+\[
+ E=P+6,\qquad e=2^{-E},\qquad A=(E+5)2^E
+\]
+and take \(K\) least with \(2^K\ge(N+1)A^{N+1}\).
+Fix price data \(p\) and assignments \(f,g\) for \(B_0\) as in
+\eqref{eq:compress}. We encode the normalized cofactor magnitudes at
+\((f,p)\) as follows. For each nonzero cofactor vector take the slot
+\(t\) maximizing \(\rho_t(f,p)\), using a fixed tie rule. For each
+slot \(s\) on the same support write
+\[
+ w=\rho_s(f,p)-\rho_t(f,p)\le0,\qquad
+ \Delta=\rho_s(y,\widehat p)-\rho_t(y,\widehat p).
+\]
+In \(\Delta\) the vector \(y\) is the parameter and the \(N\) components
+of \(\widehat p\) are the unknowns. Impose
+\[
+ \begin{cases}
+ e\lfloor w/e\rfloor\le\Delta\le e\lceil w/e\rceil,
+      & w\ge-E,\\
+ \Delta\le-E, & w<-E.
+ \end{cases}
+\]
+For a ratio smaller than \(2^{-E}\) it suffices to preserve that upper
+bound. Ratios above the cutoff need only one grid cell to specify
+their log. All constraints hold at \((y,\widehat p)=(f,p)\).
+Multiplying by \(2^E\) gives integer forms of coefficient norm at
+most \(A\), independent of the bit lengths of the original prices
+and the proxies. Lemma~\ref{lem:projection} therefore gives a solution
+\(\widehat p\) at \(y=g\), since \(f\sim_{2^K}g\). The system
+includes every cofactor list, so the solution is a single price vector
+shared by all of them. The algorithm never forms this system.
+
+Replacing \(g\) by the true log vector \(\ell\) changes each
+difference by at most \(2\cdot2^{-K}\le2e\). Thus at the lifted
+prices the true difference is within \(3e\) of \(w\) for
+\(w\ge-E\), and at most \(-E+2e\) for \(w<-E\). Taking
+\(D=D(\widehat p)\) yields
+\begin{equation}\label{eq:pivot-estimate}
+ \left|\frac{|(cD)_s|}{|(cD)_t|}-2^w\right|\le8e.
+\end{equation}
+In the first case this follows from the mean value theorem applied to
+\(2^x\) for \(x\le3e\). In the second, both magnitudes are at most
+\(2^{-E+2e}\).
+
+\subsection{The calibration procedure}
+
+Use Theorem~\ref{thm:compression}
+on \(B_0\), with \(K\) as just specified. Take \(R=4F\).
+To answer a price query \(p\), grow a sequence of pivot slots \(T\), starting empty.
+At row \(j=1,\ldots,r\), take the cofactor vector with
+\(T\) consisting of the previous pivots.
+To see there will be a pivot available, recall that this vector \(c\)
+is in the span of the first \(j\) rows. Its coefficient on original row \(j\) is \(d_{j-1}=\det B_0[[j-1],T]\), nonzero
+by construction (\(d_0=1\)). Thus \(c\ne0\).
+Request \(f\) values for all its nonzero entries.
+If a restart occurs, abandon the query with that report.
+Otherwise compute the row as follows.
+\begin{itemize}
+ \item As pivot at this row take slot \(t\) maximizing
+ \(\rho_s(f,p)\) on the support, breaking ties by the rule fixed above.
+ This gives \(d_j=c_t\ne0\) for the next step.
+ \item For row \(j\) of the answer \(B\),
+ keep zeros, and at each supported slot \(s\) put a rational
+ within \(e\) of
+ \[
+    \sgn(d_{j-1}c_s)\cdot 2^{\rho_s(f,p)-\rho_t(f,p)}.
+ \]
+\end{itemize}
+One query visits at most \(r\) cofactor rows and requests at most
+\(2Nr\) minor proxies. Signs and zeros use minors of the original
+matrix, computed as in Section~\ref{sec:arithmetic}.
+Theorem~\ref{thm:compression} bounds the cost of the requests and
+the total number of restarts.
+The rational approximations take polynomial bit time.
+For exponents below \(-E\), use zero.
+Otherwise, split off the integer power, leaving \(2^q\) with
+\(0\le q<1\).
+Use \(\ln 2=\sum_{j\ge1}2^{-j}/j\) and then the series for
+\(\exp(q\ln 2)\), e.g., through \(E+10\) in each,
+by geometric tail bounds.
+
+\begin{proof}[Completion of the proof of Theorem~\ref{thm:cal} given Theorem~\ref{thm:compression}]
+Fix any uninterrupted sequence of answers from initialization or the
+last restart up to the present time. Theorem~\ref{thm:compression}
+extends all the returned proxies to one vector \(f\). For each query
+in the sequence choose the scaling \(D\) from its common lift.
+For row \(j\) of \(B_*\), use the corresponding \(cD\)
+with sign adjusted by \(\sgn(d_{j-1})\)
+and scaled to absolute entry one at the pivot.
+Thus it now has a positive coefficient on row \(j\)
+of \(B_0D\), giving \(B_*=L B_0D\)
+with \(L\) as required.
+By~\eqref{eq:pivot-estimate}, \(B\) is within \(9e\le2^{-P}\)
+entrywise, and \(B_*\)
+has entries bounded by two in absolute value.
+Any vector of sup norm one in \(WD\)
+can be expanded with coefficient on row \(j\)
+bounded by \(3^{j-1}\le2^{100N^2}\)
+in absolute value. Indeed, subtract row multiples in pivot order.
+The pivot entry has magnitude one, so a residual of norm \(M\) requires
+a coefficient of magnitude at most \(M\). The row itself has norm at
+most two, leaving a residual of norm at most \(3M\).
+
+For each circuit choose one cofactor representative and assign demands
+\[
+ a_s = 1+F+\lfloor f_{u(s)}\rfloor
+\]
+on its support. Since \(|f_{u(s)}|\le F\), these demands belong to
+\([1,1+2F]\subseteq[1,R]\). They use the same \(f\) at every query in
+the sequence.
+Fix a circuit, with \(t\) as in the common lift
+(so maximizing \(\rho_s(f,p)\) for this representative).
+If \(s=(i,h)\) maximizes surplus \(a_s-hp_i\), then
+\(w=\rho_s(f,p)-\rho_t(f,p)>-1\),
+by the bound of one on rounding loss.
+So in the common lift,
+\(\rho_s(\ell,\widehat p)-\rho_t(\ell,\widehat p)\)
+is greater than \(-1-3e\).
+At any slot on this support, the true scaled log difference
+from \(t\) is at most \(3e\).
+Thus after scaling the circuit by \(D\), the entry at \(s\)
+has magnitude at least
+\(2^{-1-6e}\ge1/3\) times the sup norm.
+\end{proof}

@@ -1,0 +1,199 @@
+\section{Shortening a column and correcting false ties}\label{sec:masks}
+
+Splitting a letter into a head and a tail lets us run a shorter test.
+We shift each tail by a mask depending only on its head. Two equal
+letters have equal shifted tails for every choice of masks. Consequently,
+on a violating column, the shorter test can survive only if all shifted
+tails agree. We subtract exactly the mask choices that produce such a
+false tie. The saving comes from a head containing two copies of the
+same original letter. Figure~\ref{fig:example} in
+Section~\ref{sec:design} illustrates the shorter test at that head.
+
+Fix either pair of anchor groups \(A,B\) from Lemma~\ref{lem:layout}.
+They have \(w(A\cup B)=1\) and \(w(A)+w(B)=1-s\), with
+\(s\in\{\rho,2\rho\}\). A column consists of the two anchor letters,
+each shared throughout its group, and the \(n\) active satellite
+letters, where \(2\le n\le r-2\). Each satellite knows its activity
+bit. Every site holds the split data of Lemma~\ref{lem:splitdata} for
+these bits. Write \(f_s(b,n)\) for an achievable nonnegative upper
+bound on the net cost of a gate for \(b\)-bit letters. The gate has one
+fixed nonzero offset on agreement and vanishes on every violation. Its
+cost bound holds for every column in this domain, and the offset is
+independent of the active set.
+
+\begin{lemma}[Mask recursion]\label{lem:mask-recursion}
+A net cost of \(s b\) is achievable. Take \(g_0\) to be a sufficiently
+large absolute constant times \(H+\log(2|S|)+\ell/\rho\), and let
+\(G\) be the installation cost of Lemma~\ref{lem:splitdata}. For
+\(1\le l\le b\) put \(b'=b-l\) and
+\(\mathcal N_n=\{n'\in\mathbb Z:2\le n'\le(1-p_0)n\}\).
+Given achievable bounds at length \(b'\), there is a gate at length
+\(b\) with bound
+\begin{equation}\label{eq:recursion}
+\begin{aligned}
+f_s(b,n) \le g_0+\max\Big\{&
+  f_s(b',n),\\[-2pt]
+& s b'+\max_{\substack{1\le j\le r\\ n'\in\mathcal N_n}}
+ j\big(3l+g_0+G+f_{2\rho}(b',n')-2\rho b'\big)\Big\}.
+\end{aligned}
+\end{equation}
+An empty maximum has value \(-\infty\).
+\end{lemma}
+
+\begin{proof}
+For the first bound, test equality of the two anchors at cost \(s b\)
+by Lemma~\ref{lem:broadcast}(i). The surviving anchors share one
+letter on their union of width one. Broadcasting from this union
+costs zero, and each active satellite can compare its own letter with
+the broadcast copy locally. This gives the exact agreement predicate.
+An equality test or broadcast on a zero-bit label uses the unit gate.
+
+For the recursive bound, apply the guard of Lemma~\ref{lem:guard}.
+A \emph{surviving violation} is a violating input on which the guard
+is nonzero. On such an input each anchor letter occurs just once.
+Some full satellite letter occurs at least twice, and every full
+letter occurs on at most \((1-p_0)n\) active satellites. All gates
+retain the original controls, so the two terms of a cancellation can
+be checked on each basis input and tensored with the same guard output.
+
+\smallskip\noindent\emph{Which masks need to be subtracted?}
+Write \(\mathcal A=\{0,1\}^l\) for the heads and \(V=\mathbb F_2^{b'}\)
+for the tails. Addition in \(V\) describes only the labels and works
+over every coefficient field. Supply
+\[
+                   D=\bigotimes_{a\in\mathcal A}G_S(2^{b'}),
+\]
+one independent full diagonal of masks \(m_a\in V\) per head. Retain
+the masks, compute \(v_i+m_{a_i}\) locally from each letter
+\((a_i,v_i)\), and apply the \((b',n,s)\) gate to the shifted
+tails. The active set and its split data are unchanged. On agreement
+every mask tuple passes, so after erasing the temporary tails the
+output is \(D\otimes Q\), where \(Q\) is the shorter gate's offset.
+The main term costs at most \(f_s(b',n)\) relative to this output.
+
+On a surviving violation a repeated full letter gives repeated shifted
+tails. The child then returns either zero or \(Q\), with \(Q\) occurring
+precisely when all shifted tails tie at some \(z\in V\). For fixed \(z\),
+the mask required by an occurrence \((a,v_i)\) is \(m_a=v_i+z\).
+The tensor of allowed masks in slot \(a\) is therefore
+\begin{equation}\label{eq:mask-check}
+ I_a(z)=
+ \begin{cases}
+ G_S(2^{b'}), & \text{if head \(a\) is absent},\\
+ E_S(v+z),    & \text{if head \(a\) is occupied and all its tails equal \(v\)},\\
+ 0,           & \text{if head \(a\) has two different tails}.
+ \end{cases}
+\end{equation}
+Only anchors and active satellites count as occurrences. For a surviving
+violation the main output is
+\(\big(\sum_{z\in V}\bigotimes_a I_a(z)\big)\otimes Q\).
+Indeed, every mask tuple causing a tie determines a unique \(z\) and
+has coefficient one in this sum.
+
+A tie also requires the two anchor heads to be distinct and absent
+among the active satellites. Another occurrence of either head would
+have a different tail, since the corresponding anchor letter occurs
+only once. In the correction, sum over the ordered pair of distinct
+anchor heads and check their values and their absence at the active
+satellites locally. On agreement no such branch passes. On a surviving
+violation that can tie, exactly one passes.
+
+\smallskip\noindent\emph{The cost of a repeat.}
+Within a passing branch, supply \(z\) on a full diagonal at cost \(b'\).
+For each anchor head, form its mask \(v_A+z\) or \(v_B+z\) throughout
+the corresponding anchor and broadcast it by Lemma~\ref{lem:broadcast}(i).
+Compared with supplying its full mask diagonal in \(D\), this saves
+\(w(A)b'\) or \(w(B)b'\). Thus the two anchor masks leave \(s b'\) of
+the cost of \(z\) to be paid.
+
+To realize \(I_a(z)\) exactly for a non-anchor head \(a\), supply a
+full mask diagonal and check \(m_a=v_i+z\) locally at each occurrence. Its cost is at most \(b'\).
+We construct a second operation \(T_a(z)\) that will agree with the
+exact one, up to a fixed offset, whenever head \(a\) contains a
+repeated full letter of a surviving violation.
+
+Flag the active satellites whose head is \(a\). For each
+\(n'\in\mathcal N_n\), use the count predicate~\eqref{eq:count-test} to
+select columns with exactly \(n'\) new flags. Install the corresponding
+split data at cost \(G\) on the surviving support. Give the two inner
+anchor groups independent dummy labels \(u,t\in V\) by supplying a
+partial diagonal on each group. A newly flagged satellite receives
+\(v_i+z\), and the other satellites can use any fixed local letter.
+Apply the \((b',n',2\rho)\) gate and then broadcast from the union of
+the inner anchors by Lemma~\ref{lem:broadcast}(iii). Keep the labels
+in the mask slot at the sources and the broadcast copies in that slot
+at every other site. The broadcast has its prescribed output when
+\(u=t\), and its cost bound holds for every pair \(u,t\). Erase the
+dummy inputs, new split data and temporary satellite letters.
+
+Pad the count branches by the offsets of their unused child and
+broadcast gates, as in Section~\ref{sec:prices}. Summing the branches
+defines \(T_a(z)\) with common comparison offset \(Q_a\), the product
+of these offsets over all allowed counts. Put
+\(\widehat I_a(z)=I_a(z)\otimes Q_a\). If \(\mathcal N_n\) is empty,
+take \(T_a=0\) and \(Q_a\) to be the unit. The offsets can be chosen
+for every head independently of the guessed anchor heads.
+
+To compare the two operations, suppose that head \(a\) contains a
+repeated full letter in a surviving violation. Its count is at least
+two. If its count exceeds \((1-p_0)n\), the guard ensures that at
+least two tails in it differ. Then \(I_a(z)=0\), and \(T_a(z)=0\)
+because no count branch passes. At an allowed count, the child
+contains two equal satellite inputs for every pair of dummies. It
+vanishes unless \emph{all} its inputs agree. Differing tails again
+give zero on both sides. For common tail \(v\), exactly
+\(u=t=v+z\) passes. That term gives the fixed child offset and
+broadcasts the prescribed mask. The count and split selectors have
+coefficient one. Thus, at every non-anchor head containing a repeated full letter
+of a surviving violation,
+\begin{equation}\label{eq:discount-agreement}
+                    T_a(z)=\widehat I_a(z)\qquad(z\in V).
+\end{equation}
+
+Measure the cost of \(T_a\) against \(b'+h(Q_a)\), the price allowed
+for the padded exact slot. The dummy diagonals have total price
+\((1-2\rho)b'\). Selecting and summing the counts costs \(O(H)\).
+The full-width broadcast has net cost \(O(\log(2|S|))\).
+Including installation of the new split data and the child gate, the
+excess cost is at most
+\begin{equation}\label{eq:head-cost}
+ G+O\big(H+\log(2|S|)\big)
+   +\max_{n'\in\mathcal N_n}\big(f_{2\rho}(b',n')-2\rho b'\big).
+\end{equation}
+Padding charges each unused offset equally to the cost and the
+comparison price.
+
+\smallskip\noindent\emph{Cancellation across heads.}
+For the guessed anchor heads \(a_A,a_B\), let
+\(\mathcal H=\mathcal A\setminus\{a_A,a_B\}\). In the correction,
+pad both anchor mask slots by their \(Q_a\)'s and supply \(Q\).
+On the remaining slots use
+\begin{equation}\label{eq:head-product}
+ \bigotimes_{a\in\mathcal H}\widehat I_a(z)
+ -
+ \bigotimes_{a\in\mathcal H}\big(\widehat I_a(z)-T_a(z)\big).
+\end{equation}
+On every surviving violation passing the head checks, a repeated
+full letter belongs to a non-anchor head. Equation~\eqref{eq:discount-agreement}
+makes the second product zero, whatever the other \(T_a\)'s return.
+Consequently the correction summed over \(z\) exactly reproduces the
+padded main output on that violation. A surviving violation failing the head
+checks could never tie. Agreement has equal anchor heads and so gives
+no correction. Subtract the correction from the main term padded by
+\(\bigotimes_a Q_a\). With the guard, the gate now vanishes on every
+violation. Its fixed agreement offset is the tensor product of
+\(D\), \(Q\), all the \(Q_a\)'s and the guard offset.
+
+In the expansion of~\eqref{eq:head-product} the all-exact term cancels.
+Each remaining summand uses \(T_a\) on some \(j\ge1\) distinct heads,
+paying the excess~\eqref{eq:head-cost} at each of them. For a nonzero
+summand, each of these heads has at least two active satellites.
+Disjointness gives \(j\le\lfloor n/2\rfloor\), and there are at most
+\(2^l-2\) non-anchor heads. In particular we may use \(j\le r\) in
+the bound. There are at most \(2^{jl}\) subsets of size \(j\) and
+\(2^{2l}\) ordered choices of anchor heads. Their logarithmic cost is
+at most \((j+2)l\le3jl\). Add the residual \(s b'\) from \(z\).
+Summing over \(j\), subtracting the correction and applying the guard
+cost \(O(H)+O(H+\log(2|S|)+\ell/\rho)\). The main term needed no new
+split. Absorbing these fixed charges in \(g_0\) gives~\eqref{eq:recursion}.
+\end{proof}

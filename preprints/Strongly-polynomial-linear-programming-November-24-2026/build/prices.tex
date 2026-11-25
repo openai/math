@@ -1,0 +1,710 @@
+\section{Learning from extremal prices}\label{sec:prices}
+
+In the LP algorithm, a query chooses scales for the coordinates and returns
+signs at those scales. The coordinates where a nonnegative circuit has its largest
+scaled entries receive the sign of its side. Theorem~\ref{thm:prices} turns this limited
+feedback into one price vector satisfying every consistent circuit
+hypothesis. We prove it in the abstract setting, with no access to the
+subspaces that generated the signs.
+
+For integers \(N,R\ge1\), a hypothesis specifies integer demands
+\(a_s\in[-R,R]\) on a nonempty set \(S\) of \emph{slots}, the signed
+coordinates in \(\Slots=[N]\times\{-1,+1\}\). For a vector \(y\)
+write \(y_s=h y_i\) at slot \(s=(i,h)\). The surplus
+\(d_s(y)=a_s-y_s\) is the amount by which the price falls short of
+the demand. A query at \(y\) returns labels \(z\in\{\pm1\}^N\).
+Consistency requires \(z_s=1\) at \emph{every} slot attaining
+\(\max_{u\in S}d_u(y)\) whenever this maximum is nonnegative.
+The desired output has \(d_s(y)\le0\) on all slots of every hypothesis
+consistent with the entire sequence of answers.
+
+Consider a hypothesis with two demands on positive slots. If the prices
+fall short by five and two units, consistency requires a positive label
+on the first slot and permits either sign on the second. An expert
+guessing only the second demand could act on the wrong sign. Suppose
+that violations carry enough of a chosen probability distribution on
+the slots. A successful recursive call will then give correct feedback
+on a set of fixed positive mass. An expert sampling four slots from
+that distribution has a good chance to see one of them.
+
+\subsection{A market for feedback}
+
+In one round, consider a finite pool of experts \(e\),
+each with wealth \(w_e>0\).
+An expert comes with a finite list of options. An option has utility
+\(b-y_s\) at prices \(y\), for some bid \(b\) and slot \(s\);
+each expert also has an outside option with utility zero.
+Denote the maximum utility over expert \(e\)'s options by \(U_e(y)\).
+
+Choose prices \(y\in\RR^N\) minimizing
+\[
+        \Phi(y)=\sum_e w_e U_e(y) .
+\]
+Introducing an upper bound on each expert's option utilities expresses
+this as a feasible linear program. The outside options bound its
+objective below by zero, so it attains a minimum. With rational data
+we may take a rational minimizer. When the feedback is
+\(v\in\{\pm1\}^N\), pay each maximizing slot option \(v_s\), and pay
+the outside option zero. Define \(g_e\) to be the \emph{least} payoff
+among expert \(e\)'s maximizing options. The one-sided directional
+derivative of its utility satisfies \(U'_e(y;v)=-g_e\), since the derivative of a maximum
+is the largest active slope in the given direction. Minimality of
+\(\Phi\) gives, simultaneously for every feedback vector,
+\begin{equation}\label{eq:market}
+         \sum_e w_e g_e=-\Phi'(y;v)\le0 .
+\end{equation}
+Consequently the update \(w_e\gets w_e(1+\eta g_e)\), with rational
+\(0<\eta<1\), preserves positivity and never increases total wealth.
+
+There is a market interpretation of~\eqref{eq:market}. At a minimizer,
+zero is a subgradient of \(\Phi\). Each expert's wealth can therefore
+be divided among its maximizing options so that the two signs of each
+coordinate receive equal total weight. This division would give total
+gain zero for every \(v\). Taking the least payoff at each tie gives
+the inequality directly. Compare the market-clearing condition in
+matching markets~\cite[Chapter~10]{EK} and the halfspace condition
+in Blackwell approachability~\cite{Black}. For multiplicative weights
+and boosting, see~\cite{Litt,FS,AHK}.
+
+\paragraph{One expert per hypothesis.}
+Give each hypothesis initial wealth one and bids \(a_s\) on its slots.
+In each round query labels at the minimizing prices and use them as
+feedback in the update. A hypothesis consistent with all answers has
+gain one whenever any of its demands is violated. Indeed, the
+maximum surplus is then positive and every maximizing option is a
+correctly labeled slot. In every other round its gain is nonnegative:
+a maximizing slot tied with the outside option has surplus zero
+and is also correctly labeled. Thus \(k\) rounds with an unmet demand
+give this expert wealth at least \((1+\eta)^k\). The initial total
+wealth \(M\), the number of hypotheses, bounds that quantity.
+
+Run an odd number of rounds greater than \(2\log_{1+\eta}M\).
+Each consistent hypothesis has a majority of rounds meeting all of
+its demands, although the majority may differ among hypotheses.
+Taking coordinatewise medians meets them all because a signed
+coordinate of the median is the median of that signed coordinate.
+There are at most \((2R+2)^{2N}\) hypotheses, so for fixed \(\eta\)
+the query count is \(O(N\log(R+1))\).
+
+For demands \(a_s=p_s\) on both signs of every coordinate, the
+expert's utility is \(\|p-y\|_\infty\). The minimizing prices are
+then weighted geometric medians in this norm. Chen, Li and
+Yannakakis~\cite{CLY} use related balanced points to bound query
+complexity for contractions (see also~\cite{HLSW,FH}). At \(y=p\)
+both signs tie at zero, so these exact point demands cannot be
+consistent with the answer there. Section~\ref{sec:contractions}
+uses approximate demands in applying the theorem.
+
+Explicitly maintaining an expert for every hypothesis costs exponential
+time. With four guessed slots per expert, the implementation in
+Section~\ref{sec:implement-pr} will need only a constant-dimensional
+space of guesses. The remaining question is how these experts can
+profit if they miss the one slot at which a label is guaranteed.
+
+\subsection{Amplifying the feedback}\label{sec:amplify}
+
+An internal node makes an odd number of \emph{probes}. Each probe
+compares two price vectors, its own proposal and a price vector found
+by a recursive call.
+
+\begin{enumerate}
+ \item Choose proposal prices \(y\) (ultimately this will be by a market).
+ Call a fresh child with \(y\) added to the price history,
+ the list of proposals along the path from the root.
+ \item Let \(x\) be the prices returned by that child.
+ Query labels \(z\) at \(x\), and form feedback at \(y\):
+ \begin{equation}\label{eq:feedback}
+ v_i =
+ \begin{cases}
+     \sgn(x_i-y_i) & x_i\ne y_i,\\
+     z_i & x_i=y_i.
+ \end{cases}
+ \end{equation}
+\end{enumerate}
+After all probes, return the coordinatewise median of the prices
+returned by the children. We will see how to end the recursion
+after logarithmically many levels.
+
+\paragraph{Assigning thresholds.}
+Fix the complete run and a hypothesis \((S,a)\) consistent with it.
+Assign each node a threshold \(t\ge0\). A node \emph{succeeds} for this
+hypothesis if its returned prices make every surplus at most \(t\).
+The root's threshold is zero. The algorithm uses only the price history
+and the queried labels. We may choose these thresholds separately in
+the proof for each consistent hypothesis.
+
+Suppose a child returns \(x\) and succeeds at its own threshold \(t'\).
+Then the feedback at its parent's proposal \(y\) obeys
+
+\begin{equation}\label{eq:correct}
+            d_s(y)\ge t' \ \Longrightarrow\ v_s=1
+            \qquad(s\in S).
+\end{equation}
+Indeed, \(d_s(x)\le t'\le d_s(y)\) gives \(x_s\ge y_s\).
+Strict inequality already gives \(v_s=1\);
+in case of equality the slot must maximize surplus at \(x\)
+with value \(t'\),
+so that \(z_s=1\) by consistency.
+
+Thus if many surpluses at \(y\) exceed \(t\), we can
+raise the child's threshold yet still aim to get feedback
+agreeing with many slots.
+Here is how we do the assignment, propagating also a probability
+distribution \(m\) on \(S\), uniform at the root.
+For a node with \(m,t\) and a probe there, represent \(m\) by subdividing \([0,1)\),
+with a piece of length \(m_s\) for each slot in order of
+nonincreasing surplus \(d_s(y)\) (break ties deterministically).
+Call the probe
+\begin{itemize}
+ \item \emph{light} if \(d_s(y)>t\)
+ on mass at most \(\delta=1/5\). Then give the child the threshold \(t'=t\).
+ \item \emph{heavy} otherwise. Give the child as threshold
+ \(t'\) a high surplus quantile strictly above \(t\):
+ as \emph{pivot} take any slot meeting the band
+ \[
+           [\gamma,\delta),\qquad \gamma=3/16
+ \]
+ in positive length, and let \(t'\) be its surplus.
+ (Later we will make a specific choice in this band.)
+ Thus
+ \begin{equation}\label{eq:band}
+ m\{s:d_s(y)\ge t'\}\ \ge\ \gamma,
+ \qquad
+ m\{s:d_s(y)> t'\}\ \le\ \delta .
+ \end{equation}
+ See Figure~\ref{fig:band}.
+\end{itemize}
+
+A threshold is recorded either as zero or by the pivot slot and the
+level of the proposal at which its surplus gave the threshold.
+A light probe passes this description to the child. A heavy probe
+replaces it by the pivot and the current level.
+
+To form the child's distribution \(m'\), multiply the first
+\(\delta\) of the sorted mass by four and divide the resulting mass
+by \(1+3\delta\). A slot crossing the cutoff receives a partial
+boost. Every slot with \(d_s(y)>t'\) receives the full boost, by
+the light-probe rule or by~\eqref{eq:band}. Once \(m\) and \(y\)
+are fixed, the same \(m'\) works for every allowed pivot. As with
+the thresholds, the distributions are used only in the proof.
+
+\input{band}
+
+\paragraph{Leaves.}
+Take the root at level zero, all leaves at level \(D\),
+the least positive odd number with
+\[
+               (5/4)^D>2N .
+\]
+At a leaf, return the coordinatewise median of the \(D\)
+price vectors in the history.
+
+\begin{lemma}\label{lem:leaf}
+Each leaf succeeds: its returned prices achieve maximum surplus
+at most its threshold, for any assignment as above.
+\end{lemma}
+\begin{proof}
+Otherwise surplus at some slot \(s\) exceeds the leaf's threshold
+at the median. This also happened at more than half of the
+\(D\) proposals on the path.
+Since thresholds never decrease, at each such proposal \(y\)
+we had \(d_s(y)>t'\), with \(t'\)
+the threshold assigned to the child. Thus the slot's weight was boosted by
+a factor of at least \(4^{D/2}\) over the path before accounting for
+normalizations. Starting from mass \(1/|S|\),
+the slot has ended with at least
+\[
+       \frac1{2N}\frac{4^{D/2}}{(1+3\delta)^D}>1 ,
+\]
+a contradiction.
+\end{proof}
+
+Recursive amplification with reweighting also appears in the
+contraction algorithm of Soleymani and Farina~\cite[\S6]{SF} and the
+mean-payoff game algorithms of~\cite{OAIDe,OAIRa,OAITu}. In
+\cite[\S\S3--5]{OAIDe}, near-extreme deviations of hidden vectors imply
+shifted labeling requirements deeper in the recursion. That work
+also discusses the relation to Parys's recursion~\cite{Parys}.
+
+\subsection{Betting on a few slots}
+
+If a majority of probes are light and their children succeed, the
+parent succeeds because those children met the parent's own threshold.
+A successful child in a heavy probe gives a different guarantee:
+feedback is correct on the slots at or above the pivot surplus, a set
+of mass at least \(\gamma\). Four independent draws from \(m\) hit
+that set with probability at least \(1-(1-\gamma)^4>1/2\).
+This probability is the reason four slots suffice.
+
+The algorithm uses the same pool \(E\) in every probe. An expert
+specifies the following data.
+
+\begin{itemize}
+ \item four slots in \(\Slots\) (an ordered tuple),
+ guessing an integer demand in \([-R,R]\) on each;
+ \item either threshold zero, or a level \(j\in\{0,\ldots,D-1\}\)
+ and pivot slot in \(\Slots\), again guessing such a demand on that slot.
+\end{itemize}
+Include all such experts (repetitions of slots allowed, even with
+different demands).
+Zero-threshold experts always bid; those who specify \(j\)
+only bid at levels deeper than \(j\)
+(otherwise they have only the outside option, giving zero gain).
+
+In bidding on its four slots, an expert shifts
+its guessed demands by \emph{subtracting} its threshold estimate \(\tau\).
+For an expert specifying \(j\),
+\(\tau\) is the surplus
+on its pivot slot at the proposal at level \(j\) in the price history,
+using its guess for the pivot demand; \(\tau\) may even be negative.
+For zero-threshold experts \(\tau=0\).
+Thus bidding gives the four option utilities
+\[
+                b-\tau-y_s
+\]
+(one for each tuple position, with slot \(s\) and guess \(b\)).
+As before, experts keep the outside option of utility zero,
+and gains use the feedback \(v\) with worst tie breaking.
+
+We analyze again with a consistent hypothesis and thresholds
+assigned as above.
+At each node consider a distribution \(\nu\)
+of experts: sample the four slots independently from \(m\),
+match this node's threshold description (including pivot
+and level if used), and use true demands throughout.
+Thus for these experts \(\tau=t\)
+and sampled slot utilities are \(d_s(y)-t\).
+
+\begin{lemma}\label{lem:gain}
+Fix a consistent hypothesis and any threshold assignment as in
+Section~\ref{sec:amplify}, and set \(\eta=1/16\).
+In any probe where the child succeeds, for market gains
+at the proposal \(y\) we have
+\[
+ \sum_e \nu_e \ln(1+\eta g_e)\ge
+ \begin{cases}
+   0 & \text{if light},\\
+   \epsilon:=1/256 & \text{if heavy}.
+ \end{cases}
+\]
+Here \(\nu\) is from the parent node.
+\end{lemma}
+\begin{proof}
+In the light case with \(t'=t\),
+for these experts every maximizing option gets
+nonnegative feedback by~\eqref{eq:correct}
+(including zero on the outside option).
+
+In the heavy case with \(t'>t\),
+if the tuple hits \(\{s:d_s(y)\ge t'\}\),
+the gain is one: every maximizing option has surplus at least
+\(t'\) and hence correct sign, with no tie from the outside option.
+This happens for mass at least \(1-(1-\gamma)^4\) of~\(\nu\).
+Since gains are always at least \(-1\),
+mean gain is at least
+\(1-2(1-\gamma)^4>1/8\).
+The bound follows from \(\ln(1+\eta g)\ge\eta g-\eta^2\)
+for these gains.
+\end{proof}
+
+Consider running these markets independently at every internal node,
+with unit initial wealth and an odd number of probes greater than
+\((2/\epsilon)\ln|E|\). Suppose all the children succeed. If half or
+more of the probes are heavy, then Lemma~\ref{lem:gain} makes the
+final log wealth, averaged under the fixed parent distribution
+\(\nu\), greater than \(\ln|E|\). Yet no expert can exceed the
+initial total wealth \(|E|\). A majority of the probes must be
+light, so the median rule gives success. Lemma~\ref{lem:leaf} starts
+this induction at the leaves.
+
+The resulting tree has logarithmic depth and \(O(\log |E|)\) children
+at each internal node. To obtain a polynomial bound on its size we
+reduce the branching to a constant below the root. A child may then
+miss its threshold. The following wealth update lets its parent still
+make progress on that probe.
+
+\subsection{Investing recursively}
+
+Give the child a small share of each expert's wealth and retain the
+rest for the parent's market. If the child misses its threshold, we
+will show that some experts earn sufficiently large returns there
+to cover what they might lose on the feedback it supplies. Use the
+tree of Section~\ref{sec:amplify}, the expert pool \(E\), the rate
+\(\eta=1/16\), and absolute constants
+
+\begin{equation}\label{eq:probepars}
+      c=2^{-14},\qquad r=2^{19}+1 .
+\end{equation}
+Give each internal node \(r\) probes except the root, which gets
+\[
+       r_0=r+3072\lceil\log(|E|+1)\rceil .
+\]
+
+Each node receives as input the price history and
+a vector giving each expert positive wealth.
+At the root, start with wealth one each.
+Each node returns prices as well as a new wealth vector.
+A leaf simply returns median prices from the history,
+and returns the input wealth unchanged.
+
+At an internal node, use the probes successively, starting with
+the input wealth and keeping any changes across probes.
+In each probe, split the current wealth \(w\) as shown in
+Figure~\ref{fig:invest}:
+\begin{enumerate}
+ \item Use \((1-c)w\) in the market:
+  take proposal prices \(y\) minimizing \(\Phi\) with that wealth.
+  \item Call the child with \(y\) added to the history
+  and with wealth \(c w\);
+  let \(x\) and \(w'\) be the prices and wealth returned by the child.
+  \item Query labels at~\(x\) and take feedback~\eqref{eq:feedback}.
+  Replace \(w_e\) for each expert~\(e\) by
+  \begin{equation}\label{eq:invest}
+       (1-c)w_e(1+\eta g_e) + w'_e ,
+  \end{equation}
+  using the gains in this probe's market.
+ \end{enumerate}
+Return median prices from the children,
+and the wealth vector after the last replacement.
+
+Output the prices returned by the root.
+We leave implementation of the markets (including deterministic
+choices of minimizers) for later in this section.
+
+\input{invest}
+
+Every node returns total wealth at most its input total. At a leaf the
+two totals agree. At an internal node~\eqref{eq:market} bounds the
+wealth paid by the market by its initial share, while the same claim
+for the child bounds its returned share. Recombining the two bounds
+and iterating over probes proves the claim.
+
+\subsection{Profits cover failures}
+
+Fix a consistent hypothesis. We will prove that a failed node gives a
+large return on its input wealth, averaged over experts whose demands
+agree with that hypothesis. This assertion is local: those experts may
+have had little wealth when they entered the node. At the root, however,
+every expert starts with wealth one and the total is at most \(|E|\).
+There a sufficiently large return is impossible.
+
+At each node let
+\[
+  \mu_e = \frac{\text{returned wealth for }e}
+                     {\text{input wealth for }e},
+       \qquad L_e = \ln(1+(c/2)\mu_e)
+\]
+for each expert.
+Use \(L_e\) to count the bonus from returns here,
+as a contribution to log wealth one level up.
+Indeed, if in a probe the child has such values
+\(\mu'_e,L'_e\), the wealth multiplier from~\eqref{eq:invest} is
+\[
+    (1-c)(1+\eta g_e)+c\mu'_e \ \ge\
+    (1-c)(1+\eta g_e)\cdot (1+(c/2)\mu'_e)
+\]
+as \((1-c)(1+\eta g_e)<2\).
+Consequently for any internal node,
+\begin{equation}\label{eq:bonus}
+ L_e\ \ge\ -\ln(2/c)+
+     \sum_{\text{probes}}
+     \big(\ln(1-c) + \ln(1+\eta g_e)+L'_e\big),
+\end{equation}
+by taking logs and summing to bound \(\ln\mu_e\).
+For each term, the primed value is from that probe's child.
+Each \(L'_e\) is nonnegative, even if the child's investment lost
+wealth. Thus \(-\ln(1-c)\) bounds the loss per probe from sending
+wealth to the child, while a large child return gives an additional
+positive term.
+
+To use a child's return in~\eqref{eq:bonus}, we must average its
+bonuses with the parent's expert weights. The distribution \(\nu\)
+from Lemma~\ref{lem:gain} samples four slots and specifies the
+\emph{current} threshold. A heavy probe gives the child a new pivot
+description, so its \(\nu'\) can be disjoint from the parent's \(\nu\).
+We reserve weight at the parent for experts with each possible future
+pivot level, including the one at which this probe takes place.
+
+\paragraph{Comparing expert weights across one probe.}
+For a fixed assignment of thresholds, give each node at level \(l\)
+the following nonnegative weights \(\pi\) on the experts.
+
+\begin{itemize}
+ \item Include \(\nu\):
+ the distribution with tuple slots i.i.d.\ drawn from~\(m\),
+ matching this threshold description and using true demands.
+ \item For each possible \emph{future} pivot level
+ \(j\in\{l,\ldots,D-1\}\),
+ include mass \(2^{l-j}\), distributed by picking four slots
+ and the pivot slot at that level all independently from \(m\),
+ with true demands. These experts have zero gains in the markets
+ at this node, because they bid only deeper in the tree.
+\end{itemize}
+Thus~\(\pi\) is nonnegative of total mass at most three.
+
+\begin{lemma}\label{lem:transfer-p}
+For a complete run and a consistent hypothesis, there is an
+assignment (choosing all thresholds and pivots as allowed in
+Section~\ref{sec:amplify}) such that in every probe
+\[
+        \sum_e \pi'_e L'_e \ \le\ C \sum_e \pi_e L'_e ,
+         \qquad C=80(5/2)^4=3125
+\]
+where \(\pi,\pi'\) refer to the parent and child respectively,
+and \(L'\) is the vector of bonuses at the child.
+\end{lemma}
+\begin{proof}
+Proceed down the tree. With \(m,t,\pi\) already determined for a
+node, consider choosing the pivot in any heavy probe here at random:
+take a uniform point in the band
+\([\gamma,\delta)\) to determine the pivot slot.
+This spreads out the choice: for any slot, the probability
+is at most \(1/(\delta-\gamma)=80\) times that under \(m\).
+
+We claim \(\EE\pi'\le C\pi\) componentwise, including a light probe
+with its prescribed threshold. The child distribution \(m'\) is already
+fixed before choosing the pivot. Since \(m'\le4m/(1+3\delta)=(5/2)m\),
+sampling the four tuple slots costs a factor of at most \((5/2)^4\).
+
+\begin{itemize}
+ \item For the child's mass with its current threshold description:
+if light, compare with the parent's such mass,
+since the description does not change.
+If heavy, compare instead with the parent's future mass for
+\(j=l\), using the extra factor of 80 for the chosen pivot.
+ \item For the child's future mass at any pivot level \(j\ge l+1\),
+compare with the parent's future mass for that level.
+Beyond the factor for the four slots there is a factor two
+for total mass for that level, and at most \(5/2\)
+for the pivot slot probabilities.
+\end{itemize}
+The parent's current description and its reserve for each future
+level are distinct expert classes. The componentwise comparisons can
+therefore be combined with the single factor \(C\).
+
+The entire run was fixed before choosing pivots, so the child bonuses
+\(L'_e\) are fixed nonnegative numbers. Multiplying the componentwise
+expectation bound by \(L'_e\) and summing shows that at least one allowed
+pivot satisfies the claimed inequality. Fix such a choice in every
+heavy probe at this level and continue to the next level.
+
+\end{proof}
+
+\begin{lemma}\label{lem:charge}
+For a consistent hypothesis, assign thresholds as in
+Section~\ref{sec:amplify}, with the pivots chosen as in
+Lemma~\ref{lem:transfer-p}.
+If an internal node fails and has \(T\) probes, then
+\begin{equation}\label{eq:charge}
+           \sum_e \pi_e L_e\ \ge\ \sigma T,\qquad
+           \sigma=\epsilon/4=1/1024 .
+\end{equation}
+\end{lemma}
+\begin{proof}
+Proceed from the bottom of the tree.
+Fix such a node.
+We bound the contribution
+\(
+   \sum_e\pi_e (\ln(1+\eta g_e)+L'_e)
+\)
+in~\eqref{eq:bonus} per probe.
+\begin{itemize}
+ \item The child succeeds:
+ the contribution from log market gains
+ \(\ln(1+\eta g_e)\)
+ is nonnegative, and at least \(\epsilon\)
+ if heavy, by Lemma~\ref{lem:gain}
+ (the experts added for future pivots have gain zero).
+ Child bonuses only help.
+ \item The child fails:
+ then the child must be internal by Lemma~\ref{lem:leaf}.
+ Therefore
+ \[
+    \sigma r\le
+         \sum_e \pi'_e L'_e
+        \le C\sum_e \pi_e L'_e
+ \]
+ by induction and the choice of pivots. Thus this probe contributes at least
+ \[
+       \ln(1-\eta)+\frac{\sigma r}{C}
+       \ge -2\eta+\frac{\sigma r}{C} \ge\epsilon ,
+ \]
+ paying for possibly bad market outcomes
+ (again future-pivot experts have zero gain).
+\end{itemize}
+By the median rule, failure implies that for a majority
+of probes either the probe was heavy or the child failed.
+So altogether
+\[
+   \sum_e \pi_e L_e\ \ge\
+      T\epsilon/2
+          -3T(2c)-3\ln(2/c)\ \ge\ \sigma T
+\]
+by~\eqref{eq:bonus}, \(\ln(1-c)\ge-2c\),
+and the choices~\eqref{eq:probepars}
+(\(6c<\epsilon/8,\ 3\ln(2/c)<r\epsilon/8,\ T\ge r\)).
+\end{proof}
+
+At the root, \(\mu_e\le|E|\)
+since the total wealth cannot increase,
+so \(L_e\le\log(|E|+1)\)
+(recall \(\log\) denotes base two).
+As \(\sigma r_0>3\log(|E|+1)\),
+there cannot be a failure: apply Lemma~\ref{lem:charge}
+with assignments as in Lemma~\ref{lem:transfer-p}.
+As this holds for any hypothesis consistent with all answers,
+the returned prices meet all demands as required.
+
+\subsection{Running the markets}\label{sec:implement-pr}
+
+The number of probes is \(O(r_0r^{D-1})\). The expert choices give
+\(|E|\) polynomial in \(N,R\), so \(r_0=O(\log(NR+1))\).
+Since \(D\) is the least positive odd integer with \((5/4)^D>2N\)
+and \(\log_{5/4}r<60\), the tree uses \(O(N^{60}\log(NR+1))\)
+probes. The wealths also have polynomial bit length. Each probe adds
+only constantly many binary places to a common dyadic denominator,
+and all wealths are bounded by the root's initial total \(|E|\).
+
+The remaining cost is choosing the proposal at each probe. We first
+bound its bit length and then describe how to optimize over the
+implicit expert pool in time polynomial in \(N,\log(R+1)\).
+
+\paragraph{Prices at vertices.}
+At each probe use an optimum vertex of the epigraph of~\(\Phi\).
+Such vertices exist. Indeed, \(\Phi\) even tends to infinity
+as \(\|y\|_\infty\) grows:
+there are zero-threshold experts whose tuples
+repeat a single slot with guess zero, one for each slot,
+with strictly positive wealth.
+Thus the optimal face is nonempty and bounded.
+
+We claim this keeps all prices half-integral, with polynomial bit
+length, through the tree. To see this, a vertex price vector
+is determined by ties in each expert's option utilities, i.e.,
+by equations equating utilities of options of the same expert
+(including ties with the outside option).
+Indeed, otherwise there is a line through the price vector
+preserving all those ties; each \(U_e\), hence also \(\Phi\),
+is affine near the point on this line, contradicting extremality.
+Equations from equating two slot utilities have form
+\[
+      y_i = \pm y_j + B,\qquad B\in\ZZ,\quad |B|\le2R ,
+\]
+as the \(\tau\) is common. Within any connected component of these edges
+on the \(N\) coordinates, express all its prices in terms of
+one of them via a spanning tree.
+If these equations in the component already determine the prices there,
+some remaining edge (possibly a loop) determines twice
+that one price as an integer of magnitude \(O(NR)\).
+If not, a tie with the outside option must pin some price in the component,
+to an integer or to a signed history price plus an integer
+(in either case with the integer bounded by \(2R\)
+in absolute value).
+By induction down the tree we keep half-integrality
+and prices of magnitude \(O(DNR)\).
+
+\paragraph{Cells of experts.}
+Group experts by all their data except their
+demand guesses. Thus the number of groups is polynomial, and
+each group corresponds to the integer points of a box
+(one dimension per guess, at most five).
+Observe that for given prices (proposal and history),
+all comparisons among an expert's option utilities are
+comparisons of single guesses or differences of two guesses
+against constants. Thus we can subdivide the groups
+by these comparisons, creating cells of experts with a common
+set of maximizing options (by position on their lists).
+
+More precisely, within each group partition
+the range \([-R,R]\) for each guess into intervals of integers,
+and similarly partition \([-2R,2R]\) for each pairwise difference.
+Choosing one interval from each partition gives a cell of experts,
+requiring all of the bounds simultaneously
+(the cell may be empty). Start with each range as one interval.
+Every time we choose proposal prices,
+refine according to all of the option comparisons with these
+prices, keeping ties separate.
+Each partition now gets only a constant number of new cuts per probe,
+and each group has only
+a constant number of partitions.
+Thus the number of cells remains polynomial.
+
+The outcomes (including ties) of all option comparisons at
+proposals so far are now common within cells.
+So gains in response to feedback are also common:
+we can identify all maximizing options at the proposal.
+Wealths too are common, since splits, updates and recombination
+preserve this.
+Keep these per-expert data for each cell,
+copying them upon refinement to the subcells.
+This includes wealth data for any ongoing probes, which
+we need to recombine wealths.
+Compare Feodorov and Haslebacher's use of arrangements and volumes
+for fixed points~\cite{FH};
+here each expert has only a constant-dimensional guess,
+regardless of \(N\).
+
+To use these cells in choosing prices, we compute two kinds of sums:
+the number of experts in a given cell, and the sum there of any
+given guess coordinate.
+In fact we can sum polynomials by eliminating variables one by one.
+The range for a variable to eliminate runs from a maximum
+of lower bounds to a minimum of upper bounds,
+each bound an integer constant or a remaining variable plus
+an integer constant.
+So, on the remaining variables, we can subdivide according to which
+bounds achieve these two extrema (choose first in case of ties),
+and require lower at most upper.
+All these conditions have the same form (interval constraints on
+variables and differences). On each piece, summing over this range
+again gives a polynomial by the formulas for sums of powers
+(discrete antiderivatives, valid also with negative endpoints).
+Starting with constant and linear polynomials for our computations,
+the degree goes up by at most one per step, and bounds and coefficients
+undergo only constantly many arithmetic operations:
+both branching and depth are bounded by constants.
+This gives the sums in polynomial bit complexity.
+
+\paragraph{Computing the market minimizer.}
+The label oracle is queried at prices returned by the children.
+To choose the parent proposal, we construct a separate oracle from the
+finite market data. It separates points from the epigraph of \(\Phi\),
+which is defined by one inequality for every selection of one option
+per expert: the height must dominate their weighted sum of utilities.
+These inequalities have polynomial bit length because the history
+prices are short, the weights share a short denominator, and \(\log|E|\)
+is polynomial in the input size.
+
+At rational test prices, compute an affine sum as above attaining
+\(\Phi\).
+To do so, temporarily refine on the option comparisons at
+these prices. Choose a common maximizing option for the experts
+in each cell and compute the coefficients from their weighted utilities
+using counts and sums of guesses.
+This gives separation: compare the proposed height to \(\Phi\)
+and use the computed inequality if violated (the normal can be
+scaled to sup norm one).
+The bit time is polynomial, counting also the bits of the test point
+as input.
+
+Apply the classical bit-polynomial ellipsoid algorithm for
+well-described polyhedra~\cite[Theorem~(6.4.9)]{GLS} to this separator.
+All data passed to it have the bit bounds just proved. This is the
+LP subroutine used to implement~\eqref{eq:market}.
+
+Add the optimal height constraint
+(still polynomial bits), and take
+the lexicographically first optimal point,
+a vertex (cf.~\cite[Lemma~(6.5.1)]{GLS}),
+minimizing each coordinate successively.
+This works in polynomial time as well:
+the optimal face is bounded,
+and each additional constraint value fixing a price coordinate
+is a coordinate of the final vertex,
+hence still short.
+
+This gives the required deterministic implementation;
+medians and labels too use polynomially many bits,
+and the bounds hold regardless of labels.
+This proves Theorem~\ref{thm:prices} and so completes
+the proof of Theorem~\ref{thm:lp}.

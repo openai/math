@@ -1,0 +1,295 @@
+\section{The cost of sharing a label on a Euclidean flat}
+\label{sec:flatprice}
+A \emph{spectral flat} is a Euclidean space equipped with spectral
+prices, or an isometric copy of such a space inside a larger spectral
+space. On a flat, the distances between pairs of sites determine the
+price of a bit shared by \emph{all} the sites. The price is the mean
+width of their convex hull (Theorem~\ref{thm:flatlaw}). For three sites
+it is half the perimeter of their triangle, as in Figure~\ref{fig:triangle}.
+We first show how to rescale prices on a flat and how to bound the cost
+of passing an existing label to one more site.
+
+\begin{lemma}[Homogeneous flat prices]\label{lem:homogenization}
+Every spectral flat admits a compatible price system with the same
+wire distances in which the price of each nonzero tensor is invariant
+under translation, jointly convex in its leg positions, and positively
+homogeneous under dilation.
+\end{lemma}
+\begin{proof}
+Embed the flat in the geodesic spectral extension of
+Theorem~\ref{thm:geometry}. Straight segments in the flat are geodesics,
+so Corollary~\ref{cor:spectral-geodesic} gives joint convexity of
+$H(T;x)$ in the leg positions $x$. Under a common translation along a
+line, this is a convex function on $\mathbb R$. Transport from the first
+site to each of the others bounds it above by a quantity depending only
+on their relative positions, so it is constant. Next, $H(T;0)=0$,
+and hence $H(T;tx)/t$ is nondecreasing for $t>0$. The same transport
+bound gives a finite upper bound for this quotient. The limit as
+$t\to\infty$ is therefore defined for every $T\ne0$ and every $x$.
+The limiting prices inherit joint convexity and translation invariance,
+and a change of scale gives positive homogeneity.
+On each finite support of positive diameter, the rescaled price of its
+binary diagonal lies between the diameter and a spanning-tree length.
+Its limit is positive, and normalizing by it gives a spectral point
+by compactness. Tensor prices on overlaps remain compatible. Wire
+prices are the original Euclidean lengths at every scale.
+\end{proof}
+
+\subsection{The incremental cost of a common label}
+
+Recall that $\delta(A)$ is the price of the binary diagonal on a finite
+nonempty set of sites $A$. For a diagonal, the cost of adding one
+site is exactly its increment in $\delta$. For a general tensor
+carrying the same label at those sites, the increment gives an upper
+bound. The following construction is related to the copying argument
+with quadratic weights in \cite[Proposition~3.1]{nine}.
+
+\begin{proposition}[Copying a common label]\label{lem:submod}
+Let $I$ be a finite nonempty set of sites in a spectral space.
+Suppose that $T$ carries the same $q$-valued basis label at each site
+of $I$, so its coefficients vanish unless the marked indices agree.
+Let $T'$ be the tensor obtained by appending a copy of this label at
+$z\notin I$. Then
+\[
+ H(T')\le H(T)+(\delta(I\cup\{z\})-\delta(I))\log q.
+\]
+In particular $\delta$ is submodular on intersecting sets, that is,
+$\delta(A\cup B)+\delta(A\cap B)\leq\delta(A)+\delta(B)$ if $A,B$ are finite and $A\cap B\ne\emptyset$.
+\end{proposition}
+
+\begin{proof}
+If $I$ is a singleton, a wire from $I$ to $z$ suffices to append the
+common label at $z$, and $\delta(I)=0$.
+
+Write $I=\{1,\ldots,r\}$ with $r\geq2$. By
+Lemma~\ref{lem:comparison} we may extend scalars to an algebraically
+closed field while preserving the prices on the original tensors.
+Write $h$ for the common label of $T$. Starting from
+$T\otimes\Delta_{I\cup\{z\}}(L)$, we construct
+$T'\otimes\Delta_I(q)$ by restriction and degeneration with
+$L=O_r(q)$. The second factor in the output accounts for the
+subtraction of $\delta(I)$ in the price bound.
+
+Retain all indices of $T$, including $h$ at each site in $I$, and
+append an index $v_j$ at site $j\in I$ and an index $g$ at $z$. All
+these labels range from $0$ to $q-1$. We first impose the
+single integer equation
+\[
+  g=h+\sum_{j=2}^r v_j-(r-1)v_1
+\]
+by coefficient extraction. In an indeterminate $t$, assign a monomial
+to each choice of local labels. Its exponent is $q-1-h+(r-1)v_1$ at
+site~1, $q-1-v_j$ at site $j$ for $2\le j\le r$, and $g$ at $z$.
+The coefficient of $t^{r(q-1)}$ in their product is the indicator of
+the equation. The product has degree at most $2r(q-1)$, so interpolation
+expresses this coefficient as a linear combination of
+$L=2r(q-1)+1$ evaluations. Use the common label of the supplied
+$L$-diagonal to choose the same evaluation point at all these sites,
+with the interpolation weight included at site~1. This is a restriction.
+The exponents are integers in every characteristic.
+
+On this support, $(g-h)^2$ is a sum of local integer weights. Indeed
+in $g^2-2hg+h^2$ one replaces $g$ in the cross term by the right side
+of the equation, using the copy of $h$ at each site of $I$.
+Multiply the local basis vectors by the corresponding powers of a
+nonzero parameter. The local maps may have Laurent entries, but every tensor
+coordinate extends polynomially to zero because every total exponent on the
+support is nonnegative. Specializing to zero retains exactly $g=h$. The
+remaining equation is $\sum_{j=2}^r v_j=(r-1)v_1$. A second such
+specialization uses the local weight sum
+\[
+  \sum_{j=2}^r v_j^2-(r-1)v_1^2=\sum_{j=2}^r(v_j-v_1)^2
+\]
+on the remaining support. It retains exactly the terms in which all
+$v_j$ agree. Their common value is independent of $h$, giving the
+claimed product.
+Lemma~\ref{lem:spectral-closure} applied to the two specializations
+gives
+\[
+ H(T')+\delta(I)\log q\le H(T)+\delta(I\cup\{z\})\log L .
+\]
+Apply the construction to $T^{\otimes m}$ with $q^m$ labels.
+Since $m^{-1}\log(2r(q^m-1)+1)\to\log q$, division by $m$ gives the
+copying inequality. For the last assertion, apply this inequality to
+the diagonal on $A$ with marked sites $I\subseteq A$.
+Starting with $I=A\cap B$ and appending the sites of $B\setminus A$
+to both $I$ and $A$ then gives the proposition by telescoping.
+\end{proof}
+
+
+For two existing copies at $a,b$, the price increment per bit is at
+most half the extra distance incurred by going through $z$,
+\[
+ \tfrac12\bigl(d(a,z)+d(z,b)-d(a,b)\bigr).
+\]
+Indeed, the three identity wires of dimension $n$ around the triangle
+supply a diagonal of size $n^{2-o(1)}$ by the following restriction
+\cite{Strassen87,Behrend,cvzgraph}. Let the three edge labels be
+$i,j,k\in[n]$, and take a set $B\subseteq[\lfloor n/3\rfloor]$ of
+size $n^{1-o(1)}$ with no nonconstant three-term arithmetic progression.
+At the three sites retain coordinate pairs with
+$j-i\in B$, $k-j\in B$, and $k-i\in \{2u:u\in B\}$, respectively.
+The two consecutive differences must then be equal.
+Each surviving triple is determined by any one of its pairs. There are
+at least $\lfloor n/3\rfloor |B|$ such triples, by taking
+$i\le\lfloor n/3\rfloor$ and the common difference in $B$. Taking
+prices and dividing by $\log n$ gives
+$2\delta(\{a,b,z\})\le d(a,b)+d(b,z)+d(z,a)$. The claimed increment
+follows from Proposition~\ref{lem:submod} and $\delta(\{a,b\})=d(a,b)$.
+
+\subsection{Mean width on Euclidean flats}
+
+For a nonempty polytope $K\subset\mathbb R^D$, $D\ge1$, let
+$s_K(u)=\max_{x\in K}\langle u,x\rangle$ be its support function.
+The length of the projection of $K$ onto a unit vector $u$ is
+$s_K(u)+s_K(-u)$. The \emph{mean width} averages these lengths over
+directions, with a constant chosen so that a segment has its own length
+as mean width. Equivalently,
+\[
+ W(K)=\sqrt{2\pi}\,\mathbb E\,s_K(G)
+     =\int_{\mathbb S^{D-1}}s_K(u)\,d\sigma_D(u),
+ \qquad G\sim N(0,I_D).
+\]
+Here $\sigma_D$ is the rotation-invariant measure with this
+normalization. The two expressions agree by radial symmetry and
+$\sqrt{2\pi}\,\mathbb E(G_1)_+=1$, where
+$a_+=\max(a,0)$. The Gaussian expression is unchanged by translation
+and by isometric embedding into a higher-dimensional Euclidean space.
+A singleton has width zero. A finite nonempty set and its convex hull
+have the same support function and hence the same mean width.
+
+\begin{theorem}[Mean width of a shared label]\label{thm:flatlaw}
+Suppose $\mathbb R^D$ embeds isometrically in a spectral space. For
+every nonempty finite set $V\subseteq\mathbb R^D$, the price of its
+binary diagonal is $\delta(V)=W(V)$. Consequently the price of a
+common $q$-valued label on $V$ is $(\log q)W(V)$.
+\end{theorem}
+
+\begin{proof}
+For fixed $V$, the price of the diagonal with one additional leg is a
+convex function of that leg's position. At each site of $V$ the new
+leg can be copied locally, so all these values equal $\delta(V)$.
+Throughout their convex hull the price is therefore at most $\delta(V)$,
+and discarding the added leg gives the reverse inequality. We may thus
+write $\delta(K)$ for the price of any finite set with convex hull $K$.
+
+\emph{Minkowski sums.}
+First assume $\delta(tK)=t\delta(K)$ for $t>0$. The translation argument
+in Lemma~\ref{lem:homogenization} applies to the diagonal. To see
+subadditivity for Minkowski addition, list the vertices $(x_i)$ of $K$
+and $(y_j)$ of $L$. Take a diagonal with one leg for each pair $(i,j)$.
+Placing this leg at $x_i$ gives price $\delta(K)$, and placing it at
+$y_j$ gives price $\delta(L)$. At the midpoint placement the convex
+hull is $\tfrac12(K+L)$. Joint convexity and homogeneity give
+$\delta(K+L)\leq\delta(K)+\delta(L)$. In particular, $\delta$ is
+Lipschitz in Hausdorff distance. Polytopes within distance
+$\varepsilon$ of each other are each contained in the sum of the other
+with $\varepsilon$ times a fixed cube containing the unit ball.
+
+\emph{Segments and triangles.}
+Adding a segment increases the price by exactly its length. For the
+vertex set $S$ of $K$, form $\bigcup_{j=0}^m(S+jv)$ by adjoining
+$(S+(j-1)v)\cup(S+jv)$ one step at a time. At step $j$ the overlap
+contains $S+(j-1)v$. Proposition~\ref{lem:submod} and translation invariance
+give
+\[
+ m|v|\leq\delta(K+[0,mv])
+ \leq \delta(K)+m\big(\delta(K+[0,v])-\delta(K)\big).
+\]
+The first inequality uses a pair of points distance $m|v|$ apart.
+Let $m\to\infty$ and use subadditivity to conclude
+$\delta(K+[0,v])=\delta(K)+|v|$.
+
+Next let $T$ be a nondegenerate triangle. The wire restriction above
+gives $\delta(T)\le\tfrac12\operatorname{per}(T)=W(T)$.
+For the last equality, write $e_1,e_2,e_3$ for the oriented edge
+vectors. The length of the projection onto a unit direction is half
+the sum of the absolute edge projections. By symmetry of $G$,
+\[
+ W(T)=\frac{\sqrt{2\pi}}{4}\sum_{i=1}^3\mathbb E|\langle G,e_i\rangle|
+      =\frac12\sum_{i=1}^3\|e_i\|.
+\]
+Moreover $T+(-T)$ is the sum of
+the three segments given by those oriented edges. Indeed, the sums of
+subsets of the three edge vectors give zero and all pairwise vertex
+differences. Segment additivity gives
+\[
+\delta(K)+2W(T)=\delta(K+T+(-T))
+       \le \delta(K+T)+W(T)\le \delta(K)+2W(T).
+\]
+Here the inequalities use subadditivity and the half-perimeter bound
+for both triangles. Equality throughout gives
+$\delta(K+T)=\delta(K)+W(T)$. The same identity for degenerate
+triangles follows from segment additivity and translation invariance.
+
+\emph{General polytopes.}
+By Lemma~\ref{lem:triangle-density}, we can approximate $s_K$
+uniformly by a linear combination of triangle support functions.
+Grouping the positive and negative coefficients expresses the combination
+as $s_{P_+}-s_{P_-}$ for two Minkowski sums of scaled triangles. If the
+error is at most
+$\varepsilon$, then $K+P_-$ and $P_+$ are within Hausdorff distance
+$\varepsilon$. Using the Lipschitz bound for $\delta$, its additivity
+along triangles, and the additivity and continuity of $W$ gives
+$\delta(K)=W(K)$ as $\varepsilon\to0$.
+
+For the original price, $\delta(tK)/t$ is nondecreasing in $t$.
+The proof of Lemma~\ref{lem:homogenization} produces a homogeneous
+spectral price system at either endpoint, $t\downarrow0$ or
+$t\to\infty$. Indeed, for a finite set of positive diameter, its
+rescaled diagonal price has the same positive lower bound in both
+limits. The homogeneous case identifies both endpoint values as
+$W(K)$, so the quotient has this value at $t=1$. The diagonal scaling
+rule of Section~\ref{sec:spectra} gives the factor $\log q$ for the
+$q$-valued label.
+\end{proof}
+
+The density statement used above also follows from Schneider's triangle
+theorem \cite{Schneider1996}, as formulated by Schneider and Schuster
+\cite[pp.~2--3]{SS}. We give a proof by testing against signed measures
+on the sphere.
+\begin{lemma}[Approximation by triangle support functions]
+\label{lem:triangle-density}
+The support functions of triangles in $\mathbb R^D$, including degenerate
+triangles, span a uniformly dense subspace of $C(\mathbb S^{D-1})$.
+\end{lemma}
+
+\begin{proof}
+Suppose a finite signed measure $\mu$ on the sphere annihilates all
+triangle support functions. For $v,w\in\mathbb R^D$ and $h>0$ it
+annihilates the difference quotient
+\[
+ \frac{\max(0,\langle v,u\rangle,h\langle w,u\rangle)
+              -\max(0,\langle v,u\rangle)}{h}.
+\]
+As $h\downarrow0$, the quotient converges boundedly to
+$\mathbf1_{\{\langle v,u\rangle\leq0\}}(\langle w,u\rangle)_+$.
+Using both $w$ and $-w$ shows that the restriction $\nu$ of $\mu$
+to any closed hemisphere annihilates $|\langle w,u\rangle|$ for
+every $w$.
+
+To determine the even part of $\nu$, average in $w=G+tz$ for a standard
+Gaussian $G$ and a fixed vector $z$. With $b(a)=\mathbb E|G_1+a|$ this
+gives $\int b(t\langle z,u\rangle)\,d\nu(u)=0$. Since $b(0)>0$ and
+$b''(a)=\sqrt{2/\pi}\exp(-a^2/2)$, every even derivative at zero is
+nonzero. Differentiating under the integral gives
+$\int\langle z,u\rangle^{2j}\,d\nu(u)=0$ for all $j\ge0$.
+Polarization and polynomial approximation give vanishing against all
+continuous even functions. Hence $\nu$ is odd under $u\mapsto-u$.
+It is supported on a closed hemisphere, so it vanishes in the interior
+of that hemisphere. Such interiors cover the sphere, giving $\mu=0$.
+The Riesz representation and Hahn--Banach theorems prove the density.
+\end{proof}
+
+
+For any planar convex polygon $K$, the two boundary chains between its
+extreme projected points each project monotonically. Thus its projected
+length is half the sum of the absolute edge projections, just as for a
+triangle. Averaging gives $W(K)=\tfrac12\operatorname{per}(K)$, with
+a segment counted twice in the perimeter \cite{Schneider}.
+
+Theorem~\ref{thm:flatlaw} also evaluates the increment in
+Proposition~\ref{lem:submod}. If a tensor on a flat already carries a
+common label at $I$, copying it to any $z\in\operatorname{conv}(I)$
+preserves the price. The convex hull and hence its mean width stay the
+same, and discarding the new copy recovers the original tensor.

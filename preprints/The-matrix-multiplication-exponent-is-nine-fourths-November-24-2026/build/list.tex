@@ -1,0 +1,205 @@
+\section{The cost of testing many lists}\label{sec:list}
+
+Two distinctness tests suffice to check that records have reached their
+specified destinations. This gives a common starting point for the two
+cases of Theorem~\ref{thm:many}. In a field without ports, the possible
+destinations force many wires to have large total length in a suitable
+spectral space. In a finite field with ports, cheap distinctness tests
+would make it possible to compress a family of tensors with a known
+lower bound.
+
+\subsection{Checking a tagged permutation}
+
+Write \(h=w-1\), \(N=2^h\), and index records by the \(h\)-bit words.
+The tagged-permutation tensor \(\operatorname{Tag}(h,h)\) of
+\cite[Definition~\ext{G}{def:tag}]{oaG} takes
+\(N\) records \((j_i,x_i)\) and an ordered list of \(N\) payloads
+\(y_j\), with \(h\) bits per tag or payload. Its value is one when
+\(i\mapsto j_i\) is a permutation and \(x_i=y_{j_i}\) for every \(i\).
+Its other entries are zero.
+
+The first \(D_w\) test checks the tags. Encode each \(j_i\) as
+\((0,j_i,0^{h+1})\) and fill the remaining \(N\) positions with the
+distinct words \((1,j,0^{h+1})\). All \(2N\) words have length \(2w\),
+and the test passes precisely when the tags form a permutation \(\pi\).
+
+The second \(D_w\) test checks the payloads. Its first \(N\) words are
+\((j_i,0,x_i,0)\). At the position for \(j\) in the second half, sum
+over two choices, the reserve word \((j,1,0^h,0)\) with weight \(1\)
+and the comparison word \((j,0,y_j,0)\) with weight \(-1\).
+For tags forming \(\pi\), the only possible collision at address \(j\)
+is between the comparison word and the word from \(i=\pi^{-1}(j)\).
+Thus the signed sum factors as
+\[
+     \prod_j \bigl(1-\mathbf 1_{\{x_{\pi^{-1}(j)}\ne y_j\}}\bigr)
+       =\prod_j\mathbf 1_{\{x_{\pi^{-1}(j)}=y_j\}} .
+\]
+This identity holds in every characteristic. A summed selector bit for
+each address controls its word and its weight. Copying the tags,
+selecting the words, and pinning the constants cost \(O(Nh)\) trivalent
+volume. Consequently, if \(D_w^{\otimes t}\) has a realization of
+volume \(V\), two uses of that realization give a network for
+\(\operatorname{Tag}(h,h)^{\otimes t}\) of volume at most
+\(2V+O(tNh)\), including when the realization shares work among lists.
+
+\subsection{Fields without ports}
+
+A class of Hadamard spaces has \emph{ports} if it admits regular
+graphs of unbounded order and common bounded degree with the following
+property. For every placement of their vertices into any space of the
+class, the mean squared distance of two independent uniform vertices
+is at most a fixed constant times the mean squared edge length.
+A field has ports when its Hadamard spectral spaces have this property
+\cite[Definition~\ext{G}{def:ports}]{oaG}.
+
+\begin{lemma}[Uniform destinations]\label{lem:uniform-demand}
+Let the field have no ports. Consider a fixed trivalent topology with
+\(r\) input bits and \(r\) output bits. Suppose that for every permutation
+in the support of a distribution, some choice of vertex tables realizes
+the \(r\) independent wires joining each input to its assigned output.
+If each input has a uniform destination on a set of \(q\ge2\) outputs,
+the topology has size \(\Omega(r\sqrt{\log q})\). The destination sets
+may depend on the input.
+\end{lemma}
+
+\begin{proof}
+Give each exterior bit its own equality leaf. Connect the resulting
+components in a path by adding edges to the graph used to measure
+distances. This increases the maximum degree by at most two and gives
+\(m\) edges, with \(m\) at most a constant times the network size.
+Let \(\alpha\) be the law of a uniform oriented edge, and let \(\mu\)
+be the joint law of a uniform input and its random destination.
+For any placement in a spectral space with distance \(d\),
+\[
+                    r\,\mathbb E_\mu d\ \le\ m\,\mathbb E_\alpha d .
+\]
+Indeed, for each permutation the network tensors locally contract
+the product of its internal bit wires to the prescribed exterior
+wires. Monotonicity and additivity of prices bound the sum of the
+destination distances by the sum of the internal edge lengths.
+Average over the permutations and include the extra edges on the right.
+
+We need a placement where many destinations are far away at once.
+The class of Hadamard spectral spaces is closed under isometry,
+rescaling, closed convex subspaces, and pointed ultralimits
+(Section~\ref{sec:prices-background}). The product theorem
+\cite[Theorem~\ext{P}{prod:main}]{oaP} gives a subclass with the same
+properties and no ports, closed also under finite \(\ell_2\) products.
+Let \(\mathcal K\) be the squared distance tables \(D=d^2\) realized
+in this subclass with \(\mathbb E_\alpha D\le1\). Products of rescaled
+placements give convex combinations of tables. Connectivity bounds
+every entry, and pointed ultralimits realize coordinatewise limits.
+Hence \(\mathcal K\) is convex and compact.
+
+For a probability law \(\nu\le 2\mu\) on ordered pairs, let
+\(\beta_\nu=\max_{D\in\mathcal K}\mathbb E_\nu D\). By rescaling,
+\(\mathbb E_\nu d^2\le\beta_\nu\mathbb E_\alpha d^2\) for every
+placement in the subclass. Write \(X,Y\) for the endpoints under
+\(\nu\). The graph entropy bound \cite[Corollary~\ext{P}{cor:graph-entropy}]{oaP}
+and the bounded degree of our graph give
+\(H_\nu(Y\mid X)\le C(1+\beta_\nu)\), with entropy in bits.
+Every pair has \(\nu\)-mass at most \(2/(rq)\), so
+\[
+    H_\nu(Y\mid X)=H_\nu(X,Y)-H_\nu(X)
+               \ge \log_2(rq/2)-\log_2 r=\log_2(q/2).
+\]
+It follows that \(\beta_\nu\ge c\log q\) for all sufficiently large
+\(q\), uniformly in \(\nu\).
+
+Bilinear minimax on \(\mathcal K\) and the compact convex set of
+laws \(\nu\le2\mu\) gives a single \(D=d^2\in\mathcal K\) for which
+\(\mathbb E_\nu D\ge c\log q\) for every such law. If the pairs with
+\(D<c\log q\) had \(\mu\)-mass at least \(1/2\), conditioning \(\mu\)
+on those pairs would violate this bound. Hence
+\(\mathbb E_\mu d\ge \tfrac12\sqrt{c\log q}\), while
+\(\mathbb E_\alpha d\le1\) by Cauchy--Schwarz. The price inequality
+gives the result. For bounded \(q\), counting exterior bits suffices.
+\end{proof}
+
+In a network for \(\operatorname{Tag}(h,h)^{\otimes t}\), pin each
+list's tags to a uniform permutation. The topology realizes a permutation
+of \(r=tNh\) payload bits. Each input bit has \(q=N\) possible
+destinations, at its own bit position in its own list, all equally
+likely. By Lemma~\ref{lem:uniform-demand},
+\(2V+O(tNh)\ge c\,tNh\sqrt h\). Since \(n_w=4N(h+1)\), this proves
+\eqref{eq:many} for any fixed \(0<\sigma<1/2\) and all sufficiently
+large \(w\), uniformly in \(t\).
+
+\subsection{Finite fields with ports}
+
+Fix a finite field with ports. We use the signed counting tensor
+\(U_\ell^*\) on \(\ell\) exterior bits from the circuit lower-bound
+paper. Its entries count the signed computation paths of a polynomially
+clocked universal machine, reduced in the field. The polynomial-size
+verifier gives an exact trivalent network of size \(\ell^{O(1)}\) for
+one copy. Sum over its guess strings, requiring the unused bits on
+each computation path to be zero, and weight the outcome by its sign. The exact batch lower bound
+\cite[Theorem~\ext{P}{thm:batches}]{oaP} gives \(\delta,\xi>0\)
+such that, for all sufficiently large \(\ell\),
+\[
+       \operatorname{vol}_k\bigl((U_\ell^*)^{\otimes j}\bigr)
+              >j\ell^{1+\delta}
+       \qquad (1\le j\le 2^{\ell^\xi}).
+\]
+
+The descent with tagged permutations
+\cite[Proposition~\ext{G}{prop:oracle-descent}]{oaG} supplies a
+constant \(a>0\). For all sufficiently large \(h\), given a trivalent
+network of size \(s\) in the range \(N\le s\le N^4\), with \(e\)
+exterior bits, it constructs a network for \(d\) copies of its tensor
+using trivalent gates and \(\operatorname{Tag}(h,h)\) tests. Its size
+\(S\), charging every incident bit including those at tests, satisfies
+\[
+            S\le C d\bigl(sh^{-a}+e(\log h)^C\bigr),
+           \qquad \log_2 d=O\bigl((\log h)^2\bigr).
+\]
+These bounds are uniform in the network. The normalization required
+for descent attaches equality leaves and subdivides self-loops. It
+costs only a constant factor, and the cited bound holds on every fixed
+polynomial size range.
+
+Choose \(b>\max\{2,2/\xi\}\) and
+\(0<\sigma<\min\{a/4,b\delta/4,1/4\}\). Suppose there are arbitrarily
+large \(w=h+1\) for which some \(1\le t\le 2N\) admits a realization
+of \(D_w^{\otimes t}\) of volume at most \(tn_w w^\sigma\).
+The two-list construction gives a network for \(t\) tagged-permutation
+tests of size \(O(tNh^{1+\sigma})\).
+
+Group the tests in a descent network into batches of \(t\) and
+substitute this realization for each batch. In the last batch pin
+unused tests to the identity permutation with zero payloads, where
+each has value one. Since the substituted network realizes the full
+product tensor, the replacement stays exact under every contraction
+of the surrounding wires, including wires joining tests in one batch.
+Each full batch contributes \(3tNh\) incident bits to \(S\).
+Paying separately for the last batch therefore gives trivalent size
+\[
+                     O\bigl(h^\sigma S+tNh^{1+\sigma}\bigr).
+\]
+
+Set \(\ell=\lceil h^b\rceil\) and begin with \(j=N^2\) copies of
+the polynomial-size network for \(U_\ell^*\). At each descent let
+\(x=s/(j\ell)\) be the size per exterior bit. The new batch has \(dj\)
+copies. Its size per bit, for all sufficiently large \(h\), satisfies
+\[
+ \begin{split}
+ x'&\le C'\left(h^{-a+\sigma}x+
+        h^\sigma(\log h)^C+\frac{tNh^{1+\sigma}}{dj\ell}\right)\\
+   &\le h^{-a/2}x+h^{2\sigma}.
+ \end{split}
+\]
+Here \(j\ge N^2\), \(d\ge1\), and \(t\le 2N\), so the fraction is
+\(O(h^{1+\sigma-b})\). This is the reason for starting with \(N^2\)
+copies.
+
+Initially \(x\le h^A\) for some fixed \(A\). Choose a fixed integer
+\(L>2A/a\). At every one of these \(L\) steps, the product of the
+replication factors is \(N^{o(1)}\). Inductively, \(j=N^{2+o(1)}\)
+and \(x\) stays polynomial in \(h\), so the current network and its
+normalization have size in the descent range. Iterating the last
+inequality gives \(x=O(h^{2\sigma})\). Now \(j\le 2^{\ell^\xi}\)
+because \(\log_2 j=(2+o(1))h\), while
+\(h^{2\sigma}=o(\ell^\delta)\) by the choice of \(\sigma\).
+The final trivalent volume is therefore \(o(j\ell^{1+\delta})\),
+contradicting the exact batch lower bound. This proves
+Theorem~\ref{thm:many} in the remaining case.

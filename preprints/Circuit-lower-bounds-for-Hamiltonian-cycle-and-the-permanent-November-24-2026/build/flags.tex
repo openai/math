@@ -1,0 +1,512 @@
+\section{From prices to flags}\label{sec:flags}
+
+Theorem~\ref{ext:star} asks for a matrix whose columns nearly attain
+their combined star bound. At the tip, a bias threshold selects ordinary
+subspaces, and the dimension of their span records how much of the
+ambient space they supply. Away from the tip the same measurement,
+obtained from the exterior price, can take fractional values. We need
+to estimate it for many columns at once.
+
+We first recover a dimension for sums, intersections, and images of
+formal subspaces from these threshold measurements. The subspaces for
+one site, ordered by bias, then form a flag. Intersecting the levels of
+two flags gives them a pair law. Successively combining pairs of flags
+will provide a count of the columns available at a threshold.
+Lemma~\ref{flag:insertion} gives a lower bound on the rank of
+Vandermonde columns by the expected count truncated at the number of
+rows, up to arbitrarily small error. One matrix realizes this bound
+at any prescribed finite set of thresholds.
+
+\subsection{Threshold rank}
+
+Let $Y$ be a Hadamard cone with tip $0$, and let $K$ be an infinite field.
+A \emph{supplier} in a finite-dimensional $K$-space $E$ is a triple
+$(A,y,\theta)$ with $A\subseteq E$ a subspace, $y\in Y$ a site and
+$\theta\in\mathbb R$ a bias. Call $(y,\theta)$ its label. A list spans if
+its supplied subspaces span $E$.
+The exterior value in~\eqref{ext:value} assigns a finite number
+$\lambda_E(L)$ to each spanning list $L$. In this section we may use
+any such value with the following properties.
+\begin{enumerate}
+\item Isomorphisms of $E$ and permutations of the list preserve value.
+The value is continuous in the labels, positively homogeneous under their
+common dilation, and convex under simultaneous geodesic interpolation
+of sites and linear interpolation of biases.
+\item Increasing a bias, enlarging a subspace or adding a supplier can
+only increase value. Shifting every bias by $t$ adds $t\dim E$.
+Suppliers with the same site and bias merge by summing their subspaces,
+and supplying the zero space has no effect.
+\item Taking the direct sum of two spaces with their respective suppliers
+adds their values. Adding a supplier has diminishing increments under
+enlargement of a spanning base list.
+\end{enumerate}
+Section~\ref{sec:exterior} established these properties for the exterior
+value. A supplier is redundant if another supplier at the same site
+offers a containing subspace at a higher or equal bias. Indeed, raising
+the first bias to the second allows the two suppliers to merge, and
+monotonicity gives equality at the original bias.
+
+For any list $L$ in $E$, append the \emph{root supplier} $(E,0,s)$ and
+write $\lambda_L(s)$ for the value of the resulting spanning list. The
+root offers all of $E$. Its marginal value measures how much dimension
+it supplies at bias $s$. The remainder is the \emph{threshold rank}
+of the ordinary suppliers. Writing $L-s$ for the list with $s$
+subtracted from every ordinary bias, we have
+\begin{equation}\label{flag:capdef}
+ r_E(L)=\dim E-\lambda'_{L,+}(0),\qquad
+ r_E(L-s)=\dim E-\lambda'_{L,+}(s).
+\end{equation}
+The second identity follows by translating all biases. Convexity
+ensures the existence of the right derivative. Monotonicity and bias
+translation bound it between zero and $\dim E$.
+
+\begin{lemma}[Threshold rank]\label{flag:capacity}
+The rank $r_E$ takes values in $[0,\dim E]$, adds on direct sums, and is
+unchanged on merging equal labels or adding unused ambient dimensions.
+It is monotone under adding suppliers, enlarging subspaces and increasing
+biases. It is unchanged by independent positive dilations of the labels
+and has diminishing increments under adjoining suppliers to any list.
+\end{lemma}
+
+\begin{proof}
+For the empty list the root has value $s\dim E$ by homogeneity and
+translation. The direct sum and merging rules pass through the derivative
+(the root of a direct sum can itself be split at its label).
+For $h>0$, raising the root bias from $0$ to $h$ amounts to adding
+$(E,0,h)$. Its increment can only decrease when $L$ grows. Passing to
+the right derivative proves monotonicity under adjoining a supplier.
+An enlargement or a bias increase amounts to adjoining the improved
+supplier.
+
+Common dilation of the labels preserves rank by homogeneity. For
+$0<t<1$, adjoin a shortened copy $u_t=(A,ty,t\theta)$ of an existing
+supplier $u=(A,y,\theta)$. At every root bias $s\ge0$, the root
+absorbs $u_0$ and the original supplier absorbs $u_1$. By convexity
+along this segment and monotonicity under addition, $u_t$ also leaves
+the value unchanged. Deleting $u$ can only decrease rank, so replacing
+$u$ by $u_t$ can only decrease rank. Dilate the resulting list by
+$1/t$ and shorten each of its other labels by $t$ to return to the
+original list. This proves equality for one shortened label and hence
+invariance under arbitrary independent positive dilations.
+
+It remains to compare the rank gained by adjoining $u$ to two lists
+$L\subseteq L'$. Shorten $u$ towards the root. The added rank stays
+constant by dilation invariance, and in the limit it can be read from
+the derivative in the bias of the shortened supplier.
+
+To justify the derivative calculation, perturb the ordinary biases,
+keeping shared occurrences identical. For almost every perturbation,
+the root-augmented values for $L,L'$ and for their augmentations by
+$u_{1/k}$, $k\ge1$, are all differentiable in their biases at root bias
+zero. Indeed each finite convex value is differentiable almost
+everywhere. Bias translation determines it from its restriction to
+root bias zero, and scaling the additional bias by $1/k$ is an
+invertible coordinate change. We may therefore make this countable
+family of choices simultaneously.
+
+At a differentiability point the sum of the ordinary suppliers' bias
+derivatives equals the rank. Apply this to $L$ augmented by $u_{1/k}$,
+differentiating in the actual bias of that supplier. As $k\to\infty$,
+the derivatives at the old suppliers converge to those for $L$ alone.
+In fact, as convex functions of the old biases the values converge
+pointwise by continuity and redundancy of $u_0$. Left and right
+difference quotients squeeze each partial derivative at a point of
+differentiability of the limit. Independent dilation leaves the
+augmented rank fixed. The bias derivative at $u_{1/k}$ therefore
+converges to $r_E(L\cup\{u\})-r_E(L)$.
+For every $k$ that derivative can only decrease on passing from $L$ to
+$L'$, since raising the bias is equivalent to adding a supplier and
+$\lambda$ has diminishing increments. This proves the desired comparison
+at the perturbed biases. Finally approximate all ordinary biases
+simultaneously from below. Monotonicity squeezes each perturbed rank
+between its original value and its value after a common negative shift.
+The latter converges to the original value by right continuity of the
+right derivative in \eqref{flag:capdef}.
+\end{proof}
+
+When all suppliers lie at the tip, the threshold rank is
+\[
+ r_E(L-s)=\dim\!\sum_{\theta_i>s} A_i .
+\]
+After the shift by $s$, the root absorbs every supplier of nonpositive
+bias as its own bias increases from zero. Independently dilating the
+remaining labels to $(0,1)$ merges their subspaces into a single space
+$A$. On $A$ the root is redundant for small positive root bias. On a
+complement it is the sole supplier. This accounts for both the rank
+formula and the strict inequality at a bias tie.
+
+A single column illustrates what changes away from the tip. For the
+exterior price, let $E=K$ and put the column at a site of radius $u>0$
+with bias $\theta$. The two-supplier exterior pairing, computed below,
+gives $\lambda_L(s)=s+u\log(1+e^{(\theta-s)/u})$. Thus
+$r_E(L-s)=(1+e^{(s-\theta)/u})^{-1}$. At the bias tie the column
+supplies half a dimension. To combine such fractional contributions
+we need a dimension calculus that can also measure their overlaps.
+
+\subsection{Dimension of subspace expressions}
+
+Introduce a formal space $X$ of normalized dimension one and a symbol
+$U_j$ for the subspace supplied by label $j$. The unrestricted label $(0,1)$
+designates $X$ itself. At that label a supplier of $A$ has rank
+$\dim A$ by the tip calculation. For a scalar matrix $B$ with labeled
+columns write $r(B)$ for the threshold rank in its output space, using
+one supplier per label with subspace the span of its columns.
+
+Consider a variable $v_i\in U_{j_i}$ for each input column. Given
+scalar matrices $P,Q$ over $K$ with those columns, form the expression
+in $X^e$
+\[
+ T=\{Pv: Qv=0,\ v_i\in U_{j_i}\},
+\]
+where $e$ is the number of rows of $P$. It describes the outputs $Pv$
+left after imposing the constraints $Qv=0$. Sums, intersections,
+direct sums, and scalar images each admit such a description by
+introducing variables and linear constraints. In module theory these
+are positive primitive subspace expressions \cite{Prest}. An inclusion
+between two expressions is \emph{universal} if it holds for every
+substitution of an actual vector space for $X$ and actual subspaces for
+the $U_j$, with the unrestricted label interpreted as the whole space.
+
+For ordinary subspaces, projecting the joint image $(Pv,Qv)$ to $Qv$
+has kernel isomorphic to $T$. The proposition shows that the difference
+of the corresponding threshold ranks also defines a dimension and
+satisfies the same rank--nullity identity.
+
+\begin{proposition}[Dimension calculus]\label{flag:dimension}
+The formula
+\begin{equation}\label{flag:ppdim}
+ \dim_*T=r\!\binom{P}{Q}-r(Q)
+\end{equation}
+is nonnegative, respects universal inclusions and adds on direct sums.
+For any scalar map $M$,
+\[
+ \dim_*T=\dim_*M(T)+\dim_*(T\cap\ker M).
+\]
+In particular $r_E(L)=\dim_*\big(\sum_i A_i\otimes U_{j_i}\big)$, where
+each summand denotes the image along a basis of $A_i$ of independent
+variables with label $j_i$.
+\end{proposition}
+
+\begin{proof}
+First consider adding unrestricted columns spanning a space $D$ to a
+matrix $B$. The resulting rank is
+\[
+ \dim D+r(B\bmod D).
+\]
+Indeed, the unrestricted columns supply the full rank $\dim D$ on $D$.
+Copies of those columns with any other label add zero rank there. By
+invariance under unused ambient dimensions and diminishing increments
+(Lemma~\ref{flag:capacity}), they still add zero rank in the presence of
+$B$. Make these copies for every label of $B$. Within each label we can
+now subtract components in $D$ from its columns while preserving their
+span together with the copies. The remaining columns lie in a fixed
+complement of $D$. Removing the copies and applying direct sum
+additivity gives the formula.
+
+For $B=\binom{P}{Q}$ take $D=K^e$ in the first output coordinates. The
+gain from adding the unrestricted columns of $D$ is $e-\dim_*T$. It
+lies in $[0,e]$ and can only decrease on adjoining more input columns.
+Thus $\dim_*T$ is nonnegative and can only increase with more inputs.
+Dropping constraint rows also increases this dimension. For each
+dropped row adjoin an unrestricted column on its constraint axis to
+the joint matrix. By the quotient formula, that axis contributes one
+to both ranks in~\eqref{flag:ppdim}, leaving exactly the expression
+with the row dropped.
+
+Now suppose $T\subseteq T'$ universally, with respective data
+$(P,Q)$ and $(P',Q')$. We need a scalar comparison between their
+presentations. If $T$ has $s$ inputs, substitute
+\[
+ X=K^s/\operatorname{rowspan}(Q)
+\]
+and let $v_i$ be the classes of the standard basis vectors. For each
+restricted label take $U_j$ to be spanned by its $v_i$. This choice
+realizes $Qv=0$ and imposes exactly the row relations generated by
+$Q$. Universal inclusion gives $v'$ of the allowed labels with
+$P'v'=Pv$ and $Q'v'=0$. Expressing $v'$ in the generators $v_i$
+produces a scalar matrix $A$. Each restricted row uses only columns
+of its own label, and an unrestricted row may use any column. The
+relations yield scalar matrices $J,J'$ with
+\[
+ P'A-P=JQ,\qquad Q'A=J'Q.
+\]
+
+Row operations therefore let us replace $P$ by $P'A$ and append the
+redundant constraints $Q'Av=0$ in~\eqref{flag:ppdim}. Drop the old
+constraints $Qv=0$, increasing dimension. The resulting joint matrix
+is $\binom{P'}{Q'}A$. Each of its labeled columns lies in the span of
+columns of $\binom{P'}{Q'}$ with that label and of unrestricted
+columns. Copy the unrestricted columns into each label. These copies
+contribute zero in both ranks by the quotient argument above. Enlarging
+the column spans now gives $\dim_*T\le\dim_*T'$. Two presentations of
+the same expression include each other universally, so their dimensions
+agree.
+
+Direct sums add by Lemma~\ref{flag:capacity}. The dimension of $M(T)$ is
+$r\binom{MP}{Q}-r(Q)$. For $T\cap\ker M$ the added equations are $MPv=0$,
+so the two dimension formulas telescope, since stacking $MP$ with $P,Q$
+does not change their joint rank. Taking $Q$ to have no rows gives the
+last assertion.
+\end{proof}
+
+Apply the kernel identity to addition on $U\oplus V$. Its kernel is a
+scalar copy of $U\cap V$, so
+\begin{equation}\label{flag:modular}
+ \dim_* (U+V)+\dim_*(U\cap V)=\dim_*U+\dim_*V .
+\end{equation}
+We identify expressions $U,V$ if $U\cap V$ and $U+V$ have the same
+dimension. For nested expressions of equal dimension, adjoining a
+third expression by sum or intersection preserves equality of
+dimension by \eqref{flag:modular}. The same holds for direct sums and
+scalar images by Proposition~\ref{flag:dimension}. These observations,
+applied through $U+V$, give transitivity and allow equivalent expressions
+to be substituted in subsequent linear constructions.
+Now specialize to the subspace symbols of a single site $y$. If
+$\theta\le\theta'$, adding the lower-bias supplier to the higher one
+leaves its rank unchanged. Thus $U_{y,\theta}+U_{y,\theta'}$ is
+equivalent to $U_{y,\theta'}$. For any finite list of biases their
+cumulative sums give universally nested representatives. Likewise,
+in the pair of labels $(y,\theta),(ty,t\theta)$ we can dilate one
+label until they agree and merge the pair. Its sum then has the same
+dimension as each member. Hence $U_{ty,t\theta}$ and $U_{y,\theta}$
+are equivalent for every $t>0$.
+
+\subsection{The metric on flags}
+
+An \emph{event} is a subspace expression in $X$, with its dimension
+in $[0,1]$ interpreted as a probability. A finite flag $F$ is a
+decreasing filtration of $X$ by such expressions, with finitely many
+real jump levels. Its thresholds $F_{\ge a}$ range from $X$ to zero.
+We take them to be universally nested, using cumulative sums when they
+are initially nested only up to equivalence. Their dimensions are the
+upper tails of a probability law on the levels. Two flags $F,G$ also
+have a pair law, determined by
+\begin{equation}\label{flag:pair}
+ \Pr(F\ge a,G\ge b)=\dim_*(F_{\ge a}\cap G_{\ge b}).
+\end{equation}
+Indeed a cell mass is a successive difference of four intersection
+dimensions. The intersection for the two weaker thresholds contains the
+sum of the intersections obtained by strengthening either threshold.
+Equation~\eqref{flag:modular} then gives nonnegativity.
+
+A family of these pair laws may fail to admit a common probability
+space. For example, take three distinct lines in a two-dimensional
+space and normalize dimension by $1/2$. Each line has probability
+$1/2$, while each pair has intersection probability zero. Three events
+with these probabilities would have union probability $3/2$. We
+therefore combine many events one pair at a time.
+
+For a fixed pair, the grid of its jump levels has more structure.
+For each upper set $S$ in this grid, let $U_S$ be the sum of the
+intersections $F_{\ge a}\cap G_{\ge b}$ indexed by the minimal
+elements $(a,b)$ of $S$. Unions correspond to sums and intersections
+to intersections. These identities hold universally because for every
+actual substitution the two filtrations admit a common adapted basis.
+To construct one, work from the deeper grid intersections upwards.
+Extend the bases already chosen for the two immediately deeper
+intersections, whose common basis was fixed at the doubly deeper
+intersection. Each $U_S$ is then a coordinate subspace in this basis.
+Modularity and~\eqref{flag:pair} give
+$\dim_*U_S=\Pr((F,G)\in S)$.
+
+In particular, the upper level sets of a coordinatewise nondecreasing
+function $f$ give a flag $f(F,G)$. Its law is the pushforward of the
+pair law. The same grid gives the joint law of any two such functions
+of $F,G$. This permits interpolation between two flags even when a
+third flag has no joint law with them.
+
+We use the notation
+\[
+ \langle F,G\rangle=\mathbb E[FG],\qquad
+ \|F\|^2=\mathbb E[F^2],\qquad d(F,G)^2=\mathbb E[(F-G)^2],
+\]
+where each expectation uses the indicated law. The metric estimate
+below will control what happens during insertion when one indicator is
+changed. For the CAT(0) metric on filtrations of modular lattices of
+finite length, see \cite[Proposition~2.6]{Cornut}.
+
+\begin{proposition}[Flag metric]\label{flag:metric}
+After identification at distance zero, finite flags have a CAT(0)
+metric, with geodesic $H_t=((1-t)F+tG)$ defined by the two-flag
+construction. The completion is Hadamard. Positive dilation is a
+homothety. For fixed $Q$ the pairing with $Q$ is $\|Q\|$-Lipschitz.
+\end{proposition}
+
+\begin{proof}
+The two-flag grid gives distances along the candidate geodesic
+$H_t$. To compare it with a third flag $Q$ we first take
+$Q=1_A$, the indicator flag of an event $A$. For each upper set $S$
+of the $F,G$ grid put $w(S)=\dim_*(A\cap U_S)$. This function is
+supermodular because the sum of two intersections with $A$ lies in
+the intersection of $A$ with the sum. More explicitly, modularity
+gives
+\[
+ w(S)+w(T)\le w(S\cup T)+w(S\cap T).
+\]
+Order the grid points $p_1,\ldots,p_s$ so each initial segment $S_i$
+is upper, and set $S_0=\varnothing$. For coordinatewise nondecreasing
+$f$, the expectation $\langle Q,f(F,G)\rangle$ equals
+\[
+ \min_{(p_i)}\ \sum_{i=1}^s f(p_i)\big(w(S_i)-w(S_{i-1})\big).
+\]
+Indeed the pair law gives equality for a decreasing order of $f$.
+From any allowed order, swapping adjacent points inverted by $f$
+preserves the upper-set condition, since those points are incomparable.
+Supermodularity shows that such a swap can only decrease the sum.
+The minimum is concave in $f$. Every finite $Q$ decomposes as a constant
+plus a nonnegative combination of its threshold indicators, with the
+corresponding equality of pairings. For every $Q$ this proves
+\[
+ \langle Q,H_t\rangle\ge(1-t)\langle Q,F\rangle+t\langle Q,G\rangle.
+\]
+Computing $\|H_t\|^2$ in the pair law and expanding now yields
+\[
+ d(Q,H_t)^2\le (1-t)d(Q,F)^2+t d(Q,G)^2-t(1-t)d(F,G)^2 .
+\]
+Nonnegativity of the left side, with
+$t=d(Q,F)/(d(Q,F)+d(Q,G))$, gives the triangle inequality
+(the zero-denominator case follows at $t=1/2$).
+The joint law on the grid gives
+$d(H_t,H_u)=|t-u|d(F,G)$, establishing the geodesic and CAT(0)
+comparison. Dilation and homogeneity of the pairing follow from the
+pair laws. Finally the triangle inequality gives
+$|d(F,aQ)-d(G,aQ)|\le d(F,G)$ for $a>0$.
+Taking the difference of squares and dividing by $2a$, then letting
+$a\to\infty$, shows
+$|\langle F,Q\rangle-\langle G,Q\rangle|\le\|Q\|d(F,G)$.
+All these properties pass to the metric completion.
+\end{proof}
+
+The exterior application has strict thresholds at every real level.
+Suppose a decreasing family $F_{>a}$ has dimensions equal to the
+tails of a probability law of finite second moment. Truncate and
+discretize the levels, using nested representatives at each finite
+set of thresholds. Two such approximations can be coupled on their
+combined chain. Their distance is the ordinary $L^2$ distance of the
+two discretizations under the given law, so they converge in the flag
+completion. For two families the pair upper tails are still the
+dimensions of the threshold intersections. Indeed, by
+\eqref{flag:modular} the change in an intersection dimension on
+changing one threshold is bounded by the change in its marginal. The
+upper tails are therefore right-continuous, and the continuous pairing
+is the integral of the product under this pair law.
+
+For each site $y$ take $F(y)_{>a}=U_{y,-a}$. Increasing $a$ lowers
+the bias and gives a decreasing family. Whenever its tail dimensions
+have finite second moment as above, it defines a flag $F(y)$. The tip
+calculation gives $F(0)=0$, and equivalence of dilated labels gives
+$F(ty)=tF(y)$ for $t>0$. For the exterior value, the single-column
+calculation will identify the law at every site.
+
+\subsection{Insertion along a column curve}
+
+Write $F+G$ for twice the midpoint of $F,G$. On their two-flag grid,
+this is the flag of the function $(f,g)\mapsto f+g$. Shifting its
+arguments shifts this sum by the total shift. CAT(0) convexity makes
+addition $1$-Lipschitz in each argument. Given events $H_1,\ldots,H_N$
+in a fixed order, start with $V_0=0$ and form
+$V_i=V_{i-1}+1_{H_i}$. At each step the grid of the current flag and the next
+indicator defines the new flag, and their pair law gives its
+distribution. The final flag
+$V=V_N$ is the \emph{insertion sum} for this order.
+
+Write $D_j$ for the current threshold at level $j\ge1$, and put
+$D_0=X$. After inserting an event $H$, the threshold becomes
+\begin{equation}\label{flag:thresholdupdate}
+ D_j^{\mathrm{new}}=D_j+(H\cap D_{j-1})\qquad (j\ge1).
+\end{equation}
+Indeed, the upper set for $V_{i-1}+1_H\ge j$ consists of the old
+threshold together with the part of level $j-1$ that meets $H$. Thus
+after two insertions the first two thresholds are the sum and the
+intersection of the events. In general $V$ is nonnegative and
+integer-valued. Its first $m$ threshold dimensions sum to
+$\mathbb E\min(m,V)$, the count that can fit into $m$ row directions.
+The next lemma realizes this quantity as a lower bound on column rank.
+
+\begin{lemma}[Insertion along a curve]\label{flag:insertion}
+Let $v(t)\in K(t)^m$ be regular at zero and suppose its Taylor
+coefficient columns span $K^m$. Read the coefficients in order of
+degree, retaining each that increases the span. Denote the retained
+basis by $e_1,\ldots,e_m$. Let $D_j$ be the thresholds obtained by
+inserting $H_1,\ldots,H_N$ in that order. For every subspace expression
+$U\subseteq X^m$ and $\varepsilon>0$, there are parameters with
+\[
+ \dim_*\!\left(U+\sum_{i=1}^N v(t_i)H_i\right)
+ \ \ge\ \dim_*\!\left(U+\sum_{j=1}^m e_jD_j\right)-\varepsilon .
+\]
+One tuple $(t_1,\ldots,t_N)\in K^N$ can meet finitely many such tests
+with the same curve and insertion order, allowing the events and $U$
+to vary between tests. It can be chosen in any specified nonempty
+principal open subset of $K^N$, avoiding poles and pairwise
+coincidences. For $v(t)=(1,t,\ldots,t^{m-1})^\top$ and $U=0$, the
+lower bound is $\mathbb E\min(m,V)-\varepsilon$.
+\end{lemma}
+
+
+For the curve $(1,t,t^2)^\top$, suppose the earlier events have
+supplied $e_1L_1+e_2L_2+e_3L_3$ with $L_1\supseteq L_2\supseteq L_3$.
+At $t=0$ the new column supplies $H$ along $e_1$. On $H\cap L_1$
+the old space $e_1L_1$ can cancel the constant term of the new column.
+Dividing by $t$ exposes $e_2$ at zero. On $H\cap L_2$ the old spaces
+can cancel both lower terms, exposing $e_3$ after division by $t^2$.
+Specializing all three expressions together captures the three
+contributions in~\eqref{flag:thresholdupdate}.
+
+\begin{proof}
+We first record a specialization estimate for the dimension of $B(t)T$,
+where $T$ is any fixed subspace expression and $B$ is a polynomial
+matrix of degree at most $b$. At $q>b$ distinct scalars $a_i$,
+\begin{equation}\label{flag:special}
+ \sum_{i=1}^q\dim_* B(a_i)T\ \ge\ (q-b)\dim_* B(0)T .
+\end{equation}
+Take independent inputs from $T$ as the $q-b$ coefficients of a vector
+polynomial $p$ of degree less than $q-b$. Evaluating $B(t)p(t)$ at the
+$a_i$ places the joint output in $\bigoplus_i B(a_i)T$.
+Scalar interpolation recovers its coefficients since its degree is less
+than $q$. Its first $q-b$ coefficients are a lower triangular block map
+of the inputs with diagonal block $B(0)$. Its image has dimension at
+least $(q-b)\dim_*B(0)T$. Project onto the first output, whose
+dimension is $\dim_*B(0)T$. The kernel contains the image obtained
+by setting the first input to zero, a triangular map of the same
+form with one fewer input. Proposition~\ref{flag:dimension} now
+adds the bounds for the image and kernel. This proves
+\eqref{flag:special} by induction. If $R=\dim_* B(0)T$, a set of
+$q>b$ parameters each losing at least $\eta>0$ satisfies
+$q(R-\eta)\ge(q-b)R$, whence $q\le bR/\eta$. In particular all
+but finitely many $a$ have $\dim_* B(a)T\ge R-\eta$.
+Clearing common denominators gives the same conclusion for rational
+maps regular at zero.
+
+Let $L_j$ be the thresholds before the last insertion and put $L_0=X$.
+Consider the expression
+\[
+ U+v(t)H_N+\sum_{j=1}^m e_j L_j .
+\]
+Write $v(t)=\sum_h c_h t^h$ at zero and $e_j=c_{h_j}$. For each $j$
+add an independent input from $H_N\cap L_{j-1}$ along
+\[
+ w_j(t)=t^{-h_j}\!\left(v(t)-\sum_{h<h_j}c_h t^h\right).
+\]
+This is regular at zero with $w_j(0)=e_j$. Every coefficient of the
+subtracted prefix lies in the span of $e_1,\ldots,e_{j-1}$. Since
+$L_{j-1}\subseteq L_i$ for $i<j$, the extra inputs leave the image
+unchanged away from zero and the poles. At zero they supply all the
+new terms $e_j(H_N\cap L_{j-1})$ in \eqref{flag:thresholdupdate}.
+Apply the specialization estimate to the direct sum of all the fixed
+input expressions, including the new inputs. At zero its image contains
+$U+\sum_j e_jD_j$ for the updated thresholds. At every nonzero regular
+parameter the image equals the expression before the extra inputs were
+added. For each test all but finitely many $t_N$ therefore attain the
+required bound with slack $\varepsilon/N$.
+
+Choose $t_N$ good for every test and such that the prescribed principal
+open has a nonempty slice in the remaining variables. For the latter
+condition it suffices to keep a nonzero coefficient of its defining
+polynomial, viewed as a polynomial in those remaining variables,
+nonzero at $t_N$. There are only finitely many excluded values and $K$
+is infinite. For $N=1$ this choice proves the result. For $N>1$ apply
+induction to the earlier insertions with fixed part $U+v(t_N)H_N$ and
+the remaining slack. Distinctness and pole
+avoidance can be included in the initial principal open. The case $N=0$
+is immediate.
+\end{proof}

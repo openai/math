@@ -1,0 +1,230 @@
+\section{Classification of graph state sums}\label{sec:graph-classification}
+
+The three separation witnesses also determine which graph families
+admit polynomial-size computations of their state sums. Recall that
+\(Z_{G,q}\) assigns a separate variable to every choice of the
+\(q\)-valued labels on the
+edges incident to each vertex, as in Equation~\eqref{eq:graph}.
+We measure size in terms of the number \(d\) of vertices and the
+alphabet size \(q\). A single vertex of degree \(t\) thus supplies
+\(q^t\) distinct input variables. In a multigraph every parallel edge
+carries its own label and counts separately towards degrees and cuts.
+
+Write \(m(G)\) for the largest order of a connected component and
+\(\Delta(G)\) for the maximum degree. The \emph{cutwidth}
+\(\operatorname{cw}(G)\) is the minimum, over vertex orders, of the
+largest number of edges crossing from a prefix to its complement.
+A \emph{tree decomposition} consists of a tree of vertex sets, called
+bags. The bags containing a given vertex form a nonempty connected
+subtree, and the two ends of each edge belong to a common bag. The
+\emph{treewidth} \(\operatorname{tw}(G)\) is the minimum largest bag
+size minus one. Requiring the decomposition tree to be a path gives
+\emph{pathwidth}, denoted by \(\operatorname{pw}(G)\).
+
+\begin{theorem}[Polynomial-size graph state sums]\label{thm:graph-classification}
+Fix a field and a class \(\mathcal G\) of nonempty finite loopless
+multigraphs. In each model below, a single polynomial in \(d+q\)
+bounds the size of \(Z_{G,q}\) for every \(G\in\mathcal G\) and
+every integer \(q\ge2\) if and only if the indicated parameters
+are bounded on \(\mathcal G\).
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textup{Arithmetic model} & \textup{Bounded graph parameters}\\
+\midrule
+Formula & \(m(G)\) and \(\Delta(G)\)\\
+Algebraic branching program & \(\operatorname{cw}(G)\)\\
+Circuit & \(\operatorname{tw}(G)\) and \(\Delta(G)\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+For a sequence \(G_n\) with \(|V(G_n)|\le n^{O(1)}\), the same criteria,
+uniformly in \(n\), characterize polynomial size for \(Z_{G_n,n}\).
+In both formulations the upper bounds hold for exact computation, and
+the necessary conditions already hold for degree-component border size.
+\end{theorem}
+
+\subsection{The degree obstruction}
+
+Two vertices joined by \(t\) parallel edges give a dot product of two
+tables of length \(q^t\). This graph has component order two and
+treewidth one for every \(t\). The coefficient matrix of the dot
+product is the \(q^t\)-by-\(q^t\) identity. The same obstruction occurs
+at any vertex \(v\) of degree \(t\). Flatten the coefficient tensor
+across the slot at \(v\) and all remaining slots. Each of its \(q^t\)
+rows has nonempty support, since every choice of incident labels
+extends to a full edge labeling. The supports are disjoint, since the
+table indices at the neighbors determine all these labels. The rank is
+therefore \(q^t\) over every field.
+
+This rank bound still detects large tables when affine input forms
+are free. For a size-\(s\) computation, let \(U\) be the span of the
+linear parts of its affine inputs in the variables at \(v\). There are
+\(O(s+1)\) such inputs in each of the three models. In the part of the
+output linear in those variables, each product of input forms takes
+its \(v\)-linear term from exactly one factor. Extracting a coefficient
+in the other slots therefore gives a vector in \(U\). The flattening
+has rank at most \(\dim U=O(s+1)\). Since this condition is defined
+by vanishing minors of the slot tensor, it holds also on the
+degree-component closure.
+
+Consequently a polynomial size bound requires bounded degree. For a
+graph class take \(q\ge\max\{2,d\}\) arbitrarily large for each \(G\).
+For a sequence take \(q=n\). In both cases the bound
+\(q^{\Delta(G)}=O(s+1)\) forces a uniform bound on \(\Delta(G)\).
+In the branching-program row, cutwidth already controls degree. In
+any order the edges incident to \(v\) cross either the cut immediately
+before \(v\) or the cut immediately after it, so
+\(\Delta(G)\le2\operatorname{cw}(G)\).
+
+\subsection{Exact computations from graph decompositions}
+
+\paragraph{Formulas.}
+The state sum factors over connected components. In a component on
+at most \(a\) vertices, enumerate its at most \(q^{\Delta(G)a/2}\)
+edge labelings. Each labeling contributes one product of local table
+entries. Summing these products within each component and multiplying
+the results gives a formula of size \(O((d+1)q^{\Delta(G)a/2})\).
+An isolated vertex contributes its single variable.
+
+\paragraph{Branching programs.}
+Take an order of cutwidth \(k\), and place one layer after each
+prefix. A state records the labels of the at most \(k\) edges that
+cross the current cut. At the next vertex, the state gives the labels
+on its backward edges. Choose labels for its forward edges, read the
+resulting table entry as the transition weight, and retain just the
+labels that cross the next cut. Every full edge labeling determines
+one source--sink path of the required weight, and every such path
+comes from a labeling. There are at most \(dq^{k+\Delta(G)}\)
+transitions.
+
+\paragraph{Circuits.}
+A tree decomposition of width \(k\) yields a circuit of size
+\(O((d+1)q^{\Delta(G)(k+1)})\). Contract adjacent bags whenever one
+contains the other, keeping the larger bag, and root the remaining
+tree. Each nonroot bag contains a vertex absent from its parent.
+By connectedness this is the highest occurrence of that vertex,
+so the decomposition has at most \(d+1\) bags.
+
+Assign each vertex table to a bag containing the vertex. Replace
+the vertex set of each bag by the list of all edges incident to that
+set. The new list has at most \(\Delta(G)(k+1)\) entries and includes
+every edge label needed by a table assigned there. For each edge,
+the bags containing it still form a connected subtree, since the
+subtrees of its endpoints intersect. This construction is related to
+the characterization of edge contraction complexity by line-graph
+treewidth due to Markov and Shi~\cite{MarkovShi}.
+
+Compute a table at each bag, starting at the leaves. For each assignment
+on its edge list, multiply the local vertex entries by the child
+tables evaluated on the edges common to the child and the bag. Sum
+these values over the labels absent from the parent. The resulting
+table is indexed by the labels shared with the parent. Connectedness
+ensures that every label used on both sides of this boundary occurs
+in the intersection, and that each other label is summed out exactly
+once. At the root the output is \(Z_{G,q}\). The total number of
+child factors and assigned vertex tables over all bags is \(O(d+1)\),
+giving the stated gate count.
+
+\subsection{Transferring lower bounds through graph minors}
+
+To use a graph minor \(H\), we must convert a computation for its
+host \(G\) into one for \(Z_{H,q}\). Each vertex of \(H\) is represented
+by a connected set of host vertices. The construction routes the labels
+entering this set to a single vertex, where its table entry is read.
+The required host alphabet depends only on the degree of \(H\).
+
+\begin{lemma}[Projection to a minor]\label{lem:graph-minor}
+Let \(H\) be a loopless minor of a finite loopless multigraph \(G\),
+and set \(b=\max\{1,\lfloor\Delta(H)/2\rfloor\}\).
+If \(q^b\le n\), then \(Z_{H,q}\) is a projection of \(Z_{G,n}\)
+using only variables, zero and one.
+\end{lemma}
+
+\begin{proof}
+Choose disjoint connected branch sets for the vertices of \(H\).
+For each edge of \(H\), choose a distinct host edge joining its two
+branch sets. Use the first \(q\) states on each chosen edge to carry
+its label. Within the branch set for a vertex \(v\), choose a spanning
+tree and weight each tree vertex by the number of chosen edges meeting
+it. The total weight is \(\deg_H(v)\). Root the tree at a weighted
+centroid, so every component below the root has at most half the total
+weight. To find such a root, move into any neighboring component of
+weight greater than half. Each move leaves less than half the weight
+behind, so this walk on a finite tree terminates.
+
+Fix an ordering of the chosen edges. On each tree edge from a child
+to its parent, encode in one host state the tuple of labels entering
+the child's subtree, in the induced order. The tuple has at most
+\(\lfloor\deg_H(v)/2\rfloor\) entries, so \(q^b\le n\) makes all its
+values available. At a nonroot vertex, set a local entry to one
+precisely when the tuple sent to its parent agrees with the tuples
+from its children and the labels of the chosen edges meeting the
+vertex. At the root these same data specify the entire tuple at \(v\).
+Use the corresponding variable of \(Z_{H,q}\) there. This also covers
+an isolated vertex of \(H\), whose tuple is empty.
+
+Pin all unused edges to a single state and give unused vertices
+weight one on legal inputs. Set inconsistent table entries and unused
+encodings to zero. Each labeling of \(H\) extends uniquely to a
+surviving host labeling, because every tuple on a tree edge is forced
+by the chosen external labels. The corresponding monomial is exactly
+the product of the variables read at the roots.
+\end{proof}
+
+\begin{proof}[Necessity in Theorem~\ref{thm:graph-classification}]
+First consider a sequence \(G_n\) of polynomially bounded order.
+The degree obstruction allows us to assume \(\Delta(G_n)\) bounded.
+Each of the remaining unbounded parameters forces its own witnesses.
+
+\begin{itemize}
+\item If component order is unbounded, arbitrarily long paths occur
+as subgraphs. In a graph of bounded degree, balls of any fixed radius
+have bounded order.
+\item If cutwidth is unbounded, so is pathwidth. Indeed
+\[
+ \operatorname{pw}(G)\le\operatorname{cw}(G)
+ \le\Delta(G)(\operatorname{pw}(G)+1).
+\]
+For the first inequality, form each path bag from the next vertex in
+an order and the processed vertices with an edge to an unprocessed
+vertex. For the second, order the vertices by their first occurrence
+in a path decomposition. At each cut, every processed vertex with a
+future neighbor belongs to the bag in which the next vertex first
+occurs. The crossing edges are therefore incident to at most
+\(\operatorname{pw}(G)+1\) processed vertices. The excluded-forest
+theorem gives complete binary trees of arbitrarily many levels as
+minors~\cite{BRST}.
+\item If treewidth is unbounded, square grids of arbitrarily large side
+length occur as minors by the excluded-grid theorem
+\cite{RSgrid,ChekuriChuzhoy}.
+\end{itemize}
+
+Treewidth and pathwidth depend only on the underlying simple graph.
+The tree and grid minors just obtained are thus also minors of the
+original multigraphs. For every fixed witness size, the corresponding
+minor occurs along a subsequence with \(n\to\infty\).
+Lemma~\ref{lem:graph-minor} retains \(q=n\) for paths and binary trees
+and permits \(q=\lfloor\sqrt n\rfloor\) for grids.
+
+Suppose the host border size were polynomial in \(n\).
+Lemma~\ref{lem:projection}, applied with host degree \(|V(G_n)|\),
+would give an upper bound \(n^C\) for all projected witnesses, with
+\(C\) independent of the witness size. But the short-witness lower
+bounds grow as \(q^{\Omega(\log d')}\) for formulas on a path of
+\(d'\) vertices, \(q^{\Omega(\sqrt h)}\) for ABPs on a binary tree of
+\(h\) levels, and \(q^{\Omega(\sqrt r)}\) for circuits on an
+\(r\)-by-\(r\) grid (Theorems~\ref{thm:full-flat-graph},
+\ref{thm:b} and~\ref{thm:grid}). Choose the witness size large enough
+that its exponent in \(n\) exceeds \(C\), even accounting for the
+square root in the grid alphabet. Then take \(n\) sufficiently large
+along the corresponding subsequence so that the hypotheses of the
+short-witness bound hold. This proves necessity for sequences.
+
+Finally, if a graph class has an unbounded parameter in its row, choose
+graphs on which that parameter tends to infinity. Give each graph a
+distinct index \(n\) at least its order and fill the other indices from
+one fixed graph in the class. A uniform polynomial bound in \(d+q\)
+would give a polynomial bound in \(n\) for this sequence at \(q=n\),
+contrary to the preceding argument.
+\end{proof}

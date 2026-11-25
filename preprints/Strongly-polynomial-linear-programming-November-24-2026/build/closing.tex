@@ -1,0 +1,70 @@
+\section{Tropical feasibility and further questions}\label{sec:closing}
+
+The prices in the LP algorithm enter a comparison by addition to a logarithmic
+magnitude. A system of tropical linear inequalities makes such comparisons
+directly. Akian, Gaubert and Guterman~\cite{AGG} related its feasibility
+to the values of a mean-payoff game (see also~\cite{MSS,DG}).
+Theorem~\ref{thm:games} thus gives one further algorithmic consequence.
+
+\begin{corollary}[Tropical linear feasibility]\label{cor:tropical}
+Let \(a_{ri},b_{ri}\) be explicitly given entries in
+\(\RR\cup\{-\infty\}\) of two \(m\times n\) matrices.
+For the system
+\[
+                \max_i(a_{ri}+x_i)\ \le\ \max_j(b_{rj}+x_j)
+                  \qquad\text{for every row \(r\)},
+\]
+a deterministic strongly polynomial algorithm finds a solution in
+\((\RR\cup\{-\infty\})^n\) finite at every coordinate that can be
+finite in any solution. An empty maximum equals \(-\infty\).
+\end{corollary}
+
+\begin{proof}
+Use the game of~\cite{AGG}. At coordinate \(i\), Min may choose any row
+\(r\) with \(a_{ri}\) finite. At row \(r\), Max may choose any coordinate
+\(j\) with \(b_{rj}\) finite. The two successive edges have rewards
+\(-a_{ri}\) and \(b_{rj}\). Give a vertex with no move a self-loop of
+reward zero if it belongs to Min, and of reward \(-1\) if it belongs to Max.
+
+A coordinate \(i\) finite in a solution has nonnegative game value.
+After Min chooses a row there, Max takes a term attaining the right-hand
+maximum. Its coordinate \(j\) is finite and
+\(-a_{ri}+b_{rj}\ge x_i-x_j\). Summing over the play telescopes.
+The finite coordinates form a finite set, so the bounded endpoint
+contribution vanishes in the mean payoff.
+
+Conversely, compute the values and fix an optimal policy for Max by
+Theorem~\ref{thm:games}. From a coordinate of nonnegative value, Min can
+reach no negative-weight cycle under this policy, since Min could then
+repeat the cycle. In particular, every reachable Max vertex has a move
+in the original game. At each coordinate reachable from a nonnegative-value
+start, set \(x_i\) to the least total weight of a walk starting at \(i\)
+with Max's policy fixed, allowing the empty walk. Erasing cycles shows
+that a simple walk attains the minimum. At all other coordinates put
+\(x_i=-\infty\). For each permitted pair of moves \(i,r,j\) from a
+finite coordinate, concatenating the two moves with a minimizing walk
+from \(j\) gives \(x_i\le -a_{ri}+b_{rj}+x_j\). Hence the row
+inequalities hold. Dynamic programming over walks of length at most
+the number of vertices computes the minima in strongly polynomial time.
+\end{proof}
+
+A constant term in a maximum can be homogenized by adding one coordinate.
+The original system is feasible precisely when this coordinate can be finite.
+In that case subtract its value from every coordinate to recover a solution.
+
+\paragraph{Further questions.}
+Allamigeon, Benchimol, Gaubert and Joswig~\cite{ABGJgame} showed how a
+strongly polynomial combinatorial simplex algorithm could yield strongly
+polynomial time for mean-payoff games. The algorithm of Theorem~\ref{thm:lp}
+uses quantitative comparisons of minors as well as their signs. Some
+comparisons in Section~\ref{sec:compression} have degree exponential in
+the dimensions. Can a strongly polynomial LP algorithm use predicates of
+polynomial degree throughout?
+
+Theorem~\ref{thm:lp} takes the constraints as explicit input. For a
+polyhedron given by a separation oracle, known exact algorithms also
+involve geometric parameters~\cite{DVZ26}. A further question concerns
+transition probabilities in games. Theorem~\ref{thm:games} permits
+arbitrary real probabilities for one player. For two players its step
+bound still depends on the bit lengths of the probabilities.
+Can that dependence be removed?

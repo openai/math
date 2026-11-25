@@ -1,0 +1,105 @@
+\subsection{Earlier approaches to strongly polynomial time}
+\label{sec:lp-context}
+
+The first polynomial-time algorithms for general linear programming
+measure the size of a rational instance in bits. Khachiyan's ellipsoid
+algorithm~\cite{Khach,Khach2} draws on the cutting-plane methods of
+Shor and Yudin--Nemirovskii~\cite{Shor,YN}. In its feasibility argument,
+the volume of the enclosing ellipsoid falls by a controlled factor at
+each cut. Determinant bounds in terms of the input length tell the
+algorithm when that volume is too small to contain a feasible region
+of the required thickness~\cite{GLS}. Karmarkar's projective
+algorithm~\cite{Kar} gave a second route to polynomial bit complexity.
+Subsequent interior-point methods follow solutions of penalized problems
+as the penalty for approaching the boundary decreases~\cite{NN}.
+Faster linear algebra reduces the work per solve~\cite{Ren,Vai,CLS,VDB},
+while exact recovery still has to account for the input
+precision~\cite{GPV}. Even on the interval $[0,1]$, the objective
+$x\mapsto 2^{-L}x$ gives the two vertices values only $2^{-L}$ apart.
+Intervals of radius $2^{-k}$ around these values are disjoint only for
+$k>L+1$. A single exact sign comparison selects the optimal endpoint.
+
+\paragraph{Removing dependence on the data.}
+Tardos first obtained a strongly polynomial algorithm for minimum-cost
+circulation~\cite{TarCirc}, then showed that the arithmetic operation
+count for a rational LP can depend on the encoding length of the
+constraint matrix alone~\cite{Tardos}. This gives a strongly polynomial
+bound whenever the entries of the matrix have polynomial encoding length
+in the dimensions, including matrices with entries in $\{0,1,-1\}$.
+Frank and Tardos~\cite{FT} replace a vector by a short integer vector
+whose inner products with bounded integer vectors have the same signs.
+When the constraint matrix has short entries, this lets one compress
+the objective and the right-hand side while preserving the comparisons
+needed for optimization~\cite[\S6.6]{GLS}.
+
+A different source of strongly polynomial bounds is structure in the
+constraint matrix. Megiddo solved LP in linear time for fixed
+dimension~\cite{MegLin}, and solved feasibility for inequalities
+involving at most two variables each~\cite{Meg}. Generalized flow
+maximization supplies a related class with at most two nonzeros per
+column~\cite{Vegh,OV}. Dadush, Koh, Natura, Olver and V\'egh obtained a
+strongly polynomial optimization algorithm for every matrix with at
+most two nonzeros in each row or at most two in each
+column~\cite{DKNOV}. Their later work treats classes for which the
+central path has polynomial straight-line complexity~\cite{DKNOV26}.
+
+\paragraph{Geometry of the constraint matrix.}
+For a real matrix $A$, Vavasis and Ye~\cite{VY} gave a path-following
+algorithm whose iteration bound depends on the dimensions and the
+logarithm of a condition measure of $A$. Their layered least-squares
+steps can cross several numerical scales at once. A related condition
+measure in standard form $Ax=b$, $x\ge0$ has a concrete description.
+A \emph{circuit} of $A$ is a nonzero kernel vector of minimal support.
+The \emph{circuit imbalance} is the largest ratio of magnitudes of
+two nonzero coordinates in the same circuit~\cite{Rock,CIRC}.
+Dadush, Huiberts, Natura and V\'egh~\cite{DHNV} obtained an iteration
+bound in terms of the best condition achievable by diagonal scaling of
+the columns. Circuit imbalance also controls the precision needed in
+an approximate-to-exact solver~\cite{DNV}.
+
+Even the best rescaling can leave large ratios in a fixed dimension.
+For $0<u<1$, the matrix
+\[
+ A=\begin{pmatrix}1&0&1&u\\0&1&u&1\end{pmatrix}
+\]
+has circuits $(-1,-u,1,0)$ and $(-u,-1,0,1)$. The ratios of the
+magnitudes of their first two coordinates are $1/u$ and $u$.
+Any positive diagonal column scaling multiplies these two ratios by the
+same factor, so at least one ratio or its reciprocal is at least $1/u$.
+A separate obstruction comes from the central path itself. Allamigeon,
+Benchimol, Gaubert and Joswig constructed instances requiring
+exponentially many segments to follow the logarithmic central path
+in a prescribed neighborhood~\cite{ABGJ}. Allamigeon, Gaubert and
+Vandame extended this obstruction to path-following with
+self-concordant barriers~\cite{AGV}.
+
+\paragraph{Edge paths and rescalings.}
+Early applications ranged from Kantorovich's production planning~\cite{Kan}
+to the computation of optimal strategies in zero-sum matrix games by LP
+duality~\cite{Gale}. Dantzig's simplex method exploits the geometry of these
+problems by moving between adjacent feasible bases~\cite{Dantzig}.
+Klee and Minty exhibited exponentially long runs for a classical
+choice of pivot~\cite{KM}. Randomized pivot rules achieve
+subexponential bounds~\cite{Kalai,MSW}, and smoothed analysis gives
+polynomial expected bounds in the dimensions and the inverse noise
+scale~\cite{ST,BH}. Awoniyi has proposed a different pivot-based
+approach to strongly polynomial LP~\cite{Awon}.
+
+Even the shortest possible edge walk can be long. Kalai and
+Kleitman proved a quasipolynomial diameter bound for polyhedral
+graphs~\cite{KK}, and Santos disproved the original Hirsch bound of
+the number of facets minus the dimension~\cite{Santos}. The companion
+paper~\cite{OAIHirsch} constructs simple rational polytopes whose
+graph diameter grows faster than any polynomial in their number of
+facets. A circuit walk can leave the edge graph by taking a maximal
+feasible step in a circuit direction. Natura constructs polynomial-length
+monotone circuit walks between specified vertices~\cite{Natura}.
+
+The algorithm of Theorem~\ref{thm:lp} searches over coordinate
+rescalings. In earlier rescaling algorithms, finding that one coordinate
+must be small in every normalized feasible point can guide a change
+of scale that improves the geometry~\cite{Betke,DV,Chu,DVZ,PS}. Here a
+rescaling selects the coordinates on which a primal or dual witness
+can be detected. Section~\ref{sec:overview} explains how the algorithm
+combines such observations, even when the initial system has arbitrarily
+large circuit imbalance.

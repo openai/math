@@ -1,0 +1,274 @@
+\section{Tensor prices and wire distances}\label{sec:prices}
+
+A tensor network supplies a coefficient array by sending labels along
+wires and contracting tensors at their endpoints. A price assigns a
+number to the array once its indices have been placed at sites. Local
+linear maps can only decrease that number, and the prices of independent
+wires add. Thus the wires in a network must together pay at least the
+price of its output. We will also need the cost of two operations on a
+network, moving an output index and summing several possible supplies.
+Throughout this section and Part~\ref{part:no}, we use natural logarithms
+for prices. This multiplies the base-two prices of \cite{oaG} by
+$\log 2$ and preserves the units of wire distance.
+
+\subsection{Local maps, placements and limits of tensors}
+
+Fix a field $K$ and a finite set $J$ of at least two sites. A
+\emph{restriction} acts on a tensor by a linear map at each site
+(or by precomposition when the tensor is viewed as a multilinear
+form). Two operations combine tensors on $J$. The tensor product
+groups the corresponding factors at each site. The direct sum places
+the two tensors in disjoint blocks of the local spaces. Up to mutual
+restriction, these operations form the tensor semiring in Strassen's
+asymptotic spectrum \cite{Strassen}.
+
+A \emph{spectral point} $\varphi$ is a nonnegative real-valued
+function on this semiring. It is monotone under restriction,
+multiplies on tensor products, adds on direct sums, and preserves
+zero and one. Matrix rank after flattening across a fixed nontrivial
+bipartition is one example. Choose a scale $D>0$ and put
+$H(T)=D\log\varphi(T)$, with $H(0)=-\infty$. Every nonzero tensor
+restricts to a nonzero simple tensor, so $H(T)\ge0$ for $T\ne0$.
+
+To share one label with $q$ possible values among the sites of a
+nonempty $A\subseteq J$, use the diagonal tensor
+\[
+ \Delta_A(q)=\sum_{i=1}^q\bigotimes_{a\in A}e_i,\qquad
+ \delta(A)=H(\Delta_A(2))/\log 2 ,
+\]
+with one-dimensional slots outside $A$. Tensor products multiply
+label sizes, and restriction can reduce them. Comparing powers of
+$q$ with powers of two therefore gives $H(\Delta_A(q))=\delta(A)\log q$.
+In particular $\delta(J)=D$, since $\Delta_J(q)$ is the direct sum of
+$q$ unit tensors. For $a\ne b$, the two-site diagonal is a wire from
+$a$ to $b$. Its rate $d(a,b)=\delta(\{a,b\})$ defines a pseudometric
+when $d(a,a)=0$. Joining two wires gives the triangle inequality.
+A diagonal restricts to a wire between any pair of its sites.
+Conversely, equating the labels on the edges of a tree spanning $A$
+supplies the diagonal, even if the tree uses auxiliary vertices.
+Consequently
+\[
+    \operatorname{diam}(A)\leq\delta(A)\leq
+    \sum_{uv\ \mathrm{in\ the\ tree}}d(u,v).
+\]
+
+In a \emph{spectral space}, every finite set $A$ of positive diameter
+carries a price $H_A=\delta(A)\log\varphi_A$ that induces the given
+wire distances. The prices agree when one adds one-dimensional slots,
+and a nonzero tensor supported at a single site has price zero. The
+metric quotient of the sites of any spectral point carries this
+structure \cite[Section~\ext{G}{sec:spectra}]{oaG}. A \emph{placement}
+$x=(x_i)$ assigns each index of a tensor $T$ to a site. Group indices
+assigned to the same site and write $H(T;x)$ for the resulting price.
+A local map may act jointly on all indices at its site.
+
+\par\Needspace{6\baselineskip}
+\begin{lemma}[Price inequalities]\label{price:rules}
+Let $T\ne0$ have local dimensions $q_i$ and let $x,y$ be two placements
+in one spectral space. Then
+\begin{equation}\label{price:transport}
+   |H(T;x)-H(T;y)|\leq\sum_i d(x_i,y_i)\log q_i .
+\end{equation}
+For $L\ge1$ tensors of the same format at sites in $A$,
+\begin{equation}\label{price:sum}
+    H\left(\sum_{j=1}^L T_j\right)
+       \leq\max_j H(T_j)+\delta(A)\log L.
+\end{equation}
+At fixed placement and format over an algebraically closed field, every
+price sublevel is Zariski closed.
+\end{lemma}
+
+\begin{proof}
+A wire of dimension $q_i$ can transport index $i$ from $x_i$ to $y_i$
+by a contraction. Reversing the move proves Equation~\eqref{price:transport}.
+Folding the local summand spaces takes a direct sum to an ordinary
+sum. Apply additivity of $\varphi_A$ and take logarithms to obtain
+Equation~\eqref{price:sum}. At a single site every nonzero sum has
+price zero.
+
+For closedness, let $U$ lie in the closure of a set of tensors of
+price at most $b$ in an ambient tensor space of dimension $v$.
+For every $h\ge1$, the map $T\mapsto T^{\otimes h}$ is polynomial.
+The span of its values on the set is closed and hence contains
+$U^{\otimes h}$. Expanding in degree-$h$ monomials in the entries
+of $T$ bounds the dimension of this span by
+$\binom{v+h-1}{v-1}$. Express $U^{\otimes h}$ in a basis of such
+powers. Scaling a tensor by a nonzero constant preserves its price.
+Equation~\eqref{price:sum} thus gives
+\[
+ hH(U)\le hb+\delta(A)\log\binom{v+h-1}{v-1},
+\]
+where $A$ is the set of occupied sites. Dividing by $h$ and letting
+$h\to\infty$ proves the claim
+\cite[Lemma~\ext{G}{lem:spectral-closure}]{oaG}
+(see also \cite{SpectralSublevels}).
+\end{proof}
+
+For a network with fixed output sites, applying its local coefficient
+tables to the product of its wire tensors supplies the output by
+restriction. The sum of the wire prices therefore bounds the output
+price, including in a limit at the same format. If a network shares
+one label across several sites, its contribution is the corresponding
+diagonal price. Equation~\eqref{price:sum} gives the same charge for
+the common label selecting a summand.
+
+\subsection{The spaces of wire distances}
+
+A Hadamard space is a complete geodesic $\operatorname{CAT}(0)$ space.
+Every spectral space extends isometrically to a Hadamard spectral
+space that preserves its prices. The price of a nonzero tensor is
+convex as its indices move simultaneously along constant-speed
+geodesics. Three operations preserve spectral realizability. One can
+rescale the metric and all prices by a common positive factor, pass
+to a closed convex subspace, or take a pointed ultralimit
+\cite[Theorem~\ext{G}{thm:geometry}, Proposition~\ext{G}{prop:joint-convexity}
+and Section~\ext{G}{sec:limits}]{oaG}. For an ultralimit,
+Equation~\eqref{price:transport} bounds the price on bounded
+configurations and ensures independence of the representing sequences.
+
+Let $\mathcal X_\chi$ denote the class of Hadamard spaces admitting
+spectral prices over a field of characteristic $\chi$. The geometry
+depends only on $\chi$. Indeed, scalar extension preserves the
+possible simultaneous spectral values of tensors over the subfield
+\cite[Lemma~\ext{G}{lem:comparison}]{oaG}, and every binary wire is
+defined over the prime field. Finite wire-distance tables suffice to
+recover a spectral structure on a Hadamard space. Fix a basepoint
+and take a pointed ultralimit of realizations of its finite subsets
+containing that point. An ultrafilter containing every tail gives an
+isometric copy of the space, to which the limiting prices restrict.
+We may therefore work over an uncountable algebraically closed field
+of the chosen characteristic.
+
+A class of metric spaces \emph{admits ports} if regular multigraphs
+of a single positive degree and unbounded orders satisfy a uniform
+Poincar\'e inequality for squared distances in all its spaces, as in
+Section~\ref{sec:intro}. We allow symmetric nonnegative integral arc
+counts of the given row sum, including diagonal entries. The condition
+for $\mathcal X_\chi$ is precisely port admission by $\chi$
+\cite[Definition~\ext{G}{def:ports}]{oaG}. Taking a metric quotient,
+duplicating sites, or rescaling their distances preserves the inequality.
+
+\subsection{The cost of sharing the summand index}
+
+The balanced-cut decomposition in Part~\ref{part:no} will have at most
+$2^d$ summands for $d$ row sites in a unit ball. By
+Equation~\eqref{price:sum}, the charge for choosing the summand
+depends on the diagonal rate of the row sites. The tree bound can grow
+linearly in the number of sites. In the spaces we use, the following
+estimate reduces this growth to the square root of its logarithm.
+
+If $\chi$ has no ports, Theorem~\ref{prod:main} gives a subclass of
+$\mathcal X_\chi$ that still has no ports and is closed under finite
+$\ell_2$ products, positive rescaling, closed convex subspaces and
+pointed ultralimits. This subclass contains a nontrivial segment,
+since a class of one-point spaces admits every port family. Rescaling
+segments and taking a pointed limit gives a line. Products of lines
+and pointed limits then give a copy of the separable Hilbert space
+$\ell_2$ (pass to the closed convex subspace generated by the
+coordinate directions). Thus for $Y$ in the subclass we can place a
+configuration in $Y\times\ell_2$ at Hilbert coordinate zero and choose
+spectral prices on the product.
+
+When $Y$ is a metric cone with tip $o$, these prices can be made
+positively homogeneous under radial dilations. For $T\ne0$ replace
+$H(T;x)$ by
+\[
+       \lim_{s\downarrow0} H(T;s x)/s .
+\]
+Joint convexity and the zero price at the tip give the limit. It is
+also an ultralimit of the rescaled spectral prices, so it has the
+same wire metric and satisfies the spectral axioms. This construction
+applies to products of cones as well.
+
+\begin{lemma}[Diagonal price in a ball]\label{price:diagonal}
+Let $A$ consist of $n\ge2$ sites in a ball of radius $r$ in a geodesic
+metric space $Y$. Equip $Y\times\ell_2$ with spectral prices, and
+place the sites at Hilbert coordinate zero. Then
+\[
+  \delta(A)\leq \sqrt{2\pi}\,r n\,
+  \phi\bigl(\Phi^{-1}(1-1/n)\bigr)=O(r\sqrt{\log n}),
+\]
+where $\Phi$ and $\phi$ are the standard normal distribution function
+and density.
+\end{lemma}
+
+\begin{proof}
+Rescale to $r=1$, since the claim at $r=0$ is immediate. Write $o$
+for the ball center. We will compare the marginal cost of adding
+each $a\in A$ to a ball in the Hilbert coordinates through $o$. Each
+comparison takes place in a Euclidean patch, the product of a single
+geodesic segment $[o,a]$ with a finite-dimensional Euclidean space.
+
+First we show that on any finite-dimensional convex Euclidean patch
+the diagonal rate of a finite nonempty set $V$ equals its mean width,
+\[
+ W(V)=\sqrt{2\pi}\,\EE\max_{v\in V}\langle G,v\rangle,\qquad
+ G\ \text{a standard Gaussian vector}.
+\]
+The flat law of \cite[Theorem~\ext{G}{thm:flatlaw}]{oaG} gives this
+identity on an entire Euclidean space. At a relative interior point
+$y$ of a patch, each tangent rescaling limit contains its whole
+translation space. Hence for every finite nonempty configuration $E$
+of directions in that space,
+\[
+          \lim_{h\downarrow0}\delta(y+hE)/h=W(E).
+\]
+To pass from tangent configurations to $V$, work in its convex hull.
+Adjoining any point of this hull preserves price. Indeed, the added
+leg can be copied at any existing site, and its price is convex
+in its position. Discarding the added leg gives the reverse inequality.
+Choose a relative interior point as origin and
+adjoin it to $V$. Thus $t\mapsto\delta(tV)$ has right derivative
+$W(V)$ at $t=0$.
+
+To bound its derivative at $0<t<1$, adjoin $(t+h)v$ to $tV$ for
+each $v\in V$ in turn. Write $y=tv$ and $E=tV-y$, so $0\in E$.
+For fixed $M>0$ and small $h>0$, the smaller configuration
+$y+MhE$ lies in the convex hull of $tV$ and contains $y$. Adjoin
+it at zero additional cost. Submodularity on intersecting sets
+\cite[Proposition~\ext{G}{lem:submod}]{oaG} now bounds the increment
+from adding $y+hv$ by the same increment starting from $y+MhE$
+alone. The point $y$ is interior relative to the hull of $V$. After
+division by $h$, the latter increment tends to
+\[
+             W(ME\cup\{v\})-W(ME).
+\]
+Let $M\to\infty$. Since $0\in E$, dominated convergence gives the bound
+\[
+ \sqrt{2\pi}\,\EE\!\left[
+   \langle G,v\rangle_+\,
+   \mathbf1_{\{\max_{e\in E}\langle G,e\rangle=0\}}\right].
+\]
+The event means precisely that $v$ maximizes $\langle G,\cdot\rangle$
+on $V$. Almost surely the maximizing point is unique, and its value
+is nonnegative since $0$ is in the hull. Summing these increments over
+$v$ bounds the right derivative of $\delta(tV)$ by $W(V)$.
+Convexity and continuity now give $\delta(V)=W(V)$.
+
+For $t\ge0$, take a finite net $F$ in the Euclidean ball of radius
+$t/\sqrt j$ in $j$ Hilbert directions through $(o,0)$. Monotonicity
+and submodularity give
+\[
+ \delta(A)\leq\delta(F)+
+        \sum_{a\in A}\bigl(\delta(F\cup\{a\})-\delta(F)\bigr).
+\]
+Use the patch formula for $F$ and $F\cup\{a\}$. Sending the mesh to
+zero at fixed $j$ gives the Gaussian maximum $t\|G_j\|/\sqrt j$ on
+the ball, where $G_j$ is a standard $j$-dimensional Gaussian. The same Gaussian linear functional has
+value at $a$ equal to $d(o,a)G$ for an independent standard normal $G$.
+The ball maximum tends in mean square to $t$ as $j\to\infty$, so
+\[
+ \delta(A)\leq\sqrt{2\pi}\left(t+
+          \sum_{a\in A}\mathbb E(d(o,a)G-t)_+\right)
+       \leq\sqrt{2\pi}\left(t+n\mathbb E(G-t)_+\right).
+\]
+Taking $t=\Phi^{-1}(1-1/n)$ and integrating the normal density gives
+the stated expression. Taking $t=\sqrt{2\log n}$ gives the order bound.
+\end{proof}
+
+The leading constant is sharp even on a Hilbert space. For $n$
+orthogonal unit vectors the flat law gives
+$\delta(A)=\sqrt{2\pi}\,\EE\max_{i\le n}G_i$ for independent standard
+normals $G_i$. The normal tail estimate gives
+$\EE\max_iG_i\sim\sqrt{2\log n}$, so both sides of the bound have
+leading term $2\sqrt{\pi\log n}$ at radius one.

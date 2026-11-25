@@ -1,0 +1,268 @@
+\section{Exact descent with tagged-permutation gates}\label{sec:exact}
+
+In Theorem~\ref{thm:compressor}, each summand uses few wire bits. The
+available slots may nevertheless occupy a large network, and the local
+contractions still have to be evaluated. We realize the full sum in
+one network by compressing a batch of copies together. Copies share
+the cost of specifying the wiring, and short descriptions of the local
+contractions permit simultaneous table lookup. The only gates of
+unbounded arity are tagged-permutation tests of a single length.
+
+Call a trivalent network \emph{normalized} if it has no self-loops and
+each open bit is carried by a separate equality leaf adjacent to an
+interior vertex. Inserting equality leaves and subdividing self-loops
+changes the size by at most a constant factor.
+
+\begin{proposition}[Descent with tagged-permutation gates]
+\label{prop:oracle-descent}
+Let the finite field have ports in the sense of Definition~\ref{def:ports}.
+There is an $a\in(0,1)$ with the following property. Fix $J\ge 2$.
+For every sufficiently large $h$, put $N=2^h$, let $N\le m\le N^J$,
+and let $G$ be
+a normalized trivalent network of size at most $m$ with $e$ open bits.
+There is a positive integer $d$ with $\log_2 d=O((\log h)^2)$ and an
+exact network for $G^{\otimes d}$ of size
+\[
+                      O\bigl(d(m/h^a+e\operatorname{polylog} h)\bigr)
+\]
+whose gates are trivalent except for calls to $\operatorname{Tag}(h,h)$.
+The size charges every incident bit wire, including those at calls.
+The bounds are uniform in $m$ and $G$.
+\end{proposition}
+
+\subsection{Length lifting}
+The following version of the column-sorting construction of
+Leighton~\cite{Leighton} records the total number of short sorts as
+well as their depth.
+\begin{lemma}[Lifting the length of a sort]\label{lem:sort-lift}
+Let $b\ge 16$ be a power of two. A sort of length $l\ge b$ can
+be carried out by layers of independent sorts on $b$ records,
+interspersed with fixed permutations, insertions of sentinels, and
+deletions of padding. For an absolute $C$, with
+$u=1+\log(l)/\log b$, there are at most $C u^C$ layers, using altogether
+at most $C(l/b)u^C$ sorts of length $b$. For stability it suffices to
+carry the original position through the layers.
+\end{lemma}
+
+\begin{proof}
+Pad to a power of two $L\in[l,2l)$. First suppose $L=kb'$,
+with $b'$ and $k$ powers of two and $k^2\le b'/2$. Arrange $k$
+columns of height $b'$. Sort each column. Deal its sorted entries
+cyclically into the $k$ new columns and concatenate the contributions
+within each new column. Each destination receives $b'/k$ entries from
+each source. Sort the new columns and list them in row-major order.
+For any cut in the total order, the counts of elements below the cut
+in any two new columns differ by at most $k$, since the counts from
+each source differ by at most one. In row-major order the binary
+string indicating membership below the cut thus has a prefix of ones
+and a suffix of zeros separated by a window of at most $k^2$ bits.
+
+Sort aligned blocks of $b'$ consecutive positions, then blocks shifted
+by $b'/2$, handling the end half-blocks by padding. A window inside
+an aligned block is resolved in the first pass. A window crossing an
+aligned boundary is contained in the shifted block centered on that
+boundary. Sorting the aligned blocks leaves the already ordered prefix
+and suffix outside the window intact, so the second pass resolves the
+cut. This holds for every cut. The four passes consequently sort the
+list. Each pass uses at most $2L/b'$ calls, a bound allowing for the
+two end blocks.
+
+Starting from $b_0=b$, set $b_{i+1}=2^{\lfloor(5/4)\log b_i\rfloor}$.
+For $b_i\ge16$ these powers increase, and their logarithms grow at
+least geometrically (with ratio at least $8/7$, for example).
+Whenever $b_i<L\le b_{i+1}$ we may take $b'=b_i$ in the preceding
+construction. At each recursion take the largest $b_i$ strictly below the current
+length as the child length, and pad only the end half-blocks.
+There are $O(1+\log u)$ levels. The number of sequential passes
+increases by a factor at most four per level and their combined padded
+record volume by a factor at most eight. At the bottom each full call
+uses $b$ record slots. These bounds give the stated constants. Appending
+the original position once orders all genuine records distinctly. A
+flag distinguishes sentinels and permits their deletion, including
+in intermediate calls.
+\end{proof}
+
+Apply Lemma~\ref{lem:sort-lift} with base length $b=N=2^h$.
+A stable sort of $N$ records of $O(h)$ bits costs $O(Nh)$ using
+$\operatorname{Tag}(h,h)$ gates and charging their incident wires
+(Section~\ref{sec:width}). If a payload exceeds $h$ bits, split it into a bounded number of
+fields and use the same tags for all fields. For $l<N$ pad to
+$N$. For $N\le l\le N^{O(1)}$ the ratio $\log l/\log N$ is bounded,
+so a stable sort costs $O((l+N)h)$ throughout this range. This bound
+also gives simultaneous lookup when $l$ counts the query and
+dictionary records together. Sort by key, placing the unique
+dictionary record first in each group. Scan the group to answer its
+queries, then return the answers in their original order by a second
+sort. Each valid input and output has a unique witness.
+
+\subsection{Realizing the compressed expansion}
+
+\begin{proof}[Proof of Proposition~\ref{prop:oracle-descent}]
+A compressed bit has two uses. At its vertex it is part of the
+argument to a local factor. On its arc it must agree with the bit
+at the other endpoint. Vertex lookup requires short keys, since the
+table size grows exponentially in the key length. Arc comparison
+uses addresses of $\Theta(h)$ bits, so each comparison should cover
+a long string. We stack the copies of $G$ to obtain both orderings
+within the wire budget.
+
+\paragraph{Stacking the copies.}
+Let $d_0\ge4$ be the degree in Theorem~\ref{thm:compressor}. Give each
+internal edge of $G$ an arc in both directions, with the wire on just
+one arc. Copy this loop-free topology with all widths zero, no
+exterior indices, and scalar factor one at each duplicate vertex. Each
+vertex and its duplicate have the same in- and out-degree, so we can give
+both degree $d_0$ by adding zero-width arcs in both directions between
+them. Keep the exterior bits as free indices of their original vertices.
+
+Take $s=\lceil 2a\log h\rceil$ compressor blocks, consuming $b_0 s$
+lane coordinates. We choose the constant $a>0$ below. Set
+\[
+ L=2^{b_0s},\qquad B=\lceil h^{1/2}\rceil,\qquad
+ R=2^{\lceil4\log h\rceil},\qquad d=B L R .
+\]
+Since $b_0$ is fixed, $d=h^{O(1)}$. Use $LR$ lanes with zero initial
+displacements and reserve the $\log_2 R$ replication coordinates
+throughout. Each lane starts with a tensor product of $B$ copies of
+$G$, with $B$ bits per nonempty arc. Put $P=mLR$. There are $O(P)$
+initial positions, the maximum width is $B$, and the square root of
+the energy is $O(PB)$. Hence Theorem~\ref{thm:compressor} bounds the
+total internal wire width in each term of the final expansion by
+$O(dm/h^{2a})$.
+
+One binary choice per shrinking substep specifies the \emph{layout
+pattern}. Its $O(s)$ bits determine every unweighted topology and
+placement in the sequence. Each substep translates by previous arc
+displacements or moves locally on the remaining lanes, so the
+replication coordinates still have zero displacement. The final graph
+therefore consists of $R$ copies of the same set of positions, which
+we call \emph{hosts}. Widths and tensors can vary across copies. For
+each exterior bit position of $G$ and each lane in $[L]$, the layout
+pattern fixes a single host carrying one exterior port of width $B$
+per replica. At most $2^{O(s)}$ such ports reach one host, since each
+substep merges a bounded number of positions.
+
+\paragraph{Encoding the local contractions.}
+For each host and replica we record two kinds of data.
+\begin{itemize}
+\item The \emph{operands} are the bits in its incident slots and exterior
+ports. Their total length is at most $2^{O(s)}B$ by
+Theorem~\ref{thm:compressor}.
+\item The \emph{program key} describes the factor to evaluate on the
+operands and gives the length of each field. Unfold the contraction
+records of Lemma~\ref{lem:descriptors} using local names for the
+constituent objects. The key lists field offsets, incidence ordinals,
+widths, ties, motif templates and term indices. Each leaf carries one
+label for the original trivalent factor over the fixed finite field,
+which determines its $B$-fold product. Lengths and term indices use
+$O(\log h)$ bits apiece, giving $2^{O(s)}\operatorname{polylog} h$
+bits for the key.
+\end{itemize}
+
+Boolean circuits construct the keys from guesses for the motif terms.
+To count each history exactly once, select one layout pattern, check
+all its guesses, and set the guesses for the other patterns to zero.
+Use a circuit template for each pattern with the graph sequence, greedy
+colors, offsets and slot lists hardwired. The only global calculations
+are the sums of energies that verify the layout choices. After removing
+the common mass factor, all terms have a fixed denominator and
+$O(\log h)$-bit numerators. Balanced addition costs
+$O(P\operatorname{polylog} h+h)$ per sum, as the word length grows by
+one bit per level. Apply the prescribed tie rule.
+
+The width calculations, term checks and slice intersections at one
+position use a bounded number of operations on quantities of
+polynomial size in $h$. By Theorem~\ref{thm:conversion}, their cost is
+$\operatorname{polylog} h$ bits and gates. Fixed wires supply the
+local data from preceding steps. Gathering the $2^{O(s)}$ records for
+a final kernel, checking for rejection, and copying the selected
+outputs over all patterns costs $P\,2^{O(s)}\operatorname{polylog} h$.
+A long name, such as an exterior port identifier, is read once per
+host slot and shared over all replicas. For fixed $J$ the names use
+$O(h)$ bits. Selecting them from the hardwired lists costs an additional
+$(P/R)\,2^{O(s)}O(h)$.
+
+Fix $a<0.02$ small enough that all preceding
+$2^{O(s)}\operatorname{polylog} h$ bounds are $O(h^{.1})$.
+A fixed-format array of program keys takes $O(Rh^{.1})$ bits per host,
+including padding for the largest topology. Use base order within each
+pattern and pad to $O(P/R)$ hosts, with blank keys encoding unit
+factors. Each key gives the operand lengths in local slot order,
+including the exterior ports.
+
+\paragraph{Matching the wires.}
+Use rows of $h$ bits. For each incident slot at a host, concatenate its
+operand bits in replica order to form a stream. An internal stream
+must equal the stream at the other end of its arc. An exterior stream
+of $BR$ bits must equal the corresponding input bits, which are ordered
+by their fixed names for every layout pattern. For each host reserve
+control rows for the program keys, stream identifiers, flags and
+padding. These occupy $O(R h^{.1}+h^{1.1})$ bits. Reserve whole rows
+for each stream, padding its final row after combining its replicas.
+
+The total allocated bit count is
+\[
+ O\big(P h^{.1}+(P/R) h^{1.1}+d(m/h^{2a}+e)\big)
+   =O(S_*),\qquad S_*=d(m/h^{2a}+e).
+\]
+Each allocation needs at most $O(Rh^{.6}+h^{1.1})$ bits even counting operand bits.
+
+Pack the host allocations in order into bins of $h^8$ rows, starting
+a new bin when the next host does not fit. Each host uses at most half a
+bin, so a fixed pool of $O(S_*/h+h^8)$ rows suffices. Computing the
+allocation lengths costs $O(P h^{.1}\operatorname{polylog} h)$ by
+summing the stream sizes given in the keys. Each such local size is
+polynomial in $h$.
+
+Scanning the hosts to assign their bins costs $O(h)$ per host for the
+bin index and occupancy. Sort the control rows into their prescribed
+positions, mark each host's start, and assign a blank control flag to
+the remaining rows. An absolute row address uses $O(h)$ bits and can
+be updated in linear work by concatenating the bin and offset fields.
+The scatter costs $O(S_*+Nh)=O(S_*)$, since $m\ge N$, $R\ge h^4$
+and $S_*\ge BLR\,m/h^{2a}$. Sum over guesses for
+the stream rows, requiring zeros in all padding and outside the
+streams. Parse each allocation deterministically from its controls.
+A stream row receives its matching name, side and ordinal, copying
+the common prefix from its stream header. One sort and scan verifies
+the equality of every pair of internal streams and matches the
+exterior streams with fixed input rows. The latter can be rounded to
+whole rows per exterior stream within the same $O(S_*/h)$ row budget.
+
+\paragraph{Evaluating the vertex factors.}
+For each host and replica, join its program key and operand bits in
+operand order into one self-delimiting record. Reserve a length field
+in the key and fix the encoding of empty padding. Each record has
+$O(h^{.6})$ bits and fits into a row of $\lfloor h/2\rfloor$ bits for
+large $h$. Within each bin the sum of record lengths is at most a
+constant times the bin capacity. Pack records in order, beginning a
+new row when the next record does not fit and padding unused bits
+uniquely. A fixed array of $O(h^8)$ rows per bin suffices.
+
+A bit RAM with $O(\log h)$-bit addresses performs these local operations
+in at most the bin capacity times $\operatorname{polylog} h$ steps.
+It scans the controls, checks padding, and maintains a current offset
+for each stream to copy the fields into replica order. Copying the
+long headers bitwise costs $O(h)$ transfers per row. As in
+Lemma~\ref{lem:tag-amplification}, bitonic sorting of time-stamped
+memory records together with local instruction checks verifies the
+deterministic trace by a trivalent network. The overhead is
+$\operatorname{polylog} h$ since the bin size is polynomial in $h$.
+
+Each packed row specifies the product of the vertex factors in its
+records, with value one for an empty row. The fixed finite field and
+the local contractions determine a table of at most $\sqrt N$ entries
+with constant-sized outputs. Hardwire this table and perform
+simultaneous lookup with one scalar factor per request. The cost
+is $O(S_*)$, including the table, since all lists have length
+polynomial in $N$ for fixed $J$.
+
+Fix the selector bits and exterior indices. The surviving stream
+assignments are in bijection with assignments of the final wire bits.
+Every deterministic check has a unique valid completion or is used
+as its exact relation tensor. Summing the products of the returned
+scalars over these assignments and over the selectors gives
+$G^{\otimes d}$. The total size is $O(S_*\operatorname{polylog} h)$.
+For fixed $a>0$, the factor $h^{-2a}\operatorname{polylog} h$ in the
+interior cost is $O(h^{-a})$, as claimed.
+\end{proof}

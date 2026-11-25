@@ -1,0 +1,15 @@
+{
+  "challenge_module": "ComparatorChallenges.LinearProgramming",
+  "solution_module": "OAI.Optimization.LinearProgramming.Optimization",
+  "theorem_names": [
+    "OAI.Optimization.LinearProgramming.strongly_polynomial_feasibility",
+    "OAI.Optimization.LinearProgramming.strongly_polynomial_optimization"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

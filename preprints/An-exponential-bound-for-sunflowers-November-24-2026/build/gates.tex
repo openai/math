@@ -1,0 +1,301 @@
+\section{Gates for shared and projected labels}\label{sec:prices}
+
+Suppose each of two groups of sites holds a common symbol. Part~I
+constructed an equality filter for these symbols. In the many-petal
+argument a group may learn only a projection of its symbol, for
+example a few bits of the majority among the active satellites. We
+will recover the equality test from such projections at a cost
+independent of the original alphabet. To use projections as inputs to
+further tests, we first specify how a gate acts on a sum of basis inputs.
+
+\subsection{Controls and returned tensors}
+
+Fix a finite set of sites \(S\), a spectral point and its log price \(h\)
+as in Section~\ref{sec:words}. Put \(h(0)=-\infty\).
+At each site \(v\) reserve a basis register with vectors \(e_{x_v}\),
+and put \(e_x=\bigotimes_{v\in S}e_{x_v}\).
+A \emph{gate} with domain \(\mathcal D\) and tensor output \(F(x)\)
+retains these controls. On an input with arbitrary auxiliary registers
+it acts by
+\[
+   Y=\sum_{x\in\mathcal D}e_x\otimes Y_x
+   \quad\longmapsto\quad
+   F[Y]=\sum_{x\in\mathcal D}e_x\otimes Y_x\otimes F(x).
+\]
+All tensor products are grouped by site. The gate has \emph{cost} at
+most \(c\) if \(h(F[Y])\le h(Y)+c\) for every such input \(Y\).
+A \emph{promise} specifies the subset of \(\mathcal D\) on which we
+require a particular value of \(F(x)\). Cost is charged throughout
+\(\mathcal D\). In particular two gates may agree and cancel on a
+promise even when no site can check that promise.
+
+A local map controlled by a basis register has cost zero. It can copy
+a control, compute a function of it, or erase the register by sending
+each basis vector to \(1\). Retaining the controls lets a second gate
+use the first gate's output while carrying all the other registers as
+auxiliaries. Costs then add. Every basis tuple in the support of the
+new controls must lie in the second gate's domain, including on
+unpromised inputs. A prior gate may enforce a domain condition by
+sending every term outside the domain to zero.
+
+A control common to all sites is \emph{public}. Given such a control,
+each site may use it at zero additional cost. To sum over a new public
+\(d\)-bit label we may supply \(G_S(2^d)\) at cost \(d\) and erase the
+label after using it. For a transmission from one site \(u\) to
+another \(v\), it suffices to supply \(G_{\{u,v\}}(2^d)\) and select
+the sender's label at \(u\), at cost \(d\,w(\{u,v\})\).
+
+We also add and subtract gates with common output spaces. The sum of
+tensors is a restriction of their direct sum, so
+\begin{equation}\label{eq:sum-prices}
+              2^{h(\sum_j X_j)}\le \sum_j 2^{h(X_j)} .
+\end{equation}
+A sign can be applied at any one site. Thus gates of costs \(c_j\) can
+be summed at cost at most \(\log_2\sum_j 2^{c_j}\). For example,
+given local bits \(b_1,\ldots,b_n\), \(n\le r\), the exact count test
+\begin{equation}\label{eq:count-test}
+              \mathbf 1_{\{\sum_i b_i=t\}}=[z^t]\prod_{i=1}^n z^{b_i}
+\end{equation}
+costs at most \(\log_2(n+1)\). At each of \(n+1\) field elements the
+product can be formed locally. Interpolation expresses the coefficient
+as a fixed linear combination of these values.
+
+Price bounds also pass to polynomial limits. Suppose \(X(t)\) has
+degree at most \(d\) and \(h(X(t))\le c\) for \(t\ne0\).
+Interpolate \(X(t)^{\otimes n}\) at \(dn+1\) distinct nonzero scalars
+to recover \(X(0)^{\otimes n}\). Equation~\eqref{eq:sum-prices} gives
+\(nh(X(0))\le nc+\log_2(dn+1)\). Division by \(n\) and passage to the
+limit give \(h(X(0))\le c\).
+
+If a gate returns a fixed nonzero tensor \(Q\) along with the prescribed
+output on the promise, we call \(Q\) its \emph{offset}. A gross cost
+bound \(c\) gives a \emph{net cost} bound \(c-h(Q)\).
+To add branches with different offsets \(Q_i\), supply
+\(\bigotimes_{j\ne i}Q_j\) in branch \(i\) and order the factors
+identically at each site. The common offset is then
+\(Q=\bigotimes_j Q_j\). If branch \(i\) had net cost \(c_i\), its
+padded gross cost is at most \(h(Q)+c_i\). Subtraction or summation
+therefore has net cost at most \(\log_2\sum_i 2^{c_i}\), even if some
+branches give zero on a particular input.
+
+\begin{lemma}[Diagonal comparison]\label{lem:diagonal}
+Let \(P_1,\ldots,P_r\) be disjoint nonempty site groups with
+\(K=\bigcup_iP_i\), \(w(K)=1\), and \(s=1-\sum_i w(P_i)>0\).
+Let \(\mathcal W\) be a sunflower-free family of \(N\ge1\) distinct
+words of length \(k\). For each coordinate \(j\) assume a gate of net
+cost at most \(f_j\), with one symbol replicated throughout each
+\(P_i\) as its only input controls. Its domain includes the column of
+every ordered \(r\)-tuple from \(\mathcal W\). On a constant column it
+returns a fixed nonzero tensor \(Q_j\), and on a column with a repeat
+and at least two distinct symbols it returns zero. Then
+\[
+                     s\log_2 N\le \sum_{j=1}^k f_j .
+\]
+\end{lemma}
+
+\begin{proof}
+Give each group an independent word index by supplying
+\(\bigotimes_i G_{P_i}(N)\). Keeping the indices, compute the symbol
+registers locally, apply the \(k\) gates and erase the symbol
+registers. A tuple of indices that is not constant has a violating
+column by sunflower-freeness and contributes zero, regardless of the gate
+outputs on its other columns. Each constant tuple contributes
+\(\bigotimes_j Q_j\). Thus the output is
+\(G_K(N)\otimes\bigotimes_j Q_j\). Comparing its price with the initial
+price \((1-s)\log_2 N\) and the gross cost
+\(\sum_j(h(Q_j)+f_j)\) proves the bound.
+\end{proof}
+
+\subsection{Broadcasting and equality}
+
+There are two ways a gate can receive a shared label. Sometimes its
+domain guarantees that all source registers agree. Sometimes a
+previous test furnishes agreement only on a promise. The first case
+admits an exact rate bound. The second needs the controlled
+constructions of Part~I, with their returned tensors.
+
+\begin{lemma}[Broadcasting and equality]\label{lem:broadcast}
+Fix a spectral point on \(S\) over an algebraically closed field,
+disjoint nonempty \(P,Z\subseteq S\), and \(K=P\cup Z\).
+For \(b\)-bit labels, broadcasting appends \(E_Z(x)\) when all sources
+in \(P\) have label \(x\). Equality testing multiplies by
+\(\mathbf 1_{\{x=y\}}\) when \(P\) has common label \(x\) and \(Z\)
+has common label \(y\). Set
+\[
+ c_{\rm b}=w(K)-w(P),\qquad
+ c_{\rm e}=\max\{0,w(K)-w(P)-w(Z)\}.
+\]
+Both tasks have cost zero at \(b=0\). For \(b\ge1\) the bounds are
+as follows.
+\begin{enumerate}
+\item[(i)] If the indicated agreements hold throughout the domain,
+the tasks have unit offset and costs at most \(c_{\rm b}b\) and
+\(c_{\rm e}b\), respectively.
+\item[(ii)] If the agreements hold on a promise, the tasks admit
+gates with fixed nonzero offsets and net costs at most
+\(c_{\rm b}b+O(\sqrt{b\log_2(2|K|)})\) and
+\(c_{\rm e}b+O(\sqrt{b\log_2(2|K|)})\), respectively.
+\item[(iii)] In (ii), if \(w(K)=w(P)\), broadcasting has net cost
+\(O(\log_2(2|K|))\) for all \(b\).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+First consider the promised tasks. Lemma~\ref{lem:copy} gives the
+broadcast in (ii), and Lemma~\ref{lem:segment} gives (iii).
+For equality, use the filter in the proof of Theorem~\ref{thm:filter}.
+If \(w(K)>0\), normalize the price on \(K\) by dividing by \(w(K)\).
+For this normalization the proof bounds the contribution at each
+length \(m\le b\) by
+\(2^{1-g'm+C_0\sqrt{m\ell}}\), where
+\(g'=(w(P)+w(Z)-w(K))/w(K)\) and \(\ell=\log_2(2|K|)\).
+Taking the logarithm of the sum including the unit base case,
+then multiplying by \(w(K)\le1\), gives the stated linear term
+and an error \(O(\sqrt{b\ell}+\log_2(b+1))=O(\sqrt{b\ell})\).
+If \(w(K)=0\), the direct equality filter on \(K\) has cost zero.
+All these controlled restrictions retain their controls and act on
+arbitrary auxiliary factors, so their gross price bounds hold on the
+entire domain.
+
+For (i), take any input \(Y\) supported on the agreed domain and write
+\(Y'\) for its desired output with unit offset. In \(Y^{\otimes n}\),
+concatenate the \(n\) labels at each site. On this input (ii) produces
+\((Y')^{\otimes n}\otimes Q_n\) for a fixed nonzero offset \(Q_n\).
+For equality this uses the fact that equality of the concatenations
+is the product of the \(n\) equality predicates. With
+\(c_*=c_{\rm b}\) or \(c_{\rm e}\), subtract \(h(Q_n)\) to get
+\[
+              n h(Y')\le n h(Y)+c_*nb+O(\sqrt{nb\ell}).
+\]
+Taking \(n\to\infty\) after division by \(n\) gives the claimed
+gate bound for every \(Y\).
+\end{proof}
+
+\subsection{Equality from projected labels}
+
+The majority symbol in a class of satellites may be unknown at every
+designated output site. The voting procedure in Section~\ref{sec:vote}
+will supply copies of any projection of that symbol. The following
+lemma quantifies when these copies suffice to test equality of the
+original symbols. The projection procedure may also return an
+auxiliary tensor depending on the input. The equality test preserves
+this tensor on success.
+
+\begin{lemma}[Equality from projected labels]\label{lem:oracle}
+Fix a control domain and a promise on which \(a\in\{2,3\}\) labels
+\(y_1,\ldots,y_a\in\{0,1\}^b\) are specified. Let \(P_1,\ldots,P_a\)
+be disjoint nonempty groups, \(K=\bigcup_iP_i\), and \(w(K)=1\).
+For each \(0\le l\le b\), suppose a gate receives the original
+controls and an arbitrary public function
+\(\pi:\{0,1\}^b\to\{0,1\}^l\). Its cost on this extended domain is
+at most \(j+\lambda l+t\), and its output on the promise is
+\[
+                     J\otimes\bigotimes_i E_{P_i}(\pi(y_i)).
+\]
+The format of \(J\) is fixed, and its value depends only on the
+original controls and may be zero. Suppose \(j,t\ge0\),
+\(0\le\lambda\le2\), and
+\(\sum_i w(P_i)\ge1+\lambda+\sigma\) with \(0<\sigma\le1\).
+For \(a=3\), assume also
+\(w(P_i\cup P_{i'})\ge w(P_i)+w(P_{i'})\) for every pair \(i\ne i'\).
+Then a gate of cost at most
+\[
+              h(Q)+j+O\!\left(t+\log_2(2|S|)
+                           +\sigma^{-1}\log_2(2|K|)\right)
+\]
+returns \(Q\otimes J\,\mathbf 1_{\{y_1=\cdots=y_a\}}\) on the promise
+for a fixed nonzero tensor \(Q\).
+\end{lemma}
+
+\begin{proof}
+We construct a gate for equality of \(\pi(y_1),\ldots,\pi(y_a)\) for
+every output length \(l\), with one offset \(Q_l\) independent of
+\(\pi\) and of the original controls. At \(l=0\) the projected labels
+are empty. The supplied gate returns \(J\) at cost \(j+t\), so take
+\(Q_0=1\).
+
+\smallskip\noindent\emph{Shorten the labels.}
+For \(l\ge1\) write \(\pi(y_i)=(h_i,x_i)\) with one head bit \(h_i\)
+and \(d=l-1\) tail bits \(x_i\). Supply two independent \(d\)-bit
+masks \(g_0,g_1\) by full diagonals and retain their basis registers.
+Every site computes the composed public projection
+\[
+                  y\longmapsto x\oplus g_h
+                  \qquad\bigl((h,x)=\pi(y)\bigr).
+\]
+Apply the length-\(d\) equality gate to this projection and erase the
+temporary function register. On agreement every pair of masks
+succeeds, and the result is
+\(J\otimes Q_d\otimes G_S(2^d)^{\otimes 2}\).
+If all heads agree but two tails differ, every pair fails. The
+remaining error consists of the mask pairs that make different heads
+agree on one translated tail \(z\). Each such pair occupies its own
+basis register, so we can subtract it there.
+
+\smallskip\noindent\emph{Reproduce the erroneous masks.}
+Sum over assignments of the head bits to the \(a\) groups in which
+both bits occur. For a fixed assignment, use the supplied projection
+gate at length \(l\) and check the assigned heads locally. Sum over a
+public \(d\)-bit string \(z\). For each occupied head reconstruct
+its mask as follows. A singleton group broadcasts its tail to \(K\).
+For a head shared by two groups, apply the equality test of
+Lemma~\ref{lem:broadcast}(ii) to their two tails. On equal tails,
+broadcast their common value from the union of the two groups to
+the remaining sites of \(K\), again using (ii). In either case the
+resulting tail is shared on \(K\). Extend it to \(S\) using (iii),
+since \(w(K)=w(S)=1\), and output the mask \(g_h=x_i\oplus z\)
+at every site. A broadcast with no new targets can be omitted.
+
+On the promise this produces a mask pair exactly when the translated
+tails agree. The head assignment is unique and the given pair
+determines one \(z\), so each erroneous mask occurs with coefficient
+one, including in positive characteristic. All temporary labels are
+erased. The tensor \(J\) is the same in this correction as in the
+shortened call, since it depends only on the original controls.
+Off the promise each communication gate still acts on every basis
+tuple in its registers with the asserted cost.
+
+\smallskip\noindent\emph{Charge the correction.}
+Pad the two branches and the head assignments with the unused
+communication offsets, and pad the correction also with \(Q_d\).
+For \(Q_l\) take the product of \(Q_d\), all these communication
+offsets and the two full mask diagonals. On agreement this tensor
+is returned with \(J\). On disagreement subtraction cancels every
+surviving basis pair. Thus the specified output is obtained on the
+whole promise, with an offset independent of \(\pi\).
+
+Set \(\ell=\log_2(2|K|)\). For one occupied head let \(I\) be its
+set of groups. The net cost to test its tails and broadcast to \(S\)
+is bounded by
+\[
+       \Big(1-\sum_{i\in I}w(P_i)\Big)d
+          +O\!\left(\sqrt{l\ell}+\log_2(2|S|)\right).
+\]
+For two groups, the pair hypothesis makes the equality rate
+\(w(\bigcup_{i\in I}P_i)-\sum_{i\in I}w(P_i)\). Broadcasting to \(K\)
+adds \(1-w(\bigcup_{i\in I}P_i)\) per bit, giving the displayed
+coefficient. For one group the whole coefficient is its broadcast
+rate. Extension from \(K\) to \(S\) has the length-independent cost
+in (iii).
+
+There are at most six mixed head assignments. Each costs \(d\) for
+\(z\) and \(j+\lambda l+t\) for the projection gate. The two masks
+it reconstructs occupy registers whose full diagonals contribute
+\(2d\) to \(h(Q_l)\). Thus, relative to \(j+h(Q_l)\), the total
+correction costs at most
+\begin{align*}
+ & t+\lambda l+d+\Big(2-\sum_iw(P_i)\Big)d-2d
+                   +O\!\left(\sqrt{l\ell}+\log_2(2|S|)\right)\\
+ &\hspace{1em}\le
+       t+O\!\left(\ell/\sigma+\log_2(2|S|)\right)-\sigma d/2 .
+\end{align*}
+Here \(\lambda(l-d)\le2\), and the width surplus absorbs the square
+root by \(C\sqrt{(d+1)\ell}\le\sigma d/2+O(\ell/\sigma)\).
+The shortened branch has the preceding length's excess over
+\(j+h(Q_d)\). By Equation~\eqref{eq:sum-prices}, exponentiating the
+bounds adds the correction at each successive length to the base value
+\(2^t\). The sum of the factors \(2^{-\sigma d/2}\), \(d\ge0\), is
+\(O(1/\sigma)\). Its logarithmic contribution is absorbed in
+\(O(\ell/\sigma)\), giving the claimed uniform bound. Finally take
+\(l=b\) and let \(\pi\) be the identity.
+\end{proof}

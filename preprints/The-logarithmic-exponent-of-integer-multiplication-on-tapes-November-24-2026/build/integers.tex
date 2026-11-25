@@ -1,0 +1,491 @@
+\section{Integer multiplication on fixed tapes}\label{sec:integers}
+
+Write each input as a polynomial evaluated at a power of two. To
+multiply the integers it suffices to convolve the coefficient lists
+exactly and propagate carries. We compute this convolution with two
+forward Fourier transforms, one coordinatewise product and one
+inverse transform. On tapes, the choice of the transform length
+determines how much time is spent reaching the records that each
+operation needs.
+
+\begin{theorem}[Multiplication at a fixed exponent]\label{thm:integer}
+For each \(\epsilon>0\) there is a deterministic multitape Turing
+machine, with fixed alphabet and tape count, that computes the full
+product of two \(n\)-bit integers in worst-case time
+\(O_\epsilon(n(1+\log n)^{1/2+\epsilon})\), visiting
+\(O_\epsilon(n)\) cells on its tapes.
+\end{theorem}
+
+Fix \(\epsilon>0\), and choose a rational exponent
+\(\tfrac12<\rho<\min\{1,\tfrac12+\epsilon\}\) for
+Theorem~\ref{thm:interchange} and Lemma~\ref{lem:tape-walsh}.
+We will store the digits in \(N=2^k\) records of width \(O_\rho(k)\),
+with \(k=\Theta(\log n)\) and \(Nk=\Theta(n)\). We arrange the
+convolution on many short cyclic axes. Each transform then needs
+only \(O(\log k)\) layers of record permutations, phase
+multiplications and selected-bit Walsh transforms, preserving
+the Euclidean norm at every layer boundary. The time budget for
+Theorem~\ref{thm:integer} is
+\begin{equation}\label{eq:integer-budget}
+ O_\rho\!\left(Nk(1+k)^\rho(1+\log(2+k))^{O(1)}\right).
+\end{equation}
+Products within a single record of \(O(k)\) bits take
+\(O(k\log(2+k))\) steps with the multitape multiplier of
+Harvey and van der Hoeven \cite{hvh}. Marking the extents of its
+scratch areas lets us clear them and return the heads within the
+same time bound.
+
+\subsection{Packing the digits into short cyclic axes}
+
+For \(n=1\) use direct multiplication. For \(n\ge2\), let
+\(X(t)=\sum_{u<h}x_u t^u\) and \(Y(t)=\sum_{u<h}y_u t^u\)
+be the radix-\(2^b\) expansions of the inputs, with
+\(0\le x_u,y_u<2^b\). Set
+\[
+ b=\lceil\log_2 n\rceil,\qquad h=\lceil n/b\rceil,\qquad
+ k=\lceil\log_2(4h)\rceil,\qquad N=2^k.
+\]
+A cyclic convolution of length at least \(2h-1\) recovers every
+coefficient of \(X(t)Y(t)\). We choose its length \(S\) as a product
+of pairwise coprime factors \(a_i\). Factor \(a_i\) has an address
+field of \(l_i\) bits, so its padded axis has \(2^{l_i}\) positions.
+We require
+\begin{equation}\label{eq:integer-box}
+ \sum_i l_i=k,\qquad \max_i l_i=O(\log k),\qquad
+ d=O(k/\log k),\qquad S:=\prod_{i=1}^d a_i\ge 2h .
+\end{equation}
+Short axes give polynomial-size tables in \(k\). Filling a constant
+fraction of the padded box ensures that these tables can act on a
+stream of only \(O(h)\) records, even with separate binary address
+fields for all \(d\) axes.
+
+For all sufficiently large \(k\), put \(l=20\lceil\log_2 k\rceil\)
+and \(x=2^l\). Take \(\lfloor k/l\rfloor\) distinct odd primes
+from \([x(1-k^{-2}),x]\), each with \(l_i=l\). If \(l\) does not
+divide \(k\), append \(a_d=2^{k\bmod l}\), with \(l_d=k\bmod l\).
+Baker, Harman and Pintz \cite{bhp} give a prime in
+\([y-y^{0.6},y]\) for all sufficiently large \(y\). The chosen
+interval contains \(k\) disjoint intervals of this form with right
+endpoints near \(x\), since \(kx^{0.6}=o(x/k^2)\). Enumeration
+and trial division take \(\operatorname{poly}(k)\) bit steps because
+\(x=k^{O(1)}\). The resulting volume satisfies
+\[
+ S\ge N(1-k^{-2})^{\lfloor k/l\rfloor}\ge N/2\ge 2h.
+\]
+The machine tests the size and coprimality conditions and uses
+direct multiplication on the bounded initial range where they fail.
+
+Store the \(N\) positions in lexicographic order on the padded
+axes \(d,d-1,\ldots,1\), with axis \(1\) varying fastest. A valid
+address has digits \(t_i<a_i\) for every \(i\). In tape order, these
+valid addresses enumerate the ranks \(0,\ldots,S-1\) in mixed radix.
+Count the input length with an amortized binary counter and reverse
+the streams to read their low bits first. As the machine enumerates
+the box it places the successive radix-\(2^b\) digits at the first
+\(h\) valid addresses, writing zero at every other position. A
+simultaneous scan of the \(k\) address bits and the marked fields
+containing their limits tests validity in \(O(k)\) steps. The writes,
+scans and rewinds together cost \(O(Nk)\).
+
+\subsection{Changing from digit order to residue order}
+
+The digits enter the tape in increasing order of their mixed-radix
+rank. For convolution the indices must add coordinatewise modulo the
+\(a_i\). Put \(P_i=\prod_{j<i}a_j\) and
+\(\mu_i=P_i^{-1}\bmod a_i\). If \(t=\sum_iP_it_i\) has digits
+\(t_i\), use the scaled residue
+\begin{equation}\label{eq:integer-crt}
+ y_i=\mu_i t\bmod a_i
+     =t_i+\mu_i\sum_{j<i}P_jt_j\bmod a_i .
+\end{equation}
+These coordinates give an isomorphism
+\(\mathbb Z/S\mathbb Z\to\prod_i\mathbb Z/a_i\mathbb Z\).
+The scaling by \(\mu_i\) makes the coefficient of the current digit
+one. The permutation can therefore use rotations controlled by
+earlier digits, as in the prime-factor algorithm \cite{good} and the
+triangular layout of \cite[Equation~(42)]{Tape}.
+
+Build a balanced binary tree of consecutive axis intervals, splitting
+an interval after the first \(\lfloor |I|/2\rfloor\) axes. The map for
+\(I\) is Equation~\eqref{eq:integer-crt} with the sum restricted to
+\(j\in I\). A leaf is the identity. Once the two child maps have been
+applied, each right-child axis \(i\) only needs the rotation
+\[
+       \mu_i\sum_{j\ \mathrm{in\ the\ left\ child}} P_jt_j
+       \pmod {a_i}.
+\]
+The current left-child address determines its original digits \(t_j\)
+by solving the triangular equations in increasing order. Use zero
+rotation for an invalid left-child address and fix values outside
+\([0,a_i)\) on each target axis. Each step is then a permutation of
+the full padded box. For the inverse map, reverse the depth order
+and negate the rotations.
+
+Lemma~\ref{lem:controlled-blocks} combines all disjoint intervals at
+one depth as a single controlled permutation. The control
+bits lie in the left children, which collectively contain at most
+half the axes. Since all fields except possibly the last have equal
+width, the controls occupy at most \(k/2+O(\log k)\) bits. The target
+blocks have width \(O(\log k)\). For a given control setting we can
+recover the left digits and generate all local rotation tables in
+\(\operatorname{poly}(k)\) steps. The integers \(P_j\) have at most
+\(k+1\) bits and a table has at most \(2^l=\operatorname{poly}(k)\)
+entries. The lemma charges for generating these tables as well as for
+moving the records. A constant fraction of address bits lies outside
+the controls, so the lemma applies at every depth. The \(O(\log k)\)
+depths fit the budget in Equation~\eqref{eq:integer-budget} in both
+directions.
+
+\subsection{Short Fourier transforms on occupied fibers}
+
+After the CRT permutation, each factor has length \(a_i\), but its
+address occupies \(l_i\) bits. A radix-two chirp computation may need
+several times as many coordinates as fit along that axis. Padding
+every axis by such a factor would increase the size of the tensor
+product exponentially in the number of axes. Instead we borrow
+coordinates from adjacent fibers, perform a short transform, and
+restore the borrowed values exactly in the ideal complex arithmetic.
+
+Write \(e(t)=\exp(2\pi i t)\), and put
+\[
+ U_a=\bigl(a^{-1/2}e(jh/a)\bigr)_{0\le j,h<a},\qquad
+ H=2^{-1/2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}.
+\]
+\begin{lemma}[Synchronized short Fourier transforms]\label{lem:synchronized-short}
+For the axis lengths and widths of Equation~\eqref{eq:integer-box},
+let \(k\) be sufficiently large. On the \(N=2^k\) coordinates of the
+padded residue array, both
+\[
+             \mathcal U=\bigotimes_i(U_{a_i}\oplus I_{2^{l_i}-a_i})
+             \qquad\text{and}\qquad \mathcal U^*
+\]
+factor into \(O(\log(2+k))\) unitary layers. Partition the axes into
+disjoint consecutive blocks of \(O(\log(2+k))\) address bits each.
+Every layer has one of the following forms.
+\begin{enumerate}
+\item A permutation acting independently within each block.
+\item A diagonal whose value at an address is the product of one
+      unit-modulus coefficient from each block.
+\item A normalized Walsh transform on one designated bit from each
+      participating block, using \(O(k/\log(2+k))\) bits in total.
+\end{enumerate}
+For any fixed \(C>0\), a deterministic fixed-tape machine constructs
+the schedule, the block permutations, and the block phase tables
+at \(Ck+O(\log(2+k))\) fractional bits in \(\operatorname{poly}_C(k)\)
+steps. It can then stream the coefficients of any full diagonal to
+absolute error \(2^{-Ck}\) in \(O_C(Nk\log(2+k))\) steps.
+\end{lemma}
+
+\begin{proof}
+It suffices to construct the forward transform. Reversing the schedule,
+inverting the permutations and conjugating the phases gives its adjoint.
+
+\paragraph{An exact transform on occupied coordinates.}
+Fix an axis of length \(a\), and take the least power of two
+\(r\ge 2a-1\). Inside \(\mathbb C^{2r}\) let \(T\) be the space of
+the first \(a\) coordinates and \(P\) its orthogonal projection.
+We construct \(U_a\oplus I_{2r-a}\) in \(O(\log a)\) layers of
+permutations, phase diagonals and operations on disjoint pairs.
+The inequality \(2r<8a\) will bound the number of neighboring values
+to borrow.
+
+A truncated chirp gives a unitary \(V\) whose compression to \(T\)
+is a fixed positive multiple of \(U_a\). In detail, zero-extend
+\(a^{-1/2}e(-h^2/(2a))\), \(|h|<a\), to a cyclic kernel of length
+\(r\). Its Fourier multipliers are
+\[
+              \lambda_\xi
+        =a^{-1/2}\sum_{|h|<a} e(-h^2/(2a)+\xi h/r).
+\]
+We show below that \(|\lambda_\xi|\le40\), uniformly in \(a,\xi\).
+Choose \(J=64\) and \(\phi=\pi/(4J+2)\). With
+\(z=\lambda_\xi\sin\phi\) we have \(|z|\le40\pi/258<1/2\).
+Apply \(U_r\) on the first \(r\) coordinates, act on each pair
+\((\xi,r+\xi)\) by the unitary
+\[
+             L(z)=
+             \begin{pmatrix}z&\sqrt{1-|z|^2}\\
+                            \sqrt{1-|z|^2}&-\overline z\end{pmatrix},
+\]
+then apply \(U_r^*\) on the first \(r\) coordinates. The compression
+to these \(r\) coordinates is convolution by the truncated chirp
+times \(\sin\phi\). The differences \(j-h\) of two indices of \(T\)
+lie in \((-a,a)\), so their representatives in this interval are
+unambiguous modulo \(r\). Multiplying the
+active coordinates by \(e(j^2/(2a))\) before and after the
+convolution therefore gives Bluestein's factorization
+\cite{bluestein}. For the resulting unitary \(V\) we have
+\(PV|_T=\sin\phi\,U_a\).
+
+Amplitude amplification now makes the first block exact
+\cite{BHMT,berry,MZ}. For each vector \(v\) of an orthonormal basis
+of \(T\), put \(w_v=(I-P)Vv/\cos\phi\). These vectors in \(T^\perp\)
+are orthonormal because both \(V\) and \(U_a\) are isometries.
+In the plane spanned by \(w_v,U_av\),
+\[
+                    Vv=\cos\phi\,w_v+\sin\phi\,U_av .
+\]
+The reflection \(I-2P\) fixes \(w_v\) and reverses \(U_av\). On this
+plane \(2VPV^*-I\) reflects across \(Vv\), since the other vectors
+of the basis of \(V(T)\) are orthogonal to the plane. The product
+of the reflections rotates through \(2\phi\) towards \(U_av\).
+Consequently
+\[
+                  B=\bigl[(2VPV^*-I)(I-2P)\bigr]^J V
+                    = U_a\oplus B'
+\]
+for a unitary \(B'\) on \(T^\perp\), since \((2J+1)\phi=\pi/2\).
+The only reflection we must implement in the original coordinates
+is a diagonal sign change.
+
+To restore the neighboring values, we use \(B\) as a change of basis.
+The chirp
+\[
+             \chi(t)=e\bigl((t^2+(a\bmod 2)t)/(2a)\bigr)
+\]
+is \(a\)-periodic, and \(\chi(j)\chi(-h)/\chi(j-h)=e(jh/a)\).
+Thus \(U_a=D_1 C D_3\), where \(D_1(j)=\chi(j)\), \(D_3(h)=\chi(-h)\)
+and \(C\) is the circulant with kernel \(a^{-1/2}\overline{\chi(t)}\).
+In the Fourier basis \(D_2=U_aCU_a^*\) is a diagonal of phases,
+\[
+               D_2(\xi)=a^{-1/2}
+                    \sum_{h=0}^{a-1}\overline{\chi(h)}e(\xi h/a).
+\]
+Extending each of the three diagonals by the identity gives
+\[
+ (D_1\oplus I)B^*(D_2\oplus I)B(D_3\oplus I)=U_a\oplus I.
+\]
+Indeed the middle conjugation acts by \(C\) on \(T\) and by
+\((B')^*B'=I\) on its complement. The identity holds on arbitrary
+data in the borrowed coordinates (Figure~\ref{fig:borrow}).
+Each use of \(U_r\) or its adjoint has radix-two depth \(O(\log a)\)
+\cite{cooleytukey}, and the number of such uses is absolute.
+
+\input{borrow}
+
+\paragraph{The uniform multiplier bound.}
+Set \(u_h=e(-h^2/(2a)+\xi h/r)\) and
+\(\alpha_h=\xi/r-(h+1/2)/a\), so that \(u_{h+1}=u_he(\alpha_h)\).
+Over \(|h|<a\) the \(\alpha_h\) traverse an interval of length
+less than two in steps of \(1/a\). With \(\delta=1/(4\sqrt a)\),
+at most three \(\delta\)-neighborhoods of integers meet that interval.
+They contain at most \(3(2a\delta+2)\) terms, each of modulus one.
+The remaining terms split into at most four consecutive runs with
+\(\alpha_h\in[j+\delta,j+1-\delta]\) for some integer \(j\).
+On each run write \(u_h=(u_h-u_{h+1})w_h\), where
+\[
+             w_h=(1-e(\alpha_h))^{-1}
+                =\tfrac12+\tfrac i2\cot(\pi\alpha_h).
+\]
+Here \(|w_h|\le(2\sin(\pi\delta))^{-1}\) and the imaginary parts
+are monotone. Summation by parts bounds the sum on the run by the
+endpoint moduli plus the variation of \(w_h\), at most
+\(2/\sin(\pi\delta)\le1/\delta\). Adding the contributions and
+normalizing gives
+\[
+            |\lambda_\xi|
+              \le a^{-1/2}\bigl(3(2a\delta+2)+4/\delta\bigr)\le40 .
+\]
+Thus the fixed number of reflections works for every axis length.
+
+\paragraph{Sharing the workspace.}
+Divide the axes into consecutive blocks of four to seven. Such a
+division is possible for large \(k\), since the number of axes tends
+to infinity. Each block contains \(O(\log(2+k))\) address bits and
+has only \(\operatorname{poly}(k)\) coordinates. Process its axes
+in turn. For the chosen axis, the other padded axes give \(b_*\)
+fibers, a power of two at least eight. Divide them into eight equal
+batches. A batch of \(v=b_*/8\) fibers needs fewer than \(7va\)
+borrowed coordinates, since each of its \(a\)-point transforms uses
+\(2r-a<7a\) more coordinates. The other seven batches supply at
+least \(7va\) coordinates. Allocate them disjointly to the active
+fibers and run the circuits in parallel. Only the first \(a\) entries
+of each active fiber change. Every borrowed entry is restored before
+the next batch, even when it holds an earlier transform output.
+The eight batches and at most seven axes keep the block depth
+\(O(\log(2+k))\).
+
+\paragraph{Three common layer types.}
+In a layer of pair operations, complete its matching with identity
+pairs. A block permutation routes the pairs to the edges of a single
+address bit. The radix-two factorizations and the \(L(z)\) steps
+require only pairs acting by \(H,L(z),L(z)^*\) or \(I\) once their
+permutations and phases are separated. We can realize all pairs
+with the same three Walsh rounds and pair-dependent phases.
+
+For \(L(z)\), first form \(Q=H L(z)\). Every entry of \(Q\) has
+modulus at least
+\[
+       \bigl(\sqrt{1-|z|^2}-|z|\bigr)/\sqrt2
+           \ge(\sqrt3-1)/(2\sqrt2).
+\]
+Let \(c=|Q_{00}|\), \(s=|Q_{01}|\), \(\gamma=Q_{00}/c\), and put
+\[
+ \begin{aligned}
+ D_{\rm in} &=\operatorname{diag}(1,Q_{01}/(is\gamma)),\\
+ D_{\rm mid}&=\operatorname{diag}(c+is,c-is),\\
+ D_{\rm out}&=\operatorname{diag}(\gamma,Q_{10}/(is)).
+ \end{aligned}
+\]
+These are phase diagonals. The matrix \(HD_{\rm mid}H\) has \(c\)
+on its diagonal and \(is\) off its diagonal. The unitary
+\(D_{\rm out}HD_{\rm mid}HD_{\rm in}\) therefore agrees with \(Q\)
+on the first row and first column. Orthogonality determines the fourth
+entry, giving \(L(z)=HD_{\rm out}HD_{\rm mid}HD_{\rm in}\).
+For \(L(z)^*\) replace \(z\) by \(\overline z\). For the identity
+use \(Q=H\) in the same formulas. For a pair requiring \(H\), three
+Walsh rounds with identity phases give \(H^3=H\).
+In particular all divisions used to prepare the phases have
+denominators bounded away from zero.
+
+Undo the pair-routing permutation. The block schedules now consist
+entirely of permutations, phase diagonals and Walsh rounds. Cycle
+through the three types, advancing each block whenever its next type
+occurs. Blocks that are idle in a slot act by the identity. Each
+cycle advances every unfinished block, so the total number of global
+layers is \(O(\log(2+k))\). Lemma~\ref{lem:controlled-blocks}
+implements the permutations with empty external controls. A global
+phase is the product of the local phases, and a global Walsh round
+acts on at most one bit per block.
+
+\paragraph{Streaming the coefficients.}
+Every block has polynomially many coordinates. Its assignments of
+borrowed positions, pair routings, radix-two permutations and layer
+schedules can all be constructed in \(\operatorname{poly}(k)\) steps.
+The same holds for its phase tables with \(B_0=\Theta(k)\) fractional
+bits. The chirp and radix-two phases are roots of unity of
+polynomial-size orders. The formulas for \(\lambda_\xi,D_2(\xi)\)
+sum polynomially many such terms and scale by \(1/\sqrt a\).
+Use range reduction and convergent sine and cosine series, for instance
+with a Machin formula for \(\pi\), and bisection for positive square
+roots. The arguments \(1-|z|^2\) are at least \(3/4\), and the phase
+ratios above have uniformly bounded inverses of their denominators.
+Only a bounded number of such operations follows each sum.
+\(B_0+O(\log(2+k))\) fractional bits therefore suffice to make
+the local tables accurate to \(2^{-B_0}\), by deterministic
+polynomial-time fixed-tape computations.
+
+To obtain a diagonal in tape order, extend address prefixes one
+block at a time, from most to least significant. Start with the single
+coefficient \(1\). For each coefficient on the current prefix tape,
+scan the next block table, multiply by each of its entries, round,
+and append the products to a fresh tape. Rewind the table between
+prefixes and alternate the two prefix tapes. The length at least
+doubles per pass, so fewer than \(2N\) products are written in all.
+Each table rewind costs at most the scan it repeats. Multiplying
+\(O_C(k)\)-bit words takes \(O_C(k\log(2+k))\) tape steps, giving
+\(O_C(Nk\log(2+k))\) steps for the diagonal and the same bound to
+apply it to the records.
+
+If a local phase and a rounded complex product each have absolute
+error at most \(u\), the prefix error increases from \(E\) to at
+most \((1+u)E+2u\), since every ideal prefix has modulus one. After
+at most \(k\) passes the error is \(O(ku)\) for \(ku\le1\). Choosing
+the extra \(O(\log(2+k))\) guard bits gives absolute error \(2^{-Ck}\)
+in the full coefficients while preserving the \(O_C(k)\)-bit width.
+\end{proof}
+
+\subsection{Rounding the convolution to the exact product}
+
+Write \(A,B\) for the two padded digit arrays in residue order.
+The subspace supported on valid addresses is invariant under
+\(\mathcal U\) and its adjoint. There \(\mathcal U\) is the normalized
+Fourier transform of a group of order \(S\). Thus, with \(\odot\)
+denoting coordinatewise multiplication, character orthogonality gives
+\[
+ A*B=\sqrt S\,\mathcal U^*
+                  \bigl((\mathcal U A)\odot(\mathcal U B)\bigr).
+\]
+After inverse CRT, entry \(t\) at a valid address is \([z^t]X(z)Y(z)\).
+Indeed, \(2h-2<S\), so the ordinary product has no coefficient that wraps
+around the cyclic index. It suffices to compute the displayed vector
+to absolute Euclidean error less than \(1/2\).
+
+\paragraph{Precision for one transform.}
+Store the real and imaginary parts of every entry on signed fixed-point
+grids. Suppose a forward or adjoint transform receives represented data
+of norm at most \(2^{12k}\). Implement each selected-bit Walsh layer
+with Lemma~\ref{lem:tape-walsh}, using an input norm allowance of
+\(2^{13k}\) and an absolute Euclidean error allowance of \(2^{-50k}\).
+Signed integer and fractional widths \(O_\rho(k)\) suffice. The proof
+of the lemma permits enlarging these widths to any larger fixed
+multiples of \(k\).
+
+For a phase layer, compute the coefficients to absolute error at
+most \(2^{-70k}\), and round each complex product to absolute error at
+most \(2^{-70k}\). A diagonal perturbation has operator norm equal to
+its largest entry error. On inputs of norm at most \(2^{13k}\), the
+layer error, including rounding at \(N\) entries, is at most
+\[
+       2^{-70k}\bigl(2^{13k}+\sqrt N\bigr)<2^{-50k}
+\]
+for sufficiently large \(k\). Permutations move entire records
+exactly. For an adjoint transform use inverse permutations and
+conjugate phase tables. Every exact layer is unitary, so existing
+errors pass through it with unchanged norm. Induction over the
+\(O(\log k)\) layers keeps the boundary norm below \(2^{13k}\) and
+the total error relative to the exact transform of the represented
+input below \(2^{-40k}\). Lemma~\ref{lem:tape-walsh} also bounds
+the intermediate widths within each Walsh layer.
+
+\paragraph{Exact recovery.}
+A digit array has \(h\) nonzero entries at most, each less than \(2^b\).
+Its norm is at most \(\sqrt h\,2^b\le 2^{4k}\) for all sufficiently
+large \(n\), since \(b/k\to1\). Let \(x=\mathcal U A\),
+\(y=\mathcal U B\) and let \(x',y'\) be the rounded transform outputs.
+By \(\|v\odot w\|_2\le\|v\|_2\|w\|_2\),
+\[
+ \|x'\odot y'-x\odot y\|_2
+ \le \|x'-x\|_2\|y'\|_2+\|x\|_2\|y'-y\|_2.
+\]
+Rounding the products contributes at most \(\sqrt N\,2^{-70k}\).
+The stored vector therefore has error at most \(2^{-30k}\) and norm
+at most \(2^{12k}\). On this input the adjoint transform introduces
+at most \(2^{-40k}\) further error. Compute \(\sqrt S\le2^{k/2}\) to
+absolute error \(2^{-70k}\) by an integer square root in
+\(\operatorname{poly}(k)\) bit steps. Even after scaling the existing
+errors by \(\sqrt S\), multiplying by this rounded scalar and
+rounding each entry, the final Euclidean error is less than \(1/2\).
+All operands and temporary exact products fit in \(O_\rho(k)\) bits.
+Rounding the real part of each valid entry to the nearest integer
+now returns every convolution coefficient exactly. The bounded
+initial range of input lengths again admits direct multiplication.
+
+After inverse CRT, scan the valid addresses in increasing mixed-radix
+rank. Each coefficient is less than \(h2^{2b}\). Add the incoming
+carry, emit the low \(b\) bits, and pass the remaining high bits
+to the next coefficient. This recurrence keeps the carry within
+\(O(k)\) bits. Reverse the digit stream and trim or pad leading zeros
+to write exactly \(2n\) bits in most-significant-first order. These
+scans cost \(O(Nk)\).
+
+\paragraph{Time and visited cells.}
+Parameter generation, trial division, and construction of the local
+permutation and phase tables take \(\operatorname{poly}_\rho(k)\)
+steps. The full coefficient streams are generated as in
+Lemma~\ref{lem:synchronized-short}. Each of the three transforms has
+\(O(\log k)\) layers. A record permutation or selected Walsh layer
+fits Equation~\eqref{eq:integer-budget}. A phase layer, including its
+streamed coefficients, and the pointwise product each cost
+\(O_\rho(Nk\log(2+k))+\operatorname{poly}_\rho(k)\) steps. Holding a
+full stream while another input is processed costs \(O_\rho(Nk)\)
+steps for each copy or rewind. The \(O(\log k)\) factor for the number
+of layers is absorbed by the polylogarithmic factor in
+Equation~\eqref{eq:integer-budget}. The number of tapes and the
+alphabet depend only on \(\rho\).
+
+A constant number of full streams occupy \(O_\rho(Nk)\) cells.
+These include the two alternating prefix streams for the phase tables.
+The permutations of Lemma~\ref{lem:controlled-blocks} sort at most
+\(N\) exceptional records with \(O(k)\)-bit destination keys. Their
+stream storage is \(O_\rho(Nk)\), and their interchanges have linear
+space by Theorem~\ref{thm:interchange}. The Walsh layers visit
+\(O_\rho(Nk)\) cells by Lemma~\ref{lem:tape-walsh}. The remaining
+parameter and short-word computations visit
+\(\operatorname{poly}_\rho(k)\) cells by their time bounds. All work
+areas begin at marked positions and are reused after the heads return.
+Hence the union of the visited cells on all tapes has size
+\(O_\rho(Nk)+\operatorname{poly}_\rho(k)=O_\rho(n)\).
+Finally \(Nk=\Theta(n)\) and \(k=\Theta(\log n)\). Our choice
+\(\rho<1/2+\epsilon\) absorbs the remaining powers of \(\log k\)
+in the time bound. This proves Theorem~\ref{thm:integer}.

@@ -1,0 +1,236 @@
+\section{Permuting binary addresses on tapes}\label{sec:permutations}
+
+Consider a stream of records with two binary address fields $X,Y$.
+One step of the Walsh algorithm sends the record at $(X,Y)$ to
+$(X,Y\oplus X)$, where $\oplus$ denotes bitwise addition modulo two.
+For three-bit fields, for instance, the record at $(101,011)$ goes to
+$(101,110)$. Rotating $Y$ by five modulo eight
+gives $000$ in the target field because of the carry. Separately flipping every
+bit of $Y$ would require a scan for each bit. We group bit flips into
+a small number of shifts and repair the records on which a carry
+crosses between groups. This gives a cost governed by the width of
+the two fields, which decreases at each level of the Walsh recursion.
+
+Later, the conversion to Chinese remainder coordinates permutes small
+blocks of address bits according to other bits of the address. In that
+application the available budget depends on the width of the whole
+address. We derive both bounds from Theorem~\ref{thm:interchange} and
+the bit packing of \cite[Section~5.2]{Tape}.
+
+Fix $1/2<\rho<1$. A stream of $M$ records, each of $R$ bits, has bit
+volume $V=MR$. Let $k\ge2$ bound the address width up to a constant
+factor, and assume $R=\Theta(k)$ with fixed constants. Scanning the
+address counters once per record thus costs $O(V)$. All shapes have
+complete ranges in the binary fields on which we operate. A leading
+row range can have arbitrary positive integer length, and the spectator
+ranges between active fields may be combined. An address permutation
+moves whole records and requires no information about their contents.
+
+The elementary stream operations of \cite[Lemma~3]{Tape} move a
+single address bit to any position, or permute the four values of any
+two specified bits, in $O(V)$ steps. The bounds include the binary
+counters, rewinds and cleanup. Descriptors of the fields are supplied
+in binary. Throughout this section, the tape count and alphabet are
+fixed, the constants in the block widths and polynomial preparation
+costs are fixed, and the time bounds include this preparation in the
+top parameter $k$ even when the active fields are short. The space
+bound in each case is $O(V)+k^{O(1)}$ visited cells. Interchanges
+take linear space, and a fixed number of streams suffices for the
+scans and sorts below. Adding an $O(k)$-bit address to a record
+increases its size by a constant factor.
+
+\subsection{Parallel flips in two address fields}
+
+\begin{lemma}[Bulk XOR between address chunks]\label{lem:packed-xor}
+Let $X,Y,Z$ be disjoint complete binary chunks of a common width
+$L=O(k)$, occurring in any order with arbitrary intervening spectator
+fields. For each target $j$ in a specified set of positions in $Y$,
+choose a source position $i(j)$ in $X$. The simultaneous changes
+\[
+                 Y_j\longleftarrow Y_j\oplus X_{i(j)}
+\]
+take $O\bigl(V(1+L^\rho)(1+\log k)\bigr)+k^{O(1)}$ fixed multitape
+steps. Every other address bit, including all of $Z$, is restored.
+\end{lemma}
+
+\begin{proof}
+Choose a guard length $G-1$, with $G=C\lceil\log_2(2k)\rceil$ and a
+fixed integer $C$ to be chosen below. For one pass, select disjoint
+segments of $G$ consecutive bits in $Y$ and the corresponding segments
+in $Z$. Write $j$ for the low position of a segment, numbering from bit
+zero. We will flip $Y_j$ according to a Boolean control $c_j$ and
+restore all other bits of both segments. For this pass we may use
+any unchanged controls preceding both chunks, provided the functions
+$c_j$ can be computed in $k^{O(1)}$ steps from descriptions of size
+$k^{O(1)}$. For $c_j=X_{i(j)}$, interchange equal-width chunks to put
+$X$ first and undo the change of layout at the end.
+
+\emph{A shift acting on several segments.}
+For two unrestricted integer coordinates $u,w$, let $[u]_h$ indicate
+$u\equiv h\bmod2$. The following eight shifts use the current coordinate
+values in each assignment, in row order from left to right
+\cite[Lemma~13, Equations~(20)--(21)]{Tape}.
+\[
+\begin{array}{ll}
+ u\leftarrow u-c[w]_0 & w\leftarrow w-c[u]_0\\
+ u\leftarrow u+c[w]_0 & w\leftarrow w+c[u]_0\\
+ w\leftarrow w+c[u]_1 & u\leftarrow u+c[w]_1\\
+ w\leftarrow w-c[u]_1 & u\leftarrow u-c[w]_1 .
+\end{array}
+\]
+For $c=0$ these shifts fix both integers. For $c=1$, on each
+translated square $\{2a,2a+1\}\times\{2b,2b+1\}$ the first four
+assignments cycle the low-bit pairs $(00\ 01\ 10)$ and the last four
+cycle $(01\ 10\ 11)$. Their composition flips the low bit of $u$
+and restores $w$.
+
+Apply the shifts at all selected segments of $Y,Z$ at once. For
+example, one assignment with target $Y$ is the single rotation
+\[
+      Y\longleftarrow
+          Y\mathbin\pm\sum_j2^j c_j[Z_j=h]\pmod{2^L}.
+\]
+Interchange $Y$ and $Z$ if necessary to place the target last among
+these chunks. For every prefix preceding the target, compute the shift
+amount from the control bits and the parity bits of the other chunk.
+The $2^L$ target values occur consecutively as blocks with a common
+suffix length. Split the run at the wrap point and concatenate its two
+pieces in rotated order \cite[Lemma~4]{Tape}, keeping each suffix
+block intact. Undo the interchange. Each prefix accounts for at least
+$2^L\ge2^G$ records whenever there is a segment. Choosing $C$
+sufficiently large covers the polynomial cost of calculating one offset
+per prefix. With a fixed number of field counters and
+Theorem~\ref{thm:interchange}, all eight rotations cost
+$O(V(1+L^\rho))+k^{O(1)}$ steps.
+
+\emph{Repairing carries.}
+The upper $G-1$ bits of each selected segment form its guard.
+Declare an address exceptional if any guard in $Y$ or $Z$ has one of
+its first ten or last ten values. At every other address the integer
+in each segment stays inside its $G$ bits throughout the eight shifts,
+since its displacement is at most eight. Thus the performed permutation
+$S$ agrees there with the desired controlled flips $D$. The map $D$
+preserves every guard. Both $S$ and $D$ are bijections and agree on the
+complement of the exceptional set $\mathcal B$, so they both preserve
+$\mathcal B$. The remaining permutation $DS^{-1}$ need only be applied
+to records now in exceptional slots.
+
+With $s$ segment pairs the exceptional fraction is at most
+$80s2^{-G}$, also within any fixed row, since each guard assumes all
+$2^{G-1}$ values equally often. A scan identifies these records in
+$O(k)$ steps per address using prepared masks for the guards. It
+suffices to read their four low bits and test whether the higher bits
+are all zero or all one. Extract each exceptional record and attach
+its destination rank. Compute this rank from its current address by
+reversing the eight rotations and then performing the prescribed bit
+flips. This takes $k^{O(1)}$ steps per extracted record, including
+address arithmetic in the rectangular layout. Sort these tagged
+records by destination with $O(k)$ stable binary radix passes, then
+merge them into the exceptional slots in stream order. Beyond setup
+and full scans, this costs
+\[
+             |\mathcal B|\bigl(k^{O(1)}+O(kR)\bigr).
+\]
+There are $s=O(k)$ segment pairs. After fixing the polynomial bounds
+for the controls, offsets and rank calculations, take $C$ large enough
+that this cost is $O(V)$. This proves an exact pass even when all
+auxiliary address values are occupied.
+
+\emph{Covering the targets.}
+Partition the target positions $j$ with $j+G\le L$ by their residues
+modulo $G$. Within each class the segments are disjoint, so one pass
+with $c_j=X_{i(j)}$ suffices. At most $G-1$ high positions have too
+little room for a guard. Treat each by the elementary two-bit operation
+on $X_{i(j)},Y_j$. This also handles the entire case $L<G$. There are
+$O(1+\log k)$ passes in all.
+\end{proof}
+
+\subsection{Permuting positions and blocks}
+
+\begin{corollary}[Permutations of address positions]\label{cor:bit-positions}
+An explicitly specified permutation of the $k$ binary address positions
+of $2^k$ records takes
+$O_\rho(V(1+k)^\rho(1+\log k))$ deterministic fixed multitape steps.
+\end{corollary}
+
+\begin{proof}
+A permutation is a product of two involutions. On each cycle, number
+positions modulo its length and use the reflections $i\mapsto-i$ and
+$i\mapsto1-i$ in that order. It suffices to perform the disjoint pairs
+of exchanges in one involution. Split the address into three chunks
+of width $\lfloor k/3\rfloor$ and at most two remaining bits. Handle
+the pairs touching the remaining bits individually. Between any two
+chunks perform all exchanges with three simultaneous XORs, using
+the third chunk as the auxiliary chunk in Lemma~\ref{lem:packed-xor}.
+Within a single chunk, assign a distinct temporary position $t$ in
+another chunk to each exchange $(i,j)$. The three cross-chunk exchanges
+$(i,t),(j,t),(i,t)$ effect $(i,j)$ and restore $t$. This uses a
+bounded number of applications of the lemma. The $k^{O(1)}$ steps to
+prepare the cycle decompositions and position lists are absorbed by
+the full $2^k$-record volume.
+\end{proof}
+
+The Chinese remainder layout in Section~\ref{sec:integers} needs to
+rotate the values of each of several short fields by amounts determined
+by other address bits. The next lemma allows an arbitrary permutation
+table for each such field, including a different table for every
+assignment of the controls.
+
+\begin{lemma}[Controlled permutations on small blocks]\label{lem:controlled-blocks}
+On a full $k$-bit address space, take pairwise disjoint target blocks of
+$O(\log(2k))$ specified bit positions each. Fix $\delta>0$ and a common
+set of at most $(1-\delta)k$ control positions disjoint from the targets.
+At each block prescribe a permutation of its values depending on the
+control bits. At any control setting its table must be generable in
+$k^{O(1)}$ tape steps, with uniform polynomial bounds on this computation
+and its description. Applying all block permutations, or all their
+inverses, to the records takes
+\[
+ O\bigl(V(1+k)^\rho(1+\log k)^3\bigr)+k^{O(1)}
+\]
+deterministic fixed multitape steps.
+\end{lemma}
+
+\begin{proof}
+We first perform controlled flips on a batch of $b$ individual targets,
+where $b\le c_\delta k/G$ for a sufficiently small $c_\delta>0$ and
+$G$ is the guard parameter above. By Corollary~\ref{cor:bit-positions},
+place all controls first and the targets at the low positions of $b$
+disjoint $G$-bit segments of a chunk $Y$. Reserve a further $bG$
+positions for $Z$. The two chunks fit in the at least $\delta k$ free
+positions. Use the guarded pass from Lemma~\ref{lem:packed-xor} and
+undo the rearrangement. Including the two position permutations, the
+cost of one batch is $O(V(1+k)^\rho(1+\log k))+k^{O(1)}$. Thus a
+layer of flips on all targets costs
+$O(V(1+k)^\rho(1+\log k)^2)+k^{O(1)}$. Bounded $k$ can always be
+handled by a direct split and merge.
+
+For arbitrary block permutations we also need the other bits of each
+active block as controls. Batch the blocks so that each batch uses at most
+$\delta k/2$ positions and at most $c_{\delta/2}k/G$ blocks.
+Greedily filling batches yields $O(1+\log k)$ batches. For large $k$,
+a width-limited batch occupies $\Omega_\delta(k)$ positions since the
+next block has only $O(\log k)$ bits. A count-limited batch contains
+$\Omega_\delta(k/G)$ blocks.
+
+Ignore empty blocks. On a $d$-bit block with $d\ge1$, any permutation of the $2^d$ values is realized by
+a Bene\v{s} network with $2d-1$ stages \cite{benes}. Each stage flips
+one fixed bit as a function of all other bits. For the construction,
+pair inputs differing in one chosen bit, and pair outputs the same way.
+The permutation gives a degree-two bipartite multigraph on the input
+and output pairs. Alternating colors on each cycle, including a doubled
+edge, assign one edge of each color to every pair. An input switch and
+an output switch along the chosen bit place the colors in separate
+classes. Recurse within each class on the remaining $d-1$ bits, with
+one switch when $d=1$. The successive target positions are fixed, and
+the switch decisions are computable from the permutation table in time
+polynomial in $2^d$. Inverting the tables gives the inverse operation.
+
+Align these schedules within each batch, padding shorter schedules by
+identities. At one stage keep all active block bits except the current
+targets among the controls. Together with the external controls they
+use at most $(1-\delta/2)k$ positions. There is at most one target per
+block, so a single batch of guarded flips implements the stage.
+Multiplying the cost of that batch by $O(1+\log k)$ stages and
+$O(1+\log k)$ block batches gives the bound.
+\end{proof}

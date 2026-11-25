@@ -1,0 +1,211 @@
+\section{Incidence expansion}\label{sec:incidence}
+
+Let $S$ be a finite set of distinct points in an affine plane, and let a
+\emph{secant} be a line containing at least two of the points. Write
+$\mathcal L$ for the secants and $t_i$ for the number through point $i$.
+For centered real labels $v_i$, meaning $\sum_i v_i=0$, we have
+\[
+ \sum_{L\in\mathcal L}\left|\sum_{i\in S\cap L}v_i\right|^2
+       =\sum_{i\in S}(t_i-1)|v_i|^2 .
+\]
+On expanding the squares, each diagonal term occurs $t_i$ times and
+each ordered pair of distinct points occurs once. Centering gives the
+identity. We need a version for points placed in a spectral metric space,
+where one can measure how far an entire secant pulls a common center
+in a given direction. This version will bound the mean squared length
+of an incidence edge in the graphs used for permutation routing
+(Section~\ref{sec:sort-action}).
+
+\subsection{An inequality for secant lines}
+
+Take $S\subset F^2$ with $|S|\ge2$. For each $i\in S$ choose a site
+$x_i$ in a complete $\mathrm{CAT}(0)$ spectral space $X$ over $F$
+and a mass $a_i>0$. Let $o$ be the minimizer of
+$\sum_i a_i d(o,x_i)^2$ and set $r_i=d(o,x_i)$. Two points of $S$
+may be placed at the same site.
+
+Suppose the legs for a subset $C\subset S$ have widths $a_i r_i$.
+Sending them from a common site $m$ to their destinations costs
+$\sum_{i\in C}a_i r_i d(m,x_i)$. By first variation at $m=o$, the
+supremum of the initial savings per unit distance, allowing the common
+site to stay at $o$, is
+\[
+ K_C=\sup_{y\ne o}
+       \left(\sum_{i\in C}a_i r_i\cos\angle_o(x_i,y)\right)_+ .
+\]
+Here $y\in X$, $\angle_o$ is the Alexandrov angle and the summand is
+zero if $r_i=0$. For a one-point space set $K_C=0$.
+Write $K_L=K_{S\cap L}$. On a real line this is the absolute value of
+the secant sum above, with $v_i=a_i(x_i-o)$.
+
+\begin{theorem}[Incidence inequality]\label{thm:incidence}
+If $F$ is algebraically closed and $\omega_F<9/4$, then for every
+such finite configuration of affine points, weighted sites and secants,
+\begin{equation}\label{eq:inc-secants}
+       \sum_{L\in\mathcal L}K_L^2
+          \le \sum_{i\in S}(t_i-1)a_i^2r_i^2 .
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Write $i=(u_i,v_i)$ and project the points to the sphere positions
+$z_i(s)=u_i s+v_i$. As $s$ varies, a pair collides exactly once on
+$\mathbb P^1(F)$, with the projection $i\mapsto u_i$ used at infinity.
+Let $D$ consist of the finite collision parameters together with
+$\infty$. For each $\alpha\in D$ let $\mathcal P_\alpha$ be the
+partition into fibers of its projection. The nonsingleton fibers are
+precisely the intersections with secants, each occurring at the
+parameter for its direction. Thus $i$ is a singleton at exactly
+$|D|-t_i$ parameters, and $K_{\{i\}}=a_i r_i$. Adding these singleton
+contributions to both sides of~\eqref{eq:inc-secants} gives the
+equivalent estimate
+\begin{equation}\label{eq:inc-fibers}
+   \sum_{\alpha\in D}\sum_{C\in\mathcal P_\alpha} K_C^2
+             \le (|D|-1)\sum_i a_i^2 r_i^2 .
+\end{equation}
+
+\emph{Choosing the external widths.}
+Fix $s_0\notin D$. The positions $z_i(s_0)$ are distinct, so
+Theorem~\ref{thm:sphere} with $\lambda_i=1/(2a_i)$ gives energies
+$h_i=h_i(N)$ with
+\begin{equation}\label{eq:inc-saturation}
+ w_N(h_i)\longrightarrow a_i r_i,\qquad
+ \frac{1}{N}H_{\mathbf x}\bigl(C(\mathbf h;\mathbf z(s_0))\bigr)
+              \longrightarrow P:=\sum_i a_i r_i^2 .
+\end{equation}
+Here $w_N(h)=c\sqrt h/N$, $c=\pi/\sqrt3$. The cost of supplying the
+external legs from $o$, in these limiting widths, is exactly $P$.
+If $P=0$ all $K_C$ vanish. Otherwise take $N$ large enough that the
+chosen tensor is nonzero. Its total energy $H_0=\sum_i h_i$ is
+$O(N^2)$ and is an integer, since every generator in any nonzero
+coefficient is paired.
+
+\emph{A joint bound on the collision energies.}
+Write $T(s)=C(\mathbf h;\mathbf z(s))$. In the chart at a finite
+$\alpha$ use $s-\alpha$ as coordinate. At infinity use $u=1/s$ and
+the positions $u_i+u v_i$. Homogeneity in the positions gives the
+tensor $u^{-H_0}T(1/u)$ in this chart. In either chart the points of
+each fiber $C$ have a common center and distinct linear offsets.
+Proposition~\ref{prop:fusion} expands the coefficient of order $l$
+as a sum over intermediate energies $e_C\ge0$ satisfying
+$\sum_C e_C=H_0+l$.
+
+Choose temporarily a linear functional $\ell$ with
+$f(s)=\ell(T(s))$ nonzero. Let $l_\alpha$ be the order of its first
+nonzero coefficient in the corresponding tensor chart. In particular,
+$l_\infty=\operatorname{ord}_\infty f-H_0$. The ordinary orders of
+$f$ on $\mathbb P^1$ sum to zero. Since there are no poles off $D$,
+the energy totals at these orders satisfy
+\begin{equation}\label{eq:inc-orders}
+  \sum_{\alpha\in D}(H_0+l_\alpha)\le (|D|-1) H_0 .
+\end{equation}
+Each summand is nonnegative. Using the \emph{same} functional for
+all directions is what gives one bound on their total intermediate
+energy.
+
+We now require the selected coefficients to retain the price
+in~\eqref{eq:inc-saturation}. In every chart collect the fusion terms
+with total intermediate energy at most $(|D|-1)H_0$. There are only
+polynomially many in $N$. Each term is specified by one nonnegative
+half-integer per fiber, and the number of fibers and directions is
+fixed. Let $W$ be the span of all collected terms whose price is
+less than $H_{\mathbf x}(T(s_0))-\sqrt N$. The ordinary-sum inequality
+bounds the price of every nonzero tensor in $W$ by this threshold
+plus $O(\log N)$. For large $N$, $T(s_0)\notin W$. Take $\ell$
+vanishing on $W$ and nonzero on $T(s_0)$. At each $\alpha$ the
+coefficient at its first nonzero order $l_\alpha$ has a fusion term
+surviving $\ell$. By~\eqref{eq:inc-orders} such a term was collected,
+so its price is at least $H_{\mathbf x}(T(s_0))-\sqrt N$. Select one
+surviving term per direction.
+
+Pass to a common subsequence along which the selected widths
+$w_N(e_C)$ converge to limits $b_{\alpha,C}$. There are finitely
+many widths, all bounded by~\eqref{eq:inc-orders}. Multiplication
+of that inequality by $c^2/N^2$ gives
+\[
+ \sum_{\alpha\in D}\sum_{C\in\mathcal P_\alpha}b_{\alpha,C}^2
+                  \le (|D|-1)\sum_i a_i^2 r_i^2 .
+\]
+
+\emph{The width needed by one fiber.}
+Fix $\alpha$, a fiber $C$, and $y\ne o$. Supply the selected term
+by preparing the fused tensor at $o$. Carry the intermediate leg
+for $C$ a distance $t$ along $[o,y]$ to a site $m$, apply its fusion
+map there and send the external legs from $m$ to their sites. Split
+all other legs at $o$. By the transport bound~\eqref{eq:prices-transport}
+and $\log\dim V_h\le c\sqrt h$, the price of the selected term is at
+most the cost of this supply. After division by $N$, the $\sqrt N$
+price loss vanishes. Passing to the limit using~\eqref{eq:inc-saturation} gives
+\[
+ P\le\sum_{i\notin C}a_i r_i^2+b_{\alpha,C}t+
+                       \sum_{i\in C}a_i r_i d(m,x_i).
+\]
+At $t=0$ equality holds. The derivative from the right is therefore
+nonnegative. First variation in a $\mathrm{CAT}(0)$ space gives
+$b_{\alpha,C}\ge\sum_{i\in C}a_i r_i\cos\angle_o(x_i,y)$
+\cite[Chapter~II.3]{BridsonHaefliger}. Taking the supremum of the
+positive part yields $b_{\alpha,C}\ge K_C$, proving~\eqref{eq:inc-fibers}.
+\end{proof}
+
+\subsection{The sharp local link inequality}
+
+Suppose $F$ contains $\mathbb F_q$. Take the $q^2$ points of the affine
+plane $\mathbb F_q^2$ and retain the lines in $s$ parallel classes,
+$1\le s\le q+1$. A point belongs to $s$ retained lines and each line
+contains $q$ points. Place the vertices of the resulting bipartite
+incidence graph in $X$. Let $e$ be the mean squared distance across a
+uniform edge. Give each side half the total mass, uniformly distributed
+over its vertices, and let $V$ be the minimum mean squared distance
+of this distribution to a common center.
+
+\begin{corollary}[Affine incidence links]\label{cor:inc-link}
+Under the hypotheses of Theorem~\ref{thm:incidence},
+\[
+                   e\ge 2(1-s^{-1/2}) V .
+\]
+The coefficient is optimal in every target containing a nontrivial
+geodesic segment. Omitting one parallel class gives $s=q$ and a
+$q$-regular graph on $2q^2$ vertices.
+\end{corollary}
+
+\begin{proof}
+Take $o$ to be the barycenter of the point sites alone. Write $r_i,r_L$
+for the distances from $o$ of a point site $x_i$ and a line site
+$y_L$. The mean squared distances on the two sides are
+\[
+             A=q^{-2}\sum_i r_i^2,\qquad
+             B=(sq)^{-1}\sum_{L\ \mathrm{retained}} r_L^2 .
+\]
+For each incidence, triangle comparison bounds its squared distance
+from below by $r_i^2+r_L^2-2r_i r_L\cos\angle_o(x_i,y_L)$.
+A zero radius gives a zero cross term. By~\eqref{eq:inc-secants}
+with all masses one, $\sum_L K_L^2\le q\sum_i r_i^2$ even for the
+full set of lines. Thus the mean cross term over the $s q^2$
+retained incidences is at most
+\[
+ \frac{2}{s q^2}\sum_{L\ \mathrm{retained}}r_L K_L
+        \le\frac{2}{s q^2}
+           \sqrt{q\sum_i r_i^2\sum_{L\ \mathrm{retained}}r_L^2}
+        = 2\sqrt{AB/s}.
+\]
+Consequently
+\[
+      e\ge A+B-2\sqrt{AB/s}\ge (1-s^{-1/2})(A+B).
+\]
+Evaluation at $o$ gives $V\le(A+B)/2$, which proves the corollary.
+
+To attain it, choose one retained parallel class and assign its $q$
+lines real labels of mean zero and positive variance. Give each point
+the label of its line. Give each line site of that class $\sqrt s$
+times its label and every other line site zero. Both sides now have
+mean zero and the same mean square $A$. A fraction $1/s$ of the edges
+belongs to the chosen class, so the mean product of the two endpoint
+labels is $A/\sqrt s$. Hence $V=A$ and
+$e=2(1-s^{-1/2})A$. Translate and rescale the labels into any
+nontrivial segment of $X$. Nearest-point projection onto the segment
+ensures that the ambient minimum has the same value.
+\end{proof}
+
+The bound in terms of $A+B$ keeps the point barycenter fixed.
+Section~\ref{sec:sort-action} uses that form for affine links, and
+uses the secant inequality directly for projective links.

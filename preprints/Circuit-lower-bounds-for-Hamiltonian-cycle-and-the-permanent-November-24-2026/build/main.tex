@@ -1,0 +1,59 @@
+\documentclass[11pt]{article}
+\input{style}
+\articletitle{Circuit lower bounds \titlebreak for Hamiltonian cycle and the permanent}{Hamiltonian cycle and permanent}
+\hypersetup{pdfsubject={Circuit-lower-bounds-for-Hamiltonian-cycle-and-the-permanent-November-24-2026}}
+
+\newcommand{\HC}{\mathrm{HC}}
+\newcommand{\Per}{\mathrm{Per}}
+\newcommand{\Det}{\mathrm{Det}}
+\newcommand{\bsz}{\underline L}
+\newcommand{\VP}{\mathsf{VP}}
+\newcommand{\VNP}{\mathsf{VNP}}
+\newcommand{\EE}{\mathbb E}
+\DeclareMathOperator{\rank}{rank}
+\allowdisplaybreaks[2]
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We prove that over every field, arithmetic circuits for the directed
+Hamiltonian cycle polynomial of order $N$ require at least
+$\exp\!\bigl(c(\log N)^2/(\log\log N)^2\bigr)$ gates for all
+sufficiently large $N$. The constant $c>0$ is absolute, and the
+threshold depends only on the characteristic. The same lower bound holds
+for the permanent outside characteristic two. Both bounds hold even
+when a circuit need only approximate the coefficients of degree $N$.
+\end{abstract}
+
+\input{intro}
+\clearpage
+{\small\tableofcontents}
+\clearpage
+\input{prices}
+
+\part{One placement for all balanced cuts}\label{part:no}
+\input{comparison}
+\input{entropy}
+\input{product}
+\input{lamps}
+\input{values}
+\input{flags}
+\input{exterior}
+\input{packing}
+
+\clearpage
+\part{Compression and counting}\label{part:port}
+\input{model}
+\input{compress}
+\input{gap}
+\input{batch}
+\input{parse}
+\input{curve}
+\input{cartier}
+\input{border}
+
+\bibliographystyle{plainnat}
+\bookmarksetup{startatroot}
+\bibliography{references}
+\end{document}

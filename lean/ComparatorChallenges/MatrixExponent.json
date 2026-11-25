@@ -1,0 +1,16 @@
+{
+  "challenge_module": "ComparatorChallenges.MatrixExponent",
+  "solution_module": "OAI.LinearAlgebra.SpectralBooks.ExactExponent",
+  "theorem_names": [
+    "OAI.LinearAlgebra.SpectralBooks.square_exponent",
+    "OAI.LinearAlgebra.SpectralBooks.dual_exponent",
+    "OAI.LinearAlgebra.SpectralBooks.rectangular_exponent"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

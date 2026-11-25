@@ -21,6 +21,28 @@ open scoped Classical Fin.CommRing
 
 variable {k : Type*} [_root_.Field k] {S : BlockSchedule k} (B : S.Templates)
 
+theorem eventually_build_at (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in atTop,
+    ∀ capacity ≤ initialPositions factor n, ∀ {R : Type*} [CommRing R] (f : B.Entry → R) (hf : B.IsSolution f) (i : Fin S.steps) {g : ℕ}
+      (X : State (S.degreeExponent i.castSucc) (packingLaneBits (S.degreeExponent i.castSucc) g)),
+      X.positions ≤ capacity → X.maxWireWidth ≤ n → ∀ (base blocks : ℕ)
+      (old new : Fin (BlockProgram.layout B base capacity blocks).levels)
+      (m : Memory (wordBits factor n)) (fuel : ℕ),
+      let L := BlockProgram.layout B base capacity blocks
+      let w := wordBits factor n
+      let start := tableBase L old (0 : Fin 6)
+      let T := packedIncidence L w old (DemandRAM.oldCount X)
+      Current L old X n m → old.val+1=new.val → endAddress L < 2^w → ShrinkBranch.prefixClock B factor n ≤ fuel →
+      ShrinkBranch.PrefixFits B X T start (10 : Word w) fuel ∧
+        Nonempty (Common B f hf i X base capacity blocks old new m fuel) := by
+  filter_upwards [ShrinkBranch.eventually_prefixFits_at B factor hb,PrefixLevelScale.eventually_scores B factor hb,
+    CursorRAM.eventual_word_room factor hb (CursorRAM.bounded_positions factor),
+    CursorRAM.eventual_word_room factor hb (PolynomiallyBounded.const (slotDegree S))] with n prefixes scores sites degrees
+  intro capacity avail R _ f hf i g X pos mx base blocks old new m fuel L w start T current next fit clock
+  have pre := prefixes capacity i X pos mx base blocks old fit fuel clock
+  exact ⟨pre,build B f hf i X base _ blocks old new m n fuel current next pos ((pos.trans avail).trans_lt sites) degrees fit pre
+    (Nat.mod_eq_of_lt scores.1) scores.2.1 (scores.2.2 i X (pos.trans avail) mx)⟩
+
+/-- Specialization to the cursor's initial position capacity. -/
 theorem eventually_build (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in atTop,
     ∀ {R : Type*} [CommRing R] (f : B.Entry → R) (hf : B.IsSolution f) (i : Fin S.steps) {g : ℕ}
       (X : State (S.degreeExponent i.castSucc) (packingLaneBits (S.degreeExponent i.castSucc) g)),
@@ -34,13 +56,8 @@ theorem eventually_build (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in 
       Current L old X n m → old.val+1=new.val → endAddress L < 2^w → ShrinkBranch.prefixClock B factor n ≤ fuel →
       ShrinkBranch.PrefixFits B X T start (10 : Word w) fuel ∧
         Nonempty (Common B f hf i X base (initialPositions factor n) blocks old new m fuel) := by
-  filter_upwards [ShrinkBranch.eventually_prefixFits B factor hb,PrefixLevelScale.eventually_scores B factor hb,
-    CursorRAM.eventual_word_room factor hb (CursorRAM.bounded_positions factor),
-    CursorRAM.eventual_word_room factor hb (PolynomiallyBounded.const (slotDegree S))] with n prefixes scores sites degrees
-  intro R _ f hf i g X pos mx base blocks old new m fuel L w start T current next fit clock
-  have pre := prefixes i X pos mx base blocks old fit fuel clock
-  exact ⟨pre,build B f hf i X base _ blocks old new m n fuel current next pos (pos.trans_lt sites) degrees fit pre
-    (Nat.mod_eq_of_lt scores.1) scores.2.1 (scores.2.2 i X pos mx)⟩
+  filter_upwards [eventually_build_at B factor hb] with n run
+  exact run (initialPositions factor n) le_rfl
 
 end CompressorRecords.ShrinkCurrentBranch
 

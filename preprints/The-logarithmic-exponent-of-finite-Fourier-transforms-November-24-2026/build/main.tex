@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+\input{style}
+\articletitle{The logarithmic exponent \titlebreak of finite Fourier transforms}{The logarithmic exponent of finite Fourier transforms}
+\hypersetup{pdfsubject={The-logarithmic-exponent-of-finite-Fourier-transforms-November-24-2026}}
+\usetikzlibrary{fit,backgrounds,decorations.pathreplacing,matrix}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\Z}{\mathbb Z}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The minimum number of binary linear gates for a finite abelian Fourier
+transform of order $N$ is $N(\log N)^{1/2+o(1)}$. This holds over every
+field in which $N$ is invertible and which contains the required roots
+of unity. The same cost per transform holds for any number of independent
+inputs, even when gates can mix them. Formal polynomial multiplication
+has the same logarithmic exponent over every field, including for
+batches of independent products.
+\end{abstract}
+
+\input{intro}
+\medskip
+{\small\tableofcontents}
+\clearpage
+
+\part{A joint test of rank and support}\label{part:lower}
+\input{geometry}
+\input{quotient}
+
+\part{An exact algorithm on prime tensor powers}\label{part:finite}
+\input{repair}
+\input{kernel}
+
+\part{All lengths over arbitrary fields}\label{part:all}
+\input{layers}
+\input{packing}
+\input{grids}
+
+\bibliographystyle{plainnat}
+\bookmarksetup{startatroot}
+\bibliography{references}
+\end{document}

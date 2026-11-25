@@ -1,0 +1,19 @@
+{
+  "challenge_module": "ComparatorChallenges.Hirsch",
+  "solution_module": "OAI.Geometry.Hirsch.Main",
+  "theorem_names": [
+    "OAI.Geometry.Hirsch.main",
+    "OAI.Geometry.Hirsch.theorem_1_1",
+    "OAI.Geometry.Hirsch.superpolynomial_graph_diameter",
+    "OAI.Geometry.Hirsch.graph_diameter_beats_polynomials",
+    "OAI.Geometry.Hirsch.not_polynomialHirsch",
+    "OAI.Geometry.Hirsch.theorem_1_2"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

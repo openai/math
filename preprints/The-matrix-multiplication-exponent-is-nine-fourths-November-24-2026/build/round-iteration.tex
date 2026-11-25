@@ -1,0 +1,127 @@
+\subsection{Iteration and the description of the final tables}
+\label{iter:subsection}
+
+Fix the round just constructed, including $D$, $G$, $q$ and its $s$
+grouping steps. To save a factor $h^a$ in the total charge, take
+\[
+ j=\left\lceil\frac{a\log h}{\log G}\right\rceil,\qquad
+ L_i=L_0G^{-i},\qquad T_i=T_0q^i \qquad(0\le i\le j).
+\]
+Here $L_i,T_i$ are the budgets after $i$ completed rounds.
+It remains to choose $r$ and the initial number $S$ of blocks. A large
+$r$ makes partially occupied packs inexpensive. A large $S$ supplies
+enough groups for all $sj$ steps and leaves enough blocks to amortize
+the common host in Section~\ref{sec:assembly}.
+
+\paragraph{Packing slack and exterior width.}
+In one grouping step $N_b$ decreases by $r$ while $H$ increases by at
+most $cr$. Their product, which counts allocated occurrences, increases
+by at most $c$. The fixed expansions of the host can be included in $c$.
+Thus at every stage of the construction,
+\begin{equation}
+ H N_b\le C^{j+1}mS\log h , \label{iter:occurrences}
+\end{equation}
+where $C$ depends only on the design of one round. Since
+$L_0=C_0 mT_0 S\log(2+h)$, the ratio that controls the slack during
+the round starting from $L_i,T_i$ is bounded by
+\[
+   \frac{H N_b T_i}{rL_i}\le \frac{C_1C^{j+1}(qG)^i}{r}.
+\]
+Choose $r$ to be the least power of two at least $C_2(CqG)^{j+1}$.
+The round design fixes $C_2$ so that this ratio is at most $c_D$ in
+\eqref{eq:round-slack} and $r$ meets the lower bound in every step.
+In particular $r=h^{O_D(a)+o(1)}$, independently of $S$. The external
+width has a separate bound. The $ed$ exposed bits are present in every
+round, and $G^j<Gh^a$. Hence for $i\le j$,
+\[
+       \frac{ed}{L_i}=\frac{eG^i}{C_0m\log(2+h)}
+           =O_D\!\left(\frac{h^{-a}}{\log h}\right).
+\]
+For sufficiently large $h$ this gives $ed\le L_i/D$, the width
+allowance for the immobile exterior identities.
+
+\paragraph{Copies and terminal budgets.}
+Let $R$ be the least power of two at least $h^M$, for any fixed $M>0$.
+Taking $S=Rr^{sj}$ leaves exactly $R$ blocks after $j$ rounds.
+Each initial block contains $T_0$ copies, so $d=T_0S$ and
+$\log d=O((\log h)^2)$. In particular $d=n^{o(1)}$.
+Now $h^a\le G^j<Gh^a$, $q\le G^{1+\delta/3}$ and $T_0=\Theta(h^b)$.
+It follows from \eqref{eq:round-start} and \eqref{iter:occurrences} that
+\begin{equation}
+ \begin{aligned}
+ L_j&=O(md\log h\,h^{-a}),&
+ T_j&=O\bigl(h^{b+(1+\delta/3)a}\bigr),\\
+ HN_b&\le mS h^{O_D(a)+o(1)} .
+ \end{aligned}
+ \label{eq:round-terminal}
+\end{equation}
+The occurrence bound holds throughout, with a constant in $O_D(a)$
+independent of $M,a,b,\beta$. These scales also justify using a single
+working field. They range from $T_0\ge4h^\beta$ to a fixed power of
+$h$. Choose the extension degree divisible by the degree of the fixed
+extension in Lemma~\ref{lem:local}, and large enough to meet the
+cardinality requirement at $T_j$. Its degree is $O(\log h)$ and hence
+$O(\log T_i)$ for every $i$.
+
+\paragraph{Descriptions of tables.}
+An occurrence carries a label for its table, the widths of its bundles,
+and their positions in its port order. The cost of naming its
+incident host edges is bounded in terms of $D$ because each edge can
+be named by its place in the local neighbor list. Constants indexed by $D$ may depend on the round design. These local data have total length per occurrence at most
+\begin{equation}
+ C_3^{j+1}(\log h)^{O(1)}
+   =h^{O_D(a)+o(1)} .
+ \label{iter:labels}
+\end{equation}
+
+At initialization the stack at a position has a fixed table label,
+specified by its original table, its stack length and the locations
+of its ordered sublists. Its description has length
+$(\log h)^{O(1)}$. Within one round the following facts bound
+the number of old labels that can enter any new label.
+\begin{itemize}
+\item A colony of capacity $DT_i$ contains at most $D/\theta$ live
+entering stations, since each is charged at least $\theta T_i$.
+The local expansion in Lemma~\ref{lem:local} uses a bounded number of
+old labels, discrete choices and field elements in each output
+description. Its additional description length is $O_D(\log h)$.
+\item In a subround or reset, both the bound on load per leaf and the
+bound on the number of leaves contributing to one resulting pack are
+fixed multiples, depending on $D$, of $T_i$ and $1$, respectively.
+Each live core contributes at least one internal unit of width
+$u\ge T_i/\operatorname{poly}(D)$. The charged load of an individual
+frozen station has the same kind of lower bound even after the fixed
+rescaling. Scalar stations are withdrawn as soon as they form. It
+follows that a contributing pack has a bounded number of old labels
+and a bounded number of units. Lists of unit pairings, rotor layers
+and ordered sublists at a port therefore have bounded numbers of
+entries. Each entry needs at most $O_D(\log h+\log r)$ bits. This
+also describes the routing on the final trees at the frozen stations.
+\end{itemize}
+Thus if $A$ bounds the current label length, one step gives a bound
+$C_4A+C_4(\log h)^{C_5}$, including the descriptors of locally
+withdrawn scalar factors. The multiplicative constant counts old
+labels, independently of the field degree and the length of the input
+dictionary labels. Iteration through the $sj$ steps proves
+Equation~\eqref{iter:labels}. Global host addresses enter the control
+of a whole position only. They never have to be appended to an
+individual table description.
+
+\paragraph{The tensor represented by the sum.}
+Each term now consists of $R$ surviving blocks and the scalar factors
+withdrawn along its history. Regrouping permutes the exterior lists along with their stations and preserves each product entry by entry. A local tensor identity replaces a product by a sum with the same entries on those $ed$ named ports. Colorings, packings, and routings use fixed tie-breaking rules. Only choices from local tensor identities index the expansion.
+The final internal wire assignments are summed when the $R$ blocks are
+contracted.
+
+For this evaluation one dictionary suffices. A key records the type,
+stage, description and arity of a table, followed by its incident bits.
+Length fields or fixed padding give a unique encoding. The input
+dictionary and the rules of the construction assign a field value
+to each valid key. The values at unused keys may be fixed arbitrarily.
+In particular, a key for a withdrawn scalar has no incident bits.
+A longest key has length
+\[
+ O_D(T_j)+h^{O_D(a)+o(1)}
+\]
+by the maximum-arity invariant and Equation~\eqref{iter:labels}.
+A derived table description can exceed $(\log h)^{O(1)}$ bits. Section~\ref{sec:assembly} places that description in the \emph{argument} of a dictionary call. The label of the installed table need only specify the key format and length. This accounts separately for the arity of a lookup and the short label required as input to the next macro.

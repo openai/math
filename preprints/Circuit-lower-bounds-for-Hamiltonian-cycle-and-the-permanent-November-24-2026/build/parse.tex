@@ -1,0 +1,142 @@
+\section{Counting the coefficients of a formal circuit}\label{sec:parse}
+
+A circuit that computes $P_n^*$ exactly supplies a coefficient for each
+input to a signed processor. A border circuit supplies a point in the
+closure of a family of coefficient vectors. To use such a point in the
+clock argument, we first replace every processor entry by a polynomial
+in a common set of scalar parameters $X$. Each path of the resulting
+contraction contributes a monomial in $X$. Counting the paths that
+contribute a given monomial will let us apply the compression of
+Theorem~\ref{thm:gap}.
+
+Assume for contradiction that $\bsz_F^{[n]}(P_n^*)\le m_0$, where
+\[
+ m_0=\lfloor 2^{n^\sigma}\rfloor,\qquad
+ R=2^{\lceil n^\rho\rceil},\qquad M=m_0+n+w .
+\]
+Here $0<\sigma<\rho$ and $w$ is the word length from
+Section~\ref{sec:gap}. Thus $M^C=o(R)$ for every fixed $C$.
+The coefficient vector of $P_n^*$ is defined over the prime field.
+The border hypothesis holds over its algebraic closure, since the
+kernels of the circuit coefficient maps commute with field extension,
+as in Section~\ref{sec:comparison}.
+
+\subsection{One table for all circuits of a given size}
+A coefficient query at $x\in\{0,1\}^n$ asks for the coefficient of
+$\prod_i Z_{i,x_i}$. We parametrize the entire degree-$n$ output,
+including the coefficients outside this set. The recursive form of the
+parametrization will allow all $R$ processors to answer their queries
+within the larger clock.
+
+\begin{lemma}[Parse tables]\label{lem:parse-tables}
+For every $n\ge1$ and $s\ge 1$ there is an integral polynomial map
+$Y(X)$ from $h=(n+s)^{O(1)}$ scalar parameters to the full space of
+degree-$n$ coefficients in $2n$ variables. In every field, the image
+contains the degree-$n$ parts of all circuits of size at most $s$.
+Each coordinate of $Y$ has degree at most $2n-1$ in $X$, and its
+coefficient $\ell^1$-norm has logarithm $O(n\log(n+s+2))$ when nonzero.
+\end{lemma}
+\begin{proof}
+Reserve $G=O(n+s)$ gate slots, including the used inputs and a
+distinguished output. For each slot $g$ define $T_{g,1}$ to be a
+linear combination of the $2n$ variables, with a separate parameter
+for every coefficient. Recursively define
+\[
+ T_{g,d}=\sum_{e=1}^{d-1}\sum_{a,b=1}^{G}
+     X_{g,d,e,a,b}\,T_{a,e}T_{b,d-e}\qquad (2\le d\le n).
+\]
+Take the coefficients of $T_{\mathrm{out},n}$ for the coordinates of
+$Y$. The table has $O(nG+n^2G^3)$ parameters.
+
+To encode a particular circuit, evaluate its degree-zero gate
+components first. At each positive degree $d$, addition, subtraction
+and multiplication by a degree-zero component give linear combinations
+of earlier degree-$d$ components. Expand these linear dependencies in
+topological order. At degree one the resulting expressions are linear
+forms in the input variables. At degree $d\ge2$ they are linear
+combinations of products of two positive-degree components with degrees
+summing to $d$. Their coefficients give the required parameter values.
+
+Expand the recursion before specializing any parameter. Each summand
+corresponds to an ordered full binary tree with $n$ leaves. At each
+internal node choose a split and two child slots. At each leaf choose
+an input variable. A tree therefore contributes a product of $2n-1$
+parameters. There are fewer than $4^n$ tree shapes, each with at most
+$(n+s+2)^{O(n)}$ labelings. Collecting terms gives the asserted norm
+bound, including multiplicities when two trees yield the same monomial.
+\end{proof}
+
+\subsection{Counting a coefficient of the contraction}
+Fix the private machine of Theorem~\ref{thm:gap}(2) and the
+$R$-processor wiring of Theorem~\ref{thm:gap}(1). The public description
+$D$, including its code, uses at most $R/10$ active words. Set all
+other description words to zero. Write $F_D(y)$ for the contraction
+with these pins when each processor with input $x$ contributes the
+coordinate $y_x$ indexed by $\prod_i Z_{i,x_i}$. In particular
+$F_D(c)=Z(D)$, the genuine completed success count, for the full
+coefficient vector $c$ of $P_n^*$.
+
+At size $s=m_0$ the substituted contraction is
+\[
+ A_D(X)=F_D(Y(X)),\qquad \deg_X A_D\le L:=R(2n-1).
+\]
+Indeed, each assignment of the linked bits yields a product of $R$
+coordinates of $Y$. All coefficients of $A_D$ are nonnegative integers.
+Its value at the boundary will be recovered only after these terms
+are summed.
+
+\begin{lemma}[Coefficient counts]\label{lem:substitution}
+Given $D$ and an exponent vector $\mu\in\mathbb Z_{\ge0}^{h}$ with
+$|\mu|\le L$, a binary-guess program without private jobs at cap
+$T_+$ has exactly $[X^\mu]A_D$ successful paths. The encoding of
+$\mu$ uses $M^{O(1)}$ bits. The assertion holds for sufficiently small
+$\rho$ with $0<\sigma<\rho$.
+\end{lemma}
+
+\begin{proof}
+Generate the pins and wiring from $D$ and guess the linked bit
+values. At each of the resulting $R$ inputs $x$, guess an ordered
+tree from Lemma~\ref{lem:parse-tables}. Encode its $2n-1$ nodes in
+preorder. Each record specifies a gate slot and degree. A leaf gives
+its input variable, and an internal node gives its degree split and
+ordered child slots. Check all ranges, the root slot and degree, and
+require unused record fields to be zero.
+
+A degree-$d$ node at position $u$ occupies $[u,u+2d-2]$ within
+its block. For a split $d=e+(d-e)$ check the child records at
+$u+1$ and $u+2e$. Their intervals partition the rest of the parent's
+interval. Induction from the root therefore verifies every record
+exactly once. Tally the leaf variables and require the monomial to be
+$\prod_i Z_{i,x_i}$. Across all trees, tally the uses of every
+parameter in a common random access array and require the totals
+to equal $\mu$. A successful path specifies one wiring assignment and
+one labeled ordered tree at each processor, exactly the multiplicity
+with which that choice occurs in $[X^\mu]A_D$.
+
+Each count, slot label or address fits in $O(w)$ bits. Initializing and
+comparing the parameter totals costs $M^{O(1)}$, since the table has
+$m_0^{O(1)}+n^{O(1)}$ parameters and $\log(L+1)=O(w)$. Generating the
+wiring, checking the records and tallying the leaf variables takes
+$O(Rn\operatorname{poly}(w))$ ticks. The exponent on $w$ is fixed, so
+decreasing $\rho$ makes this term fit $T_+$, while $M^{O(1)}=o(R)$.
+\end{proof}
+
+Theorem~\ref{thm:gap}(2) now gives a smaller-clock simulation of each
+coefficient count. Its compressor parameters have fixed values. The
+parse-table parameters $X$ still have to account for a boundary point
+$c$ of the image of $Y$, possibly with no assignment $X$ for which
+$Y(X)=c$.
+
+Sections~\ref{sec:descent} and~\ref{sec:cartier} recover this boundary
+value through matrices over a prime field. One matrix $W_\mu$ will
+represent each monomial $X^\mu$. The same nonzero vector $\Omega$ will
+satisfy
+\[
+ \biggl(\sum_\mu ([X^\mu]A_D)\,W_\mu\biggr)\Omega=Z(D)\Omega
+\]
+for every description $D$. The computation can guess $\mu$ and count
+one matrix entry using only polynomially many bits in $M$. In
+Section~\ref{sec:border} it will supply one index as part of its own
+description and guess the other. The vector $\Omega$ enters there
+only through the displayed identity and the choice of one index at
+which it is nonzero.

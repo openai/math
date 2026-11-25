@@ -1,0 +1,164 @@
+\section{Introduction}\label{sec:introduction}
+
+How many edges must one traverse to get from one vertex of a polytope to
+another? In 1957 Hirsch proposed that a \(d\)-dimensional polyhedron with
+\(n\) facets should require at most \(n-d\) steps. Santos disproved this
+bound for bounded polytopes by constructing an example of dimension \(43\)
+with \(86\) facets and two vertices at least \(44\) steps apart~\cite{santos}.
+That example left open the possibility that some polynomial in \(n\)
+bounds all such distances. We construct bounded polytopes whose diameter
+grows faster than every fixed power of their facet count.
+
+The diameter is the maximum, over all pairs of vertices, of the length of
+a shortest path in the undirected vertex--edge graph. Our examples are
+\emph{simple}, meaning that every vertex lies on exactly \(d\) facets.
+We can even allow a move directly between any two vertices of a common
+face of dimension at most \(s\). Write \(\operatorname{dist}_s(v,w)\)
+for the minimum number of these moves, so that \(\operatorname{dist}_1\)
+is the usual graph distance. For a positive function of \(n\), the
+notations \(n^{o(1)}\) and \(n^{\omega(1)}\) mean that the ratio of
+its logarithm to \(\log n\) tends to zero and to infinity, respectively.
+
+\begin{theorem}[Superpolynomial diameter]\label{thm:main}
+For each positive integer-valued \(s(n)=n^{o(1)}\) there is a family
+of bounded simple rational polytopes \(P_n\), one for every sufficiently
+large \(n\), with exactly \(n\) facets, dimension \(n^{o(1)}\), and
+\(s(n)\)-move diameter \(n^{\omega(1)}\).
+
+Moreover, there is a linear functional \(x\) on each \(P_n\), of positive
+range \(\Delta x=\max_{P_n}x-\min_{P_n}x\), such that for every fixed
+\(0<\alpha<1\),
+\[
+ \min_{\substack{v,w\ \mathrm{vertices\ of}\ P_n\\
+               |x(v)-x(w)|\ge n^{-\alpha}\Delta x}}
+       \operatorname{dist}_{s(n)}(v,w)=n^{\omega(1)}.
+\]
+\end{theorem}
+
+Taking \(s(n)=1\) disproves the polynomial Hirsch conjecture. The objective
+estimate explains where the long distances occur. On the same polytope,
+every pair of vertices separated by even a fraction \(n^{-\alpha}\) of
+the objective range requires a long walk. Intermediate vertices may take
+any objective values.
+
+There is also a bound with both the dimension \(d\) and the facet excess
+\(E=n-d\) prescribed. This includes the classical \(d\)-step case
+\(E=d\), as well as regimes in which the two parameters grow at very
+different rates.
+
+\begin{theorem}[Prescribed dimension and facet excess]\label{thm:excess}
+For any \(a,b>0\) there exist \(c,\delta>0\) such that, for all
+integers \(d,E\) with \(m=\min\{d,E\}\) sufficiently large, some
+rational simple \(d\)-polytope with exactly \(d+E\) facets has two
+vertices requiring at least
+\[
+                         cE\min\{E^a,d^b\}
+\]
+moves across faces of dimension at most \(\lfloor m^\delta\rfloor\).
+\end{theorem}
+
+At \(n=2d\), for every prescribed \(s(d)=d^{o(1)}\), there are
+vertices at \(s(d)\)-move distance \(d^{\omega(1)}\) such that each
+facet contains exactly one of them (Corollary~\ref{cor:spindle}).
+In the polar these vertices correspond to two disjoint simplex facets
+that together contain every vertex. A section between the facets yields
+a Minkowski sum of two simplices with superpolynomial facet-adjacency
+diameter (Corollary~\ref{cor:minkowski}).
+
+\subsection{Diameter and linear programming}
+
+The simplex method gives Hirsch's question an algorithmic interpretation.
+Starting from a feasible vertex, a pivot can move to an adjacent vertex.
+Even complete knowledge of the destination cannot shorten a walk below
+the graph distance. General LP algorithms have other choices.
+In the companion paper~\cite{lpcompanion}, a strongly polynomial algorithm
+finds an optimum by recovering its primal and dual certificates from the
+inequalities. Corollary~\ref{cor:packing} makes this distinction concrete. It gives
+packing linear programs in which the origin and the all-ones vector are
+the unique minimizer and maximizer of the sum of the coordinates, yet
+every edge path between these explicit endpoints has superpolynomial length.
+
+Dantzig recorded Hirsch's original question in his treatment of linear
+programming~\cite[p.~160]{dantzig}. Klee and Walkup reduced the linear
+conjecture to the case \(n=2d\) and gave an unbounded counterexample~\cite{kw}.
+For bounded polytopes, Matschke, Santos and Weibel brought the dimension
+of Santos's counterexample down to \(20\)~\cite{msw}. Davies and
+coauthors constructed five-dimensional prismatoids whose width grows
+linearly in their number of vertices~\cite{davies}. The polynomial
+conjecture asks for a single polynomial valid in all dimensions
+\cite[Conjecture~1.3]{santos}.
+
+Larman's upper bound \(n\,2^{O(d)}\) shows that a superpolynomial
+diameter forces \(d/\log n\) to tend to infinity~\cite{larman}.
+Theorem~\ref{thm:main} places the examples within this range while
+keeping \(d\) smaller than every positive power of \(n\).
+The Kalai--Kleitman bound and its refinements give quasipolynomial upper
+bounds as \(d\) varies~\cite{kalai,todd,sukegawa}. Liu, Ge and Ye
+also obtain a quasipolynomial upper bound in the facet excess alone
+\cite{liugeye}. Our construction concerns actual convex polytopes.
+It complements work on combinatorial models of diameter, including
+connected layer families~\cite{abstraction}. By polarity, the examples
+also give rational simplicial polytopes whose facets have superpolynomial
+diameter under adjacency across ridges~\cite{ziegler}.
+
+\subsection{Why distances multiply}
+
+The construction uses a linear coordinate \(x\) to measure progress through
+a polyhedron. We call \(x\) \emph{time}, although a path can move in either
+direction in \(x\). The elementary way to force a bend is to give
+\(J+1\) independent coordinates \(z_i\) the lower bounds
+\(z_i\ge |x-a|\). At a fixed \(x\), a point in a face of the slice of
+dimension at most \(J\) must attain at least one bound. In particular,
+some \(z_i=0\) when the path reaches \(x=a\). If an affine segment
+crossed that level in its interior, its \(z_i\) coordinate would give a
+line through the corner lying above both branches of \(|x-a|\).
+Figure~\ref{fig:kink} shows why this is impossible. A convex piecewise
+affine lower bound with many corners forces a separate bend at each one.
+
+\input{figures/kink}
+
+To make the cost grow faster than the number of inequalities, we place
+a copy of an expensive crossing inside each of many disjoint intervals
+of \(x\). Within one such interval, called an \emph{episode}, a pair
+of auxiliary coordinates records progress by its difference \(w\).
+A pair can be chosen for which \(w\) crosses from near zero to near one.
+Several disjoint triples of smaller intervals are marked on the \(w\)-axis.
+On a traversal of a triple, either part of the path describes an entire
+inner crossing, with \(w\) as its time, or the path crosses an overlap
+of two phases in \(x\). We put another copy of the test in each such
+overlap. Figure~\ref{fig:episode} shows the two time coordinates.
+The last overlaps in this recursion use the piecewise affine lower
+bounds above.
+
+The lower bound for the inner crossing is counted repeatedly. For a
+sufficiently large crossing cost \(D\), one level with \(N\) episodes
+and \(q\) triples per episode forces at least \(NqD/4\) segments. To count them
+on an undirected walk, for each interval stop at the first hit of its
+far endpoint and look back to the last hit of its near endpoint. The
+selected subpaths occupy disjoint intervals of the \emph{path parameter}.
+Even two visits to the same physical overlap can force different bends
+(Figure~\ref{fig:return-traversals}).
+
+The cost in facets is a separate matter. Giving every inner crossing
+its own variables and inequalities would spend the very factor the
+construction gained in distance. The copies instead use common clock
+readings. Different copies on the same bank of clocks can contribute
+tight inequalities only in disjoint reading intervals. Eliminating the
+readings therefore requires combinations containing at most one row
+from an inner copy. When a coordinate needed for that copy is missing,
+a prescribed group of slacks can take its place. The scheduler is the
+system of inequalities that makes the required slacks available at
+the appropriate times. It must do this for many episodes using few
+coordinates.
+
+Section~\ref{sec:diameter} converts a finite crossing bound into
+Theorems~\ref{thm:main} and~\ref{thm:excess}, including the passage
+to bounded simple rational polytopes with an exact facet count.
+Sections~\ref{sec:framework}--\ref{sec:recursion} establish the crossing
+bound using the scheduler. Its numerical input is Theorem~\ref{thm:coarse},
+which assigns states to successive times subject to a coordinatewise
+inequality between neighbors. Sections~\ref{sec:numerical}--\ref{sec:finite}
+construct these states and prove the inequality.
+Sections~\ref{sec:layers}--\ref{sec:compiler} turn them into the scheduler's
+linear constraints. Section~\ref{sec:geometry} gives the consequences
+for complementary vertices, Minkowski sums and packing linear programs.

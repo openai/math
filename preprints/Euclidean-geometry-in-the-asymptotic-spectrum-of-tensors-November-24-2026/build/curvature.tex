@@ -1,0 +1,241 @@
+\section{From crossing decompositions to nonpositive curvature}
+\label{sec:crossing}
+
+The geodesic extension of Section~\ref{sec:geodesic} gives convexity of
+wire distances. To obtain nonpositive curvature, we need a quadratic
+bound on those distances. Its algebraic source is a decomposition of two
+wires into two tensors that factor across different cuts of the four
+endpoints. The cost of the internal wire on one cut can be traded
+against its cost on the other. We use this tradeoff first to prove the
+parallelogram law for normed planes realized by wire distances and then
+to prove the squared midpoint inequality in every geodesic spectral
+space.
+
+\subsection{The integral crossing identity}\label{app:crossing}
+
+The crossing construction originates in work of Anthropic~\cite{Anthropic}.
+Khoruzhii~\cite{Khoruzhii} gives an integral construction in which two
+products of fermionic operators factor through states below the same
+energy bound. Extracting a shifted coefficient changes the two bounds
+by equal and opposite amounts.
+\begin{theorem}[Shifted crossing]\label{thm:crossing}
+Let $t,u>0$, put $S=t^2+u^2$, and take $-S<\delta<S$. There are
+integers $d_X,d_Y$, depending on $n$, with
+$\log_2 d_X=nt+o(n)$ and $\log_2 d_Y=nu+o(n)$, for which the
+two-wire tensor has the ordinary sum decomposition
+\[
+ E_{X_+X_-}(d_X)\,E_{Y_+Y_-}(d_Y)=T_++T_-.
+\]
+On the cuts $X_+Y_+\mid X_-Y_-$ and $X_+Y_-\mid X_-Y_+$ respectively,
+$T_+$ and $T_-$ have flattening ranks at most
+\[
+  2^{n\sqrt{S+\delta}+o(n)}
+  \quad\text{and}\quad
+  2^{n\sqrt{S-\delta}+o(n)} .
+\]
+One can choose the tensors and their two matrix factorizations over
+$\mathbb Z$, so the same choices work over every field.
+\end{theorem}
+
+The two terminal pairs $(X_+,X_-)$ and $(Y_+,Y_-)$ carry the original
+wires. Each summand can be represented by joining two local factors
+with a single internal wire, as in Figure~\ref{fig:crossing-cuts}.
+In the integral construction, the internal wire records the intermediate
+state of a product of operators together with auxiliary summation indices.
+There are polynomially many choices of the auxiliary indices at the given
+energy cutoff. Reversing the order of the operators exchanges the two cuts. The shift $\delta$ lets us choose how much dimension to
+allow on each internal wire.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,line cap=round,
+    terminal/.style={circle,fill=ink,inner sep=1.6pt},
+    factor/.style={rectangle,draw=ink,fill=white,inner sep=2.5pt},
+    wire/.style={line width=.7pt,draw=ink},
+    internal/.style={line width=1.2pt,draw=sea},font=\small]
+\foreach \a in {0,6.1}{
+  \begin{scope}[xshift=\a cm]
+    \node[terminal,label=above:$X_+$] (xp) at (-1.55,.68) {};
+    \node[terminal,label=above:$Y_-$] (ym) at (1.55,.68) {};
+    \node[terminal,label=below:$Y_+$] (yp) at (-1.55,-.68) {};
+    \node[terminal,label=below:$X_-$] (xm) at (1.55,-.68) {};
+    \ifdim\a pt=0pt
+      \node[factor] (a) at (-.60,0) {};
+      \node[factor] (b) at (.60,0) {};
+      \draw[wire] (xp)--(a)--(yp) (ym)--(b)--(xm);
+      \draw[internal] (a)--node[above] {$r_+$} (b);
+      \node at (0,-1.45) {$T_+$};
+    \else
+      \node[factor] (a) at (0,.51) {};
+      \node[factor] (b) at (0,-.51) {};
+      \draw[wire] (xp)--(a)--(ym) (yp)--(b)--(xm);
+      \draw[internal] (a)--node[right] {$r_-$} (b);
+      \node at (0,-1.45) {$T_-$};
+    \fi
+  \end{scope}
+}
+\end{tikzpicture}
+\caption{The two factorizations of Theorem~\ref{thm:crossing}.
+In each summand the two squares are local tensors. The wire joining
+them has dimension equal to the flattening rank $r_+$ or $r_-$ across
+the corresponding cut. The dimensions on the four outer wires agree in
+both summands.}\label{fig:crossing-cuts}
+\end{figure}
+
+\input{crossing-appendix}
+
+\subsection{Rigidity of normed planes}
+
+Place the four terminals in a normed plane. The two auxiliary sites in
+each factorization may be placed anywhere. If the norm violates the
+parallelogram law, we can place these sites so that both summands cost
+strictly less at exponential scale than the original pair of wires.
+Subadditivity of a spectral point rules this out.
+\begin{lemma}[Norm rigidity]\label{lem:norm}
+Let $V$ be a real normed plane. If each finite subset of some
+nonempty open set in $V$ is realized at some scale by a spectral wire
+metric over the fixed field, then the norm comes from an inner product.
+\end{lemma}
+
+\begin{proof}
+Any finite subset of the plane can be put inside the open subset by a
+translation and a positive dilation. Let $x,y$ be unit vectors at
+which the norm is differentiable, and let $f,g$ be its derivatives
+there, elements of the dual unit sphere. We prove that for $t,u>0$,
+\begin{equation}\label{eq:crossing-dual}
+   \|tf+ug\|_*^2+\|tf-ug\|_*^2\le 2(t^2+u^2).
+\end{equation}
+Suppose the inequality fails. Put $S=t^2+u^2$ and
+$A_\pm=\|tf\pm ug\|_*$. Both are positive and
+$A_\pm^2\le(t+u)^2\le 2S$. Thus one can choose $-S<\delta<S$
+such that $S-A_-^2<\delta<A_+^2-S$. Take unit vectors $z_\pm$
+on which $tf\pm ug$ attain their respective positive maxima.
+Place the terminals at $x,-x,y,-y$. On the first cut one center serves
+$x,y$ and the opposite center serves $-x,-y$. On the second cut the
+partners change to $x,-y$ and $-x,y$. Starting both centers at the
+origin gives each placement the same terminal cost. Moving them apart
+shortens the terminal wires at a rate controlled by $tf+ug$ or $tf-ug$,
+respectively, and requires a wire between the two centers. Choose the
+centers $\epsilon z_+,-\epsilon z_+$ on the first cut and
+$\epsilon z_-,-\epsilon z_-$ on the second, with $0<\epsilon<1$.
+
+For any matrix factorization of a four-terminal tensor across a cut,
+give each terminal an identity wire of its dimension to the center on
+its side, and join the centers by a wire of the factorization size.
+Contracting the indices at the centers against the two factors
+produces the tensor by local restriction, with trivial output at
+both centers. Coincident auxiliary roles may be grouped at one party.
+Apply this observation to $T_+$ and $T_-$ of
+Theorem~\ref{thm:crossing}. Realize the terminals and both pairs of
+centers simultaneously, with wire distances $\sigma$ times their
+norm distances for some $\sigma>0$. By multiplicativity, restriction
+monotonicity, and the formula $F(E_{ab}(q))=q^{d(a,b)}$ of
+Section~\ref{sec:spectra}, the log base two of $F(T_+)$, divided by
+$2n\sigma$, is at most
+\[
+ t\|x-\epsilon z_+\|+u\|y-\epsilon z_+\|
+                 +\epsilon\sqrt{S+\delta}+o(1).
+\]
+Here and below a tensor of value zero satisfies the corresponding
+exponential bound directly. For $T_-$ the same expression applies
+with $y$ replaced by $-y$, $z_+$ by $z_-$ and $\delta$ by $-\delta$.
+As $\epsilon\downarrow0$ the leading expressions are
+\[
+ t+u-\epsilon\big(A_\pm-\sqrt{S\pm\delta}\big)+o(\epsilon),
+\]
+because the norm derivative at $-y$ is $-g$. Both linear savings
+are strictly positive. Fix $\epsilon$ small enough for both, and
+then fix the joint realization, independently of $n$. Subadditivity
+under ordinary tensor sums now contradicts the wire formula for the
+target, whose log value divided by $2n\sigma$ tends to $t+u$.
+This proves \eqref{eq:crossing-dual}.
+
+The closed convex hull of all derivatives at smooth unit vectors
+is the dual unit ball. Indeed the norm is differentiable on a dense
+set by finite-dimensional convexity. For any unit vector $v$, take
+smooth unit vectors $v_j\to v$ with derivatives $f_j$. Then
+$f_j(v)\ge f_j(v_j)-\|v-v_j\|\to1$, so these derivatives have the
+same support function as the dual unit ball. Joint convexity and
+continuity in $(f,g)$ now extend \eqref{eq:crossing-dual} to arbitrary
+$f,g$ in that ball. Taking $t,u$ to be arbitrary dual vector norms
+gives
+\[
+   \|a+b\|_*^2+\|a-b\|_*^2\le 2(\|a\|_*^2+\|b\|_*^2).
+\]
+Applying this inequality to $a+b,a-b$ proves its reverse. The
+parallelogram law gives an inner product on the dual, and duality in
+finite dimension gives the assertion for the original norm.
+\end{proof}
+
+\subsection{Nonpositive curvature}\label{sec:curvature}
+On a spectral space, distances between corresponding points of two
+geodesics are convex by \eqref{eq:wire-busemann}. Norm rigidity upgrades
+this convexity to the squared midpoint bound characteristic of
+$\operatorname{CAT}(0)$ spaces. The resulting extension preserves the prices of all
+tensors on the original sites.
+\begin{theorem}[Curvature]\label{thm:geometry}
+Every complete geodesic spectral space $X$ is $\operatorname{CAT}(0)$.
+In particular every spectral space embeds with prices in such a space, called below a \emph{Hadamard spectral space}.
+\end{theorem}
+We first examine two geodesics from a common origin whose separation
+grows exactly linearly. They span a Euclidean sector, possibly
+degenerate. We then rescale an arbitrary pair of geodesics at their
+origin. Convexity makes the separation linear in this limit, so the
+sector calculation gives an inequality for the original distances.
+
+Fix a complete geodesic spectral space $X$.
+Consider two constant-speed segments $a,b$ starting at $o$, defined on $[0,R]$, or two rays on $[0,\infty)$. Suppose $d(a(r),b(r))=cr$ throughout. On the coordinate triangle $u,v\ge0$, $u+v\le R$, or on the whole quadrant for rays, define
+\[
+ H(u,v)=[a(u+v),b(u+v)]_{v/(u+v)},\qquad H(0,0)=o.
+\]
+This map takes affine segments to geodesics with their affine parametrizations. Indeed, let $(u,v)$ be the affine interpolation of two parameter pairs, and $w$ the corresponding interpolation of their images. Comparing with the same interpolation on each boundary ray, \eqref{eq:wire-busemann} gives $d(w,a(u+v))\le cv$ and $d(w,b(u+v))\le cu$. Their sum is bounded by the distance $c(u+v)$ between these boundary points. Equality and uniqueness of geodesics force $w=H(u,v)$. The formula and \eqref{eq:wire-busemann} also give continuity, including at the origin.
+
+The pullback distances of $H$ are given by a seminorm on the coordinate plane. To see this, let $N_p(v)$ be the speed of $H(p+hv)$ as a function of $h$ near $0$, for an interior point $p$. For any two interior points $p,q$ choose $s<1$ and an interior point $z$ with $q=(1-s)p+sz$. Comparing $q+hv$ to $q$ by interpolating from $p+hv/(1-s)$ and $p$ to the same $z$ shows $N_q(v)\le N_p(v)$. Interchanging $p,q$ gives equality. The common speed is absolutely homogeneous, and the triangle inequality on small segments gives subadditivity. The segment property and continuity extend the distance formula to the boundary. In rank two the seminorm is a norm, and $H$ embeds the interior of its parameter domain isometrically into $X$ with this norm. Lemma~\ref{lem:norm} therefore makes the norm Euclidean. In rank at most one it is already induced by a positive semidefinite quadratic form. Thus the sector, with all its interpolations, has the distances of a possibly degenerate Euclidean sector.
+
+\begin{lemma}[Squared midpoint inequality]\label{lem:catzero}
+For $x,y,z\in X$ and $m=[x,y]_{1/2}$,
+\begin{equation}
+ d(z,x)^2+d(z,y)^2\ge 2d(z,m)^2+\tfrac12 d(x,y)^2.
+ \label{eq:cur-mid}
+\end{equation}
+At equality, the two sectors spanned at $m$ by the segments to $x,z$ and to $y,z$ have Euclidean distances, allowing degeneracy.
+\end{lemma}
+
+\begin{proof}
+Take the three segments from $m$ to $x,y,z$, each on $[0,1]$. Take a pointed ultralimit at $m$ after rescaling distances by integers $j\to\infty$, still geodesic (use representative segments), carrying spectral structure by Section~\ref{sec:limits}. Take the limit of the three segments with domain rescaled by the same $j$, obtaining three rays (possibly constant). For two original segments $a,b$, the ratio $d(a(s),b(s))/s$ is nondecreasing by \eqref{eq:wire-busemann} and bounded by the sum of their speeds. Its limit at zero therefore gives a constant $c$ for which the equal-parameter distances of the limiting rays are $cr$.
+
+Put $A=d(x,m)=d(y,m)$ and $B=d(z,m)$, initially both positive. The rays for $x$ and $y$ point in opposite directions on one geodesic. The preceding sector argument gives Euclidean angle cosines $u,v$ for their respective pairs with the third ray. The triangle inequality between the first two rays at parameter $T$, through the third at parameter $1$, reads
+\[
+ 2TA\le\sqrt{(TA)^2+B^2-2TABu}+\sqrt{(TA)^2+B^2-2TABv}.
+\]
+Subtract $2TA$ and let $T\to\infty$ to find $u+v\le0$. Each original distance $d(z,x),d(z,y)$ is at least the corresponding limiting distance at parameter $1$, by monotonicity of the ratios. The sum of their squares is therefore at least $2(A^2+B^2)-2AB(u+v)\ge2(A^2+B^2)$, proving \eqref{eq:cur-mid}. Equality forces each original ratio at parameter $1$ to equal its limit at zero. The ratio is then constant on $(0,1]$, and the sector argument applies to each pair of original segments. If $A$ or $B$ vanishes, the assertions follow directly on a segment.
+\end{proof}
+
+Applying \eqref{eq:cur-mid} at dyadic fractions and passing to the limit gives the CAT(0) inequality in its squared-distance form
+\begin{equation}
+ d(z,[x,y]_s)^2\le (1-s)d(z,x)^2+s d(z,y)^2-s(1-s)d(x,y)^2 .
+ \label{eq:cur-cn}
+\end{equation}
+The midpoint characterization \cite[Ch.~II.1]{BH} now gives the curvature
+assertion of Theorem~\ref{thm:geometry}. Corollary~\ref{cor:spectral-geodesic}
+gives the embedding assertion. To understand when a finite configuration
+spans a Euclidean rectangle, we use the four-point consequence of
+\eqref{eq:cur-mid}. For $A,B,C,D\in X$ it reads
+\begin{equation}
+ d(A,C)^2+d(B,D)^2
+ \le d(A,B)^2+d(B,C)^2+d(C,D)^2+d(D,A)^2 .
+ \label{eq:cur-quad}
+\end{equation}
+To derive this bound, apply \eqref{eq:cur-mid} on $AC$ with $z=B,D$, and use $d(B,D)^2\le 2d(B,m)^2+2d(m,D)^2$. At equality, $m$ is also the midpoint of $BD$, and \eqref{eq:cur-mid} is sharp on either diagonal with either remaining vertex. Consequently the two side squares incident at any vertex sum to $(d(A,C)^2+d(B,D)^2)/2$, and opposite sides have equal lengths.
+
+\subsection{Filling rectangles and cubes}
+
+Suppose $A,B,C,D$ have the six distances of the Euclidean rectangle with cyclic coordinates $(0,0),(a,0),(a,b),(0,b)$, where $a,b>0$. Put $E_s=[A,B]_s$, $F_s=[D,C]_s$. Quadrilateral equality gives a common diagonal midpoint $m$. Equality on $AC$ with $z=B$ gives a Euclidean sector bounded by $mA,mB$, by Lemma~\ref{lem:catzero}. Hence $d(E_s,m)$ equals its rectangle-model value. The same holds for $d(F_s,m)$. Each of $d(E_s,C)$ and $d(E_s,D)$ has the Euclidean upper bound by \eqref{eq:cur-cn} on $AB$. For the matching lower bound, apply \eqref{eq:cur-mid} with $z=E_s$ on $AC$ or $BD$, using the known distances to $A$ or $B$ and to $m$. The same argument determines $d(F_s,A)$ and $d(F_s,B)$.
+
+By \eqref{eq:wire-busemann}, $d(E_s,F_s)\le b$. For the reverse inequality apply \eqref{eq:cur-quad} to $A,E_s,F_s,D$. Both diagonals have squared length $s^2a^2+b^2$, while the other three sides have lengths $sa,sa,b$. Finally, for $0<s<1$ the function
+\[
+ t\longmapsto d(E_s,F_t)^2-a^2(t-s)^2-b^2
+\]
+is convex by \eqref{eq:cur-cn} on subsegments of $DC$. It vanishes at $0,s,1$, hence everywhere. Continuity includes $s=0,1$. All cross distances between the two interpolated sides are therefore Euclidean.
+
+It follows that corners in $X$ with the distances of a scaled Euclidean cube span an isometric cube. Fill the coordinates successively. At each stage, any two segments parallel to the coordinate being filled either coincide or have a Euclidean rectangle as their endpoint configuration in the previous stage. The cross-distance calculation preserves all distances at the next stage. The resulting image is compact and convex, since Euclidean segments map to the unique geodesics between their endpoints. Each specified cube point can be constructed with finitely many interpolations of the original corners.

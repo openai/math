@@ -2,6 +2,29 @@
 
 For any withdrawn papers, their README files explain the gap and link to the retracted manuscript. For any updated papers, previously published editions remain accessible through the version notes in their README.
 
+## November 24, 2026
+
+**New Results Added**
+
+We have added nine manuscripts across two result families, with Lean formalizations of selected results from each manuscript.
+
+*Euclidean tensor geometry and its applications to complexity and combinatorics* ([family 379](CONTENTS.md#family-379)). Seven manuscripts develop a geometric theory of tensors and apply it to arithmetic complexity and combinatorics.
+
+- *Euclidean geometry in the asymptotic spectrum of tensors*
+- *Paths, trees and grids separate Valiant’s hierarchy*
+- *Circuit lower bounds for Hamiltonian cycle and the permanent*
+- *The logarithmic exponent of finite Fourier transforms*
+- *The logarithmic exponent of integer multiplication on tapes*
+- *The matrix multiplication exponent is nine fourths*
+- *An exponential bound for sunflowers*
+
+The hierarchy and circuit lower bound papers subsume the results of *VP and VNP are different*, released November 23. The original manuscript remains available unchanged.
+
+*Strongly polynomial-time linear programming* ([family 380](CONTENTS.md#family-380)). Two manuscripts address the complexity of solving a linear program and the length of paths along the edges of a polytope.
+
+- *Strongly polynomial linear programming* gives a deterministic strongly polynomial algorithm for linear programming, answering Smale’s ninth problem.
+- *Superpolynomial graph diameter of simple polytopes* disproves the polynomial Hirsch conjecture for bounded simple rational polytopes.
+
 ## November 23, 2026
 
 **New Results Added**

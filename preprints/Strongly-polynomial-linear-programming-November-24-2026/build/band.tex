@@ -1,0 +1,41 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  x=35cm,y=.86cm,font=\small,
+  slot/.style={black,line width=.87pt},
+  guide/.style={black!48,densely dashed,line width=.4pt},
+  axis/.style={black!55,line width=.45pt},
+  bracket/.style={line width=.8pt}]
+ % Show the first .35 of the unit mass interval at its actual scale.
+ \fill[black!13] (.1875,0) rectangle (.20,3.38);
+ \draw[guide] (0,1.85) -- (.35,1.85) node[right,text=black] {\(t'\)};
+ \draw[guide] (0,1.12) -- (.35,1.12) node[right,text=black] {\(t\)};
+ \node[anchor=east] at (0,3.05) {\(d_s(y)\)};
+ \foreach \a/\b/\h in {
+   0/.04/3.05,.04/.095/2.75,.095/.15/2.42,
+   .15/.19375/1.85,.19375/.25/1.85,.25/.285/1.46,
+   .285/.325/.78,.325/.35/.50}
+   \draw[slot] (\a,\h) -- (\b,\h);
+ % A vertical tick separates the two slots with the same surplus.
+ \draw[slot] (.19375,1.74) -- (.19375,1.96);
+ \fill (.1895,1.85) circle[radius=1.5pt];
+
+ \draw[axis] (0,0) -- (.35,0);
+ \foreach \x/\lab in {0/0,.10/0.10,.1875/\gamma,.20/\delta,.30/0.30,.35/0.35}{
+   \draw[axis] (\x,0) -- (\x,-.1);
+   \node[below=2pt,inner sep=1pt] at (\x,0) {\(\lab\)};
+ }
+ \node[anchor=north,font=\footnotesize] at (.296,-.44) {Cumulative slot mass};
+ \draw[bracket,lagoon] (0,3.52) -- (0,3.68) -- (.25,3.68) -- (.25,3.52);
+ \node[above=1pt,text=lagoon] at (.125,3.68) {\(v_s=1\) if the child succeeds};
+ \draw[bracket,ember] (0,-.52) -- (0,-.68) -- (.20,-.68) -- (.20,-.52);
+ \node[below=1pt,text=ember] at (.10,-.68) {Multiply this mass by four};
+\end{tikzpicture}
+\caption{A heavy probe, with the first \(0.35\) of the slot mass shown.
+Each horizontal segment represents a slot, ordered by surplus. The dot selects
+a pivot in the shaded band \([\gamma,\delta)=[3/16,1/5)\).
+Two adjacent slots have the pivot surplus \(t'\). Success at \(t'\) guarantees
+correct feedback on mass \(0.25\), including both tied slots.
+Reweighting multiplies the first \(0.20\) of the mass by four before normalization.}
+\label{fig:band}
+\end{figure}

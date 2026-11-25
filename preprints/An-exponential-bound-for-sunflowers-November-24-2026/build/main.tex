@@ -1,0 +1,47 @@
+\documentclass[11pt]{article}
+\input{style}
+\articletitle{An exponential bound for sunflowers}{An exponential bound for sunflowers}
+\hypersetup{pdfsubject={An-exponential-bound-for-sunflowers-November-24-2026}}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\F}{\mathcal F}
+\newcommand{\W}{\mathcal W}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\E}{\mathbb E}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We prove the fixed-petal sunflower conjecture of Erd\H{o}s and Rado.
+For every \(r\ge3\), a family of more than \(B_r^k\) distinct sets of
+size at most \(k\) contains \(r\) sets whose pairwise intersections are
+all the same. The base depends only on \(r\) and satisfies
+\(\log B_r=O((\log r)^4(\log\log(2r))^{5/2})\).
+\end{abstract}
+
+\input{intro}
+
+\par\Needspace{23\baselineskip}
+{\small\tableofcontents}
+
+\clearpage
+\part{The bound for a fixed number of petals}\label{part:fixed}
+\input{words}
+\input{plane}
+\input{filter}
+
+\par\Needspace{15\baselineskip}
+\part{The dependence on the number of petals}\label{part:quant}
+\input{design}
+\input{gates}
+\input{vote}
+\input{geometry}
+\input{guard}
+\input{masks}
+\input{recurrence}
+
+\bibliographystyle{plainnat}
+\bookmarksetup{startatroot}
+\bibliography{references}
+\end{document}

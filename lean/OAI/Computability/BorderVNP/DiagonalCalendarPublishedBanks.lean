@@ -1,0 +1,221 @@
+import OAI.Computability.BorderVNP.DiagonalCalendarHeaderBoot
+import OAI.Computability.BorderVNP.DiagonalCalendarTaskRoom
+import OAI.Computability.BorderVNP.DiagonalCalendarBootChecks
+import OAI.Computability.BorderVNP.DiagonalDeployedPublishedSourceBanks
+
+/-! # The published reader input on the actual calendar boot and supported prefix -/
+
+namespace OAI
+namespace Computability
+namespace BorderVNP
+
+namespace TeamContraction.ProcessorSlots.BootedPinStart
+
+open VPVNP.BurstRAM RoutingISA RoutingISA.Evaluator RoutingISA.SignedTaskArena Routing JointHeader
+
+/-- The original boot family recovers its published source on every team,
+for every returning joint prefix and its actual observed header. -/
+def PublishedReadbackFamily {R r t d link inner n w : ℕ} {Edge : Type} {G : Wiring R r t d link inner n Edge}
+    {pub : Fin (R+1) → Arg → Word w} {reg : Fin (R+1) → Bank w} {args : Fin (R+1) → UnitAddresses}
+    {pin : Fin d → Bool} (task : SignedTaskArena.Layout)
+    (boot : (x : {ext // PositiveExterior G args pin w ext}) → (u : Fin (R+1)) →
+      BootedPinStart SparseExterior.driver G pub reg args pin x.val u)
+    (A : StartupArena) (L : WireLayout (R+1) r link) (fixed : Block (R+1)) (dest entries indices : ℕ) : Prop :=
+  ∀ x (active : PinStart.JointPrefix task.id (fun u => (boot x u).start)) u
+      (p : PositiveFields task.cube.header.profile task.cube.n task.cube.header.d task.cube.header.cap
+        task.cube.teams task.dim w), p.bits=observed L x.val fixed →
+      BootedPinStart.PublishedSourceReadback task (boot x) active u A p dest entries indices
+
+end TeamContraction.ProcessorSlots.BootedPinStart
+
+namespace Diagonal
+
+open Diagonal.ExternalSew Cover Packing Packing.DeckGrid Crossing Branch Epoch PackedHistoryCircuit
+open PackedHistoryCircuit.Normalized SelectedSchedule EnrichedOuter TeamScales TeamContraction ProcessorSlots
+open VPVNP ParseBatch ParseBatchVerifier Prewire VPVNP.ParseGrammar
+open FieldProcessor RoutingISA RoutingISA.Evaluator RoutingISA.Transmission
+open GeometryAdvice GeometryFrameEncoding RoutingISA.Pins VPVNP.BurstRAM RoutingISA.CompactMachine TeamSite
+open DiagonalResidueRAM ResidueEntryInput ResidueRates ResiduePins
+open scoped Classical BorderVNP.Epoch.Cube
+
+set_option maxRecDepth 7000
+set_option maxHeartbeats 1900000
+
+variable {D m : ℕ} [NeZero D] {F K : Type} [Field F] [Field K] {paid : PaidIdentity F D m}
+    {S : SiteSchedule paid} {cube : FixedCube K} {extra E p Q breadth sourcePower : ℕ}
+    {scales : EpochScales S (cube.pred+1) extra}
+    {b : JointSchedule.{0} scales (E+1) (max (5*(E+2)) p) Q 3076 (breadth+10) (sourcePower+1)}
+    {φ : K →+* F} {q : ℕ} {hm : 0 < «m»} {header C A₀ a B₀ b₀ J j coeff addr power cut : ℕ}
+    {adv : ℕ → ℕ} {c charge factor l : ℕ}
+    (cal : SignedCalendarAt cube b φ q hm header C A₀ a B₀ b₀ J j coeff addr power cut adv c charge factor (l+1))
+
+local notation "n₁" => l+1
+local notation "r₁" => stretch b.ρ (l+1)
+local notation "size₁" => stretch b.σ (l+1)
+local notation "R₁" => b.physical.teamsPred (l+1)
+local notation "w₁" => b.physical.word (l+1)
+local notation "ξ₁" => (scales.τ:ℝ)/5
+local notation "ℓ₁" => TeamScales.link (ξ₁) (R₁+1) (l+1)
+local notation "ec₁" => Wires.sortExponent (block (ξ₁) (l+1))
+local notation "budget₁" => adv (adviceScale b.σ b.ρ (l+1))
+local notation "pins₁" => (pairedTableParameters (l+1) (size₁)+2)*(budget₁+6)
+local notation "d₁" => CoverScale.initialDepth (Cube D) (r₁) (l+1)-1
+local notation "axes" => Fintype.card (Cube D)
+local notation "tiles" => GridHosts.tileCount axes (d₁)
+local notation3 (prettyPrint := false) "order₁" => (Fintype.equivFin (Fin axes → Deck (d₁+2))).symm
+local notation3 (prettyPrint := false) "geo₁" => cal.sites.choose
+local notation3 (prettyPrint := false) "prog₁" => cube.signedSiteProgram paid
+local notation "a₁" => FieldProcessor.freeWidth (prog₁) scales.α 32 64 (r₁) (w₁) (l+1)
+local notation "extra₁" => setupWidth (w₁+1) (l+1)+(prefixCapacity (r₁) 32 64 (w₁) (l+1)+1+a₁)
+local notation3 (prettyPrint := false) "tape₁" => tapeTemplate (R:=R₁) (r:=r₁) (link:=ℓ₁) (regs:=64) (w:=w₁)
+  (e:=ec₁) (width:=w₁+1) (k:=l) (a:=extra₁) (prog₁) (geo₁).fits (pins₁)
+
+variable (grid : LocatedSignedGridAt cube b header (l+1)) (qpos : 1 ≤ Q)
+    (position : (Fin (Fintype.card (Cube D)) → Deck (CoverScale.initialDepth (Cube D)
+      (stretch b.ρ (l+1)) (l+1)-1+2)) → {v : EuclideanSpace ℝ (Fin D) // ‖v‖ ≤ 1})
+local notation "T₁" => epochs scales.τ (l+1)
+local notation "copies₁" => TeamScales.width (l+1) scales.α
+local notation "J₁" => (fan S)^T₁*tiles
+local notation "description" => seedDescriptionWidth (l+1) (r₁) axes (d₁) (header*logWidth (r₁) (l+1))
+  (BottomGridBank.bodyBudget (seedBoxCapacity (l+1) (r₁) axes (d₁) (Fintype.card (Direction axes))))
+local notation "cap₁" => SeedPlan.profileReserve (r₁) (l+1)
+local notation "ceiling₁" => geometryGateCeiling (8*(11920000+1500000+16008100*coeff+37)) (4*(E+2)) (r₁) (l+1)
+local notation3 (prettyPrint := false) "dir₁" => freeDirectory (R₁) (r₁)
+  ((tape₁).program.length+(cutWidth (l+1)+extra₁)) (ℓ₁) tiles (GridHosts.inputBlockWidth (r₁) (l+1) axes (d₁)) J₁ description
+
+
+variable {ord : Fin (l+1) × Bool ≃ Fin (2*(l+1))}
+    {common : CommonField paid (φ ∘ cube.table) q l (stretch b.σ (l+1)) ord}
+    (chart : AdvisedBranch common) [Fact common.p.Prime] [Algebra (ZMod common.p) chart.E]
+    (reader : ChosenReader chart (b.physical.teamsPred (l+1)+1) (stretch b.ρ (l+1))
+      (b.physical.multBits (l+1)) (b.physical.tally (l+1)) (b.physical.word (l+1))
+      (adv (adviceScale b.σ b.ρ (l+1))+6))
+    (chargeFit : reader.charge ≤ c*(adv (adviceScale b.σ b.ρ (l+1))+1)^charge)
+
+
+local notation3 (prettyPrint := false) "layout₁" => cal.frozenLayout chart reader chargeFit
+local notation3 (prettyPrint := false) "initial₁" => reader.startupArenaWith (n:=l+1) (reg:=64)
+  (prog₁) (a₁) (ℓ₁) (layout₁).header
+local notation3 (prettyPrint := false) "located₁" => cal.locatedGateTable grid qpos position (initial₁)
+local notation3 (prettyPrint := false) "task₁" => b.frozenSignedTask cube (l+1) l (size₁) header (initial₁)
+  (dir₁) cap₁ ceiling₁ (located₁).outputs (w₁) (located₁).directories
+
+
+local notation3 (prettyPrint := false) "physical₁" => cal.frozenSites grid qpos position chart reader chargeFit
+local notation3 (prettyPrint := false) "program₁" => (withStartup (signedBody (cube.cubeID paid))).program
+local notation3 (prettyPrint := false) "wired₁" => wiringWith (prog₁) (program₁) physical₁ (pins₁) (ℓ₁) (l+1) ec₁ (geo₁).fits
+local notation3 (prettyPrint := false) "names₁" => (cal.frozenWitness).routedFine position
+local notation3 (prettyPrint := false) "sites₁" => (Fintype.equivFin (names₁).Site).toEmbedding
+local notation3 (prettyPrint := false) "edges₁" => (Fintype.equivFin (names₁).Edge).toEmbedding
+local notation3 (prettyPrint := false) "ports₁" => (Fintype.equivFin (Fin (r₁) × Fin (publicWidth (tape₁)))).toEmbedding
+local notation3 (prettyPrint := false) "tag₁" => ParseTable.signedLiteralCode (s:=size₁) ord
+local notation3 (prettyPrint := false) "selectedTask" => cal.frozenTask grid qpos position chart reader chargeFit
+local notation3 (prettyPrint := false) "selectedSites" => cal.frozenSites grid qpos position chart reader chargeFit
+local notation3 (prettyPrint := false) "table₁" => (located₁).raw.reserve ceiling₁
+local notation "outside₁" => TeamScales.exterior (ξ₁) (r₁) (l+1)
+local notation3 (prettyPrint := false) "directory₁" => freeDirectory R₁ r₁ (initial₁).literal ℓ₁ tiles
+  (GridHosts.inputBlockWidth r₁ (l+1) axes d₁) J₁ description
+local notation3 (prettyPrint := false) "fresh₁" => (initial₁).next+7*(directory₁).candidates
+local notation3 (prettyPrint := false) "origin₁" =>
+  Allocation.dest fresh₁ cap₁ (table₁).size (located₁).outputs w₁
+local notation3 (prettyPrint := false) "route₁" => routingExtension (signedBudgetWords w₁ outside₁)
+  directory₁ origin₁ (selectedTask).cube.cables (selectedTask).cube.cells
+local notation3 (prettyPrint := false) "placed₁" u => reader.frozenTaskPlacement selectedTask initial₁ u route₁
+local notation3 (prettyPrint := false) "pin₁" u => CubeHeaderInstall.pinFields (placed₁ u).extension
+  (Allocation.stop fresh₁ cap₁ (table₁).size (located₁).outputs w₁ w₁) (selectedTask).cube.header.d
+  ((selectedTask).cube.n+1) ((selectedTask).cube.h*(selectedTask).cube.b) (selectedTask).cube.header.blocks cap₁
+  (BorderVNP.Cube.Physical.declarationCap (selectedTask).cube.n (selectedTask).cube.header.d
+    (selectedTask).cube.header.blocks (selectedTask).cube.b (selectedTask).cube.h (selectedTask).cube.s)
+local notation3 (prettyPrint := false) "stripe₁" => GeometryAdviceRate.stripeWidth
+  (GeometryOutput.packetCount cap₁ (table₁).size (located₁).outputs w₁*w₁) r₁
+local notation3 (prettyPrint := false) "fields₁" u => Allocation.fields (pin₁ u) fresh₁ cap₁ (table₁).size
+  (located₁).outputs w₁ ((initial₁).literal/4) stripe₁
+local notation3 (prettyPrint := false) "packet₁" u => reader.packetAt (ReaderPlacement.inArena initial₁
+  (placed₁ u).valuation (placed₁ u).entry (placed₁ u).totals (fields₁ u))
+
+
+local notation3 (prettyPrint := false) "ad₁" => adviceOffsetWith (prog₁) r₁ 32 64 w₁ (l+1)
+local notation3 (prettyPrint := false) "headers₁" => JointHeader.PositiveFields cap₁ (selectedTask).cube.n
+  (selectedTask).cube.header.d (selectedTask).cube.header.cap (R₁+1) (selectedTask).dim (b.physical.tally (l+1))
+local notation3 (prettyPrint := false) "seedStrings" => (cal.frozenWitness).seedLiteralMatrix position tag₁ sites₁ edges₁ ports₁
+  copies₁ ((fan S)^T₁) (header*logWidth (r₁) (l+1))
+
+
+open TeamContraction.JointHeader
+
+local notation3 (prettyPrint := false) "address₁" => fun u : Fin (R₁+1) => (initial₁).unitAddresses ad₁ (packet₁ u)
+local notation3 (prettyPrint := false) "frame₁" u => (wired₁).transferFrame u (layout₁).header (initial₁).broadcastBase
+local notation "first₁" => freeStartWith prog₁ r₁ 32 64 w₁ (l+1)
+local notation3 (prettyPrint := false) "stripeStart" => Allocation.stripe fresh₁ cap₁ (table₁).size (located₁).outputs w₁
+  ((initial₁).literal/4) stripe₁
+local notation3 (prettyPrint := false) "bits₁" => GeometryAdvice.serialized (GeometryAdvice.packet (w:=w₁) fresh₁
+  (Allocation.packed fresh₁ cap₁ (table₁).size (located₁).outputs w₁ w₁) table₁
+  (fun i => (initial₁).broadcastBase+1+Fin.val i))
+local notation3 (prettyPrint := false) "raw₁" => SignedTaskArena.rawAddress initial₁ (selectedTask).cube.header.profile
+  (selectedTask).cube.n (selectedTask).cube.header.d (selectedTask).cube.header.cap
+local notation3 (prettyPrint := false) "full₁" u => signedProfileExtension selectedTask (signedBudgetWords w₁ outside₁)
+  directory₁ origin₁ (selectedTask).cube.cables (selectedTask).cube.cells raw₁ (Fin.val u) w₁ fresh₁ cap₁
+  (table₁).size (located₁).outputs w₁ ((initial₁).literal/4) stripe₁
+
+local notation3 (prettyPrint := false) "blank₁" => TimedProcessor.scaleData (signedProgram (cube.cubeID paid)).program
+  (siteLibrary SparseExterior.driver) (fun _ : Fin 8 => some false) (geo₁) (fun _ _ => 0) (fun _ _ => 0)
+  (fun _ _ => false) (fun _ _ _ => false)
+local notation "query₁" => Fintype.card (Board.Physical (pairedTableParameters (l+1) (size₁)) (budget₁+6) w₁
+  (paid.Entry ⊕ _root_.OAI.Computability.BorderVNP.Cube.TableEntry cube.pred cube.b cube.h cube.copies cube.width))
+
+private theorem startupTeams_word (area : StartupArena) {w : ℕ} (hp : 0<area.processors) (hl : 0<area.link)
+    (fit : area.next<2^w) : area.teams<2^w := by
+  have width : area.teams-1 ≤ area.stride :=
+    (Nat.le_mul_of_pos_right _ hl).trans (Nat.le_add_left _ _)
+  have start : area.stride ≤ area.frame := Nat.le_mul_of_pos_left _ hp
+  dsimp only [StartupArena.next, StartupArena.hbase, StartupArena.ibase, StartupArena.broadcastBase, StartupArena.dense] at fit
+  omega
+
+/-- The frozen reference packet contains all signed routing, cube and scanner words
+of the actual board at this team. -/
+theorem SignedCalendarAt.frozenPublicationLiteral (u : Fin (R₁+1)) :
+    (packet₁ u).extension=full₁ u := by
+  exact signed_geometry_packet selectedTask (signedBudgetWords w₁ outside₁) directory₁ origin₁
+    (selectedTask).cube.cables (selectedTask).cube.cells raw₁ u.val w₁ fresh₁ cap₁ (table₁).size (located₁).outputs
+    w₁ ((initial₁).literal/4) stripe₁
+
+/-- The pin layout in the original calendar boot is the layout used by the
+native packet, including the offset of its reference strip. -/
+theorem SignedCalendarAt.frozenPublicationPinLayout (u : Fin (R₁+1)) :
+    ((initial₁).operands u ad₁ (packet₁ u)).layout =
+      (wired₁).pinLayout u ((address₁ u).ibase) ((address₁ u).hbase) ((address₁ u).starbase) := rfl
+
+/-- Protected words and pointers at the observed headers of the calendar's selected
+boot family, for every simultaneous returning prefix. -/
+def SignedCalendarAt.PublishedBanks (fixed : Routing.Block (R₁+1)) (live : Fin pins₁ → Bool) : Prop :=
+    BootedPinStart.PublishedReadbackFamily selectedTask
+      ((cal.frozenSites_boots grid qpos position chart reader chargeFit fixed).2.choose live)
+      initial₁ layout₁ fixed origin₁ (6+3*reader.gates+query₁) pins₁
+
+set_option maxRecDepth 10000 in
+set_option maxHeartbeats 9200000 in
+/-- At the original issued prefix, the calendar publication's source recovers
+both protected banks and the installed extended pointer array. The decoded
+header is the one recorded on the original exterior. -/
+theorem SignedCalendarAt.frozenPublishedReadback (fixed : Routing.Block (R₁+1)) (live : Fin pins₁ → Bool) :
+    cal.PublishedBanks grid qpos position chart reader chargeFit fixed live := by
+  let chosen := cal.frozenSites_boots grid qpos position chart reader chargeFit fixed
+  intro x active u p same wire₀ hdr₀ len₀ pub₀ op₀ regs₀ mem₀ who sourceFrame site proto amount route owned
+  have bounds := cal.frozenBootBounds grid qpos position chart reader chargeFit
+  have room := cal.frozenTask_room grid qpos position chart reader chargeFit
+  have count : R₁+1<2^w₁ := startupTeams_word (initial₁) (by
+    change 0<r₁
+    exact stretch_one b.ρ (l+1)) (grid.block_pos.trans_le (grid.block_le.trans_eq grid.link_eq)) bounds.2.2.1
+  exact reader.deployed_published_source_banks (R:=R₁) (r:=r₁) (rw:=w₁) (pinWidth:=budget₁+6)
+    (s:=size₁) (k:=l) (ec:=ec₁) («a»:=a₁) (link:=ℓ₁) («axes»:=axes) (d:=d₁) (gridOrder:=order₁)
+    prog₁ program₁ blank₁ (geo₁).fits cal.frozenWitness position sites₁ edges₁ ports₁
+    copies₁ ((fan S)^T₁) header layout₁ table₁ selectedTask outside₁ fixed
+    bounds.1 bounds.2.1 bounds.2.2.1 bounds.2.2.2.1 rfl count room.2.2.1 room.2.1
+    (fun i => ⟨(chosen.1 i).1,cal.frozenPacketClock grid qpos position chart reader chargeFit i⟩)
+    live x (chosen.2.choose live x) active u p same sourceFrame site owned
+
+end Diagonal
+
+end BorderVNP
+end Computability
+end OAI

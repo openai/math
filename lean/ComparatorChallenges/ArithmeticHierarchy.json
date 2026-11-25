@@ -1,0 +1,14 @@
+{
+  "challenge_module": "ComparatorChallenges.ArithmeticHierarchy",
+  "solution_module": "OAI.Hierarchy.Strict",
+  "theorem_names": [
+    "OAI.Hierarchy.Valiant.strict_inclusions"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

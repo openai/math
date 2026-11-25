@@ -1,0 +1,112 @@
+\paragraph{Stages and tiles.}\label{app:two}
+A \emph{stage of scale $t$}, for fixed $0<t\leq 1$, has a fixed collection
+of groups.  Each group has an input list and an output list of the same
+length $2^{th+O(1)}$, and the lists have $O(n)$ positions in total.  A
+stage specifies $n$ matched input--output pairs, with both positions in
+the same group and with each position used at most once on its side.
+We call each matched pair a \emph{tile}.  A permutation on $n$ positions
+is a stage of scale one with a single group.
+
+
+The construction groups positions by successive colors. A recursive
+permutation network uses a related decomposition \cite{Benes}. Here
+the control must also compute the route in linear word time on every
+input matching.
+
+\par\Needspace{4\baselineskip}
+\begin{lemma}[Subdivision of a stage]\label{lem:subdivision}
+Fix $0<t\leq 1$ and an integer $d\geq2$, and put $K=18(d-1)+1$.
+For all sufficiently large $h$, a stage of scale $t$ can be replaced by
+$K$ successive stages of scale $t/d$.  Each parent tile is routed from
+its input to its output along one tile of every child stage, within the
+original parent group.  At each of the $K+1$ boundaries between moves,
+including the two ends, different parent tiles occupy distinct positions.
+The child groups and the identifications between successive position
+lists are fixed independently of the matching.  Given the matching, the
+control computes the child tiles in $O(n)$ operations on $O(h)$-bit
+words, with $O(n)$ words of advice and working storage.  The constants
+may depend on $t,d$ and on the size bounds for the parent groups.
+\end{lemma}
+
+\begin{proof}
+Put $D=2^{\lfloor th/(9d)\rfloor}$ and $L_b=D^9$.  Inside one parent
+group, begin with the given pair of lists.  To split a pair of lists of
+length $m_1$, partition each list into blocks of $L_b$ positions, padding
+the last block.  Color every matched pair with one of $D$ colors so that
+at either endpoint at most $4D^8$ pairs of its color use its block.
+For a greedy assignment, a block with $4D^8$ previous pairs of one color
+forbids that color.  Each endpoint block forbids at most
+$L_b/(4D^8)=D/4$ colors, so a color is always available at both ends.
+We give the time bound for the assignment below.
+
+In each block reserve $4D^8$ positions for every color, in a fixed order.
+One entering stage sends each occupied input position to the next free
+position of its color in the same block.  One exiting stage sends the
+corresponding color positions on the output side to their final
+positions.  Allocate the output-side positions in the same processing
+order, using a separate counter for each block and color.  Both stages
+use groups with $4L_b$ positions on each side after padding.  Between
+them there remains, for each color, a matching between its positions
+across all blocks.  Its two lists each have length
+\[
+        m_2=4D^8\lceil m_1/L_b\rceil.
+\]
+The fixed relabeling by color and block identifies each position of an
+entering or exiting stage with a unique position of the intervening lists.
+
+Repeat this operation on each remaining list pair for $q=9(d-1)$ rounds.
+Starting from $m_0=2^{th+O(1)}=\Theta(D^{9d})$, the length after $j$
+rounds is $\Theta(D^{9d-j})$ for $0\leq j\leq q$.  Indeed, before
+the last split the length is at least a constant times $D^{10}$, and
+each split of a list of length $m_1\geq L_b$ gives
+$4m_1/D\leq m_2\leq8m_1/D$.  Thus every final list has length
+$\Theta(D^9)=2^{th/d+O(1)}$ and supports one central stage.  Reading
+the $q$ entering stages, the central stage, and the $q$ exiting stages
+in reverse nesting order gives the asserted $K$ moves.  In one round
+the $D$ separated lists together have length at most $8m_1$.  Since the
+number of rounds is fixed, each phase inside the parent group has
+$O(m_0)$ positions and can be padded to a common length
+$\Theta(m_0)$.  Each matched pair uses distinct endpoints at each step
+by its allocated positions and the inductive matching property.
+
+It remains to assign colors in linear time.  Let $\ell=\lceil Ch\rceil$
+for an absolute constant $C$.  Hardwire $D^4$ strings of $\ell$ colors
+so that, for every $S\subseteq\{1,\ldots,D\}$ of size at most $D/4$,
+fewer than $D$ strings have at least half their entries in $S$.
+To obtain the strings, sample their entries independently and uniformly.
+For fixed $S$ the probability for one string is $\exp(-\Omega(\ell))$.
+The probability of failure for some $S$ and some $D$ strings is at most
+$2^D\binom{D^4}{D}\exp(-\Omega(\ell D))<1$ for sufficiently large $C$,
+since $\log D\leq h$.
+
+For each block store a bit mask for each string.  A bit is set when the
+corresponding color is forbidden in this block.  When a color first
+becomes forbidden, set its bits using the list of its occurrences across
+the strings.  Initialization and all such updates cost $O(D^4\ell)$
+word operations per block.  For a matched pair with within-block
+positions $u,v$, try the string indexed by
+$(u\bmod D^2,v\bmod D^2)$.  Take the union of its two endpoint masks.
+If there is a free bit, use its color.  This takes constant time on
+$O(h)$-bit words.  For example, divide a mask into a constant number of
+chunks of at most $h/2$ bits and use a shared table of $O(2^{h/2})$
+words to find the first free bit in a chunk.
+
+If both masks together cover the string, scan all $D$ colors to find a
+common available one.  Charge this scan to an endpoint block whose mask
+covers at least half the string.  Its final set of forbidden colors has
+size at most $D/4$.  By the choice of strings, fewer than $D$ strings
+can receive charges at that block.  A fixed string is tried there at
+most $L_b/D^2=D^7$ times, since it fixes the residue of the position
+on that side and the matching uses each position at most once.  Thus all
+scans charged to a block cost at most $D\cdot D\cdot D^7=L_b$ word
+operations.  Also $D^4\ell=O(L_b)$ for fixed $t,d$ and sufficiently
+large $h$.  Summing over the blocks in the fixed number of rounds proves
+the claimed bounds.  Fixing the order of the pairs and taking the first
+available color in either search makes the routing deterministic.
+
+The scans, shifts, comparisons and table reads used here fit
+Definition~\ref{def:protocol}. If a word operation needs multiplication
+by an advice-fixed constant, split the operands into a bounded number of
+pieces of at most $h/3$ bits. A shared product table of $O(2^{2h/3})$
+words and a bounded number of additions and shifts suffice.
+\end{proof}

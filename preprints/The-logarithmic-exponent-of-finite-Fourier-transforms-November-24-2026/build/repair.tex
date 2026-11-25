@@ -1,0 +1,301 @@
+\section{Prediction and exact spectral repair}\label{sec:repair}
+
+The Fourier construction in Section~\ref{sec:prime-kernel} expresses
+a large transform as a product of \(m\) commuting operators. Applying
+them one at a time would cost \(m\) stages. In a common eigenbasis their
+product acts by a single scalar at each frequency, but changing to that
+basis on every input row would itself be expensive. We use a low-degree
+predictor on a batch of independent rows. At each frequency it is exact
+on almost all rows, and a small number of linear checks recovers the
+product on the whole batch. The exceptional rows may change from one
+frequency to the next.
+
+Let \(\ell\) be prime, let \(\zeta\) be a primitive complex \(\ell\)-th
+root of unity, and set \(R_\ell=\mathbb Z[1/\ell,\zeta]\). A row is an
+array indexed by a finite set, with coefficients in a commutative
+\(R_\ell\)-algebra. Suppose that one invertible change of coordinates
+\(\mathcal S\) diagonalizes \(Q_1,\ldots,Q_m\) on this array. At frequency
+\(\nu\), operator \(Q_j\) has multiplier \(\zeta^{k_j(\nu)}\), and the
+exponents \(k_j(\nu)\) are given. Write \(F=\prod_{j=1}^m Q_j\).
+
+We count two operations on a batch of \(W\) rows. A \emph{pencil stage}
+combines the query powers with scalar matrices acting on the row index,
+\begin{equation}\label{eq:repair-pencil}
+  A_0\otimes I+\sum_{j=1}^m\sum_{a=1}^{\ell-1}A_{ja}\otimes Q_j^a,
+       \qquad A_0,A_{ja}\in\operatorname{Mat}_{W\times W}.
+\end{equation}
+A \emph{spectral table on \(h\) rows} takes \(h\) forward conversions by
+\(\mathcal S\), applies one prescribed \(h\times h\) scalar matrix at
+each frequency, and takes \(h\) inverse conversions. Pointwise linear
+maps combine rows at the same ordinary index. A pencil stage can
+contain all \(m\) queries. The next section bounds the cost of executing
+such a stage in the Fourier construction.
+
+\needspace{4\baselineskip}
+\begin{theorem}[Simultaneous spectral repair]\label{thm:repair}
+For every \(m\ge2\) there are a positive batch width \(W\) and a finite
+free cyclotomic extension of \(R_\ell\), depending only on \(\ell,m\),
+over which a program computes \(F\) on \(W\) independent rows. It uses
+\(O_\ell(\sqrt{m\log(2m)})\) pencil stages, pointwise linear maps and
+one spectral table on \(2s\) rows, with \(s\le W/(2m^3)\). The table
+thus uses at most \(4s\) full row conversions. Its matrix at frequency
+\(\nu\) depends only on \((k_j(\nu))_{j=1}^m\). All row matrices and the
+finite list of spectral matrices are effectively constructible for fixed
+\(\ell,m\). The identities specialize to any commutative \(R_\ell\)-algebra
+after base change along the finite free extension.
+\end{theorem}
+
+\subsection{Predicting the product from an integer count}
+
+Assign each row a shift \(\beta\in(\mathbb Z/\ell\mathbb Z)^m\), using
+every shift equally often. At a fixed \(\nu\), write \(q_j=\zeta^{k_j(\nu)}\)
+and \(z=\prod_jq_j\) for the desired multiplier. Let \(b_j\) be the least
+nonnegative residue of \(k_j(\nu)+\beta_j\), and put \(c=\sum_j b_j\)
+as an ordinary integer. On a row with shift \(\beta\), it suffices to
+predict \(\zeta^{c-\sum_j\beta_j}=z\). Varying the shift makes the digits
+\(b_j\) uniform and independent at every fixed frequency.
+
+For three binary queries, for example, \(c\) is the Hamming weight of
+\(k+\beta\). On the window \(1\le c\le2\), the linear predictor
+\((-1)^{|\beta|}(2c-3)\) gives the target sign \((-1)^{|k|}\).
+The two shifts outside the window are \(000,111\) at \(k=000\), but
+\(001,110\) at \(k=001\).
+
+In general, let \(r\) be the least integer with \(2^r\ge2m\). Set
+\[
+ \mu=m(\ell-1)/2,\qquad B=(\ell-1)\lceil\sqrt{2mr}\rceil,\qquad
+ u=\lfloor\mu-B\rfloor,\quad v=\lceil\mu+B\rceil .
+\]
+These endpoints are computable by integer arithmetic. Hoeffding's
+inequality \cite[Theorem~2]{hoeffding} bounds the fraction of rows
+outside this window at each frequency,
+\[
+ \Pr_\beta[c\notin[u,v]]
+    \le 2\exp\!\left(-\frac{2B^2}{m(\ell-1)^2}\right)
+    \le \frac{1}{2m^3}.
+\]
+The predictor will have degree at most the width \(D=v-u\). We use
+integral interpolation so that its coefficients also make sense in
+positive characteristic.
+
+\begin{lemma}[Integral interpolation on the count]\label{lem:count-predict}
+For each shift \(\beta\) there is a polynomial \(P_\beta\) over
+\(R_\ell\), of degree at most \(D=v-u\) in the variables representing
+the query powers \(Q_j^a\), \(1\le a<\ell\). At each frequency with
+\(c\in[u,v]\) this polynomial equals the multiplier of \(F\).
+\end{lemma}
+\begin{proof}
+The indicator for the event \(b_j=b\) is affine-linear in the query powers,
+\[
+ I_{j,b}=\frac1\ell\sum_{a=0}^{\ell-1}\zeta^{a(\beta_j-b)}q_j^a.
+\]
+For \(h>0\), the coefficient of \(T^h\) in \((1+T)^{b_j}\) is thus
+represented by \(\sum_{b=0}^{\ell-1}\binom bh I_{j,b}\). Use \(1\)
+for the constant coefficient. In the formal expansion
+\[
+ L_h=[T^h](1+T)^{-u}\prod_{j=1}^m(1+T)^{b_j}
+\]
+each term uses a positive power of \(T\) from at most \(h\) query
+factors. It follows that \(L_h\) has a representation of degree at
+most \(h\) in the query powers. The fixed series \((1+T)^{-u}\) has
+integer coefficients.
+
+Now take
+\[
+ P_\beta=\zeta^{\,u-\sum_j\beta_j}
+                \sum_{h=0}^{D}(\zeta-1)^h L_h .
+\]
+On the window, \(0\le c-u\le D\). The truncated sum therefore evaluates
+the whole polynomial \((1+T)^{c-u}\) at \(T=\zeta-1\) and returns
+\(\zeta^{c-\sum_j\beta_j}=z\) after scaling.
+\end{proof}
+
+\subsection{Evaluating a predictor on independent rows}
+
+A polynomial of degree \(D\) can have many monomials. To evaluate it in
+\(O_\ell(D)\) pencil stages, increase the batch width and express the
+polynomial times the identity as a power of one matrix of affine-linear
+forms. The identity factor ensures that every coordinate of the matrix
+holds an independent input.
+
+Childs studied such linearizations of forms through generalized Clifford
+algebras \cite{childs}. For homogeneous forms over a field with a
+primitive root of the required order, see Bl\"aser, Eisenbud and
+Schreyer \cite[Theorem~2.1]{ulrichcomplexity}. We give the construction
+over a localized cyclotomic ring to obtain a pencil that specializes in
+every characteristic allowed here.
+
+\begin{lemma}[Matrix evaluation of a polynomial]\label{lem:matrix-root}
+Let \(p\) be a polynomial of degree at most \(b\) over \(R_\ell\), where
+\(b=\ell^a\ge2\). If \(\xi\) is a primitive \(b\)-th root of unity,
+there is a square matrix \(L\) of affine-linear forms over
+\(R_\ell[\xi]\) such that \(L^b=pI\).
+\end{lemma}
+\begin{proof}
+Write \(p=\sum_{i=1}^h\prod_{r=0}^{b-1}\lambda_{ir}\), padding each
+monomial with constant factors so that every \(\lambda_{ir}\) is
+affine-linear. On the \(i\)-th copy of a free module with basis
+\(e_0,\ldots,e_{b-1}\), put
+\[
+ S_i e_r=\lambda_{ir} e_{r+1\bmod b},\qquad Z e_r=\xi^r e_r .
+\]
+Then \(S_i^b=(\prod_r\lambda_{ir})I\) and \(ZS_i=\xi S_i Z\).
+On the tensor product of the \(h\) modules take
+\[
+ L=\sum_{i=1}^h Z^{\otimes(i-1)}\otimes S_i\otimes I^{\otimes(h-i)} .
+\]
+Each summand \(V\) satisfies \(VU=\xi UV\) for \(U\) the sum of the
+preceding summands. Potter's identity \cite{potter} gives
+\((U+V)^b=U^b+V^b\) over the complex numbers. To see why it survives
+specialization, order the factors in the expansion of \((U+V)^b\)
+using \(VU=\xi UV\). The coefficient of \(U^{b-r}V^r\) is the
+Gaussian binomial polynomial
+\[
+ \genfrac{[}{]}{0pt}{}{b}{r}_{\!X}
+     =\prod_{j=1}^r\frac{1-X^{b-j+1}}{1-X^j}
+\]
+evaluated at \(X=\xi\), by the recurrence obtained on multiplying the
+ordered expansion by \(U+V\). For \(0<r<b\) the denominators are
+nonzero at a complex primitive \(b\)-th root, while the numerator
+contains \(1-X^b\). Thus \(\Phi_b(X)\) divides the Gaussian binomial
+in \(\mathbb Z[X]\). Every mixed coefficient vanishes over \(R_\ell[\xi]\)
+and under any specialization. The \(b\)-th power of \(L\) is therefore
+the sum of the \(b\)-th powers of its summands, which is \(pI\).
+\end{proof}
+
+Take \(b\) to be the least power of \(\ell\) at least \(\max(2,D)\).
+Apply Lemma~\ref{lem:matrix-root} to every \(P_\beta\), padding the
+monomial lists by zero terms to obtain matrices of one dimension.
+Give each shift a block of that many independent rows. On the direct
+sum of the blocks, \(b\) repetitions of one pencil stage compute a
+predictor \(P\). At each frequency \(P\) is diagonal in the individual
+rows. Write \(p_i\) for its multiplier on row \(i\). The exponent tuple
+specifies the set \(J=J(\nu)\) of rows outside the window. It has size
+at most \(s=\lfloor W/(2m^3)\rfloor\) and contains every row where
+\(p_i\ne z\).
+
+\subsection{Sending the error through a small spectral table}
+
+At each frequency the prediction error has at most \(s\) known
+positions. We can recover their values from \(s\) linear checks.
+Returning them to the correct ordinary rows poses a second problem.
+The set of destination rows changes with the frequency. Our lift
+from the inverse-transformed rows uses a fixed row matrix, which acts
+identically at every frequency. To make that lift work, we replace the
+predictor by a polynomial whose error vanishes to second order at the
+target multiplier.
+
+\begin{lemma}[Full-rate Hermite repair]\label{lem:hermite-repair}
+Work over a commutative ring in which \(\ell\) is invertible and there
+are \(W\) elements with pairwise unit differences. Suppose that at each
+frequency \(F\) has the same multiplier \(z\) on all rows, with
+\(z^\ell=1\), and that \(P\) has known row multipliers \(p_i\) agreeing
+with \(z\) off a known set \(J\) of size at most \(s\). Then \(F\) on
+\(W\) independent inputs can be computed with at most \(\ell+2\)
+applications of \(P\), one spectral table on \(2s\) rows and
+pointwise linear maps.
+\end{lemma}
+\begin{proof}
+If \(s=0\), \(P\) already gives \(F\). Otherwise, choose the \(s\times W\)
+Vandermonde matrix \(H\) with powers \(0,\ldots,s-1\) on the given
+nodes. Over a field these are the parity checks of a generalized
+Reed--Solomon code \cite{reedsolomon}. For \(j=|J|\le s\), the first
+\(j\) rows of the column submatrix \(H_J\) give a Vandermonde
+determinant that is a unit. Hence \(H_J\) has a left inverse and
+\(H_J^{\mathsf T}\) a right inverse.
+
+On the batch \(X\), form \(PX\) and convert the \(2s\) check rows
+\(HPX,HX\) to spectral coordinates. At one frequency the error vector
+\(e\) satisfies
+\[
+ e_i=(p_i-z)\widehat X_i,\qquad
+ He=H\widehat{PX}-zH\widehat X.
+\]
+The left inverse of \(H_J\) recovers \(e_J\) from \(He\).
+
+To correct the output, first replace the predictor by the polynomial
+\(g(P)\), where
+\[
+ g(y)=y-\ell^{-1}y(y^\ell-1).
+\]
+At every allowed \(z\), \(g(z)=z\) and \(g'(z)=0\). Dividing by the
+monic polynomial \((y-z)^2\) gives
+\(g(y)-z=(y-z)^2D_z(y)\) over the ring. Use the right inverse of
+\(H_J^{\mathsf T}\) to choose an \(s\)-vector \(a\), linear in \(e_J\),
+satisfying
+\[
+ (H^{\mathsf T}a)_i=D_z(p_i)e_i\qquad(i\in J).
+\]
+The table returns the pair \(a,za\). After inverse conversion and
+pointwise multiplication by \(H^{\mathsf T}\), these are ordinary
+rows \(Z,FZ\) with \(\widehat Z=H^{\mathsf T}a\)
+(Figure~\ref{fig:repair-table}). Output \(g(P)X-PZ+FZ\).
+Its error on row \(i\) at this frequency is
+\[
+ (p_i-z)\bigl(D_z(p_i)e_i-\widehat Z_i\bigr).
+\]
+The second factor vanishes on \(J\), and the first vanishes outside
+\(J\). Thus the entire batch is correct. We reuse the initial \(PX\)
+to form \(P^{\ell+1}X\) for \(g(P)X\), and apply \(P\) once more
+to \(Z\). This totals \(\ell+2\) predictor applications.
+\end{proof}
+
+\input{repair-figure}
+
+\begin{proof}[Proof of Theorem~\ref{thm:repair}]
+With \(W\) fixed, choose \(t\ge1\) so that \(\ell^t\ge W\) and
+\(b\mid\ell^t\). Take a primitive \(\ell^t\)-th root \(\eta\) with
+\(\eta^{\ell^{t-1}}=\zeta\). The cyclotomic degrees give the basis
+\(1,\eta,\ldots,\eta^{\ell^{t-1}-1}\) for
+\(R'=\mathbb Z[1/\ell,\eta]\) over \(R_\ell\). This ring contains the
+matrix coefficients and supplies \(W\) Vandermonde nodes from the
+powers of \(\eta\). For the quotient \(\rho\) of any two distinct
+nodes, of order \(\ell^h\), the product of \(1-\rho^j\) over \(j\)
+prime to \(\ell\) modulo \(\ell^h\) is \(\Phi_{\ell^h}(1)=\ell\).
+Each factor is a unit, so the nodes have pairwise unit differences.
+
+Each predictor application takes \(b\) pencil stages. Hence
+Lemma~\ref{lem:hermite-repair} uses at most
+\((\ell+2)b=O_\ell(\sqrt{m\log(2m)})\) stages and converts \(2s\)
+rows in each direction. The bases, inverses and finite list of tables
+can be constructed in \(R'\) from \(\ell^{-1}\) and the indicated
+roots. These ring identities give the asserted program after base
+change to every commutative \(R_\ell\)-algebra.
+\end{proof}
+
+The same construction applies to swaps of address fields. The following
+form of the pencil is used for integer multiplication on tapes
+\cite{oaT}.
+
+\begin{corollary}[Simultaneous swaps in odd characteristic]
+\label{cor:swap-repair}
+Fix an odd prime \(p\) and a finite commutative ring \(K\) of
+characteristic \(p\). Suppose \(Q_1,\ldots,Q_m\) interchange disjoint
+pairs of address fields of equal respective lengths. For some fixed
+batch width \(W\), their product on \(W\) independent arrays over \(K\)
+can be applied with \(O(\sqrt{m\log(2m)})\) stages
+\(A_0\otimes I+\sum_j A_j\otimes Q_j\) and one spectral table on
+\(2s\le W/m^3\) rows. Forward or inverse conversion of one row uses
+at most \(m\) individual swaps and address-dependent pointwise linear
+maps.
+\end{corollary}
+\begin{proof}
+Take \(\ell=2\) and \(\zeta=-1\). On a two-point orbit of one swap,
+store the sum and difference in the two positions in a fixed order
+determined by that pair of address fields. A fixed point keeps its
+value. The two coordinates have eigenvalues \(+1,-1\), and the inverse
+uses \(1/2\). Different swaps act on disjoint pairs, so these changes
+of coordinates commute. A full conversion uses one swapped copy and
+pointwise combinations for each pair. The resulting signs determine
+the repair table.
+
+Specializing the extension in Theorem~\ref{thm:repair} gives the finite
+free \(K\)-algebra \(K'=K[Y]/(Y^{2^{t-1}}+1)\), of rank \(d=2^{t-1}\).
+Pack \(d\) independent \(K\)-valued rows into one \(K'\)-valued row in
+the monomial basis. Each prescribed scalar multiplication becomes a
+fixed \(K\)-linear map on these \(d\) coordinates, while the swaps and
+spectral conversions act componentwise. Expanding in this basis
+multiplies both the batch width and the table width by \(d\), preserves
+the number of pencil stages and returns the swap product on all the
+original \(K\)-valued rows.
+\end{proof}

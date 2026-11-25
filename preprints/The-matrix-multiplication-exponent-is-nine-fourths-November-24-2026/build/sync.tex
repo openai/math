@@ -1,0 +1,246 @@
+\section{Synchronization of tensor parameters}\label{sec:sync}
+
+Theorem~\ref{thm:extension} tests whether one price extension works for
+an entire family. Its tests allow one to choose any tensors in the family,
+multiply them and close their extra legs jointly. For a family depending
+on a marked point $s$, two factors in such a test can therefore have
+different marked points. The sphere calculation in Section~\ref{sec:sphere}
+will give estimates when all factors use the same marked point.
+We show that under a strict saving for square multiplication this
+diagonal test already controls every choice of the points.
+
+Fix an algebraically closed field $F$, an ordinary price $H$ of scale
+$D>0$ on base sites $S$, and a finite set $L$ of additional sites,
+called openings. Recall from Equation~\eqref{eq:prices-beta} that
+$\beta_H$ measures the largest price per copy obtained by taking a
+tensor power and applying one joint functional at each opening.
+For a polynomial tensor family $T(\mathbf s)$, $\mathbf s=(s_1,\ldots,s_d)$,
+write
+\[
+ \beta_H^{\rm gen}(T(\mathbf s))
+    =\sup_{\mathbf c\in F^d}\beta_H(T(\mathbf c)).
+\]
+This is the assisted cost at independent indeterminates for the
+generic extension of $H$ in Section~\ref{sec:valued}. Indeed, fix a
+power and a closure with rational function coefficients. One can
+specialize its entries together with the tensor on a common open
+set where the resulting price is arbitrarily close to its generic
+value. Conversely, a fixed closure over $F$ witnessing a strict lower
+bound at one point witnesses the same bound on a nonempty open set,
+by closedness of price sublevels. In particular the supremum is unchanged
+on restricting to any dense open parameter domain.
+
+\begin{theorem}[Synchronization]\label{thm:sync}
+Suppose $\omega_F<9/4$. For any polynomial tensor families
+$U_1,\ldots,U_a$ on $F^d$ with common base and openings,
+\[
+ \beta_H^{\rm gen}\!\left(\bigotimes_{i=1}^a U_i(\mathbf s_i)\right)
+ =
+ \beta_H^{\rm gen}\!\left(\bigotimes_{i=1}^a U_i(\mathbf s)\right).
+\]
+On the left the $a$ parameter vectors vary independently. On the right
+they are equal. Both products group their legs at each opening, so a
+closure on either side may couple all the factors.
+\end{theorem}
+
+\begin{proof}
+Choosing equal parameters gives the inequality from right to left.
+For the reverse inequality we first take copies of one univariate
+family $U(s)$. An identically zero factor makes the assertion immediate,
+so we may assume that the families under consideration are nonzero.
+Write $B=\beta_H^{\rm gen}(U(s))$. The diagonal cost of $a$ copies is
+$aB$ by homogeneity under tensor powers. We first control different
+parameters lying in a disk above the same residue $s$, then recover
+independent parameters by letting the valuation depth of that disk
+tend to zero.
+
+\smallskip\noindent\emph{Pinning above one residue.}
+Take an uncountable set $\mathcal U$ of independent indeterminates,
+and let $s$ be a further indeterminate. Put
+\[
+ E=F(\mathcal U,s),\qquad
+ K_0=\operatorname{Frac}(F(\mathcal U)[t^{\mathbb Q}]),\qquad
+ J=\{z\in K_0:\nu(z)>0\}.
+\]
+The Gauss lift of the generic extension of $H$ to $E$ is a valued price
+$p$ on $K_0(s)$ (Theorem~\ref{thm:gauss}). For $z\in J$, translation
+by $z$ preserves the unit disk. Apply Lemma~\ref{lem:star} to this
+translation and its inverse, taking $s$ as the fresh residue variable.
+It gives
+\begin{equation}\label{eq:sync-disk-single}
+     \beta_p(U(s+z))=\beta_p(U(s))=B .
+\end{equation}
+For the second equality the Gauss lift agrees with the ordinary
+generic price on coefficients independent of $t$. As in the proof of
+Lemma~\ref{lem:star}, it suffices to use closing functionals with
+constant entries in $F$.
+
+Fix $M\ge1$ and an anchor in $S$. For each $z\in J$, let $V_z$ be the
+product of $U(s+z)^{\otimes M}$ with the pin penalties of
+Lemma~\ref{lem:pinning}, one for each opening. By translation invariance
+its minimum $b=\beta_p(V_z)$ is the same for every $z$. Give each
+objective its own copy of $L$. Lemma~\ref{lem:pinning} realizes its minimizing
+sites $x_{z,\ell}$, $\ell\in L$, in one complete $\operatorname{CAT}(0)$
+spectral space over $F$. For any finite list of objectives, a valued
+extension simultaneously realizes their minima.
+
+\smallskip\noindent\emph{The minimizing sites cannot move.}
+For each $\ell$ we check that a nonconstant map $z\mapsto x_{z,\ell}$
+would satisfy the hypotheses of Theorem~\ref{thm:motion}. The bridge
+from these ordinary sites to the valued disk is the pinned evaluation
+formula. For every nonzero test tensor $T$ over $F$ placed at sites
+from a finite list $z_1,\ldots,z_m$, its price is
+\begin{equation}\label{eq:sync-pinned-prices}
+ \lim_{n\to\infty}
+ \left[
+ \beta_p\!\left(
+  (V_{z_1}\otimes\cdots\otimes V_{z_m})^{\otimes n}\otimes T
+ \right)-nmb
+ \right].
+\end{equation}
+The $m$ copies of $L$ here are distinct. If two parameters coincide,
+the corresponding minimizing sites are at distance zero, by uniqueness
+of pinning.
+
+Permutation of the indeterminates in $\mathcal U$ preserves the prices
+in Equation~\eqref{eq:sync-pinned-prices} after relabeling the $z_j$.
+Translating every $z_j$ by $w\in J$ replaces $s$ by $s+w$ in a
+polynomial family over $K_0$, so the disk comparison preserves each
+finite-$n$ expression as well. For an affine test $z_j=a_j+b_jc$ in
+Theorem~\ref{thm:motion}, the tensor inside $\beta_p$ is polynomial in
+$c$. Lemma~\ref{lem:star} therefore gives specialization and the
+weighted submean inequality at the disk and its inner and outer
+ends. Subtracting the same constant $nmb$ at every end preserves these
+inequalities, and taking the limit transfers them to the pinned prices.
+
+It remains to check continuity at zero. At any one placement of the
+openings, $U(s+z)$ and $U(s)$ both have an entry of valuation zero,
+because their common reduction $U(s)$ is nonzero. Each tensor has
+nonnegative price there. The entries of their difference have
+valuation at least $\nu(z)$. Applying the entry bound
+\eqref{eq:prices-range} to the difference and the sum inequality in
+both directions shows that the prices of the two tensors differ by
+at most
+\[
+      \eta(z)=D\log\!\left(1+\exp((C-\nu(z))/D)\right)
+\]
+for a constant $C$ depending only on the format and scale. Evaluate
+$V_0$ at the sites minimizing $V_z$. Its price is at most
+$b+M\eta(z)$ since the pin penalties are identical at that placement.
+In a common minimizing extension for the two lists, the midpoint
+estimate \eqref{eq:prices-midpoint} applied to $V_0$ gives
+\[
+  2c_D\sum_{\ell\in L}d(x_{z,\ell},x_{0,\ell})^2 \le M\eta(z).
+\]
+The right side tends to zero as $\nu(z)\to\infty$ at fixed $M$.
+Distances are bounded by the scale $D$. A nonconstant family of
+pinned sites would now force exact matrix multiplication rank at
+least $n^{9/4}$ for every $n$, by Theorem~\ref{thm:motion}.
+Lemma~\ref{lem:bilinearize} would then give
+$\omega_F\ge9/4$. Thus for every $\ell$, all $x_{z,\ell}$ coincide.
+
+\smallskip\noindent\emph{Removing the penalty and recovering independent parameters.}
+The sum of the penalties is between zero and a constant $C_0$
+depending only on $D$ and $|L|$. Using a placement minimizing
+$U(s+z)$ as a competitor gives $b\le MB+C_0$ by
+Equation~\eqref{eq:sync-disk-single}. Hence at its pinned sites
+$U(s+z)$ has price at most $B+C_0/M$. For any $z_1,\ldots,z_a\in J$,
+take a common valued extension minimizing their pin objectives.
+The corresponding openings have distance zero. Transport therefore
+identifies their prices also on tensors with coefficients in $K_0(s)$.
+Product additivity at these common openings gives
+\[
+  \beta_p\!\left(\bigotimes_{i=1}^aU(s+z_i)\right)
+       \le a(B+C_0/M).
+\]
+Let $M\to\infty$ to obtain $aB$ as an upper bound throughout the disk.
+
+Take independent $u_1,\ldots,u_a\in\mathcal U$. Fix a power $h$ and
+a closure over $F$, and apply this closure to
+$(\bigotimes_i U(s+v u_i))^{\otimes h}$, obtaining a polynomial
+tensor $P(v)$ over $E$ on the base sites. For rational $r>0$ the
+parameters $s+t^r u_i$ lie above $s$, so $p(P(t^r))\le haB$.
+Write $H_E$ for the ordinary generic extension of $H$ to $E$.
+If $P(1)\ne0$, the Gauss formula gives
+\[
+                 H_E(P(1))\le p(P(t^r))+r\deg P .
+\]
+Indeed, the coefficients of $P(v)^{\otimes n}$ sum to $P(1)^{\otimes n}$.
+There are at most $n\deg P+1$ coefficients, and the Gauss penalty
+for any of them is at most $rn\deg P$. The loss from adding them is
+at most $D\log(n\deg P+1)$. Divide by $n$ and pass to the limit using
+Equation~\eqref{eq:gauss-price}. Letting $r\downarrow0$ gives
+$H_E(P(1))\le haB$. The substitution $u_i\mapsto s+u_i$ is an invertible change of
+variables over $F(s)$, so $P(1)$ tests the independent generic
+parameters.
+Taking all powers and constant closures proves the identical-family case.
+
+\smallskip\noindent\emph{Different families and several coordinates.}
+For arbitrary univariate families $U_i$, apply the result just proved to
+$U(s)=\bigotimes_iU_i(s)$. With independent $s_1,\ldots,s_a$, regroup
+$\bigotimes_jU(s_j)$ as the product of $a$ tensors
+$\bigotimes_i U_i(s_{i+j})$, reading indices cyclically. Each of these
+has the same assisted cost at the generic price on $F(s_1,\ldots,s_a)$
+because that price is invariant under permutations of the
+indeterminates. Superadditivity of assisted cost on products follows by taking
+separate closures of the factors on a common multiple of their
+witnessing powers. Thus $a$ times the independent cost for the $U_i$
+is at most the independent cost for $a$ copies of $U$, which we have
+bounded by $a\beta_H^{\rm gen}(U(s))$.
+
+For several coordinates choose any $\mathbf c_1,\ldots,\mathbf c_a\in F^d$.
+Coordinatewise interpolation gives a single polynomial curve
+$\gamma:\mathbb A^1\to\mathbb A^d$ through these points at distinct
+scalar arguments. The univariate result applied to $U_i\circ\gamma$
+bounds the assisted cost of this tuple by the common-parameter cost
+along $\gamma$, hence by the common-parameter cost on $F^d$.
+Taking the supremum over tuples completes the proof.
+\end{proof}
+
+\begin{corollary}[Simultaneous pricing]\label{cor:sharedprice}
+Under the hypotheses of Theorem~\ref{thm:sync}, let
+$\{U_i(\mathbf s)\}_{i\in I}$ be a collection of polynomial families
+with common openings. For every finite list $i_1,\ldots,i_m$,
+allowing repetitions, suppose every closure of
+$\bigotimes_j U_{i_j}(\mathbf s)$ at a shared generic parameter has
+price at most $\sum_j h_{i_j}$. Then one ordinary extension
+$\widehat H$ of $H$, of the same scale, satisfies
+$\widehat H(U_i(\mathbf c))\le h_i$ for every $i$ and every
+$\mathbf c\in F^d$. The conclusion also holds for rational families
+on a common nonempty open domain of regularity. In particular, for
+one such family $U$ on its domain $\Omega$,
+\[
+ \min_{\widehat H\supset H}\ \sup_{\mathbf c\in\Omega}\widehat H(U(\mathbf c))
+    =\sup_{\mathbf c\in\Omega}\beta_H(U(\mathbf c)).
+\]
+\end{corollary}
+
+\begin{proof}
+Repeating each finite list gives the assumed bound on closed powers
+and hence on its synchronized assisted cost. By Theorem~\ref{thm:sync}
+this bound also holds at independently chosen parameters.
+Theorem~\ref{thm:extension} now yields the single price extension.
+
+For a finite list of rational families, clear scalar denominators on a
+dense open set where they are nonzero. An ordinary price is unchanged
+by nonzero scalar multiples, so the polynomial result gives the same
+product tests there. If such a test failed at a regular tuple, a
+fixed power and closure would witness a strict violation. Closedness
+of price sublevels makes this violation persist on an open neighborhood
+of the tuple, which meets the dense open set. The tests now hold
+throughout the domain, as required by Theorem~\ref{thm:extension}.
+
+For the minimax identity use the supremum of the pointwise assisted
+costs as the bound for the single family. If the family is
+nonzero this is finite by the fixed-format bound. Products at a
+shared parameter satisfy the tests by homogeneity of $\beta_H$ on
+powers, giving an extension with the stated upper bound. Every
+extension majorizes $\beta_H$ pointwise, giving the reverse inequality.
+The zero family has both sides equal to $-\infty$.
+\end{proof}
+
+For the sphere tensor, $s$ specifies the additional marked point and
+the family index specifies its energies. Corollary~\ref{cor:sharedprice}
+places its leg once for all regular positions and all energies. Each
+collision with an original marked point can then measure a distance
+from this same site.

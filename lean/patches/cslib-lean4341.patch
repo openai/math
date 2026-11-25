@@ -1,0 +1,17 @@
+diff --git a/Cslib/Computability/Machines/Turing/MultiTape/Nondeterministic.lean b/Cslib/Computability/Machines/Turing/MultiTape/Nondeterministic.lean
+index 447e62b..bfae11e 100644
+--- a/Cslib/Computability/Machines/Turing/MultiTape/Nondeterministic.lean
++++ b/Cslib/Computability/Machines/Turing/MultiTape/Nondeterministic.lean
+@@ -167,8 +167,10 @@ lemma exists_running (p : ntm.RunPath input) (h : p.last.Halted) :
+   -- cut the path at its first halted configuration
+   have hex : ∃ n, ∃ hn : n < p.length + 1, (p ⟨n, hn⟩).Halted := ⟨p.length, by lia, h⟩
+   obtain ⟨hn, hhalt⟩ := Nat.find_spec hex
+-  refine ⟨⟨Nat.find hex, fun i => p ⟨i, by lia⟩, fun i =>
+-    ⟨fun hi => Nat.find_min hex i.isLt ⟨_, hi⟩, p.step ⟨i, by lia⟩⟩⟩, rfl,
++  refine ⟨⟨Nat.find hex, fun i => p ⟨i, lt_of_le_of_lt (Nat.lt_succ_iff.mp i.isLt) hn⟩,
++    fun i =>
++    ⟨fun hi => Nat.find_min hex i.isLt ⟨_, hi⟩,
++      p.step ⟨i, lt_of_lt_of_le i.isLt (Nat.lt_succ_iff.mp hn)⟩⟩⟩, rfl,
+     (p.last_eq_of_halted _ hhalt).symm, Nat.lt_succ_iff.mp hn, fun _ ⟨i, hi⟩ => ⟨_, hi⟩⟩
+ 
+ end RunPath

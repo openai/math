@@ -1,0 +1,139 @@
+\section{A signed counting tensor}\label{sec:model}
+
+Fix a characteristic $\chi$ admitting ports, in the sense of
+Section~\ref{sec:prices}. The bounded-degree expansion property can
+equivalently be tested at power-of-two orders
+\cite[Definition~\ext{G}{def:ports} and the discussion there]{oaG}.
+In this case the port identities compress a tensor network while
+preserving its contraction. We encode the signed counts of a universal
+machine as coefficients of a polynomial. For exact networks the
+contradiction comes from making a machine recover its own count and
+add one. Extending the argument to the closure of circuit outputs gives
+a stretched-exponential circuit lower bound for Hamiltonian cycle and,
+when $\chi\ne2$, for the permanent.
+
+Throughout Part~\ref{part:port}, logarithms are to base two. A wire
+with $2^b$ possible labels has width $b$ bits. Unless specified to be
+absolute, exponents in the length estimates may depend on $\chi$ and
+the port constants.
+
+\subsection{The coefficient of a computation}
+
+Fix a self-delimiting binary encoding of multitape Turing-machine
+programs, for example by transition tables with explicit tapes and
+a fixed alphabet. An input $x\in\{0,1\}^n$ begins with the code of a
+program. Run the program with read access to all of $x$. At each
+step it may request a fresh private bit and branch on its value.
+Give each branch $n^{100}$ simulated steps. A valid halt returns
+$+1$, $-1$ or $0$, and a malformed program, an error or a timeout
+contributes zero. The encoding admits deterministic universal
+simulation with polynomial overhead.
+
+Let $U_n^*(x)$ be the sum of these outputs in $\mathbb Z$. This is a
+clocked universal GapP function \cite{GapP}. Viewing its table as a
+tensor with $n$ bit indices, form the polynomial
+\begin{equation}\label{eq:signed-witness}
+  P_n^*(Z)=\sum_{x\in\{0,1\}^n}U_n^*(x)\prod_{i=1}^n Z_{i,x_i}.
+\end{equation}
+The choice of one variable from each pair $(Z_{i,0},Z_{i,1})$
+records the bits of $x$. Thus the coefficient of the corresponding
+monomial is the signed count for that input, and every monomial
+has degree $n$. We use the same notation over a field after mapping
+the integer coefficients to it.
+
+To see uniform $\VNP$ membership, supply $x$ and a string of $n^{100}$
+guess bits as Boolean summation variables. A deterministic verifier
+feeds the bits to the program as it requests them and requires every
+unused bit to be zero. Each computation path therefore has exactly
+one padded guess string, and $|U_n^*(x)|\le 2^{n^{100}}$. Implement
+the verifier by a uniform polynomial-size Boolean circuit of bounded
+fan-in. Introduce a sum bit for each gate output and multiply the
+truth-table predicates of all gates. Each predicate is a
+constant-degree integral polynomial, obtained by summing products of
+literals for the allowed rows. For fixed input and guesses there is
+one consistent gate assignment. Weight it by the positive-output
+indicator minus the negative-output indicator and by
+\[
+                 \prod_i\big((1-x_i)Z_{i,0}+x_i Z_{i,1}\big).
+\]
+The resulting polynomial has polynomial size and degree before the
+Boolean sum. The same construction over each field yields
+\eqref{eq:signed-witness}.
+
+\subsection{Batches and border circuits}
+
+A bit network contracts local tensors by summing products over paired
+bit indices. A ternary equality tensor can pass the same bit to
+several factors. The \emph{volume} counts tensors and wires, including
+one wire for each unpaired exterior index. A network is
+\emph{trivalent} if each tensor has at most three incident indices,
+including exterior ones. Loops, parallel wires and disconnected
+networks are allowed.
+
+A batch of $k$ copies has the exterior table
+\[
+        (x^{(1)},\ldots,x^{(k)})\longmapsto
+              \prod_{j=1}^k U_n^*(x^{(j)}).
+\]
+A network realizing this table may connect indices from different
+copies internally. The first lower bound controls the cost per copy
+even with this freedom.
+
+\begin{theorem}[Exact batches]\label{thm:batches}
+Fix a finite field $F$ of characteristic $\chi$.
+There are constants $\sigma,\delta>0$ such that, for all sufficiently
+large $n$ and every $1\le k\le 2^{n^\sigma}$, every trivalent bit
+network over $F$ realizing the batch $(U_n^*)^{\otimes k}$ has
+volume greater than $kn^{1+\delta}$.
+\end{theorem}
+
+\begin{theorem}[Border lower bound in port characteristics]\label{thm:stretch}
+There are $\sigma,\varepsilon>0$ such that over every field $F$ of
+characteristic $\chi$, including the case $\chi=0$,
+\[
+   \bsz_F^{[n]}(P_n^*)>2^{n^\sigma}
+       \qquad\text{for all sufficiently large }n .
+\]
+For all sufficiently large $N$ in this characteristic,
+\[
+   \bsz_F^{[N]}(\HC_N)>2^{N^\varepsilon}.
+\]
+The same bound holds for $\Per_N$ when $\chi\ne2$.
+\end{theorem}
+
+\paragraph{How the computation uses its own count.}
+Pin the program bits of $R$ tensors $U_n^*$ and join pairs of their
+other bit indices. Each tensor can then check a portion of a
+computation or carry out a private job. Summing the shared bits
+multiplies the local path counts and adds over consistent public
+computations. For an appropriate wiring, the resulting scalar counts
+the successes of a prescribed program whose code and advice are
+supplied as pins.
+
+Suppose the batch in Theorem~\ref{thm:batches} had a small exact
+network. Use it in place of each group of $k$ processors. An evaluator
+can read the program and advice as data, recover the pins and links,
+and count assignments in the substituted network modulo the
+characteristic. This evaluator needs too many public steps for the
+original processors to run directly. The port identities reduce the
+number of bits that must be guessed and checked jointly. The remaining
+checks split into short private jobs that individual processors can
+execute. The original program can consequently run the compressed
+evaluator on its own description and contribute one additional
+success. The two evaluations of its count then differ by one in the
+prime field. Section~\ref{sec:batches} gives the exact argument, whose
+batch lower bound also enters the analysis of matrix multiplication
+in \cite{oaM}.
+
+For Theorem~\ref{thm:stretch}, the proposed small circuit supplies a
+table of coefficient queries in formal scalar parameters. Many such
+queries can again be counted together. The target coefficient vector
+may, however, lie only in the closure of the circuit outputs. On a
+curve reaching that vector the parameters can have poles, even
+when the contracted count has a well-defined value. The Cartier
+operator on differentials yields matrices for the monomials in the
+parameters. Their weighted sum acts on one common nonzero vector by
+the boundary value of the count. This identity lets the program add
+one at a nonzero coordinate without having to compute the vector.
+The projections to Hamiltonian cycle and the permanent then complete
+Theorem~\ref{thm:main}.

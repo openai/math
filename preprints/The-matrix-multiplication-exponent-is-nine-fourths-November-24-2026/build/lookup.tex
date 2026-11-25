@@ -1,0 +1,60 @@
+\subsection{Evaluating a table by sorting its queries}
+
+At a station of arity $t$, the incident bits give the address of an
+entry in a table of length $2^t$. When many copies of the station are
+evaluated together, only the multiplicity of each address matters to
+the product of the selected entries. Sorting the queries recovers
+these multiplicities and spreads the cost of the table over the batch.
+
+\begin{lemma}[Batched table evaluation]\label{lem:batch-table}
+Assume the ordinary-width stable-sort bound of Theorem~\ref{thm:sort}
+over $k$, with exponent $p>1$. Let a network of binary wires and
+$K$-valued tables represent a tensor $T$, where $K/k$ is any field
+extension. If $t_v\le u$ is the arity of station $v$ and
+$s=\sum_v(1+t_v)$, then $T^{\otimes 2^u}$ has an exact trivalent
+$K$-network of size
+\[
+                  O\bigl(2^u s(1+u)^{p-1}\bigr).
+\]
+The constant is independent of $K$ and of the entries in the tables.
+\end{lemma}
+
+\begin{proof}
+First consider one table $f\colon\{0,1\}^t\to K$, with $t\ge1$, and
+expose the $2^t$ query addresses $x_1,\ldots,x_{2^t}$ as tensor legs.
+If $c_z$ is the number of occurrences of address $z$, the required
+product is $\prod_z f(z)^{c_z}$, with an empty product at an unused
+address. Create one dictionary row for each $z$ and guess its count in
+$t+1$ bits. On count bit $j$, for $0\le j\le t$, place a unary factor
+with entries
+\[
+                    (1,\ f(z)^{2^j}).
+\]
+The position of this factor already determines $z$. Thus its two entries
+are fixed coefficients of the network.
+
+Give each query its own row, with zeros in the count field. Sort the
+$2^{t+1}$ rows by address and then by row type, so that the dictionary
+row follows all queries to that address. A counter, initially zero,
+increments on every query. On a dictionary row it must agree with the
+carried count and then resets to zero. This checks the count even at
+addresses with no queries. For fixed exposed addresses there is exactly
+one valid choice of counts, sorted rows and counter states. The
+contraction therefore equals $\prod_i f(x_i)$ in every characteristic,
+also when a table entry vanishes.
+
+The counter uses $O(2^t(1+t))$ gates by ripple-carry addition.
+Sorting the $O(t+1)$-bit rows costs $O(2^t(1+t)^p)$. The sorting
+network realizes a zero--one tensor over $k$ and hence realizes the
+same tensor over $K$ by scalar extension.
+
+Group the $2^u$ copies of each station of arity $t$ into $2^{u-t}$
+batches of $2^t$. A station of arity zero supplies a scalar directly.
+Connect the exposed wires according to the original network in each
+copy. The result contracts to $T^{\otimes 2^u}$ and its size is
+bounded by a constant times
+\[
+  2^u\sum_v(1+t_v)^p
+       \ \le\ 2^u(1+u)^{p-1}\sum_v(1+t_v).
+\]
+\end{proof}

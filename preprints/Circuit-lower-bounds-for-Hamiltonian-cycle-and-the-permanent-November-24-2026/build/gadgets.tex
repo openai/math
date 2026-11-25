@@ -1,0 +1,116 @@
+\subsubsection{Preserving the variables in completeness projections}\label{sec:gadgets}
+
+We use an explicit form of Valiant's completeness reductions
+\cite{Valiant} to control the order of the graph and the placement of
+the variables. A \emph{weighted Boolean verifier} is a circuit of fixed
+bounded fan-in that takes Boolean guesses, tests acceptance, and computes
+a list of output bits. Each listed bit has a weight in $F$ or a variable
+weight. The verifier sums, over accepted guesses, the product of the
+weights of the listed bits that are true. Each variable occurs once in
+the list. Let $s$ count guesses, gates, wires and listed bits.
+
+\begin{lemma}[Sparse completeness projections]\label{gadget:verifier}
+The value of a weighted Boolean verifier of length $s$ is a projection
+of $\HC_M$ with $M=O(s+1)$. Its directed graph has maximum indegree
+and outdegree at most three. Each variable labels a single arc, and
+these arcs have disjoint endpoints. If $\operatorname{char} F\ne2$,
+the value is also a projection of $\Per_M$ for an order $M=O(s+1)$.
+Its bipartite graph has maximum degree three and its variable edges
+form a matching. Both constructions take polynomial time.
+\end{lemma}
+
+\begin{proof}
+First encode the computation by clauses requiring exactly one true
+literal. For each gate, introduce one indicator for each row of its
+truth table and require exactly one indicator to hold. For each bit $x$
+incident to the gate, form another clause from $\neg x$ and the
+indicators of the rows in which $x=1$. The clause forces the selected
+row to agree with $x$. Unit clauses fix constants and require
+acceptance. Give every listed output a private copy $b$ of its bit $x$
+using the clause $(\neg x,b)$. Every accepted guess then has exactly
+one extension to a satisfying assignment, with its original weight.
+
+There are $O(s+1)$ literal occurrences. To ensure that every clause
+has length at most three, replace a long clause on
+$\ell_1,\ldots,\ell_t$ by the clauses $(a_{j-1},\ell_j,\neg a_j)$
+for $1\le j\le t$. Unit clauses fix $a_0=0$ and $a_t=1$. On Boolean
+values these constraints say $a_j=a_{j-1}+\ell_j$ over the integers,
+so the running sums give a unique extension precisely when one literal
+is true. Finally add a private bit pinned true to cover the empty
+verifier.
+
+\smallskip\noindent\emph{Hamiltonian cycles.}
+Make one bidirectional path per bit, and arrange the paths in cyclic
+order. Put a connector between each path and the next, with incoming
+arcs from either endpoint of the first path and outgoing arcs to either
+endpoint of the next. Forward traversal represents true. On each path,
+reserve one edge (a gap) per literal occurrence. The ordinary path
+segments on either side of a gap have length at least two, as does a
+path with no gaps. For a literal of clause $C$, write $u,v$ for the gap
+endpoints in the direction that makes the literal true. Keep the arc
+$v\to u$ and replace $u\to v$ by $u\to C\to v$, where all literals
+in $C$ share the clause vertex $C$. Give a private ordinary forward arc
+on each listed bit's path its output weight. Every other permitted arc
+has weight one and all missing arcs have weight zero.
+
+An interior vertex of an ordinary segment must use its two distinct
+neighbors in a Hamiltonian cycle, since a return to one neighbor would
+close a two-cycle. Thus each whole segment is traversed in one
+direction. Across a gap, $v\to u$ is both the only possible incoming
+arc at $u$ and the only possible outgoing arc at $v$. If either end
+needs this arc, it fills both positions. Otherwise $u$ needs an
+outgoing arc across the gap and $v$ needs an incoming arc there, forcing
+$u\to C\to v$. In particular a cycle cannot enter a clause at one
+gap and return at another. Each path therefore has a consistent
+orientation, and each clause vertex is visited once precisely when
+one of its literals is true. A satisfying assignment determines one
+directed cycle through the paths in their cyclic order, counted once
+in $\HC_M$, with the prescribed weight. Clause lengths give the degree
+bound, and weighted arcs on distinct paths have disjoint endpoints.
+
+\smallskip\noindent\emph{Perfect matchings.}
+For each bit make a simple even bipartite cycle of length at least four.
+Its two alternating perfect matchings represent true and false. Reserve
+one distinct edge for each literal occurrence in the matching that makes
+the literal true. For a listed bit, weight one further edge of the true
+matching by its output weight. For each clause, create a row and a
+column, with one prospective edge between them per literal. We must
+couple each prospective edge to its occurrence edge so that they are
+selected together.
+
+Delete each such pair of edges and add three private rows and three
+private columns with weight matrix
+\[
+  A=\begin{pmatrix}
+     \tfrac12&\tfrac12&-\tfrac12\\
+     -1&-1&1\\
+     1&1&1
+  \end{pmatrix}.
+\]
+For the first deleted edge, join its row to private column $1$ and
+private row $1$ to its column. For the second edge, use private column
+and row $2$ in the same way. All four connecting edges have weight one.
+Fix the connecting edges used by a matching. They must occupy equally
+many private rows and columns for an internal completion to exist. If
+they occupy none, the total internal weight is $\operatorname{per}(A)=1$. With
+one row and one column occupied, deleting them leaves a permanent of
+zero for all four choices from indices $1,2$. With both rows and both
+columns occupied, the remaining entry is $A_{33}=1$. Thus the only
+states that contribute are those using neither deleted edge or both,
+each with factor one. This cancellation uses the inverse of $2$.
+
+After summing over the private vertices, each clause chooses one literal
+and each bit chooses an alternating matching. Their choices agree
+exactly for satisfying assignments. The unweighted cycle edges carry
+weight one and all missing edges carry weight zero. With these entries
+the permanent equals the verifier sum.
+
+The only vertices that can have degree four are private rows and columns.
+Split any such row into two rows, give each two of its old edges, and
+add one column adjacent to both with unit weights. Exactly one row
+matches externally, and its choice forces the match to the new column.
+Use the transposed operation for columns of degree four. This preserves
+the permanent and leaves the variable edges on distinct bit cycles.
+Both constructions use only a constant number of vertices per bit and
+per literal occurrence, hence have order $O(s+1)$.
+\end{proof}

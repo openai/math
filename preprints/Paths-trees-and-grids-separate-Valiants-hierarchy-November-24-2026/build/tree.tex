@@ -1,0 +1,111 @@
+\section{Binary trees and algebraic branching programs}\label{sec:bt}
+
+Let $B_{q,h}=Z_{T_h,q}$ be the state sum on the complete binary tree
+$T_h$ with $h$ levels and $d=2^h-1$ vertices. A circuit computes
+$B_{q,h}$ from the leaves up. At each nonroot vertex it stores the
+subtree sum for each of the $q$ possible states of the parent edge.
+For a fixed parent state it sums, over the child-edge states, the
+product of the local table entry and the corresponding child sums.
+The circuit reuses each child sum for many entries of the parent's
+table. The root returns the full state sum, and the circuit has
+size $O(dq^3)$. In particular $(B_{n,\lfloor\log(2n)\rfloor})_n$ belongs to $\VP$.
+
+\begin{theorem}[Branching-program lower bound for binary trees]\label{thm:b}
+Over every field, for all sufficiently large $q$ and $h$ such that
+$2^h-1\le(\log q)^{1/3}$, the degree-component border ABP size of
+$B_{q,h}$ is at least $q^{\Omega(\sqrt h)}$.
+\end{theorem}
+
+The subtree below one child of the root has $(d-1)/2$ vertices
+and just one boundary edge. Thus even a nearly equal division of
+the slots can have a small cut. A branching program gives us freedom
+to prescribe the \emph{cardinality} of the cut. Hrube\v{s} and Yehudayoff
+used this freedom to separate monotone branching programs from monotone
+circuits on a tree polynomial \cite[Proposition~13]{HrubesYehudayoff}.
+For the state sum $B_{q,h}$ we will choose $k$ so that every $k$-vertex
+set has a large boundary. The spectral bound will control all resulting
+cuts at the same terminal sites.
+
+\begin{lemma}[Prefixes of prescribed size]\label{lem:prefix}
+Fix $1\le k<d$. If an ABP of size at most $s$ computes $f$ on $d$
+variable slots $V$, then its slot tensor has a decomposition
+\[
+             A(f)=\sum_{\substack{U\subset V\\ |U|=k}} T_U ,
+             \qquad \operatorname{rank}_{U\mid V\setminus U} T_U\le s .
+\]
+Here the rank is that of the matrix obtained by grouping slots on the two sides.
+\end{lemma}
+\begin{proof}
+Expand the polynomial of the ABP into source--sink paths and choose
+one term from the affine label on each path edge. A term that
+contributes to $A(f)$ selects exactly one variable from each slot.
+Reading the selected variables in path order gives a permutation of
+$V$, which may depend on both the path and the selected terms.
+
+Cut the path immediately after the edge on which its $k$th variable
+was selected. Write $U$ for the first $k$ slots and $v$ for the ABP
+vertex reached by that edge. For fixed $U,v$, form a coefficient array
+$P_{U,v}$ from the source--$v$ paths that select one variable from each
+slot in $U$, select only constants elsewhere, and select a variable on
+their last edge. Form $Q_{V\setminus U,v}$ from the $v$--sink paths
+that select one variable from each complementary slot and select
+constants on all other edges. Each array entry sums the corresponding
+products of coefficients from the edge labels.
+
+Every such prefix can be followed by every such suffix, since the
+program is acyclic. Their contribution for fixed $U,v$ is therefore the
+outer product $P_{U,v}\otimes Q_{V\setminus U,v}$. The variable on the
+final prefix edge identifies the cut uniquely, even when several
+constant terms follow it. Summing over the at most $s$ choices of $v$
+gives $T_U$ and the rank bound.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:b}]
+We use the edge-isoperimetric bound of Bharadwaj and Chandran
+\cite[Theorem~1 and Corollary~1]{BharadwajChandran}. We give the
+counting argument to see how the choice of $k$ depends only on $h$.
+For $U\subset V(T_h)$, write $b$ for the indicator of the root in
+$U$. Along an edge from a parent to a child, the membership indicator
+changes by $+1$, $-1$, or $0$. For $1\le j<h$, let $c_j$ be the sum
+of these changes over the edges whose child subtree has $j$ levels.
+Along the path from the root to each vertex the changes telescope.
+On summing over all vertices, a change at the top of a $j$-level
+subtree contributes once for each of its $2^j-1$ vertices. Hence
+\begin{equation}\label{eq:tree-sizes}
+ |U|=b(2^h-1)+\sum_{j=1}^{h-1} c_j(2^j-1),
+ \qquad \sum_{j=1}^{h-1}|c_j|\le|\partial U|.
+\end{equation}
+
+A set with at most $u$ boundary edges therefore has a size given by
+one of two root terms plus a multiset of at most $u$ signed numbers
+from the $2(h-1)$ choices $\pm(2^j-1)$. There are at most
+$2\binom{2(h-1)+u}{u}$ such sizes. For $u=\lfloor\gamma h\rfloor$
+with a sufficiently small absolute $\gamma>0$, this is less than
+$2^h-2$ for all large $h$, by $\binom{m}{u}\le(em/u)^u$.
+Thus some $k\in\{1,\ldots,d-1\}$ requires at least $u+1$ boundary
+edges for every vertex set of that size.
+
+Suppose $B_{q,h}$ has degree-component border ABP size at most $s$.
+Extracting $A(f)$ is linear on the space of degree-$d$ components.
+By Lemma~\ref{lem:prefix}, $A(B_{q,h})$ lies in the closure of sums
+of at most $\binom{d}{k}\le 2^d$ tensors of rank at most $s$ across
+their respective $k$-slot cuts. Every one of those cuts has at least
+$u+1$ crossing edges. Lemma~\ref{lem:single} now gives
+$\log s\ge\tfrac12(\log q)\sqrt{u+1}$, which proves the theorem.
+\end{proof}
+
+For the family in Theorem~\ref{thm:main}, take $q=n$ and
+$h_0=\lfloor(\log\log n)/3\rfloor$. The taller tree with
+$\lfloor\log(2n)\rfloor$ levels contains $T_{h_0}$ as a subtree,
+so its state sum projects to $B_{n,h_0}$. By Lemma~\ref{lem:projection},
+a border ABP of size $s$ for the taller tree would give one of size
+$O((s+1)^2)$ for the shorter tree. Theorem~\ref{thm:b} therefore
+gives $s\ge n^{\Omega(\sqrt{\log\log n})}$ for the taller tree as well.
+
+The same lower bound holds for the order of a matrix of affine forms
+representing this family by its determinant, even in the
+degree-component border sense. The determinant of an order-$m$ matrix
+has an ABP of size polynomial in $m$ over every field
+\cite{MahajanVinay,MalodPortier}. Substituting affine forms in that ABP
+preserves its size, so the branching-program bound applies.
+

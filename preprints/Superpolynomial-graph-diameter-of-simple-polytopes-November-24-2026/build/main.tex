@@ -1,0 +1,84 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[letterpaper,textwidth=449pt,textheight=650pt,hcentering,top=73pt,headheight=14pt,headsep=18pt]{geometry}
+\usepackage{amsthm,mathtools,amssymb,microtype}
+\usepackage{graphicx,tikz,booktabs,enumitem,fancyhdr}
+\usetikzlibrary{arrows.meta,calc,positioning}
+\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+\definecolor{ink}{HTML}{213650}
+\definecolor{lagoon}{HTML}{175967}
+\definecolor{ember}{HTML}{994121}
+\usepackage[unicode,colorlinks,linkcolor=ink,citecolor=lagoon,urlcolor=lagoon,
+ pdfauthor={OpenAI},pdftitle={Superpolynomial graph diameter of simple polytopes},
+ pdfsubject={Superpolynomial-graph-diameter-of-simple-polytopes-November-24-2026}]{hyperref}
+\usepackage{bookmark}
+\input glyphtounicode
+\pdfgentounicode=1
+\setcounter{tocdepth}{1}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{black!65}\nouppercase{\leftmark}}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection.\ #1}{}}
+\renewcommand{\headrulewidth}{0pt}
+\setlist[itemize,enumerate]{topsep=4pt plus 1pt,itemsep=2pt,parsep=0pt}
+\linespread{1.025}
+\raggedbottom
+\emergencystretch=1.0em
+\widowpenalty=6000
+\clubpenalty=3500
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Superpolynomial graph diameter\\of simple polytopes}
+\author{OpenAI}
+\date{November 24, 2026}
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{center}
+    {\fontsize{21}{25}\selectfont\bfseries\color{ink}\@title\par}\vspace{6pt}
+    {\normalfont\large\@author\par}\vspace{2pt}
+    {\normalfont\normalsize\@date\par}
+  \end{center}\thispagestyle{plain}}
+\renewcommand*{\l@section}{\@dottedtocline{1}{0em}{2.05em}}
+\makeatother
+
+\begin{document}
+\maketitle
+\begin{abstract}
+\normalsize\noindent
+We disprove the polynomial Hirsch conjecture. For every sufficiently large
+\(n\), we construct a bounded simple rational polytope with exactly \(n\)
+facets whose graph diameter grows faster than every fixed power of \(n\).
+Its dimension grows more slowly than every positive power of \(n\).
+For any prescribed subpolynomial \(s(n)\), two vertices can remain
+superpolynomially far apart even when a single step may cross any face
+of dimension at most \(s(n)\).
+\end{abstract}
+\input{sections/introduction}
+\clearpage
+{\small\tableofcontents}
+\medskip
+\input{sections/diameter}
+\input{sections/framework}
+\input{sections/coupling}
+\input{sections/transfer}
+\input{sections/recursion}
+\input{sections/numerical}
+\input{sections/probability}
+\input{sections/switching}
+\input{sections/finite}
+\input{sections/layers}
+\input{sections/vertex}
+\input{sections/compiler}
+\input{sections/geometry}
+\input{sections/references}
+\end{document}

@@ -31,6 +31,27 @@ def descriptorRate := commonRawRate (ShrinkScheduledRun.fixedRate B) (RefreshEmi
 attribute [local irreducible] BlockProgram.script BlockProgram.layout BlockClock.small
 
 /-- Above one length threshold, the actual selected pass runs in its allocated window over any coefficient ring. -/
+theorem eventually_locatedRuns_at (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in atTop,
+    ∀ pos ≤ initialPositions factor n, ∀ {R : Type v} [CommRing R] (f : B.Entry → R) (hf : B.IsSolution f)
+      (pub : Fin 11 → Word (wordBits factor n)) (blocks cap : ℕ) (initial : TaggedLayer)
+      (frame : Fin 8 → Word (wordBits factor n)),
+      let L := BlockProgram.layout B (pub 2).val pos blocks
+      let small := BlockClock.small B factor n
+      let A := BlockProgram.script B
+      endAddress L < 2^wordBits factor n → small ≤ cap →
+      Schedule.Online.Run.ControlBounds A.plan small (w := wordBits factor n) →
+      LocatedRuns (CompiledResident.resident B f hf (pub 2) pos blocks n initial frame) pub (levelWords L)
+        (directoryRows L) cap small (nativePassRate A (descriptorRate B)*pos) blocks pos n := by
+  filter_upwards [ShrinkScheduledRun.eventually_emitAt_capacity.{u,v} B factor hb,RefreshPass.eventually_emitAt_capacity.{u,v} B factor hb]
+    with n shrink refresh
+  intro pos available R inst f hf pub blocks cap initial frame L small A room clock control
+  apply locatedRuns_of_passes
+  · intro i g t X
+    exact shrink pos available f hf i X pub blocks t cap (RefreshEmit.rawRate B) initial frame room clock control
+  · intro g t X
+    exact refresh pos available f hf X pub blocks t cap (ShrinkScheduledRun.fixedRate B) initial frame room clock control
+
+/-- The descriptor compiler at the full cursor allocation. -/
 theorem eventually_locatedRuns (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in atTop,
     ∀ {R : Type v} [CommRing R] (f : B.Entry → R) (hf : B.IsSolution f)
       (pub : Fin 11 → Word (wordBits factor n)) (blocks cap : ℕ) (initial : TaggedLayer)
@@ -43,14 +64,8 @@ theorem eventually_locatedRuns (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : �
       Schedule.Online.Run.ControlBounds A.plan small (w := wordBits factor n) →
       LocatedRuns (CompiledResident.resident B f hf (pub 2) pos blocks n initial frame) pub (levelWords L)
         (directoryRows L) cap small (nativePassRate A (descriptorRate B)*pos) blocks pos n := by
-  filter_upwards [ShrinkScheduledRun.eventually_emitAt.{u,v} B factor hb,RefreshPass.eventually_emitAt.{u,v} B factor hb]
-    with n shrink refresh
-  intro R inst f hf pub blocks cap initial frame pos L small A room clock control
-  apply locatedRuns_of_passes
-  · intro i g t X
-    exact shrink f hf i X pub blocks t cap (RefreshEmit.rawRate B) initial frame room clock control
-  · intro g t X
-    exact refresh f hf X pub blocks t cap (ShrinkScheduledRun.fixedRate B) initial frame room clock control
+  filter_upwards [eventually_locatedRuns_at B factor hb] with n run
+  exact run (initialPositions factor n) le_rfl
 
 end CompressorRecords.ScheduledTrace
 

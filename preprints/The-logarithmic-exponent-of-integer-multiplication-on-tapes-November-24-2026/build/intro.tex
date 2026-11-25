@@ -1,0 +1,220 @@
+\section{Introduction}\label{sec:intro}
+
+The product of two $n$-bit integers fits in $2n$ bits. Reading the
+operands and writing a string of that length takes only linear time.
+How much more work does it take to determine the bits of the product?
+On a tape the question concerns movement as well as arithmetic. A
+Fourier multiplication algorithm repeatedly combines digits stored
+far apart, and each tape head moves only one cell at a time.
+
+We construct one machine whose worst-case time per input bit grows
+at most as $(1+\log n)^{1/2+o(1)}$. The program, the alphabet and the
+number of tapes are fixed once for all lengths. Under a hypothesis
+about the time needed to solve satisfiability, the square-root
+exponent is optimal.
+
+\begin{theorem}[One multiplier for all lengths]\label{thm:uniform-main}
+There is a deterministic multitape Turing machine that computes the
+full product of two $n$-bit integers in worst-case time at most
+$n(1+\log n)^{1/2+o(1)}$, visiting $O(n)$ tape cells.
+\end{theorem}
+
+The assumption for the converse is \emph{variable-count Weak ETH}.
+It says that for no fixed $0<\delta<1$ can a deterministic algorithm
+decide 3-SAT on $v$ variables in time
+$2^{O(v^{1-\delta})}$ times a polynomial in the input length
+\cite{SH,WeakSH}. For example, a running time of $2^{O(v/\log v)}$
+is compatible with this hypothesis.
+
+\begin{theorem}[Multiplication lower bound]\label{thm:lower}
+Assume variable-count Weak ETH. For every deterministic multitape
+machine that multiplies exactly there are constants $c>0$ and $n_0$
+such that, for each $n\ge n_0$, some pair of $n$-bit operands
+requires at least $c\,n\sqrt{\log n}$ steps.
+\end{theorem}
+
+\needspace{4\baselineskip}
+Both theorems use a fixed finite number of one-dimensional tapes, a
+fixed finite alphabet, and one head per tape. Each step reads or
+writes at the heads and moves each head by at most one cell. The
+operands are nonnegative integers given in binary, high bits first,
+with a delimiter between them. The inputs and outputs occupy
+prescribed contiguous tape intervals, one bit per cell. Leading
+zeros are allowed, and multiplication returns the full $2n$-bit
+product. Space counts the cells ever visited, including temporary
+work tapes. All logarithms are to base two.
+
+The upper bound in Theorem~\ref{thm:uniform-main} means that the
+\emph{same} machine takes $O_\epsilon(n(1+\log n)^{1/2+\epsilon})$
+time for every fixed $\epsilon>0$. Whether $O(n\sqrt{\log n})$ time
+is attainable remains open. Theorem~\ref{thm:lower} is a statement
+at every sufficiently large length, with constants that may depend
+on the machine.
+
+\subsection{Division, square root and transposition}
+
+Exact division with remainder and the floor of the square root each
+have a single linear-space algorithm with the time bound of
+Theorem~\ref{thm:uniform-main}. Newton iteration reduces both tasks
+to products at a sequence of increasing precisions. There are also
+linear-time reductions in the reverse direction on exact binary inputs.
+One division, or three integer square roots, suffices to recover a
+product after padding the operands. The padding can hit every large
+target length. Thus under Weak ETH even computing the quotient alone
+or the floor square root requires $\Omega(n\sqrt{\log n})$ worst-case
+time at every sufficiently large $n$ (Corollaries~\ref{cor:near-root-applications}
+and~\ref{cor:division-root-lower}).
+
+Matrix transposition connects the two halves of the proof. Store a
+square array on a tape one row after another. A scan sees the entries
+in each row consecutively, while consecutive entries of a column are
+a whole row apart. Transposing the array writes out those columns
+consecutively. The multiplier uses fast changes of order of this kind
+to bring together the digits of its short Fourier transforms.
+Conversely, Harvey and van der Hoeven showed how to transpose a
+binary matrix using integer multiplication \cite{hvhtranspose}.
+
+For a matrix of side $N$, let $n=N^2$ denote its bit count. The
+reduction and Theorem~\ref{thm:uniform-main} give a transposition
+algorithm with time at most $n(1+\log n)^{1/2+o(1)}$. Our conditional
+lower bound for this task holds even on a subset of the inputs. For
+each fixed $0\le\rho<1-1/\sqrt2$, a machine that returns the correct
+transpose by a common deadline on at least a $2^{-\rho n}$ fraction of
+the matrices needs a deadline of $\Omega(n\sqrt{\log n})$, at every
+sufficiently large side length (Theorem~\ref{thm:transpose}).
+
+\input{history}
+
+\subsection{How the algorithm saves tape scans}
+
+To multiply the integers, regard their blocks of binary digits as
+coefficients of polynomials. Choose the convolution length large
+enough that cyclic convolution gives the ordinary coefficient
+product. Once the coefficients are known, a scan propagates the
+carries. The work in between is to compute Fourier transforms and
+place the digits needed together at each stage. A bound on the number
+of linear gates in a Fourier circuit does not charge for moving
+their inputs across a tape or for representing a complex scalar to
+the required precision. The algorithm in Part~\ref{part:algorithm}
+accounts for both costs.
+
+\paragraph{Sharing the movement.}
+On a power-of-two square array, transposing amounts to exchanging the
+row and column fields of the binary address. Divide each field into
+$m$ chunks. Swapping the corresponding chunks in turn gives the
+desired permutation, but applying each swap separately entails a new
+pass over the array. We instead apply combinations of these swaps to
+many independent streams. Each swap has eigenvalues $+1$ and $-1$.
+In a basis that diagonalizes all the swaps, their product takes its
+sign from the parity of the number of minus signs.
+
+The Fourier companion paper gives a way to compute this parity in
+bulk \cite[Section~\ext{F}{sec:repair}]{oaF}. Different sign shifts on
+the streams give a binomial distribution of counts at each frequency.
+On the central interval the parity sign is exactly a polynomial of
+degree $O(\sqrt{m\log m})$ in the shifted queries. The exceptional
+streams depend on the frequency. A small set of linear combinations
+carries enough information into the common basis to recover the
+errors there, and further applications of the polynomial correct
+the full batch. This gives about $\sqrt{m\log m}$ stages, each linear
+in all $m$ swaps.
+
+The tape algorithm must perform such a stage without paying for $m$
+separate rearrangements. It groups transfers between streams into
+rectangles of source and destination labels. A change of address
+layout at a rectangle endpoint can be used for every query there.
+In the new layout the shifts needed for each query are controlled by
+fields that a tape scan reads earlier. These shifts cost linear time.
+The number of smaller interchanges per stream in a stage grows more
+slowly than any prescribed positive power of $m$ for a suitable
+choice of the finite construction. This is the saving required for
+the recursion in Theorem~\ref{thm:interchange}. Section~\ref{sec:permutations}
+uses interchange to implement bitwise addition modulo two on selected
+address positions and to put records back in order after each transform.
+
+\paragraph{Sharing the arithmetic.}
+The construction uses many short, pairwise coprime cyclic factors.
+Their product is large enough to hold the digit convolution, and
+their padded ranges still fit in an array of linear bit volume.
+The Chinese remainder theorem converts the cyclic convolution to a
+convolution on this product. Padding each factor afresh for its
+Fourier transform could multiply the space requirements across all the
+factors. Instead, a short transform borrows occupied coordinates and
+restores their contents. This lets the short transforms use the same
+sequence of diagonal phases, address permutations and normalized
+Walsh transforms (Lemma~\ref{lem:synchronized-short}).
+
+The one-bit Walsh transform combines two values by taking their normalized
+sum and difference. On selected address bits it factors into
+transforms on smaller sets of bits, with the unselected bits indexing
+many independent copies. Lemma~\ref{lem:tape-walsh} shows how to
+gather those copies, share the work and return every record to its
+specified place on the tape. Our use of the normalized binary
+algorithm of the Fourier paper keeps intermediate errors under
+control \cite[Proposition~\ext{F}{prop:binary-template}]{oaF}.
+With $O(\log n)$ bits per numerical record the total error in the
+convolution coefficients is less than one half. Rounding therefore
+recovers the exact coefficients before the carry scan. These steps
+give a multiplier for every fixed exponent greater than $1/2$
+(Theorem~\ref{thm:integer}).
+
+\paragraph{One machine.}
+Choosing a new finite construction for each exponent gives a family
+of algorithms. Theorem~\ref{thm:uniform-main} requires a single
+program with one linear bound on visited space. The finite
+constructions can be generated effectively, and each candidate can
+test its layout and precision conditions before use. To accommodate a
+candidate with a large space constant, the machine tries it on smaller
+chunks of the operands and assembles the product from the results.
+It runs the candidates with increasing time allowances on a fixed
+number of tapes, abandoning attempts that would cross fixed linear
+space limits. Every completed attempt gives the correct product.
+For each fixed exponent a suitable candidate eventually fits within
+the limits and incurs only a constant scheduling overhead
+(Section~\ref{sec:single-machine}).
+
+\subsection{Why a fast transposer would contradict Weak ETH}
+
+To prove the lower bound in Part~\ref{part:lower}, we record how the
+heads move in a tape run. For a binary $N\times N$ matrix, split time into
+epochs of $N$ steps and each tape into blocks of $N$ cells. Given the
+block containing a head at the start of an epoch, the head can visit
+only that block and its two neighbors. Fix the sequence of starting
+blocks for all heads. Each epoch is now a vertex of a network. An
+edge passes the contents of a tape block to the next epoch that can
+touch it, and neighboring epochs exchange the control state and head
+positions. A time bound $T$ gives $O(N+T/N)$ vertices. Even though
+the heads move in response to their data, there are only
+$2^{O(1+T/N)}$ such coarse traces. Some trace is shared by enough
+successful inputs for the partial transposition bound to apply.
+
+That bound prices the wires of the network using the tensor geometry
+of the companion papers \cite{oaG,oaP}. A wire carrying $q$ bits
+between two sites costs $q$ times their distance. Whatever is
+computed locally, independent bits delivered at prescribed pairs of
+sites cannot have greater total price than the wires supplying them.
+Weak ETH enters when choosing the sites. Uniform expansion for these
+distances would give a power saving in the variable exponent of a
+3-SAT algorithm (Theorem~\ref{thm:noports}). In the absence of
+expansion we find a placement with short network edges but with
+typical row and column terminals about one unit apart.
+
+Every correctly transposed bit must appear at its row terminal and
+at its column terminal. If the trace succeeds on at least
+$2^{-\rho n}$ of the arrays, for $n=N^2$, the successful arrays
+contain at least $(1-\rho)n$ bits of joint entropy. Over repeated
+copies this yields independent wires at the corresponding rates.
+An auxiliary vertex choosing the rows can supply them for at most
+$n/\sqrt2+o(n)$ at our placement. For $\rho<1-1/\sqrt2$ a positive
+fraction of the demand is still unpaid. This forces the network to
+have $\Omega(N\sqrt{\log N})$ vertices (Theorem~\ref{thm:table}),
+and hence forces the claimed transposition time.
+
+Finally, given a multiplier at any operand length $m$, the reduction
+of Harvey and van der Hoeven transposes a matrix of side
+$\lfloor\sqrt m\rfloor$ using a constant number of multiplications at
+that very length and $O(m(1+\log\log(2m)))$ other steps. This extra
+cost is smaller than the transposition lower bound. The argument
+therefore bounds multiplication at every sufficiently large $m$,
+without a monotonicity assumption on its running time
+\cite[full version, Corollaries~6.2 and~6.3]{hvhtranspose}.

@@ -1,0 +1,331 @@
+\section{Realizing the scheduler by blocking inequalities}\label{sec:layers}
+
+At a probe for bucket \(P\), the scheduler of
+Theorem~\ref{thm:scheduler} must make enough of the corresponding red
+rows tight to serve the client program. Each red row will be a lower
+bound on an affine expression, called an \emph{output}. A module has two
+ways to supply a tight output. It can attain one of its own bounds, or
+it can transmit tight bounds from all of its children at one label.
+Section~\ref{sec:vertex} proves this alternative for the inequalities
+constructed here. Section~\ref{sec:compiler} chooses modules to match
+the alternative to the options in the client program.
+
+\paragraph{One episode.}
+Write \(x_P\) for the probe of bucket \(P\) in a single episode.
+One coordinate \(v_P\) per bucket suffices to realize the first alternative
+at height zero. Impose
+\begin{equation}\label{eq:base-module}
+ v_P\ge0,\qquad v_P+v_{P'}\ge1\quad(P\ne P'),\qquad
+ v_P\ge I_0|x-x_P|-1 .
+\end{equation}
+Choose \(I_0\) so that the time-dependent bound for \(P\) is at
+least two at every other probe and at both anchors. At \(x_P\) its
+value is \(-1\), while each retained \(v_{P'}\) for \(P'\ne P\) is at
+least two. Thus \(v_P\) can move in both directions if it is present
+and positive. At a vertex that retains it, the floor \(v_P=0\) must
+be tight. Reusing a coordinate at two separated probes poses a new
+problem. A convex lower bound low at those probes stays low between
+them. The numerical construction provides many different zero sets
+on the same coordinates. They will distinguish the sites in a time
+block, while the prices introduced below select children to serve at
+a probe.
+
+\subsection{From ordered layers to prescribed times}
+
+Fix \(r\ge100\). The positions \(\mathcal A\) will carry a tournament
+in which each set of at most \(2^r\) positions has a common dominator
+outside the set. Such a tournament exists. For a fixed \(j\)-set in
+a uniform random tournament on \(a_0\) positions, with \(1\le j\le
+2^r\), the probability of having no common dominator is
+\((1-2^{-j})^{a_0-j}\). Multiplying by \(\binom{a_0}{j}\) and summing
+over these \(j\) gives a bound tending to zero as \(a_0\to\infty\).
+Fix the tournament once for this \(r\).
+
+Apply Theorem~\ref{thm:coarse} with \(C=1000r^2\). Choose a power of
+two \(q\) supplied by that theorem and take \(L=(q^C)^k\) for sufficiently
+large \(k\). Its field size \(b\), the least power of two at least
+\(L^{1/(r+1)}\), then accommodates all the positions. Every block
+will use the same label alphabet
+\[
+   \mathcal I\times\mathcal A\times\mathbb F_b,\qquad
+   H_i(s)=\{(i,a,\mathrm h_a(s)):a\in\mathcal A\}
+    \quad(i\in\mathcal I,\ 1\le s\le L).
+\]
+Here \(H_i(s)\) is the bundle assigned to site \(s\) by index \(i\).
+Since \(\lvert\mathcal I\rvert\le L^{8/C}\), the total number \(V\)
+of labels satisfies
+\[
+ V\le 2|\mathcal A| L^{8/C+1/(r+1)},\qquad 10V\le L^{3/r}
+\]
+for all sufficiently large \(k\).
+
+At each site the theorem allows a blank sample, any positive number of
+interior samples, and another blank sample. At an interior sample of
+site \(s\), every state vanishes on some whole \(H_i(s)\) and has at
+most \(r\) zeros on any bundle of a different site. Its third conclusion
+bounds the number of states at a sample independently of the number of
+interior samples. We now use its merge inequality to realize these
+states at the \emph{prescribed real times}, including unevenly spaced ones.
+
+For a sample time \(x\) with immediate neighbors \(x^-<x<x^+\), write
+\(x=\alpha_x x^-+(1-\alpha_x)x^+\). Choose a single positive integer
+\(e\) for the finite sequence so that \(4^{-e}<\min(\alpha_x,1-\alpha_x)\)
+at every such \(x\). Raise each entry of every state to the power \(e\).
+The zero sets persist and the merge factor in
+Equation~\eqref{eq:layermerge} becomes \(4^{-e}\). Let \(Z_x\) be the
+convex hull of the powered states at \(x\) plus the nonnegative
+orthant. For \(c\ge0\), the value
+\(m_c(x)=\min\{c\cdot v:v\in Z_x\}\) is attained by a powered state.
+Merging minimizing states at the two neighbors gives
+\[
+ m_c(x)\le 4^{-e}\bigl(m_c(x^-)+m_c(x^+)\bigr)
+        \le \alpha_x m_c(x^-)+(1-\alpha_x)m_c(x^+).
+\]
+The last inequality is strict whenever \(m_c(x)>0\), since the two
+neighboring values then have positive sum. Thus the linear interpolation
+of the data \(m_c\) is convex and bends strictly at each interior time
+where the data are positive. At any sample \(x_0\) with \(m_c(x_0)>0\),
+choose an affine function \(b_c\) equal to \(m_c\) there and strictly
+below it at every other sample. At an interior sample one may use any
+slope strictly between the two chord slopes. At the first or last
+sample use a slope below or above its adjacent chord slope, respectively.
+
+\subsection{Time blocks and the forest of modules}
+Time blocks organize the sample times. Modules organize the physical
+coordinates. Blocks at one height are disjoint intervals of time,
+and the same module serves all of them.
+
+Arrange the $N=L^h$ episodes as the leaves of an ordered $L$-ary
+tree of time blocks. A block of height zero contains the anchors
+and probes of one episode. A block $E$ of positive height has one
+site $s$ for each of its children $E_s$. All samples of $E_s$,
+including its own blanks if any, are interior samples of that site.
+Insert two new blank samples around them. The gaps between prescribed
+episodes leave room for all internal insertions, and the outermost
+blanks can be placed beyond the episodes. Every prescribed probe is an
+interior sample of its site at each positive height, so the zero-bundle
+conclusion applies there. The added blanks serve only the interpolation
+within the block that inserted them. A common exponent \(e\) can be chosen
+for the finitely many interpolation triples in all the blocks. The
+total number of distinct times, including the new blanks, is
+$S=O(NB)$, since two blanks are added per tree edge. Whenever sample
+data on the whole tree are interpolated, we use linear interpolation in
+their order and extend the two outermost pieces affinely to the line.
+
+A separate finite forest specifies which coordinates we use. Each
+module owns distinct coordinates. The roots are
+modules of height $h$. A module of height $t>0$ may have any number of
+children of height $t-1$ at each label, and modules of height zero
+have no children. Its own outputs, called quick outputs, come in classes with one member
+per bucket $P\in\{1,\ldots,B\}$. It also propagates each output class
+of each child as a separate class of its own. Thus a root has one
+class for each quick-output class in its subtree. The rows bounding
+these root outputs below will be the red rows. At any fixed time the
+root systems use disjoint coordinates, so their joint slice is a product.
+
+All modules use one physical time $x$. Each module has a fixed set of
+physical coordinates shared across its blocks. To state the inequalities
+for block $E$, take the local value of every output to be its physical
+value minus
+\begin{equation}\label{eq:module-shift}
+ D_E(x)=T_E(x)+R_t(x),
+\end{equation}
+where $T_E$ is affine and $R_t$ is convex piecewise affine, common
+to all blocks of this height. At height $h$ we set the shift to zero.
+At the samples in \(E\), its lines and shifts will make the local system
+of this block govern its module. We first give those local inequalities.
+
+At height zero there is one physical coordinate per bucket. Subtracting
+the shift \eqref{eq:module-shift} gives the local coordinates $v_P$ in
+\eqref{eq:base-module}. Choose a common $I_0$ large enough to serve all
+height-zero blocks.
+
+\subsection{Local inequalities at positive height}
+Fix $t>0$ and a block $E$ of height $t$.
+The child systems are already fixed. Their pair bounds have positive
+gaps, and Lemma~\ref{lem:descent} at height \(t-1\) supplies an allowance
+for raising their local output floors independently at probes. Choose
+\(\delta>0\) with \(10\delta\) smaller than all those gaps and with
+\(2\delta\) within the child floor allowance. In assigning the shifts
+at height \(t-1\), take \(0\le R_{t-1}\le\delta/8\) at all samples.
+The final paragraph describes the choices in inductive order.
+
+At each label $\ell$ introduce local variables $W_\ell,p_\ell$ and,
+for every bucket $P$, quick outputs $F_{\ell,P},G_{\ell,P}$. The
+$F$'s at a fixed label constitute one class, and the $G$'s another.
+If a child attached at $\ell$ has physical output $v_j^{\rm phys}$,
+its propagated output in this block is the expression
+\begin{equation}\label{eq:module-propagation}
+ Y_j=p_\ell+\varepsilon v_j^{\rm phys}.
+\end{equation}
+The index $j$ includes the child identity. No new coordinate is
+introduced for $Y_j$. Take $\mu=\sigma^2$ and $\varepsilon=\sigma^3$,
+where $\sigma>0$ will be chosen small at this height. Impose output
+floors $F,G,Y\ge0$. A floor raise in a fixed slice refers to an
+increase of one of these local lower bounds.
+
+\paragraph{Numerical constraints.}
+Use the states and $Z_x$ for this block, and require $W\ge0$.
+Choose a piecewise affine function $g$ with positive values at
+all samples, so that adding any offsets in $\{0,1\}$ to its sample
+values still gives concave data. A sufficiently large multiple of
+$-x^2$ on the finite sample set, translated upward and interpolated,
+has this property. We use the same \(g\) on the full sample set at this
+height. Write $z=W-\sigma g(x)\mathbf1$ and let $z^+,z^-$
+denote its positive and negative parts, both taken nonnegative.
+The numerical rows must reproduce the following condition at each
+sample \(x\) of \(E\):
+\begin{equation}\label{eq:layer-state}
+ z^+\in D Z_x,\qquad D=1+M_0\sum_\ell z_\ell^- .
+\end{equation}
+A coordinate of \(W\) is allowed to fall below the offset
+\(\sigma g(x)\). When that happens the negative parts of \(z\) enlarge
+the required positive part by the factor \(D\). The following rows
+implement this compensation with nonnegative coefficients.
+
+Apart from nonnegativity, $Z_{x_0}$ is described by its facet
+inequalities $c\cdot v\ge m$, with $c\ge0$ and $m=m_c(x_0)>0$.
+Indeed its recession cone is the nonnegative orthant, and an
+inequality with minimum zero already follows from $v\ge0$.
+The number of facets is bounded in the fixed parameters, since each
+face is generated by a subset of the boundedly many states and coordinate
+rays. For all the finitely many facets and samples in use take $M_0$
+large enough that $M_0m\ge\max_\ell c_\ell$. If $b_c$ is the affine
+minorant of $m_c$ touching only at $x_0$, impose
+\begin{equation}\label{eq:coarse-rows}
+ c'\cdot W\ge b_c(x)+\sigma\|c'\|_1g(x_0)
+\end{equation}
+for each $c'$ formed by replacing any subset of the entries of $c$
+by $M_0m$. At $x_0$ the least value of $c'\cdot z$ over these
+choices is $c\cdot z^+-M_0m\sum_\ell z_\ell^-$. Hence the rows
+generated there enforce exactly \eqref{eq:layer-state}. At any other
+sample $x$ of $E$, its own rows suffice. Since $W\ge z^+$ and $c'\ge c$,
+we have $c'\cdot W\ge m_c(x)$ by \eqref{eq:layer-state} and the
+inclusion $D Z_x\subseteq Z_x$ for $D\ge1$. The strict gap
+$m_c(x)-b_c(x)$ makes \eqref{eq:coarse-rows} strict there for small
+enough $\sigma$.
+
+\paragraph{Links and prices.}
+Let $o_P$ have value one at probes for $P$ and zero at every other
+sample. At such a probe the quick outputs in $P$ will be called
+\emph{target outputs}, and those in the remaining buckets \emph{other-bucket outputs}. Impose
+\begin{equation}\label{eq:module-link}
+ F_{\ell,P}\ge W_\ell-\sigma (g+o_P)(x),\qquad
+ p_\ell\ge W_\ell-\sigma g(x)-3\mu .
+\end{equation}
+At the target probe the first link allows one extra \(\sigma\) of slack.
+In Lemma~\ref{lem:descent}, this slack frees the price from its link to
+\(W\) at a zero coordinate of the limiting state. A tournament on each
+bundle will select one of the freed prices for the common descent. Enforce $p_\ell\ge-K_0\varepsilon$, with $K_0$ so large
+that $K_0-T_{E_s}(x)-\delta>0$ for all relevant sites and samples.
+For every site $s$ set
+\[
+ u_\ell^s=-p_\ell/\varepsilon-T_{E_s}(x)-\delta .
+\]
+Thus \(u_\ell^s\) measures the price in the units of a child at site
+\(s\), with sign reversed. The price floor gives a common upper bound
+\(K_1>0\) for these quantities at the samples. Choose $M_1>1$ such that $rK_1/M_1<\delta/2$.
+For every $H_i(s)$ and every list $\ell_0,\ldots,\ell_r$ in it whose
+positions form a transitive tournament in the stated order (each
+beats all later positions), impose
+\begin{equation}\label{eq:module-tournament}
+ \sum_{j=0}^r M_1^{r-j}u_{\ell_j}^s\le0 .
+\end{equation}
+
+For the link to the second quick output put
+$\mathcal D(x)=\max_{E'}D_{E'}(x)$ over all blocks of height $t-1$.
+Take $0<\lambda<\delta/4$ so small that the sample values of
+$\mathcal D+\lambda-2\lambda o_P$ are convex for every $P$.
+This is possible because $\mathcal D=R_{t-1}+\max T_{E'}$ has strict
+bends in its sample data. With the expression in parentheses
+interpolated from those values, impose
+\begin{equation}\label{eq:module-g}
+ G_{\ell,P}\ge p_\ell+\varepsilon
+       (\mathcal D+\lambda-2\lambda o_P)(x).
+\end{equation}
+Finally give each pair of distinct outputs within a class a positive
+gap. For their sum the lower bound is
+\begin{equation}\label{eq:module-pairs}
+ \mu\quad\text{in an $F$ class},\qquad
+ \varepsilon\lambda/4\quad\text{in a $G$ class},\qquad
+ \varepsilon\delta\quad\text{in a propagated class}.
+\end{equation}
+
+\subsection{One blocking system for all blocks}
+At positive height the actual coordinates of a module are
+\begin{equation}\label{eq:module-coordinates}
+ W_\ell^{\rm phys},\quad p_\ell^{\rm phys}-W_\ell^{\rm phys},\quad
+ F_{\ell,P}^{\rm phys}-W_\ell^{\rm phys},\quad
+ G_{\ell,P}^{\rm phys}-p_\ell^{\rm phys}.
+\end{equation}
+We refer to these, in order, as the coordinates associated to $W,p,F,G$.
+For block $E$, subtract $D_E$ from the physical variables $p,F,G$ and
+$D_E/2$ from $W$ to obtain local variables. Descendant variables in
+\eqref{eq:module-propagation} keep their physical values. This makes
+the physical propagated output $p_\ell^{\rm phys}+\varepsilon
+v_j^{\rm phys}$, with the same shift as a quick output.
+
+This choice of coordinates separates the differences in the links from
+the sums in output floors. For example, \(p_\ell^{\rm phys}\) is the sum
+of the first two coordinates, and \(G_{\ell,P}^{\rm phys}\) is their sum
+plus the fourth. Propagation adds a positive multiple of a descendant
+output. Thus each output is a nonnegative linear combination of blocking
+coordinates. We verify the convexity of the corresponding time bounds.
+In particular, \eqref{eq:module-link} and \eqref{eq:module-g} bound single
+difference coordinates. The former acquires the convex shift $D_E/2$
+and the latter has zero shift. The negative interpolants of \(g\) and
+\(g+o_P\) are convex, as is the interpolant in the \(G\) link. The numerical rows acquire nonnegative
+multiples of $D_E$. Equation~\eqref{eq:module-tournament} bounds a
+positive weighted sum of physical prices below by an affine function
+plus a positive multiple of $D_E$. Output floors and pair rows also
+acquire nonnegative multiples of $D_E$. Each such lower bound
+represents the finite list of its affine pieces, all imposed on the
+whole time line. Even after removing every output floor, a bound on
+each single coordinate remains, from $W\ge0$ and the links, or from
+the absolute-value bound at height zero.
+
+Choose the lines $T_E$ at each height with slopes increasing in the
+order of the blocks and with successive intersections lying in the
+gaps between them. Then $T_E$ is the unique highest line at every
+sample of $E$. Scaling all these lines by a common positive factor
+makes the gaps between the highest line and the others arbitrarily
+large at those finitely many samples. In particular
+$\mathcal D(x)=D_{E_s}(x)$ at the samples of $E_s$.
+We check that the current block imposes all the required inequalities
+at its samples. Express a feasible point for $E$ in the local variables of
+another block $E'$. The values of $F,G,p$ and all propagated outputs
+increase by $D_E-D_{E'}$, and $W$ increases by half that amount.
+The difference $G_{\ell,P}-p_\ell$ is invariant under this change,
+and its lower bound in \eqref{eq:module-g} is shared by all blocks at
+height $t$. Thus the copies of this link in $E$ and $E'$ have exactly
+the same slack, which may be zero. For each remaining row of $E'$
+the left side gains a positive multiple of $D_E-D_{E'}$. Before this
+gain its value is bounded below uniformly on the current slice.
+Use the floors and links for individual quantities and differences,
+$W\ge0$ for numerical rows, and the price floors for the tournament.
+There are finitely many rows and samples. One scaling therefore gives
+strict slack in every off-block row other than the shared links.
+At height zero every off-block row gains positive slack by the same
+argument. Raising current output floors preserves the implications. The conclusion also holds after coordinate restriction. The system of
+\(E\) and its descendants has nonnegative coordinate normals, so any
+feasible restricted point can be lifted by taking omitted coordinates
+sufficiently large. The full lift satisfies the other blocks' rows,
+and hence so does its projection for every such row that is retained.
+
+The construction in height is inductive. First fix all times,
+numerical states, and powers. Construct the local systems at height
+zero. Their pair gaps and allowable raises of the output floors
+determine how small the next $\delta$ must be. After each height
+$t<h$ has acquired its local pair gaps and positive floor allowance,
+choose the next $\delta$ accordingly, then choose $R_t$ by interpolating
+a sufficiently small positive multiple of $x^2$ on the full sample
+set, so that $0\le R_t\le\delta/8$ there. Choose the lines $T_E$ at
+that height as above. Thus when the next height is constructed all
+child shifts are fixed. At a positive height first choose
+$g,M_0,K_0,K_1,M_1,\lambda$, then choose a common sufficiently small
+$\sigma$ for all its modules and blocks. Lemma~\ref{lem:descent}
+gives a uniform floor allowance in these local systems, using only
+their probe slices and the already fixed child systems. Thus its
+choice of $\sigma$ and allowance is independent of the current
+height's shifts. At the root height there is one
+block, its shift is zero, and its output floors are single affine rows.

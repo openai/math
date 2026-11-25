@@ -1,0 +1,55 @@
+\subsection{Earlier bounds and related sunflower problems}\label{sec:history}
+
+Erd\H{o}s and Rado suggested replacing the factorial in their 1960
+bound by \(c^k\) for an absolute \(c\)~\cite[p.~86]{ER}. In the
+notation of Theorem~\ref{thm:main}, this would give \(b_r=O(r)\).
+Erd\H{o}s later stated the fixed-petal conjecture explicitly, allowing
+the base to depend arbitrarily on \(r\)~\cite[Section~4]{ERstrong}.
+For three petals the block-transversal lower bound can be improved.
+A construction of Abbott, Hanson and Sauer gives
+\(b_3\ge\sqrt{10}\)~\cite{AHS}.
+
+After earlier improvements by Kostochka~\cite{Kostochka}, Alweiss,
+Lovett, Wu and Zhang brought the base down to a polylogarithmic
+function of \(k\) for fixed \(r\)~\cite{ALWZ}. Their argument finds a
+subfamily whose members have a common intersection \(C\), such that
+a random subset of the ground set is likely to contain one of the
+nonempty remainders \(A\setminus C\). If a random color class in
+an \(r\)-coloring contains no remainder with probability less than
+\(1/r\), some coloring puts one remainder in each class. These
+\(r\) disjoint remainders give the petals. Their examples also show why a logarithmic loss
+arises here. For fixed sampling and success probabilities there are
+families of size \((\log k)^{(1-o(1))k}\) with no such robust
+sunflower~\cite[Section~3]{ALWZ}. Rao's coding argument gave
+\(M_r(k)\le (Cr\log(rk))^k\)~\cite{Rao}. Bell, Chueluecha and Warnke
+refined the probabilistic step to give \((Cr\log(k+1))^k\)~\cite{BCW}.
+Related random-containment estimates enter the study of thresholds of
+increasing families~\cite{Thresholds,PP}. Sunflower lemmas also play
+a role in Razborov's lower bounds for monotone
+circuits~\cite{Razborov}. Rao surveys these connections~\cite{RaoSurvey}.
+
+For \(k\)-uniform families of VC dimension \(d\ge1\), Ge, Wang, Xu and Zhao
+obtained the width-independent base \(50dr\)~\cite[Theorem~1.1]{VC},
+building on earlier results for restricted set
+systems~\cite{FPS,vcsmall}. Shangguan improved the base to
+\(O(r\log(d+1))\)~\cite[Corollary~1.4]{Shangguan}. For unrestricted
+families Fukuyama proposed a base \(O(r^4)\)~\cite{Fukuyama}.
+A product-family obstruction to the sequence-selection estimate in
+that argument is described in~\cite{Plasma}.
+
+The size \(N\) of the ground set gives a different measure of the
+problem. Erd\H{o}s and Szemer\'edi asked for a bound exponentially
+smaller than \(2^N\) on a sunflower-free family of subsets of
+an \(N\)-element set~\cite{ES}. Alon, Shpilka and Umans showed how
+both conjectures can be studied using words, and that the fixed-petal
+conjecture rules out a group construction proposed by Coppersmith
+and Winograd for matrix multiplication~\cite{ASU}. Naslund and
+Sawin gave a direct slice-rank proof of the ground-set bound for
+three petals~\cite{NS}. Buci\'c, He and Lee obtained
+\(3(2-1/(16r^3))^N\) for every \(r\ge3\) by polynomial
+interpolation~\cite[Theorem~1]{BHL}. For words of length \(k\) over
+\(D\) symbols, their bound has base
+\((2r)^{2/(r-1)}D^{1-1/(r-1)}\)~\cite[Theorem~2]{BHL}. The
+word estimate proved here has a single base for all alphabets, as
+required for the passage to \(k\)-element sets on an arbitrary ground
+set~\cite[Theorem~2.6]{ASU}.

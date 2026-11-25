@@ -1,0 +1,199 @@
+\section{Introduction}\label{sec:intro}
+
+Each coefficient of a discrete Fourier transform is a weighted sum of
+all the input samples. Computing the sums separately takes quadratic
+work. The fast Fourier transform shares partial sums among frequencies
+and, at power-of-two lengths, computes all $N$ outputs in
+$O(N\log N)$ operations \cite{CooleyTukey}. How much of that
+logarithmic work per sample is intrinsic? A linear circuit may choose
+arbitrary scalar coefficients and reuse any intermediate result.
+
+We prove that the optimal logarithmic exponent is $1/2$. A circuit
+needs at least order $\sqrt{\log N}$ gates per sample, and for every
+$\epsilon>0$ we construct circuits using
+$O_\epsilon((\log N)^{1/2+\epsilon})$ gates per sample. The bounds hold for every finite abelian group whose order is
+invertible in the field and whose characters take values there. They
+also hold per sample when one circuit processes many independent
+signals, even if its gates combine values from different signals.
+
+Write $C_K(T)$ for the smallest number of gates in an acyclic linear
+circuit computing a matrix $T$ over a field $K$. Each gate forms
+$au+bv$ from two available values, with arbitrary $a,b\in K$. An
+output may select and scale a single input or gate value, or return
+zero. All logarithms in the paper are to base two.
+
+\begin{theorem}[The Fourier exponent]\label{thm:main}
+Let $G_1,\ldots,G_J$ be finite abelian groups of common order $N\ge2$,
+where $J\ge1$. Suppose $N$ is invertible in $K$ and $K$ contains a
+primitive root of unity of order $\exp(G_j)$ for each $j$. Let $T$ be
+the direct sum of their Fourier transforms, choosing the forward or
+inverse transform independently in each block. For an absolute $c>0$
+and a constant $C_\epsilon$ depending only on $\epsilon>0$,
+\[
+ c\,JN\sqrt{\log N}\ \le\ C_K(T)\
+            \le\ C_\epsilon\,JN(1+\log N)^{1/2+\epsilon}.
+\]
+\end{theorem}
+
+\needspace{4\baselineskip}
+Here $\exp(G)$ is the exponent of the group. The field condition gives
+one frequency for each character $\chi:G\to K^\times$. The forward
+transform sends a list $(x_g)_{g\in G}$ to the list of sums
+$\sum_{g\in G}\chi(g)x_g$, one for each $\chi$. For example, on
+$(\mathbb Z/2\mathbb Z)^k$ over $\mathbb C$ these are the
+Walsh--Hadamard sums, with coefficients $+1$ and $-1$. Each of $J$
+independent Walsh--Hadamard transforms of length $2^k$ costs at least
+$c\,2^k\sqrt{k}$ gates on average, however fast $J$ grows with $k$.
+Theorem~\ref{thm:main} leaves open an upper bound with $\epsilon=0$.
+
+The exponent also governs \emph{formal polynomial convolution}, the
+map that takes two lists of $n$ coefficients to the coefficients of
+their polynomial product. Over every field, $J$ independent products
+require $\Omega(Jn\sqrt{\log n})$ gates in a division-free arithmetic
+circuit, and $O_\epsilon(Jn(1+\log n)^{1/2+\epsilon})$ gates suffice
+(Corollary~\ref{cor:conv-exponent}). Here addition, subtraction and
+multiplication are binary operations, including multiplication by a
+prescribed scalar. For the Fourier transform itself, allowing products
+of intermediate polynomials in an exact formal circuit also gives the
+same exponent. Taking the linear part of each gate turns a product
+$uv$ into $u_0v_1+v_0u_1$, where the subscripts denote constant and
+linear parts. Conversely, three field operations suffice for a weighted
+linear gate.
+
+\subsection{A lower bound with feedback and errors}
+
+The lower bound allows two further ways in which a circuit might save
+work. First, it may use feedback. A system of $s$ scalar states
+specifies each state as a weighted sum of at most two inputs or
+states, with a unique solution for every input. Write $\mathcal C_s(h)$
+for the $h$-input, $h$-output matrices computed in this way over
+$\overline K$ using at most $s$ states and the readout convention
+above. Second, the system may leave behind a low-rank error and an
+error concentrated on a prescribed number of matrix entries. Each
+can couple all the blocks. Even a limit of these corrected systems
+obeys the lower bound.
+
+\begin{theorem}[Robust lower bound]\label{bch:uniform-robust}
+With $T$ as in Theorem~\ref{thm:main} and $h=JN$, there are absolute
+constants $c,\beta,\eta>0$ with the following property. Suppose $T$
+belongs to the Zariski closure over $\overline K$ of all sums $M+B+Z$
+satisfying
+\[
+ M\in\mathcal C_s(h),\qquad \operatorname{rank}B\le\beta h,\qquad
+ |\operatorname{supp} Z|\le\eta h\,2^{\sqrt{\log N}/8}.
+\]
+Then $s\ge c\,h\sqrt{\log N}$.
+\end{theorem}
+
+The support budget counts nonzero entries in the entire $h\times h$
+matrix. Taking the closure of the sums lets the feedback matrix and
+both corrections vary together. Setting the corrections to zero and
+using an acyclic circuit gives the lower bound of Theorem~\ref{thm:main}.
+
+\input{history}
+
+\subsection{Where the square root enters}
+
+\paragraph{A geometric test for a small circuit.}
+Rank and the number of nonzero entries each describe one way a matrix
+can be easy to compute. Neither by itself explains the Fourier bound.
+For example, over $\mathbb Q$ the map that adds the sum of all inputs
+to each input is dense and invertible, yet has a linear-size circuit.
+Part~\ref{part:lower} tests rank and support together by placing the
+indices of a matrix at the corners of a rectangle. The construction
+uses the tensor prices of the companion geometry paper \cite{oaG}.
+A wire sharing one of $q$ labels between two sites costs their
+distance times $\log q$. Placing the row label at both left corners
+and the column label at both right corners gives a price that reads
+log rank when the rectangle has height zero and log support size when
+it has width zero, per unit of the remaining length.
+
+At width one and height $L$ the price of a character table is exactly
+$(L+\sqrt{1+L^2})\log N$ (Theorem~\ref{geo:saturation}). A
+permutation matrix at the same placement costs $(L+1)\log N$. Both
+matrices have full rank. As the rectangle opens up, their prices
+separate by approximately $\tfrac12 L^2\log N$. Thus even at height
+of order $1/\sqrt{\log N}$ the test detects a difference of constant
+size. To obtain the exact Fourier price, we use two diagonal
+character phases and changes of basis to exchange the two labels.
+The cost of this exchange forces the character table to attain the
+upper bound from supplying its labels through the center.
+
+The circuit comparison applies the rectangle test to the list of both
+inputs and outputs of a transform. Pairing two copies of the list
+exposes the character table, and the resulting lower bound on the
+list survives a small fractional loss of rank. For a batch, eliminating
+a single rank correction that mixes the signals might seem to destroy
+every individual list. Row reduction and a scaling limit recover a
+separate projection on each block. Their rank losses add up to at
+most the original rank budget, so most blocks retain the lower bound.
+
+Finally, repeat each scalar input and state along $d$ time coordinates.
+A shift at every state leaves a copy of the desired transfer on each
+time diagonal. Changing the shift by a map of rank one kills every
+path that runs through $d$ states. The short paths left behind reach
+at most $2^{d-1}$ inputs per output, while the total rank correction
+costs at most one dimension per state. With $d$ of order
+$\sqrt{\log N}$, the list test rules out the resulting combination
+of rank and support unless the circuit has at least a constant times $JN\sqrt{\log N}$
+states (Section~\ref{bch:proof:section}).
+
+\paragraph{Predicting a product and repairing it exactly.}
+The upper bound in Part~\ref{part:finite} starts with the Walsh--Hadamard
+transform. We express a transform on many binary digits, up to
+permutations and scalings, as a product of $m$ commuting operators.
+In their common frequency basis each operator multiplies by a sign.
+The product is determined by the parity of the number of negative
+signs. Run many independent inputs together and assign them all
+possible sign shifts in equal proportions. At each frequency the
+shifted count has a binomial distribution over the batch. Almost all
+counts lie in an interval of width $O(\sqrt{m\log m})$, on which a
+polynomial of that degree gives the parity sign exactly. Undoing the
+known shift gives the desired answer on those rows.
+
+The exceptional rows depend on the frequency. Converting every input
+to the common basis to correct them would spend the work we are trying
+to save. Instead, send a small number of linear combinations of the
+rows into the frequency basis. There the exceptional positions are
+known, and interpolation recovers the corrections from those combinations.
+A fixed number of further predictor applications in ordinary
+coordinates then corrects every output (Theorem~\ref{thm:repair}).
+
+A degree bound for the predictor still has to become a gate bound.
+We evaluate it in $O(\sqrt{m\log m})$ stages, each a matrix linear
+in the commuting operators. A stage may ask for short Fourier
+transforms in $m$ different directions. The construction in
+Section~\ref{sec:prime-kernel} shares those calls among rows by
+factoring their routes through common source and destination maps.
+It uses different characteristics for the routing labels and the
+addresses, drawing on constructions in \cite{Tape,FranklWilson1981,Alon1998}
+and related ideas in index coding \cite{BarYossefBirkJayramKol2006,LubetzkyStav2009}.
+For any fixed $\theta>1/2$, a finite choice of parameters then
+replaces a transform on $Af$ digits by fewer than $A^\theta$
+transforms on $f$-digit axes per input row, averaged over the batch.
+A single large transform already contains the independent inputs this
+step needs. Holding some digits fixed gives disjoint slices on which
+the remaining digits are transformed, and these slices fill the batches
+in the recursion. Iterating gives the exponent on prime tensor powers.
+In the binary
+case the construction also controls how errors in individual gates
+affect the normalized transform (Proposition~\ref{prop:binary-template}).
+The tape multiplication paper uses this implementation \cite{oaT}.
+
+\paragraph{Returning to the given field.}
+A general finite abelian group factors into cyclic groups of different
+orders. Even when the field contains every character of the original
+group, a fast algorithm may call for roots of unity at other lengths.
+Part~\ref{part:all} packs independent data into the coordinates of
+small field extensions and charges the operations there back to the
+base field. For formal convolution in characteristic zero, a single
+deformation parameter handles all cyclic factors at once. In positive
+characteristic, finite-field extensions supply roots with short
+Frobenius periods. The resulting multiplication circuits over the
+original field give fast evaluation and interpolation on geometric
+grids, of which every cyclic Fourier matrix is an instance
+(Theorems~\ref{thm:conv} and~\ref{up:grid}).
+In the reverse direction, fixing one operand of a polynomial product
+realizes a cyclic Fourier transform after diagonal scalings. Applying
+the Fourier lower bound to this specialization gives the convolution
+lower bound in Corollary~\ref{cor:conv-exponent}.

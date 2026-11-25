@@ -1,0 +1,34 @@
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  box/.style={font=\small,align=center,text width=4.2cm,minimum height=1.04cm,
+              draw=#1,rounded corners=2pt,inner sep=3pt,fill=#1!4},
+  labeltext/.style={font=\footnotesize,align=center,inner sep=3pt},
+  arrow/.style={-{Stealth[length=1.8mm]},draw=ink,line width=.55pt}]
+\node[box=sea] (in) at (0,0)
+  {Inputs in $\mathcal T_S$\\$Y_\nu^{m_\nu}=\lambda_\nu$};
+\node[box=sea] (out) at (8.4,0)
+  {Output in $\mathcal T_S$\\$Y_\nu^{m_\nu}=\lambda_\nu$};
+\node[box=ink] (lift) at (0,-2.23)
+  {Lifted coefficients in $E[t]$\\$\deg P_a,\deg Q_a<r$};
+\node[box=ink] (recover) at (8.4,-2.23)
+  {Product coefficients in $E[t]$\\$\deg R_a\le2r-2+|S|$};
+\node[box=rust] (splitin) at (0,-4.46)
+  {Inputs over $E[t]/(t^H)$\\$Y_\nu^{m_\nu}=1$};
+\node[box=rust] (splitout) at (8.4,-4.46)
+  {Product over $E[t]/(t^H)$\\$Y_\nu^{m_\nu}=1$};
+\draw[arrow] (in) -- node[labeltext,right] {undo the unit scaling\\lift with $z_1=t-1$} (lift);
+\draw[arrow] (lift) -- node[labeltext,right] {reduce modulo $t^H$\\apply the unit scaling} (splitin);
+\draw[arrow] (splitin) -- node[labeltext,above] {Fourier evaluation}
+                        node[labeltext,below] {$W_S$ jet products\\and interpolation} (splitout);
+\draw[arrow] (splitout) -- node[labeltext,left] {undo the unit scaling\\read $R_a(t)$ in $E[t]$} (recover);
+\draw[arrow] (recover) -- node[labeltext,left] {substitute $t=1+z_1$\\truncate and scale} (out);
+\end{tikzpicture}
+\caption{Multiplication in a binomial block using one parameter for all
+axes. The upper row uses length-$r$ jets at $t=1$ and the lower row
+uses length-$H$ jets at $t=0$. Each axis wraps at most once in a
+monomial product, so $H=2r+d$ captures every coefficient of the
+ordinary polynomial in the middle row. This degree bound justifies
+reading the polynomial before evaluating it at the other endpoint.}
+\label{poly:fig:deformation}
+\end{figure}

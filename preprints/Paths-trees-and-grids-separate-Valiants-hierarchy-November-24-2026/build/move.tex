@@ -1,0 +1,47 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=1.18cm,y=1.18cm,font=\small,
+  t/.style={circle,draw=ink,fill=white,inner sep=2.4pt},
+  c/.style={t,draw=sea,fill=sea!25,thick},
+  wire/.style={draw=ink,thick}, cutwire/.style={draw=sea,thick},
+  supply/.style={rectangle,fill=ink,inner sep=2.1pt}]
+\begin{scope}[shift={(-3.45,0)}]
+  \draw[wire] (-1,0)--node[midway,above]{$i$}(0,0)--node[midway,above]{$j$}(1,0);
+  \node[t,label=below:$A$] at (-1,0) {};
+  \node[c,label=below:$B$] at (0,0) {};
+  \node[t,label=below:$D$] at (1,0) {};
+  \node at (0,-1.68) {Cut $C=\{B\}$};
+\end{scope}
+\begin{scope}
+  \draw[wire] (-1,0)--node[pos=.28,above]{$i$}(1,0);
+  \draw[wire,preaction={draw=white,line width=3.8pt}] (0,-1)--node[pos=.73,right]{$j$}(0,1);
+  \node[t,label=left:$A$] at (-1,0) {};
+  \node[c,label=right:$B_i$] at (1,0) {};
+  \node[c,label=above:$B_j$] at (0,1) {};
+  \node[t,label=below:$D$] at (0,-1) {};
+  \node at (0,-1.68) {Graph tensor};
+\end{scope}
+\begin{scope}[shift={(3.7,0)}]
+  \coordinate (o) at (0,0);
+  \coordinate (z) at (.5,.5);
+  \draw[wire] (-1,0)--(o)--(0,-1);
+  \draw[cutwire] (1,0)--(z)--(0,1);
+  \draw[rust,line width=1.5pt] (o)--node[midway,below right,inner sep=1pt]{$R$}(z);
+  \node[supply,label=above left:$0$] at (o) {};
+  \node[supply,fill=sea,label=above right:$z$] at (z) {};
+  \node[t,label=left:$A$] at (-1,0) {};
+  \node[c,label=right:$B_i$] at (1,0) {};
+  \node[c,label=above:$B_j$] at (0,1) {};
+  \node[t,label=below:$D$] at (0,-1) {};
+  \node at (0,-1.68) {Low-rank summand};
+\end{scope}
+\end{tikzpicture}
+\caption{On the path $A$--$B$--$D$, the indices $i$ and $j$ of slot
+$B$ occupy separate terminals $B_i$ and $B_j$. Each edge of the graph
+gives a length-two equality wire between opposite terminals, for a
+total price of $4w$. For a summand of rank at most $R$ across
+$\{B\}\mid\{A,D\}$, the squares mark the two supply sites. Moving the
+site $z$ toward both terminals of $B$ shortens their $q$-dimensional
+wires. The wire from $0$ to $z$ has dimension $R$ and costs
+$\|z\|\log R$.}\label{fig:move}
+\end{figure}

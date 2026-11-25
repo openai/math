@@ -1,0 +1,303 @@
+\section{The lower bound for independent transforms}\label{bch:proof:section}
+
+A circuit can mix coordinates from all its input signals in a single
+state. A low-rank correction to its output can do the same. To obtain
+a bound proportional to the number of signals, we test the input
+coordinates and Fourier outputs of each signal together. The rectangle
+calculation in Section~\ref{geo:section} gives a lower bound on this
+test even after a projection removes a small fraction of the dimensions.
+We then show that a projection of the whole batch must preserve most
+of these individual tests. Throughout the proof we work over the
+algebraic closure $k$ of the coefficient field.
+
+\subsection{A character table after projection}
+
+For a matrix $U$ with columns $u_j$, its \emph{list tensor} is
+$\mathcal D(U)=\sum_j u_j\otimes e_j\otimes e_j$. The label $j$ is
+recorded twice so that we may place it at both ends of one side of a
+rectangle. Put the vector leg at the center $O$ and the label legs on
+the left side as in Figure~\ref{geo:rectangle-figure}. Write $V_-(U)$
+for the spectral value $\Phi_S(\mathcal D(U))$ at these three sites
+and $V_+(U)$ for its counterpart on the right. Set $V_\pm(0)=0$.
+For a transform of order $N$, we use width one and height $L=3/\sqrt m$,
+where $m=\log_2 N$. The triangle and rectangle have semiperimeters
+\[
+ \delta=\tfrac12\bigl(L+\sqrt{1+L^2}\bigr),
+ \qquad \Delta=1+L .
+\]
+For the matrix $U=[I_N\ H]$ the list contains the coordinate vectors
+and the columns of a character table. Its value on either triangle
+is at most $2N$, the cost in spectral value of supplying the column
+label itself. The next estimate retains nearly this value on a single
+triangle after projection.
+
+\begin{lemma}[Testing a projected character table]\label{bch:projected-list}
+There is an absolute $N_0$ with the following property. Let $H$ be
+the character table, in symmetric character coordinates, of a split
+finite abelian group of order $N\ge N_0$ invertible in $k$. Put
+$U=[I_N\ H]$ and $\varepsilon=2^{-100}$. Every linear map $Q$ on
+the vector leg of rank at least $(1-\varepsilon)N$ satisfies
+$V_-(QU)\ge1.8N$.
+\end{lemma}
+
+\begin{proof}
+Choose a cyclic decomposition of the group and a primitive root on
+each axis. The resulting symmetric bicharacter gives $H^{\mathsf T}=H$
+and $H^{\mathsf T}H=NP$, where $P$ represents $g\mapsto-g$.
+Put one copy of $\mathcal D(U)$ on each triangle and contract their
+vector legs at $O$ by the usual bilinear pairing. The rectangle tensor
+that remains is specified by the Gram matrix
+\[
+ U^{\mathsf T}U=\begin{pmatrix} I_N&H\\ H&NP\end{pmatrix}.
+\]
+The two diagonal blocks together have rectangle value $2N$, since
+they supply a single common label up to local permutations and
+nonzero scalings. The two off-diagonal blocks form a direct sum of
+character-table tensors. Theorem~\ref{geo:saturation} gives each of
+these price $2\delta m$ and hence rectangle value $2^{2\delta m/\Delta}$.
+Subtracting the diagonal blocks from the Gram tensor and applying
+\eqref{geo:sum} bounds the Gram value from below. On the other hand,
+contracting at $O$ gives a price at most the sum of the two triangle
+prices, by compatibility under insertion of trivial legs. Together
+these estimates give
+\[
+   \bigl(V_-(U)V_+(U)\bigr)^{\delta/\Delta}
+       \ge 2\,2^{2\delta m/\Delta}-2N .
+\]
+Put $a=m(2\delta-\Delta)/\Delta$. As each triangle value is at most
+$2N$, the value on either one divided by $N$ is at least
+$[2(1-2^{-a})]^{\Delta/\delta}/2$. The choice of height makes the
+curvature term $a$ tend to $9/2$, while $\Delta/\delta\to2$.
+The limiting lower bound is $2(1-2^{-9/2})^2>1.82$.
+
+It remains to control the part removed by $Q$. Choose a linear map $E$
+such that $EQ$ projects onto a complement to $\ker Q$ and put
+$W=(I-EQ)U$. If its rank $r$ is positive, place a supplier halfway
+from $O$ to the midpoint of the left side. A common label of size
+$2N$ at the supplier and both left corners specifies a column of $W$.
+Carry its coordinates in a basis of $\operatorname{im}W$ along a wire
+of length $1/4$ and dimension $r$ to $O$. The triangle used by the
+common label has semiperimeter
+$\tau=L/2+\sqrt{1/16+L^2/4}$. Thus
+\[
+ \delta\log V_-(W)
+ \le \tau\log(2N)+\tfrac14\log r
+ \le \delta m+\tfrac92+\tau-25 .
+\]
+The last inequality uses $r\le2^{-100}N$ and
+$\tau+1/4-\delta\le L^2/2=9/(2m)$. Since $\delta\to1/2$ and
+$\tau\to1/4$, this gives $V_-(W)<0.01N$ for all sufficiently
+large $N$. The estimate also holds when $r=0$. Now $U=EQU+W$,
+so subadditivity and restriction at $O$ imply
+$V_-(U)\le V_-(QU)+V_-(W)$.
+\end{proof}
+
+\subsection{Removing a rank correction from the whole batch}
+
+Set $V=V_-$ and $p=L/\delta\in(0,1)$. We can annihilate a global
+rank correction by projecting the output coordinates. This projection
+may mix the blocks of independent signals. The next lemma extracts
+one projection per block without increasing their total rank loss
+or their total list value.
+
+\begin{lemma}[A row quotient across independent lists]\label{bch:quotient-test}
+Let $A=\bigoplus_i U_i$ have $h$ rows, in blocks of sizes $n_i$.
+Suppose $A$ is in the closure of sums of a matrix of rank at most $r<h$
+and a matrix with at most $T$ nonzero entries. There are $n_i$-square
+matrices $Q_i$ such that
+\[
+ \sum_i(n_i-\operatorname{rank} Q_i)\le r,\qquad
+ \sum_i V(Q_iU_i)\le h(T/h)^p .
+\]
+\end{lemma}
+
+\begin{proof}
+For an actual sum $B+P$, choose $h-r$ independent row vectors
+annihilating $B$ and form the matrix $Q$ with these rows. Decompose
+$QP$ into contributions from the rows of $P$. The contribution of
+row $i$ has fixed vector leg, the $i$th column of $Q$, and two copies
+of a label ranging over the $t_i$ nonzero entries of that row.
+A wire of dimension $t_i$ and length $L$ between the two label
+sites supplies this contribution, including its coefficients by a local
+map. Its list value is at most $2^{L\log(t_i)/\delta}=t_i^p$ when
+$t_i>0$, and zero when $t_i=0$. Subadditivity and concavity give
+\[
+ V(Q(B+P))=V(QP)
+    \le\sum_i t_i^p\le h(T/h)^p .
+\]
+
+The annihilator can vary as $B+P$ approaches a border point. To see
+that some quotient still gives the same bound there, consider the
+Grassmannian of $(h-r)$-dimensional subspaces of $(k^h)^*$.
+On each standard chart a basis matrix $Q$ depends regularly on the
+subspace. For a matrix $M$, the condition $V(QM)\le h(T/h)^p$ is closed
+by Theorem~\ref{geo:spectrum}, and changing the basis of the rows of
+$Q$ preserves the list value. The chart conditions therefore define
+a closed incidence set in the product of the Grassmannian with matrix
+space. The Grassmannian is projective, so the image in matrix space
+is closed. In particular the target $A$ admits such a $Q$.
+
+At the block-diagonal target, put the rows of $Q$ in echelon form
+and insert each into the row position of its pivot in a square matrix,
+filling the other rows with zeros. This replacement preserves the list
+value by local maps in both directions. The resulting matrix, still
+denoted by $Q$, is upper triangular. Each pivot contributes one to
+the rank of its diagonal block $Q_i=Q_{ii}$, so
+$\sum_i\operatorname{rank}Q_i\ge h-r$.
+
+The $(i,j)$ block of $QA$ is $Q_{ij}U_j$. Scale the vector block $i$
+by $z^{-i}$ and the label block $j$ at one of its two sites by $z^j$.
+These local maps are invertible for $z\ne0$. Each surviving block
+acquires a factor $z^{j-i}$ with nonnegative exponent. At $z=0$ only
+the diagonal blocks remain (Figure~\ref{bch:quotient-figure}). Closed
+sublevels and additivity on direct sums give
+$\sum_i V(Q_iU_i)\le V(QA)$.
+\end{proof}
+
+\begin{figure}[htb]
+\centering
+\begin{tikzpicture}[x=1.3cm,y=.65cm,font=\small]
+  \foreach \off in {0,5} {
+    \foreach \i in {0,1,2} {
+      \fill[sea!12] (\off+\i,-\i) rectangle (\off+\i+1,-\i-1);
+    }
+    \draw[gray!65] (\off,0) rectangle (\off+3,-3);
+    \foreach \i in {1,2}
+      \draw[gray!65] (\off+\i,0)--(\off+\i,-3) (\off,-\i)--(\off+3,-\i);
+    \foreach \i/\b in {0/1,1/2,2/3}
+      \node at (\off+\i+.5,-\i-.5) {$Q_{\b}U_{\b}$};
+  }
+  \node at (1.5,.43) {Scaled quotient};
+  \node at (6.5,.43) {Independent lists};
+  \node at (1.5,-.5) {$zB_{12}$}; \node at (2.5,-.5) {$z^2B_{13}$};
+  \node at (2.5,-1.5) {$zB_{23}$};
+  \foreach \x/\y in {.5/-1.5,.5/-2.5,1.5/-2.5,5.5/-1.5,5.5/-2.5,6.5/-2.5,6.5/-.5,7.5/-.5,7.5/-1.5}
+    \node[gray] at (\x,\y) {$0$};
+  \draw[-{Stealth[length=2mm]},thick] (3.2,-1.5)--(4.8,-1.5)
+    node[midway,above] {$z\to0$};
+\end{tikzpicture}
+\caption{An echelon quotient of three independent lists. The mixed
+blocks $B_{ij}=Q_{ij}U_j$ vanish under scaling. Each pivot survives
+in a shaded diagonal block, and the three surviving list values add.}
+\label{bch:quotient-figure}
+\end{figure}
+
+\subsection{Repeating the transfer on a time coordinate}
+
+The quotient test charges independent Fourier lists. To turn the number
+of states into a rank budget for that test, we run the same transfer on
+$d$ time coordinates. Making the time shift nilpotent changes
+one column in a suitable basis. This costs at most one unit of rank
+per state and truncates every dependency path at depth $d$, so each
+row of the resulting transfer has small support.
+For related time expansions of feedback circuits see
+\cite[Sections~5--6]{FiniteFourier}.
+
+\begin{lemma}[Time expansion]\label{bch:time-expansion}
+Let $M\in\mathcal C_s(h)$ be the transfer of a binary linear system
+and let $d\ge1$. Then $I_d\otimes M$ belongs to the closure of sums of
+a matrix of rank at most $s$ and a matrix with at most $d2^{d-1}$
+nonzero entries per row.
+\end{lemma}
+
+\begin{proof}
+Write the state equations as $v=Cv+Ax$. Uniqueness at $x=0$ implies
+that $I-C$ is invertible. Pad with zero states to obtain exactly $s$
+states. Replace each state by $d$ copies, writing $C'=C\otimes I_d$
+and $A'=A\otimes I_d$, and after each state apply a shift on its
+$d$ time values. Consider two choices for this shift. First take
+$R=I_d+D$, where $D$ sends $e_i$ to $e_{i+1}$ and kills $e_d$.
+The vectors $e_1,Re_1,\ldots,R^{d-1}e_1$ form a basis in every
+characteristic, by triangularity. In this basis take $R_0$ to act as
+$R$ on the first $d-1$ vectors and to kill the last. Then $R_0^d=0$
+and $\operatorname{rank}(R-R_0)=1$.
+
+For $S=R$ or $R_0$, put $Z_S=I_s\otimes S$. The input-to-state
+map $V_S$ solves $V_S=Z_S(C'V_S+A')$. For $R$, the equations are
+triangular in the original time coordinates with invertible diagonal
+blocks $I-C$. For $R_0$, $Z_{R_0}C'=C\otimes R_0$ is nilpotent.
+Subtracting the two systems gives
+\[
+ (I-Z_R C')(V_R-V_{R_0})
+       =(Z_R-Z_{R_0})(C'V_{R_0}+A').
+\]
+The right side has rank at most $s$, one per state. The same rank
+bound holds after the output readout, since any direct readout of an
+input is the same in both transfers.
+
+In the transfer for $R_0$, any path visiting $d$ states has zero
+contribution. Unroll a single readout into a binary dependency tree
+truncated after $d-1$ state expansions along each path. At most
+$2^{d-1}$ leaves can be original input coordinates. Each such coordinate
+carries $d$ time values, so the row has at most $d2^{d-1}$ nonzeros.
+
+In the original time basis the transfer for $R$ is lower triangular
+in time with diagonal blocks $M$. Multiply each output time block $i$
+by $t^{i-1}$ and each input time block $j$ by $t^{1-j}$. For $t\ne0$
+this preserves rank and support. Sending $t$ to zero removes the
+strictly lower blocks and leaves $I_d\otimes M$ in the claimed closure.
+\end{proof}
+
+\subsection{Comparing the two budgets}
+
+\begin{proof}[Proof of Theorem~\ref{bch:uniform-robust}]
+Let $h=JN$, $m=\log_2 N$, $d=\lceil\sqrt m/8\rceil$, and $h_d=dh$.
+In symmetric character coordinates the inverse transform differs from
+the forward transform by a permutation and a nonzero scalar. Such
+permutations and scalings preserve all three budgets, so take each
+block to be a forward transform $H_j$.
+
+Suppose the target is in the geometric border of $M+B+Z$ as in
+Theorem~\ref{bch:uniform-robust}. For an actual sum, apply
+Lemma~\ref{bch:time-expansion} to $M$ and repeat $B,Z$ on the $d$
+time coordinates. Transpose the result and adjoin $I_{h_d}$ as
+input columns. Transposition preserves the total number of nonzero
+entries, and the identity adds $h_d$ entries. This operation on
+$M+B+Z$ is affine in the sum, so it maps the joint border into
+the closure of rank-plus-sparse sums with the same budgets. At the
+target the resulting list is, up to permutations, the direct sum of
+$d$ copies of each $[I_N\ H_j]$. The rank and total support budgets are
+\[
+ r=s+d\lfloor\beta h\rfloor,\qquad
+ T=h_d(1+d2^{d-1})+d\lfloor\eta h\,2^{\sqrt m/8}\rfloor .
+\]
+
+Take $\beta=\varepsilon/400$ and $\eta\le1$. If
+$s\le\varepsilon h_d/400$, the sum of rank deficits in
+Lemma~\ref{bch:quotient-test} is at most $\varepsilon h_d/200$.
+At least a fraction $199/200$ of the $Jd$ blocks therefore retain
+rank at least $(1-\varepsilon)N$. For all sufficiently large $N$,
+Lemma~\ref{bch:projected-list} gives total list value at least
+$1.8(199/200)h_d>1.79h_d$. But Lemma~\ref{bch:quotient-test}
+bounds it by $h_d(T/h_d)^p$, where
+\[
+ (T/h_d)^p\le (1+d2^{d-1}+2^{\sqrt m/8})^p
+       \longrightarrow 2^{3/4}<1.79 .
+\]
+Indeed $p\sqrt m\to6$ and $d/\sqrt m\to1/8$. This contradiction
+gives $s>\varepsilon h\sqrt m/3200$ uniformly in $J$ and the field.
+
+For the finitely many smaller orders, we find two disjoint sets of
+input columns on which many output rows still have full rank. In each
+group choose a cyclic factor of order $e\ge2$ and let
+$\ell=\lfloor e/2\rfloor$. The first $\ell$ exponent rows paired
+with either of two disjoint sets of $\ell$ nodes give invertible
+Vandermonde minors. Tensoring with the other cyclic factors and taking
+the direct sum over the groups gives a common set of $u\ge h/3$
+rows with full row rank on each of two disjoint column sets.
+
+For any circuit readout, the direct-input part of each selected row
+misses at least one of the two column sets. A state readout has zero
+direct-input part and misses both. On at least $u/2$ rows one common
+column set is missed. The transfer restricted to these rows and that
+column set has rank at most $s$ by factorization through the states.
+The corrections add at most $\beta h+|\operatorname{supp} Z|$ to
+the rank. There are finitely many choices of rows and column set at
+each size, so the union of these rank conditions is closed. Full row
+rank at the target now gives $u/2\le s+\beta h+\eta h2^{\sqrt m/8}$.
+Shrink $\eta$ once so that $\beta+\eta 2^{\sqrt m/8}\le1/12$ for
+every order in this finite range. Then $s\ge h/12$. Decreasing the
+absolute constant in the lower bound proves the assertion at all orders.
+An acyclic circuit of size $s$ is a uniquely solvable system with $s$
+states. Taking $B=Z=0$ gives the lower bound of Theorem~\ref{thm:main}.
+\end{proof}

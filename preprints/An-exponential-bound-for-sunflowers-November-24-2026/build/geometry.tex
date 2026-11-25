@@ -1,0 +1,217 @@
+\section{A layout for two majority votes}\label{sec:geometry}
+
+Lemma~\ref{lem:vote} delivers a majority symbol to a destination at a
+rate bounded by the longest wire from a voter to that destination. We
+want two groups of voters to deliver the same symbol to sites \(U,V\).
+The resulting shared label has rate \(w(\{U,V\})\). We therefore place
+the groups so that the distance from \(U\) to \(V\) exceeds the sum of
+their two longest wire lengths. A different split may be needed each
+time the recursion changes the active voters. A binary code gives
+a small fixed collection of splits from which the active counts alone
+select a balanced one.
+
+The same layout holds the two anchor symbols. Its outer faces allow us
+to prescribe the two surpluses used in Section~\ref{sec:masks} and then
+to enlarge every input group for the last mask in
+Section~\ref{sec:recurrence}. We use the normalized mean width
+\(w(E)=\delta(E)/\delta(S)\) of Section~\ref{sec:words}.
+
+\begin{lemma}[Layout for two votes]\label{lem:layout}
+Let \(r\ge4\), \(q=2\), \(H=\log(2r)\), and
+\(d=\lceil12H/\log q\rceil\). There are a finite Euclidean site set
+\(S\), distinct satellite sites \(x_1,\ldots,x_{r-2}\), a site \(O\),
+and a parameter
+\[
+        0<\rho<10^{-3},\qquad
+        \rho^{-1}\asymp d\sqrt{\log(2dq)}
+\]
+with the following properties.
+\begin{enumerate}
+\item \emph{Balanced splits.} There are at most \(dq\) bipartitions
+\(C_1,C_2\) of the satellite indices into nonempty classes, each with
+destinations \(U,V\in S\) satisfying
+\begin{equation}\label{eq:split-gap}
+ w(\{U,V\})-
+ \max_{i\in C_1}w(\{x_i,U\})-
+ \max_{i\in C_2}w(\{x_i,V\})\ \ge\ 4\rho .
+\end{equation}
+For any subset of \(n\ge2\) active satellites, its counts in the
+classes determine a split with at least \(n/(32q)\) active satellites
+on each side. Put \(p_0=1/(128q)\). A symbol held by more than
+\((1-p_0)n\) active satellites then receives more than three quarters
+of the active votes on both sides.
+\item \emph{Anchor groups.} All satellites, all destinations and \(O\)
+belong to a central polytope of normalized width at most \(10^{-3}\).
+For each \(s\in\{\rho,2\rho\}\) there are two disjoint anchor groups
+\(A,B\subset S\) outside this polytope, with
+\[
+         w(A\cup B)=1,\qquad w(A)=w(B)=(1-s)/2 .
+\]
+Adjoining any central site to either group increases its width by at
+least \(0.06\). The group cardinalities are the same for both choices
+of \(s\), and
+\[
+  \ell:=\log\bigl(2(|A|+|B|+2)\bigr)=O(\log(2dq)),
+  \qquad \log|S|=O(H).
+\]
+\item \emph{Enlarged groups.} For \(s=\rho\), each of the two anchors
+and the \(r-2\) singleton satellite groups can be enlarged within \(S\)
+to increase its width by exactly \(\alpha=\rho/(10r)\). The enlarged
+groups are disjoint, their union has width one, and their surplus is
+\(9\rho/10\).
+\end{enumerate}
+All widths use the same set \(S\), and all constants are absolute.
+\end{lemma}
+
+\begin{proof}
+\emph{Balancing the active votes.}
+Assign a word \(c_i\in[q]^d\) to satellite \(i\), choosing the words at
+pairwise Hamming distance at least \(d/8\). To see that this is
+possible, take independent uniform words. For each pair the probability
+of distance less than \(d/8\) is at most
+\[
+  2^{d h_2(1/8)} q^{d/8-d}\le q^{-d/4}\le (2r)^{-3},
+\]
+by the binomial sum bound, where \(h_2\) is binary entropy and
+\(h_2(1/8)<5/8\). A union bound over the pairs gives the claim.
+
+A coordinate \(j\) and a letter \(b\) specify the class
+\(C_1=\{i:c_i(j)=b\}\) and its complement \(C_2\). Keep the splits
+with both classes nonempty. Among any \(n\ge2\) active satellites,
+each ordered pair of distinct names disagrees on at least \(d/8\)
+coordinates. Some coordinate therefore has at least \(n(n-1)/8\)
+ordered disagreements. At this coordinate let \(a\) be the largest
+active letter count. Each disagreeing pair has at least one member
+outside the class of size \(a\), so \(2n(n-a)\ge n(n-1)/8\).
+Thus \(a\ge n/q\) and \(n-a\ge(n-1)/16\ge n/32\).
+We may choose the first split in a fixed order with at least
+\(n/(32q)=4p_0 n\) active votes on each side. Under the majority
+promise, fewer than \(p_0n\) votes in the entire active set dissent.
+Even if they all lie on one side, they occupy less than one quarter
+of its active votes.
+
+\emph{Separating the destinations.}
+Use \(m=dq\) orthogonal unit vectors \(e_{j,b}\) and put
+\(v_i=\sum_{j=1}^d e_{j,c_i(j)}\). For the split \((j,b)\), write
+\(e=e_{j,b}\). Every vector has squared norm \(d\), but its projection
+onto \(e\) is one for \(C_1\) and zero for \(C_2\). Place the
+destinations at \(Te,-Te\), respectively, with \(T=10d\).
+Figure~\ref{fig:vote-layout} shows the two routes. The projection of
+\(C_1\) toward its destination reduces the combined length of the
+longest wires. In unscaled coordinates their lengths sum to
+\[
+   \sqrt{T^2-2T+d}+\sqrt{T^2+d}
+      \le 2T-1+d/T=2T-9/10 .
+\]
+Here we used the tangent-line bound
+\(\sqrt{T^2+y}\le T+y/(2T)\). The distance between the destinations
+is \(2T\), leaving an unscaled gap of at least \(9/10\).
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+    wire/.style={draw=sea,thick},shadow/.style={draw=ink!55,densely dashed}]
+  \node[font=\small\bfseries] at (0,1.68) {A split along \(e_{j,b}\)};
+  \draw[draw=ink!70,->] (-2.44,0)--(2.7,0);
+  \draw[shadow] (0,-.92)--(0,.92);
+  \draw[shadow] (.85,-.92)--(.85,.92);
+  \node at (0,1.16) {\(C_2\)};
+  \node at (.85,1.16) {\(C_1\)};
+  \foreach \y in {-.69,-.25,.46}{\fill[ink] (0,\y) circle (1.6pt);}
+  \foreach \y in {-.48,.34,.72}{\fill[ink] (.85,\y) circle (1.6pt);}
+  \draw[wire] (-2.2,0)--(0,-.69) (.85,.72)--(2.2,0);
+  \fill[sea] (-2.2,0) circle (2pt) node[below=3pt,text=ink] {\(V=-Te\)};
+  \fill[sea] (2.2,0) circle (2pt) node[below=3pt,text=ink] {\(U=Te\)};
+  \node at (0,-1.12) {\(0\)};
+  \node at (.85,-1.12) {\(1\)};
+  \begin{scope}[xshift=6.2cm]
+    \node[font=\small\bfseries] at (0,1.68) {The two anchor groups};
+    \fill[sea!14] (-1.85,1) rectangle (1.85,1.24);
+    \fill[sea!14] (-1.85,-1.24) rectangle (1.85,-1);
+    \draw[draw=ink] (-1.85,-1.24) rectangle (1.85,1.24);
+    \draw[draw=ink!65] (-1.85,1)--(1.85,1)
+                       (-1.85,-1)--(1.85,-1);
+    \draw[draw=rust,thick,dashed] (-1.85,1.24)--(0,0)--(1.85,1.24);
+    \fill[ink] (0,0) circle (1.8pt) node[below] {\(z\)};
+    \node[anchor=west] at (1.94,1.12) {\(A\)};
+    \node[anchor=west] at (1.94,-1.12) {\(B\)};
+  \end{scope}
+\end{tikzpicture}
+\caption{At left, the two classes project to zero and one on the chosen
+code axis. The highlighted wires carry their votes to opposite
+destinations. At right, a projection of the prism onto its interval
+and height coordinates shows both anchor layers. Adding a central
+site \(z\) to the upper anchor places the dashed triangle in the
+projection of its hull. Distances and thicknesses are schematic.}
+\label{fig:vote-layout}
+\end{figure}
+
+All \(v_i\) and all destinations lie in the cross-polytope
+\(T B_1^m\), which has only \(2m\) vertices. For independent standard Gaussian coordinates \(g_j\), its mean width satisfies
+\[
+ \delta(TB_1^m)=\sqrt{2\pi}\,T\,\E\max_{j\le m}|g_j|
+       \le \sqrt{2\pi}\,T\sqrt{2\ln(2m)} .
+\]
+Indeed, for \(u>0\) the expected
+exponential of \(u\max_j|g_j|\) is at most \(2m e^{u^2/2}\).
+Taking logarithms and minimizing the resulting upper bound on the
+mean gives the inequality. Scale all positions by
+\(\gamma=10^{-5}/(d\sqrt{\log(2m)})\). The resulting polytope
+\(K=\gamma T B_1^m\) has \(\delta(K)\le10^{-3}\), and the wire gap
+is at least \(0.9\gamma\).
+
+\emph{Setting the anchor widths.}
+Take the prism
+\[
+       P=P_0\times[-h,h],\qquad P_0=[-1,1]\times K,\qquad h=1.025
+\]
+in orthogonal coordinates. The central polytope consists of points
+\((0,x,0)\) with \(x\in K\). Place the satellites at
+\((0,\gamma v_i,0)\), the destinations at \((0,\pm\gamma Te,0)\),
+and \(O\) at the origin. The upper anchor \(A\) contains all vertices
+of \(P_0\) at height \(h\), and the lower anchor \(B\) contains their
+reflections at \(-h\). Together these vertices span \(P\). We will
+add sites only inside the prism, fixing the normalizing denominator
+\[
+       D=\delta(S)=\delta(P)=\delta(P_0)+2h,\qquad
+       2\le\delta(P_0)=2+\delta(K)\le2.001 .
+\]
+In particular \(4.05\le D\le4.051\). Set \(\rho=\gamma/32\).
+After normalization the wire gap is at least \(0.9\gamma/D>4\rho\),
+proving~\eqref{eq:split-gap}, and the central polytope has width at
+most \(10^{-3}/D\).
+
+For each \(s=\rho,2\rho\), include in each anchor a second copy of
+its vertices, a distance \(t_s\) toward the center. Its hull is
+a product of \(P_0\) with an interval of length \(t_s\), giving width
+\((\delta(P_0)+t_s)/D\). The choice
+\[
+       t_s=\tfrac12(1-s)D-\delta(P_0)
+           =\tfrac12\bigl(2h-\delta(P_0)-sD\bigr)
+\]
+lies between \(0\) and \(0.03\) and gives the desired normalized
+width \((1-s)/2\). Both choices use the same outer faces.
+
+If \(z=(0,x,0)\) is central, the hull of \(A\cup\{z\}\) contains
+the triangle joining \(z\) to \((-1,0,h)\) and \((1,0,h)\) in the
+outer face. Its raw width is its semiperimeter,
+\(1+\sqrt{1+h^2+\|x\|^2}>2.4\). Thus \(w(A\cup\{z\})>2.4/D>0.56\),
+whereas \(w(A)\le1/2\). Reflection gives the same gain for \(B\).
+
+For \(s=\rho\), append to each anchor one more layer a distance
+\(\alpha D\) farther inward and to each satellite one more site at
+height \(\alpha D\) above it. Each anchor hull grows by an interval
+of length \(\alpha D\), and each satellite group becomes a segment of
+that length. Hence each of the \(r\) widths increases by exactly
+\(\alpha\). The anchor layers stay within \(0.04\) of their respective
+outer faces, and different satellite groups have different projections
+onto \(K\). The groups remain disjoint, and their union still spans
+\(P\). Their surplus is therefore
+\[
+                  1-\bigl(1-\rho+r\alpha\bigr)=9\rho/10 .
+\]
+Each layer has \(4m\) vertices. Each original anchor has two layers,
+and only a constant number of layers is needed altogether. Including
+the satellites, their extra sites, the destinations and \(O\) gives
+\(|S|=O(r+dq)\) and the stated bound on \(\ell\).
+\end{proof}

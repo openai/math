@@ -1,0 +1,161 @@
+\section{Why Weak ETH rules out spectral expansion}\label{sec:graphs}
+
+Transposition sends each bit from its input row to its output column.
+A short tape computation would implement all these transfers with a
+bounded-degree network. To rule this out we will place the vertices
+in a metric space where the network edges are short and the
+row-to-column distances are typically large. The issue here is the
+existence of such placements. Uniform expansion in the relevant
+metrics would instead allow a deterministic algorithm to decide
+3-SAT with a power saving in the number of variables.
+
+\subsection{Wire costs and expansion}
+
+In a rational tensor network each edge of width $q$ carries a string of
+$q$ bits. A vertex table assigns a rational coefficient to each tuple
+of incident strings and external indices. To contract the network,
+fix the external indices, multiply the table entries, and sum over all
+internal strings. A network with no external indices is \emph{closed}.
+A \emph{bit network} has width one on every edge.
+
+The metric records the cost of sharing information. In the tensor
+language, a wire is equality of two external labels. A one-bit wire
+allows the joint labels $(0,0)$ and $(1,1)$, each with coefficient one.
+To obtain a metric, take tensors over $\mathbb Q$ at a finite set of at
+least two sites. A spectral point in Strassen's asymptotic spectrum
+takes nonnegative real values, preserves zero, one, direct sums and
+tensor products, and is monotone under a linear map at each site
+\cite{Strassen}. Its base-two logarithm, with a positive normalization,
+is a \emph{price}. The prices of one-bit wires give a pseudometric on the
+sites. Thus a $q$-bit wire between two sites at distance $d$ costs $qd$.
+
+We use the class $\mathcal X$ of complete $\operatorname{CAT}(0)$
+spaces carrying compatible spectral prices for rational tensors on
+all finite subsets, with their distances given by the wire prices.
+Every finite spectral wire pseudometric occurs in a member of
+$\mathcal X$ after sites at distance zero are identified. Rescaling
+prices and distances together is allowed
+\cite[Sections~\ext{G}{sec:spectra} and~\ext{G}{sec:limits},
+Theorem~\ext{G}{thm:geometry}]{oaG}.
+Place each vertex $u$ at $x_u$ in a member of $\mathcal X$. Applying
+the vertex tables as local maps to the product of the edge wires gives
+the contraction. Tables at coincident sites can be applied jointly.
+It follows by monotonicity and additivity of the price that any product
+of equality wires obtained in this way costs at most
+\[
+                 \sum_{e=uv} q_e\,d(x_u,x_v).
+\]
+For $r$ copies the right-hand side is multiplied by $r$, even when
+the local maps act jointly on all copies. If all vertices coincide,
+every wire costs zero.
+
+Characteristic zero \emph{admits ports} when there are symmetric
+regular multigraphs of arbitrarily large order, with a common bound
+on their degrees, and a constant $C$ such that
+\[
+                 \mathbb E\,d(x_U,x_V)^2
+                      \le C\,\mathbb E\,d(x_I,x_J)^2
+\]
+for every placement of every such graph in $\mathcal X$. Here $U,V$
+are independent uniform vertices and $(I,J)$ is a uniform directed
+arc, with a diagonal arc counted once in the degree. This is the
+nonlinear Poincar\'e inequality for the wire metrics, which depend
+only on the characteristic \cite[Definition~\ext{G}{def:ports}]{oaG}.
+
+\begin{theorem}[Expansion and 3-SAT]\label{thm:noports}
+If characteristic zero admits ports, then for some $\delta>0$ a
+deterministic algorithm decides 3-SAT on $v$ variables in
+$2^{O(v^{1-\delta})}$ bit operations times a polynomial in the input
+length. In particular, under variable-count Weak ETH, characteristic
+zero does not admit ports.
+\end{theorem}
+
+\begin{proof}
+Suppose characteristic zero admits ports. By the enumerable contraction
+theorem \cite[Theorem~\ext{P}{thm:closed}]{oaP}, there is $0<\eta<1$
+such that a closed bit network of volume $s$ (vertices plus edges)
+and maximum degree at most $s^{1/20}$ can be contracted
+deterministically in $2^{O(s^{1-\eta})}$ bit operations plus the time
+for that many local entry queries when its entries are integers of
+polynomial bit length. The topology determines an enumerable formula
+with fixed rational constants. For the clause and equality tables
+below, each query takes constant work given its arguments.
+
+A general 3-CNF can have order $v^3$ clauses. To get a power saving
+in $v$, we branch into formulas of smaller volume by sunflower
+sparsification \cite{IPZ}. Choose a fixed rational $0<\alpha<1/4$
+so small that $(1+4\alpha)(1-\eta)<1$. Put $r=\lceil v^\alpha\rceil$
+and $R=r^2$, taking $v\ge2$. Remove tautologies and duplicate literals,
+and handle an empty clause directly. Regard each remaining clause as a
+set of literals. At the outset and after every branch discard duplicate
+clauses and strict supersets of other clauses.
+
+At each node choose the first applicable rule below, breaking ties
+canonically. Each rule selects clauses with a common center and
+pairwise disjoint, nonempty remainders, the petals.
+\begin{enumerate}[leftmargin=*]
+\item If a literal occurs in at least $r$ two-literal clauses, take
+$r$ of them with that literal as center.
+\item If a pair of literals occurs in at least $R$ three-literal
+clauses, take $R$ of them with that pair as center.
+\item If a literal occurs in more than $2R^2$ three-literal clauses,
+choose $R$ of them with that literal as center and disjoint two-literal
+petals. A petal excludes at most $2R$ candidates since the preceding
+rule does not apply, so greedy selection suffices.
+\end{enumerate}
+One child adds the center as a clause. The other adds every petal as
+a clause. An assignment satisfying the parent either satisfies the
+center or must satisfy every petal. Both children imply the parent.
+Each new clause is a strict subset of a selected clause, so no
+existing clause is contained in it. The new petals are disjoint and
+hence all survive simplification.
+
+Consider a root-to-leaf path. At most $2v$ unit clauses are added,
+since each persists. The initial run of the first rule adds only units.
+After that run, each literal belongs to fewer than $r$ pairs. Subsequent
+branches on triples can add one pair or a set of disjoint pairs, so
+they raise each pair degree by at most one. The first rule has priority
+and only deletes pairs. Thus pair degrees stay at most $r$. At any
+node after the initial run there are $O(vr)$ surviving pairs, and
+each subsequent unit can delete at most $r$ of them. Only units
+delete pairs, so the total number of new pairs along the path is
+$O(vr)$. Each step adds a unit or a pair, giving depth $O(vr)$.
+Taking the child that adds all petals consumes at least $r$ new
+units or $R$ new pairs. Such a choice occurs only $O(v/r)$ times.
+Recording the depths of these choices determines the leaf, hence
+there are at most $2^{O((v/r)\log v)}$ leaves. Finding the branches
+and simplifying at each node take polynomial time in the input length.
+
+At a leaf the three rules all fail, so there are $O(vR^2)$ clauses.
+Construct a closed bit network with a clause indicator at each clause
+and a tree of ternary equality tables to distribute each variable to
+its occurrences. For each unused variable, a wire joining two all-ones unary tables
+supplies its two possible values.
+Every assignment has a unique compatible labeling of the copy wires,
+and the product of the indicators tests all clauses. Its contraction
+is therefore the number of satisfying assignments of this leaf.
+The network has degree at most three and volume $O(v^{1+4\alpha})$.
+For volumes too small to meet the degree hypothesis, direct contraction
+costs a constant.
+
+Accept if any leaf contraction is positive. The logarithm of the total
+running time, apart from the polynomial input factor, is at most
+\[
+       O\!\left(v^{1-\alpha}\log v
+             + v^{(1+4\alpha)(1-\eta)}\right).
+\]
+Taking $0<\delta<\min\{\alpha,1-(1+4\alpha)(1-\eta)\}$ gives the
+claimed bound, which variable-count Weak ETH excludes.
+\end{proof}
+
+\noindent
+For the tape lower bound we use the quantitative consequence of
+nonexpansion from \cite[Theorem~\ext{P}{thm:loggraph}]{oaP}. Under
+Weak ETH, for a
+regular graph on $P\ge2$ vertices of fixed positive degree, the
+Poincar\'e constant valid for all placements in $\mathcal X$ must
+grow at least as $\log P$, up to a degree-dependent factor. One can
+therefore choose a placement with mean squared distance one between
+independent vertices and mean squared distance $O(1/\log P)$ along
+an edge. Lemma~\ref{lem:geometry} applies this fact to the graph of a
+tape computation and controls distances to the row and column terminals.

@@ -1,0 +1,232 @@
+\section{Approaching the star bound}\label{sec:achieve}
+
+For a fixed placement of the columns, Theorem~\ref{ext:star} asks for a
+matrix whose exterior price comes close to the sum of the individual wire
+budgets. The rank calculus of Section~\ref{sec:flags} gives two ways to
+measure what is lost. Above threshold zero we count column contributions
+that become linearly dependent. Below zero we count dimensions that the
+columns fail to supply. To turn these losses into a price, we first
+recover the exterior value from its threshold ranks.
+
+\subsection{Recovering price from threshold rank}
+
+Let $L=((A_i,y_i,\theta_i))_i$ span $E$, and write $e=\dim E$.
+Adjoin a supplier of all of $E$ at the tip with bias $s$, giving value
+$\lambda_L(s)$. Write $r_s=r_E(L-s)$ for the rank after subtracting
+$s$ from each original bias. By~\eqref{flag:capdef}, the right derivative of
+$\lambda_L(s)$ is $e-r_s$. We claim that
+\begin{equation}\label{ext:recover}
+ \lambda(L)=\int_0^\infty r_s\,ds
+             -\int_{-\infty}^0(e-r_s)\,ds .
+\end{equation}
+Indeed, at high bias the tip can supply all $e$ dimensions, giving
+$\lambda_L(s)\ge se$. For an upper bound, transport the ordinary
+inputs from the tip. If $a_i=\dim A_i>0$, the degree-$p_i$ input costs
+at most $\|y_i\|\log\binom{\ell a_i}{p_i}$. Relative to supply entirely
+from the tip, it also changes the bias term by $(\theta_i-s)p_i$.
+Maximizing each contribution with the binary entropy bound gives
+\[
+ 0\le\lambda_L(s)-se\le
+ \sum_i a_i A(\|y_i\|,\theta_i-s)\longrightarrow0
+ \qquad (s\to+\infty).
+\]
+
+At low bias the degree-zero tip input gives
+$\lambda_L(s)\ge\lambda(L)$. To bound the gain from a tip input of
+degree $p$, choose a basis of $E$ from the ordinary suppliers and
+assign each basis vector to one containing supplier. In the induced
+wedge basis of $E\otimes K^\ell$, the tip input has
+$\binom{\ell e}{p}$ coordinates. For each coordinate, wedge its $p$
+basis vectors into their assigned ordinary inputs and apply the
+coordinate functional at the tip. This term is a restriction of an
+ordinary sector. Its reordering sign is constant for the chosen
+coordinate and input degrees. The tip contributes bias $ps$, while the
+reassigned vectors contribute at least $-pT$ in the ordinary sector,
+where $T=\max_i|\theta_i|$. Let $D$ be the diagonal rate of the sites
+including the tip, and let $h$ denote binary entropy in nats.
+By~\eqref{price:sum}, summing the coordinates costs at most
+$D\log\binom{\ell e}{p}$. Hence, for $e>0$,
+\[
+ 0\le\lambda_L(s)-\lambda(L)\le
+ e\sup_{0\le u\le1}\{D h(u)+u(s+T)\}
+ \longrightarrow0\qquad (s\to-\infty).
+\]
+Integrating the right derivative of the convex function $\lambda_L$
+between these two limits gives~\eqref{ext:recover}. If $e=0$, both
+sides vanish.
+
+\subsection{Site flags and the barycenter}
+
+At a site $y$ the threshold spaces $U_{y,-a}$ are nested as $a$
+increases. We determine the law of the flag $F(y)$ with strict
+thresholds $\{F(y)>a\}=U_{y,-a}$, beginning with $E=K$.
+Two suppliers of $K$ at $y$ and the tip, with biases $t$ and $s$,
+have value $s+A(\|y\|,t-s)$. Indeed, complementary exterior degrees
+$p$ and $\ell-p$ give a perfect pairing of dimension $\binom{\ell}{p}$.
+Its price is $\|y\|\log\binom{\ell}{p}$. Taking the entropy limit
+and maximizing over $p/\ell$ gives the stated value. Now set $t=-a$.
+Subtracting the right derivative at $s=0$ from one gives
+\[
+ \Pr_{\rm flag}\{F(y)>a\}=(1+\exp(a/\|y\|))^{-1}
+ \qquad (\|y\|>0).
+\]
+Thus $F(y)$ has a logistic law of scale $\|y\|$ and mean zero.
+At the tip the value is $\max(-a,s)$, giving the constant flag $F(0)=0$.
+The finite second moments of these laws place the flags in the metric
+completion of Proposition~\ref{flag:metric}.
+
+The distance between two such flags also has an exterior interpretation.
+Take suppliers at $y,z$ with biases $t_1,t_2$. At threshold $s$,
+the rank of these suppliers of $K$ is the dimension of the sum of
+their threshold spaces. By~\eqref{flag:modular} and~\eqref{flag:pair},
+this is the upper tail at $s$ of $\max(F(y)+t_1,F(z)+t_2)$ in the
+pair law of $F(y),F(z)$. Equation~\eqref{ext:recover} integrates this
+tail to give the expectation of the maximum. On the other hand, the
+perfect pairing at $y,z$ gives the value $t_2+A(d(y,z),t_1-t_2)$.
+Writing $t=t_1-t_2$ and using $\mathbb E_{\rm flag}F(z)=0$, we obtain
+\[
+ \mathbb E_{\rm flag}\big(F(y)-F(z)+t\big)_+=A(d(y,z),t).
+\]
+The right derivative on the left is
+$\Pr_{\rm flag}(F(y)-F(z)\ge-t)$. Thus the difference has a logistic
+law of scale $d(y,z)$, with a point mass at zero when $y=z$.
+
+The flag metric measures the second moment of this difference, so
+$y\mapsto F(y)$ scales every distance by the standard deviation of a
+standard logistic variable. Its image is closed by completeness of $Y$
+and convex by uniqueness of geodesics in the CAT(0) flag space.
+If $y_1,\ldots,y_N$ have barycenter at the tip, the sum of squared
+distances to their flags is minimized at $F(0)=0$ within the image.
+Projection onto the closed convex image can only decrease these
+distances, so zero is also a minimizer in the full flag space.
+For any flag $Q$ and $a>0$, comparison of this sum at $aQ$ and at
+zero yields
+$2a\sum_i\langle Q,F(y_i)\rangle\le Na^2\|Q\|^2$. Letting
+$a\downarrow0$ gives
+\begin{equation}\label{ext:center}
+ \sum_{i=1}^N \langle Q,F(y_i)\rangle\le0
+ \qquad\text{for every flag }Q .
+\end{equation}
+Each summand uses the pair law of $Q$ and the indicated site flag.
+
+\subsection{Controlling lost rank by random insertion}
+
+\begin{proof}[Proof of Theorem~\ref{ext:star}]
+Write $b=N/2$. At threshold $s$ each slot $i$ supplies the event
+$H_i(s)=\{F(y_i)>s-\theta_i\}$ of dimension
+$p_i(s)=\Pr_{\rm flag}(H_i(s))$. For a Vandermonde matrix $C$, let
+$r_s(C)$ be the rank of the image of $\bigoplus_i H_i(s)$ under its
+column map. Since the sites are unit,
+$\int_0^\infty p_i(s)\,ds=A(1,\theta_i)$. Equation~\eqref{ext:recover}
+therefore expresses the star deficit exactly as
+\[
+ \sum_i A(1,\theta_i)-\lambda(C;y,\theta)
+   =\int_0^\infty K_+(s)\,ds+\int_{-\infty}^0 K_-(s)\,ds ,
+ \qquad
+ \begin{aligned}
+ K_+(s)&=\sum_i p_i(s)-r_s(C),\\
+ K_-(s)&=b-r_s(C).
+ \end{aligned}
+\]
+For $s\ge0$, $K_+$ measures the kernel dimension of the column map
+and decreases as its domain shrinks. For $s\le0$, $K_-$ measures the
+missing image dimension and decreases as $s$ moves left. Both lie in
+$[0,N]$. It suffices to control them at finitely many thresholds for
+a single choice of $C$.
+
+\emph{Centering the indicators.}
+For $|s|\le M/2$, put
+\[
+ c_s=\tfrac12-\tfrac{s}{2M},\qquad X_i(s)=\mathbf1_{H_i(s)}-c_s .
+\]
+The scalar $c_s$ is the fraction of the interval $[-M,M]$ above $s$.
+Let $I$ be a uniformly sampled slot. For every fixed finite flag
+$Q$, uniformly in this range of $s$,
+\begin{equation}\label{ext:meanflag}
+ \mathbb E_I\langle Q,X_I(s)\rangle\le\epsilon\|Q\|,
+ \qquad \epsilon=q^{-1}+O(N^{-10}).
+\end{equation}
+To see this, fix one site $y$ and a value $f$ of its flag. Averaging the
+centered indicator over a continuous uniform bias on $[-M,M]$ gives
+\[
+ \min\{1,\max\{0,c_s+f/(2M)\}\}-c_s .
+\]
+This agrees with $f/(2M)$ on $|f|\le M/2$. By the unit logistic tails
+and $M\ge100\log N$, the discrepancy has $L^2$ norm $O(N^{-10})$.
+Replacing the continuous bias by the $q$ equally spaced midpoints
+changes the average by at most $1/q$ at every $f$. Within the pair law
+of $Q,F(y)$, Cauchy--Schwarz bounds the corresponding error in pairing
+by $\epsilon\|Q\|$. The remaining terms average to a nonpositive
+number by~\eqref{ext:center}, since each site occurs $q$ times.
+
+\emph{A second moment for the insertion sum.}
+Choose a uniform permutation $\pi$ of the slots and use it at every
+threshold. Fix $s$ for the moment and let $Z_0(s)=0$. Obtain $Z_j(s)$
+by inserting $X_{\pi(j)}(s)$ into $Z_{j-1}(s)$ using two-flag
+addition. Put $a_j=(\mathbb E_\pi\|Z_j(s)\|^2)^{1/2}$. To handle
+sampling without replacement, take a uniform slot $I$ independent of
+$\pi$ and exchange it with the slot at position $j$. The new permutation
+is uniform, and its $j$th flag $X_I(s)$ is independent of the
+\emph{old} partial sum. At most one earlier term changes. Each centered
+indicator has norm at most one, and insertion is $1$-Lipschitz in
+either argument. Hence the new partial sum lies within distance two of
+the old one, even after propagating the change through the intervening
+insertions. Lipschitz continuity of the pairing and~\eqref{ext:meanflag}
+now give
+\[
+ \mathbb E_\pi\langle Z_{j-1}(s),X_{\pi(j)}(s)\rangle
+    \le 2+\epsilon a_{j-1}.
+\]
+Expanding the squared norm of each insertion in its two-flag law yields
+\[
+ a_j^2\le a_{j-1}^2+5+2\epsilon a_{j-1},
+ \qquad
+ \max_{j\le N} a_j^2=O(N+N^2\epsilon^2).
+\]
+For the second bound, sum the first inequality up to an index
+maximizing $a_j$ and solve the resulting quadratic inequality.
+
+\emph{One matrix for all thresholds.}
+For each realized order, apply Lemma~\ref{flag:insertion} with slack one
+simultaneously at zero and at $s=\pm M2^{-j}$ for
+$1\le j\le\lceil\log_2 N\rceil$. Assign the resulting parameters to
+the columns in order $\pi$. This gives one Vandermonde matrix $C=C_\pi$
+whose ranks at all selected thresholds satisfy
+\[
+ r_s(C)\ge\mathbb E_{\rm flag}\min\{b,S_N(s)\}-1 ,
+\]
+where $S_N(s)$ inserts the uncentered indicators in order $\pi$.
+Translation of two-flag addition gives $S_N(s)=Z_N(s)+Nc_s$.
+Additivity of the mean at every insertion gives
+$\mathbb E_{\rm flag}S_N(s)=\sum_i p_i(s)$. Thus the error above
+zero is at most $1+\mathbb E_{\rm flag}(S_N(s)-b)_+$, and the error
+below zero is at most $1+\mathbb E_{\rm flag}(b-S_N(s))_+$. At
+each selected $s\ne0$ the relevant bound is
+\[
+ 1+\mathbb E_{\rm flag}
+   \left(\operatorname{sgn}(s)Z_N(s)-\frac{N|s|}{2M}\right)_+ .
+\]
+All expectations here use the law of the insertion sum at the single
+threshold in question. Averaging over $\pi$ and using
+$(x-v)_+\le x^2/(4v)$ for $v>0$, the second-moment bound gives
+\[
+ \mathbb E_\pi K_\pm(s)\le 1+O\!\left((1+N\epsilon^2)\frac{M}{|s|}\right)
+\]
+on the respective sides of zero.
+
+Integrate on each side from zero to the nearest grid point using
+$K_\pm\le N$, at a cost of at most $M$. On the remaining dyadic
+intervals up to $|s|=M/2$, use monotonicity and the bound at the
+endpoint nearer zero. Each interval has length equal to that
+endpoint's absolute value, so its expected cost is
+$O(M(1+N\epsilon^2))$. The interval $M/2\le|s|\le2M$ obeys the
+same bound using $|s|=M/2$. For $s>2M$, bound $K_+(s)$ by
+$\sum_i p_i(s)$. For $s<-2M$, select any basis of columns of $C$.
+The threshold spaces on this basis have images in direct sum, so
+$K_-(s)$ is at most the sum of $1-p_i(s)$ on the basis. Since
+$|\theta_i|\le M$, the logistic laws give total tail cost $O(Ne^{-M})$.
+
+The expected deficit of the chosen matrices is therefore
+$O(M(1+N/q^2)\log N)$. Some order and its matrix attain at most
+this average, as required.
+\end{proof}

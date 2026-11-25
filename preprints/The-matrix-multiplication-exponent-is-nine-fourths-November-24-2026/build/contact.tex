@@ -1,0 +1,720 @@
+\section{Polynomial multiplication near contact}\label{sec:profiles}
+
+The tripod principle compares the price $D$ of a common label at the
+three terminals with the lower bound $D_*(a)=\sum_i a_i-(\sum_i a_i^{-1})^{-1}$
+for their arm lengths $a_i>0$. We call equality \emph{contact} and write
+$\Delta=D-D_*(a)$ for the defect. To propagate contact to other triples
+of arm lengths, we need to know how a price changes when just one input
+width varies. Polynomial multiplication supplies a tensor for which we
+can measure this change. Its price as one input grows has a limiting slope
+and intercept after exponentiation. Proposition~\ref{thm:profile-rigidity}
+determines the intercepts to within $O(\Delta)$. Section~\ref{sec:energy}
+then compares different placements, and Section~\ref{sec:contact} uses the
+comparison to propagate equality.
+
+Throughout these three sections the field is algebraically closed and
+prices use natural logarithms with the distances held fixed. A label
+with $q$ values shared at the terminals costs $D\log q$. On an embedded
+tripod, including its origin gives the same price. A duplicate at either
+of two terminals is free, and convexity bounds its cost at every point
+on the geodesic between them.
+
+\subsection{The continuum profile}
+Place a finite nonempty set of inputs and one output in a spectral space.
+Write $H$ for price and $D>0$ for the common-label rate of the placement.
+For integer lengths $L_i\ge1$, let $M(L)$ multiply univariate polynomials
+of degrees less than $L_i$, retaining all output coefficients. The following
+normalization also fixes the constant in the energy formula below.
+
+\begin{lemma}\label{lem:continuum-profile}
+There is a continuous coordinatewise nondecreasing function $P$ on the positive
+orthant such that, if $L_i/N\to t_i>0$, then
+\[
+ H(M(L))=D\log N+P(t)+o(1),\qquad P(ct)=P(t)+D\log c.
+\]
+For polynomials in $m$ variables with total input degrees at most
+$\lfloor Nt_i\rfloor$, the corresponding price is
+$mD\log N+mP(t)-D\log(m!)+o(1)$ for each fixed $m$.
+\end{lemma}
+
+\begin{proof}
+Evaluation and interpolation bound $H(M(L))$ by $D\log(\sum_iL_i)$.
+In the other direction, $M(kL)$ degenerates to $k$ direct copies of
+$M(L)$. Indeed, divide $[0,1]$ into $k$ equal intervals and choose a
+continuous convex piecewise affine function with a strict change of slope
+at each division. An input monomial of degree $d_i$ has normalized position
+$(d_i+1/2)/(kL_i)$. Give it weight $kL_i$ times the function there. Give the
+output the opposite weight at the weighted mean of those positions, with
+coefficient $k\sum_i L_i$. The output weight depends only on the sum of
+degrees. Jensen's inequality retains precisely the terms whose inputs lie
+in one interval. Different intervals use disjoint input and output
+coordinates, and each surviving block is a translated copy of $M(L)$.
+The weight equalities define a rational linear subspace. Rational
+approximation within it preserves the finitely many strict inequalities,
+and scaling gives integral weights. Rescaling the coordinates and using
+closedness of price sublevels therefore gives the asserted degeneration.
+
+For $L_i=\lfloor Nt_i\rfloor$ the normalized cost at $N$ therefore
+dominates that at any fixed sufficiently large $M$, up to
+$D\log(M\lfloor N/M\rfloor/N)$. Taking first the lower limit in $N$ and
+then the upper limit in $M$ proves convergence. Changing the unit of $N$
+gives log homogeneity, first with floors by squeezing the scales and then
+for real $N$. Coordinate monotonicity and squeezing between
+$(1\pm\epsilon)t$ give continuity and allow $o(N)$ errors in the lengths.
+
+For the assertion about total degree, divide the exponent vector at
+input $i$ by $Nt_i$ and at the output by $N\sum_i t_i$. All inputs now
+range over lattice points in the unit simplex. To cut this domain by a
+hyperplane, first discard input points on the plane. Apply the same
+convex weighting as above, using the positive part of the defining
+affine form and coefficients $Nt_i$. Jensen's inequality retains terms
+whose inputs are on the same side. Their outputs are on that side as
+well, so the two blocks form a direct sum. One may repeat the cut within
+each block.
+
+On a translated axis-parallel cube of side $s$, multiplication factors
+over the $m$ coordinates. The univariate limit shows that its
+exponentiated price, divided by $N^m\exp(mP(t)/D)$, tends to its volume
+$s^m$. Translation just relabels exponents and rounding a cube side
+changes widths by $O(1)$. Packing the simplex with interior grid cubes
+thus bounds its normalized price from below by $1/m!$, since
+$\exp(H/D)$ adds on direct sums. For the upper bound, start with an
+enclosing cube and cut off a slightly enlarged simplex, so all input
+points of the desired tensor survive in one cell. Pack the complementary
+cells with interior grid cubes. The enclosing tensor dominates the
+direct sum of the desired tensor and all packed cubes. Refining the
+grid and shrinking the enlargement accounts for the whole complementary
+volume and gives the matching upper bound $1/m!$. Taking logarithms
+proves the formula.
+\end{proof}
+
+\subsection{A label visible at two sites}
+
+We also need a lower bound for a sum whose block label is visible at
+only two of three sites. Suppose $T=\sum_b T_b$ with $T_b\ne0$ and
+$T_b\in X\otimes Y_b\otimes Z_b$, where the $Y_b$ are direct subspaces
+at $Y$, and the $Z_b$ are direct subspaces at $Z$. For every probability
+law $q$ on the block labels, writing
+$\operatorname{Ent}(q)=-\sum_b q_b\log q_b$, we have
+\begin{equation}
+ H(T)\ge\sum_b q_b H(T_b)+d(Y,Z)\operatorname{Ent}(q).
+ \label{eq:pair-entropy}
+\end{equation}
+To see the entropy term, take a rational $q$ and a power $n$ for which
+each $nq_b$ is integral. At $Y$ and $Z$, retain the
+$M=n!/\prod_b(nq_b)!$ words of type $q$. Each word has price
+$n\sum_bq_bH(T_b)$. The shared-leg separation of~\cite[Proposition~3.1]{nine},
+in the interpolation form of~\cite[Proposition~2.1]{lu}, degenerates
+$2M-1$ direct copies of the retained tensor to the full direct sum of
+the $M$ word blocks, each tensored with an $M$-dimensional wire on
+$Y,Z$. Interpolation uses $2M-1$ distinct field elements, available
+in every algebraically closed field. Comparing the two prices gives
+\[
+ nH(T)+D\log(2M-1)\ \ge\
+ n\sum_bq_bH(T_b)+(D+d(Y,Z))\log M ,
+\]
+where $D$ is the common-label rate of the three sites.
+Now $\log((2M-1)/M)\le\log2$ and $n^{-1}\log M\to\operatorname{Ent}(q)$.
+Division by $n$ and continuity in $q$ give~\eqref{eq:pair-entropy}.
+
+\subsection{Slopes and intercepts on a triangle}
+
+Use $i,j,k$ for the three sites in any order and suppose their arms $a_i$
+are positive. Put $d_i=d(j,k)=a_j+a_k$, $D=\delta(\{i,j,k\})$, and
+write $P_k(x,y)$ for the profile with output $k$ and input widths $x$ at
+$i$ and $y$ at $j$. We identify each argument by its site.
+For a fixed first input define
+\[
+ F_{ik}(t)=\exp\bigl(P_k(t_i=1,t_j=t)/d_i\bigr).
+\]
+The determinant filtration and the shifted three-block degeneration for
+polynomial multiplication \cite[proofs of Lemmas~4.1 and~4.2]{nine} give
+\[
+ F_{ik}\text{ is concave},\qquad
+ F_{ik}(3t+1)\ge 2F_{ik}(t)+F_{ij}(t).
+\]
+In the first degeneration a two-dimensional wire on $j,k$ supplies two
+blocks, with the length at $j$ increased and decreased by one. The blocks
+are direct on that pair. Optimizing the pair-label inequality over the
+block probabilities adds their exponentiated prices at scale $d_i$.
+This gives midpoint concavity on the lattice of lengths, hence concavity
+in the limit. In the second degeneration the longer length is
+$3L_j+L_i-1$, and one of the three blocks exchanges $j$ and $k$. The same
+pair-label inequality and Lemma~\ref{lem:continuum-profile} give the second
+displayed assertion. Both degenerations work in every characteristic.
+For the first, injectivity of multiplication by the determinant and
+a dimension count give the degree-one Clebsch--Gordan determinant
+sequence (see~\cite{kowalski}). Lifting monomials to its filtration
+suffices. The second uses a monomial grading, and reversal of the order
+on a leg identifies the middle block.
+
+Positive increasing concave functions have finite limiting slopes at
+infinity. Dividing the three-block inequalities by $t$ shows that the
+slopes of $F_{ik}$ and $F_{ij}$ are equal. For $S=F_{ik}+F_{ij}$ we have
+$S(3t+1)\ge3S(t)$. Iterating along
+$t_n=3^n(t+1/2)-1/2$ gives
+$S(t)/(t+1/2)\le \lim_{n\to\infty}S(t_n)/(t_n+1/2)$, twice the common slope. In particular the common slope is positive. Write it as
+$\exp(c_i/d_i)$.
+For either function the excess over the line through zero of that slope
+is nonnegative and increasing. The bound on $S$ therefore gives numbers
+$\beta_{ik},\beta_{ij}\ge0$, with $\beta_{ik}+\beta_{ij}\le1$, such that
+\[
+ t\le e^{-c_i/d_i}F_{ik}(t)\le t+\beta_{ik}.
+\]
+Here $\beta_{ik}$ is the limiting excess after division by the slope.
+In particular $P_k$ is $d_i$-Lipschitz as a function of $\log y$ with $x$
+fixed, since every one-sided derivative of $F_{ik}$ lies between zero and
+$F_{ik}(t)/t$.
+
+Set $h=(\sum_i1/a_i)^{-1}$, $b_i=a_i-h$, $u_i=b_i/a_i$,
+$\beta_{ik}^*=a_k/d_i$, and $\Delta=D-D_*(a)$, where
+$D_*(a)=\sum_i a_i-h$. Since $P_k(x,y)=D\log x+P_k(1,y/x)$
+and $D-d_i=b_i+\Delta$, the intercept bound gives an upper envelope
+valid at every pair of widths,
+\begin{equation}\label{eq:profile-upper}
+ P_k(x,y)\le U_{ik}(x,y):=c_i+(b_i+\Delta)\log x+d_i\log(y+\beta_{ik}x).
+\end{equation}
+
+\begin{proposition}[Profile near contact]\label{thm:profile-rigidity}
+We have $\Delta\ge0$. If $\min_i u_i\ge\eta>0$, there is a number $C$
+common to all three sites such that
+\begin{equation}\label{eq:src2}
+ d_i(\beta_{ik}-\beta_{ik}^*)=O_\eta(\Delta),\qquad
+ c_i+b_i\log u_i=C+O_\eta(\Delta).
+\end{equation}
+In the sector $y/x\ge u_j/u_i$,
+\begin{equation}\label{eq:src3}
+ 0\le U_{ik}(x,y)-P_k(x,y)\le O_\eta(\Delta).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Let $E_{ik}=U_{ik}-P_k$ and $z_{ik}=d_i(\beta_{ik}-\beta^*_{ik})$.
+Differentiating with respect to $y$ and bounding the derivative of
+$F_{ik}$ below by its limiting slope yields
+\[
+ \partial_y P_k(x,y)\ \ge \frac{d_i}{y+\beta_{ik}x}\exp(E_{ik}(x,y)/d_i).
+\]
+There is a second bound from interchanging $i,j$. At differentiability
+points, $x\partial_xP_k+y\partial_yP_k=D$. The profiles are locally
+Lipschitz, so continuity gives the sum of the two derivative bounds at
+$(x,y)=(u_i,u_j)$ even if a derivative fails to exist there.
+At this point $u_j+u_i\beta^*_{ik}=1$ and $u_jd_i+u_id_j=D_*$.
+Use $(1+r)^{-1}=1-r+r^2/(1+r)$ with
+$r=u_i z_{ik}/d_i$, and $e^s\ge1+s$ for $s\ge0$.
+Since $\eta\le u_j+u_i\beta_{ik}\le2$, this gives, for some $c_\eta>0$,
+\[
+ \frac{\Delta}{u_iu_j}\ge -(z_{ik}+z_{jk})+
+ c_\eta\left(E_{ik}+E_{jk}
+           +\frac{z_{ik}^2}{d_i}+\frac{z_{jk}^2}{d_j}\right),
+\]
+where all the gaps are evaluated at the specified widths.
+The row sums $z_{ik}+z_{ij}$ are nonpositive since
+$\beta^*_{ik}+\beta^*_{ij}=1$. Summing over output sites $k$ gives
+$\Delta\ge0$ and bounds each nonnegative remainder by $O_\eta(\Delta)$.
+Each row sum thus lies between $-O_\eta(\Delta)$ and zero. Each
+column sum is at least $-O_\eta(\Delta)$ by the displayed inequality.
+Since the columns have the same total as the rows, each column sum is
+also at most $O_\eta(\Delta)$.
+
+Comparing the two envelopes for $P_k(u_i,u_j)$ now gives
+\[
+ c_i+b_i\log u_i+u_i z_{ik}
+ =c_j+b_j\log u_j+u_j z_{jk}+O_\eta(\Delta).
+\]
+Here the logarithmic Taylor remainders are controlled by
+$z_{ik}^2/d_i$ and $z_{jk}^2/d_j$. The row and column estimates
+show that, up to $O_\eta(\Delta)$, the entries
+$(z_{12},z_{13},z_{23},z_{21},z_{31},z_{32})$ alternate between
+$z_{12}$ and $-z_{12}$. Sum the three comparisons of envelopes for
+$(i,j)=(1,2),(2,3),(3,1)$. The terms $c_i+b_i\log u_i$ cancel, leaving
+$2(u_1+u_2+u_3)z_{12}=O_\eta(\Delta)$.
+This proves \eqref{eq:src2}. The gap $E_{ik}$ depends only on $y/x$. The
+difference between $t+\beta_{ik}$ and $e^{-c_i/d_i}F_{ik}(t)$ decreases
+with $t$, and the latter function increases. Their log ratio hence
+decreases, which proves \eqref{eq:src3}.
+\end{proof}
+
+For example, at contact on the unit tripod the predicted intercept
+is $\beta^*_{ik}=1/2$ and $u_i=u_j=2/3$. Thus
+$e^{-c_i/d_i}F_{ik}(t)=t+1/2$ for $t\ge1$. More generally,
+\eqref{eq:src2} remains uniform as a single arm tends to infinity
+while the other two stay in a compact subset of $(0,\infty)$.
+If an arm has length zero, $D\ge D_*(a)$ follows from the diameter bound.
+
+\section{Energy and radial contraction}\label{sec:energy}
+
+Fix an output and a nonempty finite set $A$ of inputs with common-label
+rate $D>0$ on all the terminals. For costs $\ell_i>0$ per unit of input
+width, define the energy
+\begin{equation}\label{eq:energy-widths}
+ Q_A(\ell)=D+\sup_{t_i>0}\bigl(P(t)-\ell\cdot t\bigr).
+\end{equation}
+It is finite by the evaluation bound, convex in $\ell$, and satisfies
+$Q_A(c\ell)=Q_A(\ell)-D\log c$ by log homogeneity of $P$.
+A common surcharge $s$ penalizes a candidate width vector by
+$s\sum_i t_i$. Hence the slope of the optimized energy along a common
+cost increase measures total width. We will use the finite difference
+$Q_A(\ell)-Q_A(\ell+s\mathbf1)$.
+Lemma~\ref{lem:energy-compare} shows that this drop can only decrease
+when inputs move towards the output and their respective costs decrease
+in proportion. We prove the comparison first for homogeneous degrees,
+where we can move an input between two polynomial multiplications,
+and then recover $Q_A$ by rescaling those degrees.
+
+To compare different placements, first charge a cost $f_i>0$ per
+degree of a homogeneous polynomial.
+Write $M_m^{\mathrm{hom}}(r)$ for multiplication of homogeneous
+polynomials in $m$ variables, with input degrees $r=(r_i)_{i\in A}$.
+Define
+\[
+ B_A(f)=\sup_{m\ge1,\ r_i\in\mathbb Z_{\ge0}}
+ \frac{H(M_m^{\mathrm{hom}}(r))-\sum_i f_i r_i}{m}.
+\]
+This is finite. Evaluation and interpolation at a basis of evaluation
+functionals on the output give rank at most its dimension. With
+$R=\sum_i r_i$ and $q=\exp(-\min_i f_i/D)$, the exponential of the
+cost-subtracted price at scale $D$ is bounded by
+$\binom{m-1+R}{R}q^R\le(1-q)^{-m}$. The supremum is unchanged if $m$
+is required to be a multiple of a prescribed integer. Indeed, using
+disjoint groups of variables recovers any power of the original tensor
+as a restriction of multiplication with the combined degrees.
+
+\begin{lemma}[Adding an input]\label{lem:increasing-returns}
+If $\varnothing\ne A'\subseteq A$ and $s>0$, then
+\begin{equation}\label{eq:src5}
+ B_A(f)-B_A(f+s\mathbf1)\ge
+ B_{A'}(f)-B_{A'}(f+s\mathbf1),
+\end{equation}
+with costs restricted to the indicated input set. If all sites in a
+restricted placement coincide, its energy is zero.
+\end{lemma}
+
+\begin{proof}
+It suffices to add a single input $e$. Rewrite the claim with
+$B_{A'}(f)+B_A(f+s\mathbf1)$ on the right, and choose two multiplications
+approaching those suprema. They can use the same number $m$ of variables
+by taking powers in separate groups. Name their variables respectively
+$u=(u_1,\ldots,u_m)$ and $v=(v_1,\ldots,v_m)$. At each common input the
+tensor product of the two multiplications accepts a bihomogeneous
+polynomial in $(u,v)$ of prescribed bidegree. At $e$ it accepts a
+polynomial $h(v)$ of degree $q$. Write $(U,V)$ for the total bidegree,
+including $q$.
+
+We realize this tensor product by a sum of multiplications in which $e$
+belongs instead to the $u$ group. Rename $h(v)$ to $h(u)$ and substitute
+$u-v$ for $u$ at the common inputs. Multiply, substitute $u+v$ for $u$
+on the output, and project onto bidegree $(U,V)$. The substitutions on
+the common inputs cancel, and the only term of $h(u+v)$ that survives
+the projection is $h(v)$. This identity uses no division. Expand the
+intermediate inputs into bidegrees before multiplying. If a total of $k$
+degrees from the common inputs move from $u$ to $v$, the intermediate
+$v$-degree is $V-q+k$. The final substitution can only increase this
+degree, so a surviving sector has $k\le q$. The total degree at each
+input is preserved. Thus the base cost of every sector is unchanged and
+its surcharge on $v$ is at most $sV$. Each sector factors through a
+multiplication on $u$ with all inputs and one on $v$ with inputs $A'$,
+with local pre- and postprocessing.
+
+Apply this construction to powers in $nm$ variables per group with all
+degrees multiplied by $n$. There are polynomially many bidegree sectors
+as functions of $n$, since $A$ is fixed. The price bound for an ordinary
+sum costs only $O(\log n)$ beyond the largest sector price. After division
+by $nm$ and passage to the limit, the right side is bounded by
+$B_A(f)+B_{A'}(f+s\mathbf1)$, as claimed.
+\end{proof}
+
+\subsection{From degrees to widths}
+
+Charging $\ell_i/N$ per degree makes degrees of order $N$ correspond
+to widths of order one. The factor $1/m!$ for total-degree polynomials
+in Lemma~\ref{lem:continuum-profile} accounts for the additive $D$ in
+\eqref{eq:energy-widths}.
+
+\begin{lemma}[Continuum limit of the degree energy]\label{lem:continuum-energy}
+At a placement with common-label rate $D>0$, one has
+\begin{equation}\label{eq:src6}
+ B_A(\ell/N)=D\log N+Q_A(\ell)+o(1)
+ \qquad(N\longrightarrow\infty).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Write $S_m(r)$ for polynomial multiplication with total degree
+\emph{at most} $r_i$ on each input. Its price minus degree costs, divided
+by $m$, is a lower bound on $B_A$. Indeed, $n$ copies on disjoint variable
+groups restrict from homogeneous multiplication with $nm+1$ variables
+and degrees $nr_i$. Use the last variable to homogenize and set it to one
+on the output. Hence
+$B_A(f)\ge n(H(S_m(r))-f\cdot r)/(nm+1)$, and we let $n\to\infty$.
+For $r_i=\lfloor Nm t_i\rfloor$, Lemma~\ref{lem:continuum-profile} now gives
+\[
+ \liminf_{N\to\infty}(B_A(\ell/N)-D\log N)
+ \ge P(t)-\ell\cdot t+D\bigl(\log m-m^{-1}\log(m!)\bigr).
+\]
+The last summand tends to $D$. Taking the supremum over $t$ gives the
+required lower bound.
+
+For the upper bound take integer $N$. In the supremum defining $B_A$
+we may use $Km$ variables grouped into $K$ sets of size $m$. At each
+input, record the total degree in each group by its bin
+$[(b_i-1)N,b_iN)$, $b_i\ge1$. Within a fixed bin pattern the
+multiplication restricts from the product of $S_m(Nb)$ over the groups,
+and the cost in each group is at least $\sum_i\ell_i(b_i-1)$. The price
+of the sum over patterns is bounded by the logarithm of the sum of their
+exponentiated prices at scale $D$. Summing over all bins independently
+in each group enlarges this last sum to a $K$th power. Dividing its
+logarithm by $Km$ and taking the supremum gives
+\[
+ B_A(\ell/N)\le \frac Dm\log\sum_{b\in\mathbb Z_{>0}^A}
+ \exp\left(\frac{H(S_m(Nb))-\sum_i\ell_i(b_i-1)}{D}\right).
+\]
+For fixed $m$, after removing $N^m$ from the sum, the terms are dominated
+by a constant times $(m+\sum b_i)^m\exp(-\ell\cdot b/D)$, by the
+output-dimension bound. Lemma~\ref{lem:continuum-profile} and dominated
+convergence bound the upper limit of $B_A(\ell/N)-D\log N$ by
+\[
+ D\left(\log m-\frac{\log(m!)}m\right)
+ +\frac{\sum_i\ell_i}m+
+ \frac Dm\log\sum_b\exp\left(\frac{mP(b/m)-\ell\cdot b}{D}\right).
+\]
+For $0<\epsilon<1$, use the supremum of
+$P(t)-(1-\epsilon)\ell\cdot t$ to bound the last term, with a remainder
+at most $(D/m)\log\sum_b\exp(-\epsilon\ell\cdot b/D)$.
+Let $m\to\infty$, then $\epsilon\downarrow0$, using the scaling relation
+for $Q_A$. Monotonicity in $N$ gives the same limit at real scales.
+\end{proof}
+
+\begin{lemma}[Radial contraction]\label{lem:energy-compare}
+Move each input $i$ towards the output along its geodesic, to a fraction
+$0<\lambda_i\le1$ of its original distance. Write $A'$ for the resulting
+placement and $\ell'_i=\lambda_i\ell_i$. For $s>0$ one has
+\begin{equation}\label{eq:src7}
+ Q_A(\ell)-Q_A(\ell+s\mathbf1)\ge
+ Q_{A'}(\ell')-Q_{A'}(\ell'+s\mathbf1)
+\end{equation}
+when both placements have positive common-label rate.
+\end{lemma}
+
+\begin{proof}
+Duplicating an input at its own site and cost leaves $B$ unchanged, by
+local multiplication. An additional input at the output at zero cost
+also leaves $B$ unchanged, by local multiplication on the output.
+The reverse inequalities in both statements use degree zero at the
+added input. For each fixed multidegree the price is convex as the
+added input moves on a geodesic, and the subtracted cost is affine.
+Thus an added input at radial fraction $\lambda_i$ and cost at least
+$\lambda_i f_i$ leaves $B$ unchanged, first for one addition and then
+for all of them. This applies both at $f=\ell/N$ and after increasing
+every cost by $s/N$, since $\lambda_i\ell_i+s\ge
+\lambda_i(\ell_i+s)$. Insert the moved inputs at their specified costs
+and use Lemma~\ref{lem:increasing-returns} to delete the original
+inputs. The energy drop for the resulting placement is bounded by the
+drop for the original one. Let $N\to\infty$ in \eqref{eq:src6}. The
+leading $D\log N$ cancels separately at each placement, which proves
+\eqref{eq:src7}.
+\end{proof}
+
+\section{Propagation of equality on a tripod}\label{sec:contact}
+
+Fix three infinite rays forming a metric tripod with origin $O$.
+Prices on these rays are homogeneous under simultaneous radial
+dilation. Proposition~\ref{thm:profile-rigidity} gives
+$D(a)\ge D_*(a)$ at the three tips of lengths $a_1,a_2,a_3$.
+We now prove the rigidity assertion of Proposition~\ref{prop:tripod}.
+Equality at a single triple of lengths forces equality at every
+triple. The same conclusion follows from equality approached along
+one arm as its length tends to infinity with the other two lengths
+fixed and positive.
+
+Use the reciprocal lengths
+\[
+ v_i=1/a_i,\qquad h(a)=\frac{1}{v_1+v_2+v_3},\qquad
+ \Delta(v)=D(a)-D_*(a).
+\]
+An infinitely long arm now corresponds to a coordinate face.
+The proof first compares integrals of the defect along the three
+coordinate rays out of $v$. At a zero of $\Delta$ these integrals
+agree. Radial homogeneity then forces their common value to vanish.
+
+\subsection{Comparing the three directional integrals}
+
+The profile lower bound and the spanning tree through $O$ give
+$D_*(a)\le D(a)\le\sum_i a_i$. Equivalently,
+\begin{equation}\label{eq:defectbound}
+ 0\le \Delta(v)\le\frac{1}{v_1+v_2+v_3},\qquad
+ \Delta(rv)=r^{-1}\Delta(v)\quad(r>0).
+\end{equation}
+On the positive octant $\Delta$ is locally Lipschitz and locally
+semiconvex. The latter means that adding $C|v|^2$ makes it convex
+on a given small ball for a suitable $C$. Indeed, $D$ is convex in
+the arm lengths by joint geodesic convexity. Transport of a single
+tip through distance $t$ changes $D$ by at most $t$. The change of
+variables $a_i=1/v_i$ has bounded first and second derivatives on
+interior compact sets, and $D_*$ is smooth there.
+
+As $v_1\downarrow0$, the function $D(a)-\sum_i a_i$ is
+nonincreasing by the same transport bound, and is bounded below by
+$-h(a)$. Since $h(a)$ also has a limit there, $\Delta$ extends to the open face $v_1=0$.
+The Lipschitz and semiconvexity constants in the other two variables
+are uniform when those variables range in compact subsets of
+$(0,\infty)$, including as $v_1\downarrow0$. Thus the extension is
+continuous and has the same tangential regularity. The other faces
+are treated by relabeling.
+
+For each interior $v$ and coordinate vector $e_i$, set
+\[
+ J_i(v)=\int_0^\infty
+ \left[\Delta(v+t e_i)-\mathbf 1_{\{t\le1\}}\Delta(v)\right]
+       \frac{dt}{t}.
+\]
+The subtraction makes the integral convergent at zero by local
+Lipschitz continuity. Equation~\eqref{eq:defectbound} gives
+convergence at infinity. We will prove the estimate
+\begin{equation}\label{eq:src10}
+                   |J_i(v)-J_j(v)|\le C\Delta(v).
+\end{equation}
+Here $C$ is locally uniform up to each open face. On a face the same
+estimate holds for its two tangential directions.
+
+\paragraph{An energy derivative.}
+Keep $v$ fixed and use $a_i=1/v_i$ as the locations of three input
+tips, with the output at $O$. Let $Q$ be their energy from
+Equation~\eqref{eq:energy-widths}. For a variable
+$s\in(0,\infty)^3$, put
+\[
+ G_v(s)=Q\big((a_i s_i)_i\big)+\sum_i a_i\log s_i
+                   -h(a)\log\Big(\sum_i s_i\Big).
+\]
+Moving $s$ in direction $v$ raises every cost $a_i s_i$ at the same
+unit rate. On the same tripod place tip $i$ at distance $r/s_i$
+with cost $r$ on every input. The ratio of cost to distance on arm
+$i$ is still $s_i$. For small $r$ the comparison placement lies
+inside the fixed one, and for large $r$ it lies outside. By
+Lemma~\ref{lem:energy-compare}, the energy drops at these inner and
+outer placements bound the drop at the fixed placement from below
+and above, respectively.
+
+At the comparison placement the common-label rate is
+$rD((1/s_i)_i)$. Adding $O$ to the three label sites costs nothing.
+Increasing all costs from $r$ to $r+t$ therefore lowers the energy
+by $rD((1/s_i)_i)\log(1+t/r)$, by the scaling law for $Q$.
+After division by $t$, both bounds tend to $D((1/s_i)_i)$ as
+$t\downarrow0$. Differentiating the two explicit logarithmic terms
+of $G_v$ adds $\sum_i1/s_i-1/\sum_i s_i=D_*((1/s_i)_i)$. Hence
+\begin{equation}\label{eq:src8}
+       \left.\frac{d}{dt}\right|_{t=0+}G_v(s+tv)=-\Delta(s).
+\end{equation}
+The finite convex function $Q$ is locally Lipschitz, so this identity
+may be integrated along any ray in direction $v$.
+
+\paragraph{Starting the rays near their axes.}
+Let $s_i=1$, $s_j=s_k=\varepsilon$. Recall $b_i=a_i-h(a)$ and the
+intercept $c_i$ of Section~\ref{sec:profiles}. Write
+$B_i=b_i+\Delta(v)$ and $d_i=a_j+a_k$. The limit of $G_v$ is
+\begin{equation}\label{eq:src9}
+           \lim_{\varepsilon\downarrow0}G_v(s)
+                =c_i+B_i\log\frac{B_i}{a_i}.
+\end{equation}
+To prove the upper bound, let the three input widths be $x,t_j,t_k$
+and denote their profile with output at $O$ by $P(x,t_j,t_k)$.
+The point $O$ divides the segment from $j$ to $k$ in the ratio
+$a_j:a_k$. Convexity in the output position bounds $P$ by the
+weighted average of the profiles with output at $k$ and at $j$,
+with respective weights $a_j/d_i$ and $a_k/d_i$. At either
+endpoint, the input at the output site can be multiplied in
+locally. Equation~\eqref{eq:profile-upper} and
+$\beta_{ik},\beta_{ij}\le1$ give
+\[
+ P(x,t_j,t_k)\le c_i+B_i\log x
+                +a_j\log(t_j+x)+a_k\log(t_k+x).
+\]
+In the energy formula use costs $(a_i,\varepsilon a_j,\varepsilon a_k)$.
+Changing variables to $x,t_j+x,t_k+x$ makes the effective cost of
+$x$ equal to $a_i-\varepsilon d_i>0$ for small $\varepsilon$.
+Maximizing the three terms separately and using $B_i+d_i=D(a)$
+gives
+\[
+ Q\le c_i+B_i\log\frac{B_i}{a_i-\varepsilon d_i}
+                  +d_i\log(1/\varepsilon).
+\]
+
+For a matching lower bound take $x=B_i/a_i$, $t_j=1/\varepsilon$,
+$t_k=x+t_j$. At $O$ extract a single coefficient of the product.
+Choosing complementary degrees and reversing the basis at $k$ makes
+this coefficient the pairing of the third input with the product
+of the first two. An endpoint rounding by one leaves the continuum
+profile unchanged. Hence $P(x,t_j,t_k)\ge P_k(x,t_j)$, and the
+asymptotic slope from Section~\ref{sec:profiles} gives
+\[
+       P_k(x,t_j)=c_i+B_i\log x+d_i\log(1/\varepsilon)+o(1).
+\]
+The total width cost of this choice tends to $B_i+d_i=D(a)$, which
+cancels the additive constant in the energy formula. Subtracting
+$d_i\log(1/\varepsilon)$ through the logarithmic terms of $G_v$
+gives Equation~\eqref{eq:src9}.
+
+\paragraph{Comparison by integration.}
+Start two rays near $e_i$ and $e_j$, at points of the form used in
+Equation~\eqref{eq:src9}. Integrate Equation~\eqref{eq:src8} in
+direction $v$ on both rays and subtract. Their terminal $G_v$ values
+have difference tending to zero at infinity, since
+$G_v(rs)=G_v(s)-\Delta(v)\log r$ and $G_v$ is continuous at $v$.
+Now send the starting points to $e_i$ and $e_j$. The two integrands
+are uniformly bounded near zero by Equation~\eqref{eq:defectbound}.
+At infinity their difference is $O(t^{-2})$ by homogeneity and the
+Lipschitz bound near $v$. The difference of the two axis limits in
+Equation~\eqref{eq:src9} therefore equals
+\[
+ \int_0^\infty\big[\Delta(e_i+tv)-\Delta(e_j+tv)\big]\,dt
+    =J_i(v)-J_j(v).
+\]
+For the last identity use $\Delta(e_i+tv)=t^{-1}\Delta(v+t^{-1}e_i)$
+and substitute $u=1/t$.
+
+By Equation~\eqref{eq:src2}, the quantities $c_i+b_i\log(b_i/a_i)$
+agree up to $O(\Delta(v))$. Replacing $b_i$ by $B_i$ changes each
+quantity by $O(\Delta(v))$ as well. Indeed, $b_i/a_i$ is bounded
+away from zero when the other two reciprocal lengths stay in compact
+subsets of $(0,\infty)$ and $v_i$ approaches zero; more generally,
+all three ratios stay bounded away from zero in a neighborhood of any
+open face point. Also $B_i/a_i\le1$ by Equation~\eqref{eq:defectbound}.
+The derivative of $b\mapsto b\log(b/a_i)$ is uniformly bounded
+throughout the interval in question. This proves Equation~\eqref{eq:src10}
+with the asserted uniformity. For the two tangential directions
+at a face, dominated convergence uses the tangential Lipschitz bound
+at zero and Equation~\eqref{eq:defectbound} at infinity.
+
+\subsection{The strong minimum principle}
+
+\begin{proof}[Completion of the proof of Proposition~\ref{prop:tripod}]
+Suppose $\Delta(v)=0$. Work either in the interior or on an open face,
+using just its positive coordinates, indexed $1,\ldots,k$ after
+relabeling. All $J_i(v)$ equal a common $J\ge0$ by
+Equation~\eqref{eq:src10}. A simultaneous dilation gives the exact
+change $J_i((1+\varepsilon)v)=J/(1+\varepsilon)$. To compare this
+decrease with the variation on the individual rays, perform the
+dilation one coordinate at a time. Its intermediate points are
+\[
+          v^i=v+\varepsilon\sum_{j\le i}v_j e_j
+               \qquad(0\le i\le k).
+\]
+At each intermediate point the cost of switching from $J_i$ to
+$J_{i+1}$ is bounded by $C\Delta(v^i)$. Thus
+\[
+ S_\varepsilon=\sum_{i=1}^k\big(J_i(v^i)-J_i(v^{i-1})\big)
+   =\frac{J}{1+\varepsilon}-J+
+                  O\!\left(\max_{0<i<k}\Delta(v^i)\right).
+\]
+Write $K=\limsup_{\varepsilon\downarrow0}
+\max_{0<i<k}\Delta(v^i)/\varepsilon$, finite by local Lipschitz
+continuity, and set $g_i(t)=\Delta(v+te_i)$. We claim that
+\begin{equation}\label{eq:src11}
+ -J+CK\ \ge\ \liminf_{\varepsilon\downarrow0}
+              \frac{S_\varepsilon}{\varepsilon}
+        \ \ge\ \sum_{i=1}^k v_i\int_0^\infty g_i'(t)\,\frac{dt}{t}.
+\end{equation}
+
+To justify the second inequality, write all $k$ integrals with the
+same variable $t$. For almost every $t>0$, the increment of $\Delta$
+on $[v^{i-1}+te_i,v^i+te_i]$, divided by $\varepsilon$, tends to
+$v_i g_i'(t)$. Indeed, after adding a local quadratic, the slope
+on this segment lies between the slopes of adjoining segments in
+direction $e_i$ of any fixed small length. Send $\varepsilon$ to
+zero, then shrink the adjoining segments at each point where $g_i$
+is differentiable. The unshifted increments that are subtracted for
+$t\le1$ sum to $\Delta((1+\varepsilon)v)-\Delta(v)=0$.
+
+These subtractions also control the singularity at zero. Pair each
+shifted increment with its own unshifted increment. Adding a local
+quadratic makes the shifted increment at least the unshifted one,
+because both segments have the same length and direction. Removing
+the quadratic gives a lower bound $-C\varepsilon t$ for the
+difference. For large $t$, moving the starting point by
+$\varepsilon v_i e_i$ changes the corresponding arm length by
+$O(\varepsilon t^{-2})$. Transport bounds the change in $D$, and
+the same bound follows from the formula for $D_*$. These bounds
+control the negative part uniformly after division by $\varepsilon t$.
+On a face the same estimates apply in the tangential variables.
+Fatou's lemma now proves Equation~\eqref{eq:src11}. Each limiting
+integral has finite negative part since $g_i$ is semiconvex near
+zero and takes its minimum there.
+
+The right derivatives $g_i'(0+)$ exist and are nonnegative. A
+positive derivative would, by semiconvexity, give a positive lower
+bound for $g_i'$ near zero and hence an infinite integral in
+Equation~\eqref{eq:src11}. Thus every $g_i'(0+)$ vanishes. The
+directional derivative of $\Delta$ at $v$ is sublinear by
+semiconvexity and nonnegative by minimality. Since it vanishes on
+the positive coordinate vectors, it vanishes on their positive span.
+In particular $K=0$. Integrating by parts gives
+\[
+       -J\ \ge\ \sum_{i=1}^k v_i
+                    \int_0^\infty\frac{g_i(t)}{t^2}\,dt\ \ge\ 0.
+\]
+The boundary terms vanish because $g_i(t)=o(t)$ at zero and
+Equation~\eqref{eq:defectbound} holds at infinity. As $J\ge0$,
+continuity gives $g_i(t)=0$ for every $i$ and $t\ge0$. Applying
+the same argument successively along the coordinate rays reaches
+every point above $v$ coordinatewise. Any positive triple, or any
+point of the same open face, can be dilated into this region.
+Homogeneity gives zero defect throughout the interior or the face
+in which we started.
+
+It remains to move a face zero into the interior. Suppose $v_1=0$
+and $\Delta(v)=0$. At $v^{(r)}=v+re_1$, tangential dominated
+convergence gives $J_2(v^{(r)})\to J_2(v)=0$. By the uniform
+Equation~\eqref{eq:src10} and continuity of $\Delta$,
+$J_1(v^{(r)})\to0$ as well. Although we have only tangential
+Lipschitz bounds at the face, transport shows that
+$\Delta-h=D-\sum_i a_i$ is nondecreasing in $v_1$. Since the normal
+derivative of $h$ stays bounded near this point,
+\[
+ \Delta(v^{(r)}+te_1)-\Delta(v^{(r)})\ge-Ct \qquad(0<t\le1).
+\]
+Fatou's lemma in the normal integral now yields
+$\int_0^\infty\Delta(v+te_1)\,dt/t\le0$. The continuous nonnegative
+integrand vanishes at every $t>0$, giving the interior zero required
+above. In particular a homogeneous tripod with contact in either
+regime has $D(1,1,1)=3-1/3=8/3$, the equal-arm value used in
+Section~\ref{sec:boundary}.
+\end{proof}
+
+\subsection{The three wire lengths at the maximal price}
+
+The unconditional inequality of Proposition~\ref{prop:tripod} gives a
+geometric proof of the known square upper bound and identifies the wire
+prices when equality holds. Work at scale one on three sites, so that a
+label shared by all three has rate one. Write the three wire lengths as
+\(a_i+a_j\) for \(i\ne j\). The triangle inequalities give \(a_i\ge0\).
+Over an algebraically closed field the Proposition and the
+arithmetic--harmonic mean inequality give
+\begin{equation}\label{eq:arm-perimeter}
+  1\ \ge\ \sum_i a_i-\Big(\sum_i a_i^{-1}\Big)^{-1}
+     \ \ge\ \frac89\sum_i a_i .
+\end{equation}
+The reciprocal term is zero if an arm vanishes.
+The joint values of the three wires are preserved on passing to an
+algebraic closure (Section~\ref{sec:prices-background}), so the same
+bound holds over every field. Since \(T_n\) consists of one
+\(n\)-dimensional wire on each side, every spectral point assigns it
+value \(n^{2\sum_i a_i}\le n^{9/4}\). Strassen's maximum formula for
+asymptotic rank~\cite{spectrum} gives the upper bound. Fixed-size
+recursion as in Lemma~\ref{lem:specialize} then gives \(\omega_F\le9/4\).
+
+\begin{corollary}\label{cor:extremal-price}
+Fix \(n\ge2\) and a field \(F\). At every scale-one spectral point
+maximizing the value of \(T_n\), all three wire lengths are \(3/4\).
+There exists such a point, and it assigns \(T_{a,b,c}\) the value
+\((abc)^{3/4}\) for every choice of positive integers \(a,b,c\).
+\end{corollary}
+
+\begin{proof}
+The spectral maximum is attained. Corollary~\ref{cor:tight} identifies
+its value as \(n^{9/4}\), so \(\sum_i a_i=9/8\). In
+\eqref{eq:arm-perimeter} both inequalities must be equalities. All three
+arms are positive, since a zero arm would give \(1\ge9/8\).
+Equality of the arithmetic and harmonic means gives \(a_i=3/8\) for
+each \(i\). Each wire therefore has rate \(3/4\). The rectangular tensor
+has one wire of each dimension \(a,b,c\), and their values multiply.
+\end{proof}

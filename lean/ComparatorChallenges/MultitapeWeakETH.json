@@ -1,0 +1,15 @@
+{
+  "challenge_module": "ComparatorChallenges.MultitapeWeakETH",
+  "solution_module": "OAI.Computability.MultitapeWeakETH.NearRoot",
+  "theorem_names": [
+    "OAI.Computability.MultitapeWeakETH.main_of_weakETH",
+    "OAI.Computability.MultitapeWeakETH.optimal_exponent_of_weakETH"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

@@ -1,0 +1,151 @@
+\section{A common price for different cuts}\label{sec:cuts}
+
+Write $d=|V(G)|$, $e=|E(G)|$ and $w=\log q$. The variables in the
+table at a vertex $v$ form a \emph{slot}. For a polynomial $f$ in
+these variables, let $A(f)$ be the array of coefficients of monomials
+containing exactly one variable from each slot. An index at $v$
+specifies a table entry and hence a tuple of $\deg(v)$ edge labels.
+We write this tuple as $\deg(v)$ separate indices of dimension $q$,
+in the table basis. An isolated vertex contributes a one-dimensional
+factor.
+
+For the graph polynomial $Z_{G,q}$, a coefficient is one precisely when
+the two endpoint labels agree on every edge. Thus $A(Z_{G,q})$ is a
+tensor product, with one equality wire $\sum_{i=1}^q e_i\otimes e_i$
+per edge. Across a fixed bipartition $C\mid V(G)\setminus C$ of the
+slots its matrix rank is $q^{|\partial C|}$, where $\partial C$ is the
+set of edges crossing the cut. Each crossing wire is an identity matrix
+of rank $q$, and each internal wire is a nonzero vector on one side.
+In the circuit and branching-program decompositions below, different
+summands can have low rank across different cuts. We will use a
+single tensor invariant that detects a saving on each summand and
+controls the price of their sum.
+
+\subsection*{Euclidean tensor prices}
+
+We use the following consequences of the Euclidean price theorem
+\cite[Theorem~\ext{G}{thm:main}, Section~\ext{G}{sec:spectra} and
+Lemma~\ext{G}{lem:spectral-closure}]{oaG}. We work over the algebraic
+closure $K=\overline F$ so that the same comparison applies to border
+computations.
+
+\begin{theorem}[Euclidean pricing]\label{thm:width}
+Fix a Euclidean space of any finite dimension. Assign every index of a
+finite tensor over $K$ to a site in this space, grouping all indices at
+one site into a single factor. There is one compatible system of prices
+$H(T)$ for all such placements. Adjoining an unused site leaves the
+price unchanged. The price is real for $T\ne0$, and $H(0)=-\infty$.
+\begin{enumerate}[leftmargin=*,itemsep=.3ex]
+\item Tensor products add prices. Applying one linear map to the entire
+factor at each site cannot increase the price.
+\item Sharing a common $q$-valued label among a finite nonempty set $S$
+of sites costs $\delta(S)\log q$, where
+\[
+       \delta(S)=\sqrt{2\pi}\,\mathbb E\max_{x\in S}\langle g,x\rangle
+\]
+for a standard Gaussian vector $g$. This is the Gaussian mean width
+of the convex hull, normalized to give a segment its length. In particular, $\delta(\{x,y\})$
+is the distance between $x$ and $y$.
+\item For tensors in the same format placed at the same sites $S$,
+their ordinary sum satisfies
+\begin{equation}\label{eq:ordinary}
+ H(T_1+\cdots+T_L)\le \max_{1\le i\le L} H(T_i)+\delta(S)\log L .
+\end{equation}
+\item In each fixed format and placement, the price sublevels
+$\{T:H(T)\le a\}$ are Zariski closed.
+\end{enumerate}
+\end{theorem}
+
+An arbitrary array on indices at a single site can be supplied by a
+local linear map from a scalar. To deliver an index of dimension $q$
+from that site to a site at distance $D$, contract it with one end of an
+equality wire and use the other end as the output index. The wire costs
+$Dw$. We can choose the auxiliary sites for this construction separately
+for each summand. Only the common \emph{output} sites enter the sum
+penalty in Equation~\eqref{eq:ordinary}.
+
+For any finite nonempty set $S$ in the unit ball we have
+\begin{equation}\label{eq:width-ball}
+                         \delta(S)=O\bigl(\sqrt{\log(2|S|)}\bigr).
+\end{equation}
+Indeed each $\langle g,x\rangle$ has variance at most one. A union bound
+gives $\Pr(\max_{x\in S}\langle g,x\rangle>t)\le |S|\exp(-t^2/2)$ for
+$t\ge0$, and integration of the tail gives the stated estimate.
+
+\subsection*{Fixed terminals and movable supply sites}
+
+Give each edge its own coordinate axis in $\mathbb R^e$. Place its
+two endpoint indices at the opposite unit vectors on that axis, choosing
+the signs arbitrarily. Call these $2e$ sites the \emph{terminals}.
+The target price at the terminals is
+\[
+                          H(A(Z_{G,q}))=2ew ,
+\]
+since each of its $e$ wires has length two. We could supply any tensor
+of this format by putting its whole array at the origin and sending
+each of its $2e$ indices one unit to its terminal. The graph tensor
+attains this upper bound. To prove a lower bound, we will exploit a
+summand's cut to supply it for strictly less.
+
+Let $a_v$ be the sum of the terminal vectors of slot $v$. For
+$C\subseteq V(G)$ set $a_C=\sum_{v\in C}a_v$. The two endpoints of
+each edge internal to $C$ cancel, and the edges leaving $C$ contribute
+one unit vector each on mutually orthogonal axes. Consequently
+\begin{equation}\label{eq:cut}
+                       \|a_C\|^2=|\partial C|.
+\end{equation}
+If the slots in $C$ are supplied at $z$ instead of the origin, the
+distance to a unit terminal $u$ changes by at most
+$-\langle z,u\rangle+\|z\|^2/2$, since
+$\sqrt{1-2\langle z,u\rangle+\|z\|^2}
+ \le 1-\langle z,u\rangle+\|z\|^2/2$. The change in the total
+distance to the terminals belonging to $C$ is therefore at most
+\begin{equation}\label{eq:move}
+                -\langle z,a_C\rangle+
+                    \tfrac12\|z\|^2\sum_{v\in C}\deg(v).
+\end{equation}
+Moving a short distance in the direction of $a_C$ saves wire length at
+first-order rate $\sqrt{|\partial C|}$. The following estimate
+compares that saving with the cost of sharing a rank label across the
+cut, as illustrated in Figure~\ref{fig:move}.
+\input{move}
+
+\begin{lemma}[One cut per summand]\label{lem:single}
+Let $G$ have $d$ vertices and $e$ edges, with
+$2\le d\le w^{1/3}$, $1\le e\le 2d$ and $w=\log q$.
+Fix $1\le b\le e$. Suppose $A(Z_{G,q})$ lies in the Zariski closure
+of sums of at most $2^d$ tensors with the following property. For each
+summand there is a bipartition of slots $C\mid V(G)\setminus C$ with
+$|\partial C|\ge b$ across which that summand has matrix rank at most
+$R$. Then for all sufficiently large $w$,
+\[
+                             \log R\ge \tfrac12 w\sqrt b .
+\]
+\end{lemma}
+
+\begin{proof}
+Suppose $\log R< w\sqrt b/2$, and fix one summand $T$ with its cut
+$C$. A rank factorization across $C$ writes
+$T=\sum_{i=1}^R U_i\otimes V_i$, with $U_i$ on the slots in $C$ and
+$V_i$ on the remaining slots. Put the two supply sites at
+$z=\lambda a_C/\|a_C\|$ and $0$. A single $R$-dimensional equality
+wire between them supplies the common index $i$. The local maps
+$e_i\mapsto U_i$ and $e_i\mapsto V_i$ produce the two sets of indices,
+which are then sent to their fixed terminals. The rank wire costs
+$\lambda\log R$. By Equations~\eqref{eq:cut} and~\eqref{eq:move},
+the wires to the terminals save at least $\lambda w\sqrt b-ew\lambda^2$
+against the original budget of $2ew$. Taking $\lambda=\sqrt b/(4e)$
+gives
+\[
+ H(T)\le 2ew-\lambda(w\sqrt b-\log R)+ew\lambda^2
+      \le 2ew-\frac{wb}{16e}.
+\]
+
+All the summands now have prices at the same $2e$ terminals. Adding
+at most $2^d$ of them costs at most $O(d\sqrt{\log(2d)})$ above their
+largest price by Equations~\eqref{eq:ordinary} and~\eqref{eq:width-ball}.
+This is at most $wb/(32e)$ for all sufficiently large $w$, uniformly
+in the given ranges, since $e\le2d$, $b\ge1$ and $d\le w^{1/3}$.
+Thus the sums and their Zariski closure lie in the sublevel
+$H\le2ew-wb/(32e)$. The graph tensor has price $2ew$, a contradiction.
+\end{proof}

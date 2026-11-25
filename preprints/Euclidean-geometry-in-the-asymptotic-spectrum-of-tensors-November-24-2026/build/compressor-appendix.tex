@@ -1,0 +1,106 @@
+\subsection{Packing the wire slots}\label{sec:compressor-slots}
+
+The lane coordinates let us replicate each base arc in four endpoint
+configurations. We mark each endpoint thick or thin. Thick positions
+will merge at a fixed site, whereas thin positions can move to either
+end of an assigned bundle. The assignment must move every occurrence
+of a given old position together, even when several motifs meet there.
+
+\begin{lemma}[Packing and placement of the wire slots]\label{lem:compressor-slots}
+For every power-of-two base degree $d$, set $K=2^{2d+1}d$ and $Q=3K/4$.
+There is a packing of the wire slots, using a number of lane coordinates
+depending only on $d$, with the following properties. The two layouts
+refer to the six-party motif of Figure~\ref{fig:motif-layout}.
+\begin{enumerate}
+\item Packing the thick positions produces $P/K$ new positions. Each
+thick--thick bundle contains $K/4$ wires. Every other wire is assigned as
+a $CD$ demand to the bundle of its thin $C$ endpoint, with $Q$ per bundle.
+\item In either layout the packed endpoints $A,B$ and the image $D^*=\pi(D)$
+of the other endpoint have distinct bases in each motif. Each of these three
+roles occurs exactly $dQ$ times per new position.
+\item Translation of the remaining lane preserves the assignments, placements
+and unweighted slots. Slot numbering, including the padding
+to any admissible output degree, can be determined by bounded-size lists
+per new position after a greedy scan of the base.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Color the base greedily with $2d+1$ colors. Split the lane as $(U,h,j,g)$,
+where $U$ supplies one bit per color, $h$ indexes the $d$ outgoing slots,
+$j$ is a tag in a binary vector space of order $J$, and $g$ is the remaining
+lane. We determine $J$ below. Call a position thick if its base-color bit
+is $1$, and thin otherwise. Put $K=2^{2d+1}d$, the number of pairs $(U,h)$.
+Along a base arc the endpoint colors are distinct. With $j,g$ fixed at one
+end, the two tests use distinct free bits of $U$ up to translations. They
+are independent fair tests, also independently of $h$ at either end.
+Consequently each of the four endpoint types occurs $K/4$ times.
+
+For given $x,j,g$ pack all thick positions there into a single new one, with
+base $(x,j)$ and lane $g$. There are $P'=P/K$ new positions. Bundle the
+$K/4$ thick--thick wires of each base arc for fixed $j,g$ at its source by
+concatenating them in a common order at both endpoints. The bundle runs from
+a packed position $A$ to a packed position $B$. For every wire outside these
+bundles take a thin end for $C$ and the other end for $D$. For thin--thin
+wires take their old direction $C\to D$.
+
+Give each base vertex $x$ an offset $\phi_x$. Assign each thin position
+$(x,U,h,j,g)$ to the bundle with source $(x,j+\phi_x,g)$ on the outgoing
+base arc of slot $h$. Every wire on which this position plays $C$ is assigned
+to that bundle. To count these wires, fix the base, tag, remaining lane and
+slot of its possible thin sources. The $d$ originally outgoing incidences
+contribute $d(K/(2d))=K/2$ wires. The $d$ originally incoming incidences
+from thick positions contribute $d(K/(4d))=K/4$. Thus each bundle receives
+$Q=3K/4$ wires of type $CD$.
+
+We choose the tag offsets so that $A,B,D^*$ always have distinct new bases.
+The old base components of $A,B$ differ. For $C$ at old base $x$ with tag
+$j$, and $D$ at $y$ on their old base arc $e$ in either direction, write
+\[
+          L_x=\{0\}\cup\{\tau_f^{\mathrm{tag}}: f\text{ leaves }x\}.
+\]
+The new tags of $A,B$ lie in $j+\phi_x+L_x$. A thick $D$ has tag
+$j+\tau_e^{\mathrm{tag}}$, and the possible tags of a thin $D^*$ belong to
+$j+\tau_e^{\mathrm{tag}}+\phi_y+L_y$. It suffices to impose, at each
+incidence,
+\[
+      \phi_x\notin\tau_e^{\mathrm{tag}}+L_x,
+      \qquad \phi_x+\phi_y\notin\tau_e^{\mathrm{tag}}+L_x+L_y.
+\]
+Greedy choice in base order works for any power of two
+$J>2d((d+1)+(d+1)^2)$, since at most this many values are forbidden by
+the first conditions and the already assigned neighbors in the second.
+
+\smallskip
+At every new position $d$ bundles start and $d$ bundles end, so each of
+the roles $A,B$ occurs $dQ$ times. The thick $D$ endpoints at this position
+contribute $2dK/4=dK/2$ occurrences of $D^*$, counting mixed arcs in both
+old directions. The others are destinations of thin--thin arcs. Before
+placement, for fixed base, tag and remaining lane, these contribute $dK/4$
+occurrences, equally distributed over destination slot labels $h$. In
+layout~1 the tag offset permutes the tags. In layout~2 each position receives
+through $d$ incoming base arcs, each with a uniquely determined source tag
+and remaining lane, and each carrying $K/4$ such occurrences from its
+assigned slot. In both cases the total number of $D^*$ roles is
+$dK/2+dK/4=dQ$.
+
+Packing, bundle assignment, and the two choices of image depend on the
+remaining lane only through the given arc translations. The common choice
+of layout therefore preserves this symmetry. For each surviving occurrence,
+label its parallel slots by the original $CD$ arc identifying the motif, the
+surviving type, and the subdivision index. When a common deficit remains
+after the degree calculation in Subsection~\ref{subsec:shrink}, add zero-width
+arcs to the next tag cyclically at the same old base and remaining lane.
+Number incoming and outgoing slots separately by sorting their identifiers,
+expressing all remaining lanes relative to the vertex being numbered. The
+orders transport from lane zero to every lane. Widths and term-dependent map
+entries need never enter these identifiers.
+
+Greedy coloring and tag selection each use a single scan of the indexed
+base and bounded neighbor lists. After these scans the assignments can be
+formed by listing the actual arcs by bundle, and the regularized slots by
+their endpoints. The list sizes depend only on the fixed degrees and lane
+coordinates consumed in this step. The sorted identifiers give the two
+corresponding slot numbers and their displacement, as required for the
+next level of the construction.
+\end{proof}

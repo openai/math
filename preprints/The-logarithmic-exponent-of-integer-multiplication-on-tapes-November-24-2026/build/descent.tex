@@ -1,0 +1,50 @@
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[font=\small, x=1cm, y=1cm, line width=.52pt,
+   descriptor/.style={anchor=east,align=right,font=\small},
+   arrow/.style={draw=ink,-{Stealth[length=1.6mm]}}]
+% Horizontal positions denote address fields, not their numeric widths.
+\newcommand{\slotrow}[3]{%
+  \fill[ink!8] (0,#1) rectangle (2.1,#1+.64);
+  \fill[ink!8] (7.3,#1) rectangle (8.45,#1+.64);
+  \draw[ink] (0,#1) rectangle (8.45,#1+.64);
+  \foreach \cut in {1.05,2.1,3.4,4.7,6,7.3}
+     \draw[ink] (\cut,#1)--(\cut,#1+.64);
+  \node[font=\footnotesize] at (.525,#1+.32) {#2};
+  \node[descriptor] at (-.23,#1+.32) {#3};}
+\slotrow{2.35}{\(r\)}{Parent\\\(V\) bits}
+\node[font=\footnotesize] at (1.575,2.67) {passive};
+\node[font=\footnotesize] at (7.875,2.67) {passive};
+\foreach \x/\txt in {2.75/1,4.05/2,5.35/3,6.65/4}
+  \node at (\x,2.67) {\(\txt\)};
+\draw[sea] (2.1,3.06)--(2.1,3.18)--(7.3,3.18)--(7.3,3.06);
+\node[text=sea,above,font=\footnotesize] at (4.7,3.18)
+  {\(A\) active slots of \(f\) bits each (\(A=4\) shown)};
+
+\draw[arrow] (.525,2.26)--(.525,1.71)
+  node[midway,right,font=\footnotesize,xshift=3pt]
+  {split the \(r\) leading rows onto \(W\) streams};
+\slotrow{1}{\(r/W\)}{One stream\\\(V/W\) bits}
+\foreach \x in {2.45,3.75,5.05,6.35}
+  \fill[rust!85] (\x,1.04) rectangle (\x+.12,1.60);
+\node[font=\footnotesize,text=rust,anchor=west] at (6.77,1.92)
+  {one column of four bits};
+\draw[rust,line width=.45pt] (6.77,1.86)--(6.41,1.62);
+
+\draw[arrow] (.525,.92)--(.525,.38)
+  node[midway,right,font=\footnotesize,xshift=3pt]
+  {recurse on one slot of this stream};
+\slotrow{-.32}{\(r/W\)}{One call\\\(V/W\) bits}
+\foreach \x in {2.1,4.7,6}
+   \fill[ink!8] (\x+.025,-.30) rectangle (\x+1.275,.30);
+\fill[sea!12] (3.425,-.30) rectangle (4.675,.30);
+\draw[sea,line width=.8pt] (3.4,-.32) rectangle (4.7,.32);
+\node[font=\footnotesize,text=sea] at (4.05,0) {\(f\) bits};
+\end{tikzpicture}
+\caption{One level of the Walsh recursion. The leading range counts
+rows. The orange marks pick the same offset in each slot, so a
+column change acts across slots. Each child transforms one whole slot
+on every setting of its spectator fields. Other work streams remain
+parked until the child returns.}
+\label{fig:walsh}
+\end{figure}

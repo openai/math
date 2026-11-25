@@ -1,0 +1,188 @@
+\section{Crossings and the scheduler}\label{sec:framework}
+
+Fix a linear coordinate \(x\), which we call time. We want to force many
+changes of direction on a path from one time level to another. The basic
+observation is that a point on a face of dimension at most \(J\) admits
+at most \(J\) independent two-sided directions. The recursive construction
+uses this observation twice. It first constrains a path in an outer
+polyhedron, then reads a path in an inner polyhedron from slacks of the
+outer inequalities. Only some inner coordinates can be varied independently
+through these slacks. We record which sets of coordinates suffice for the
+next crossing.
+
+\subsection{Blocking inequalities and crossings}
+
+A \emph{blocking system} \(Q\) consists of finitely many inequalities
+\begin{equation}\label{eq:blocking-row}
+             c\cdot z\geq \ell(x),\qquad c\geq0,\quad c\ne0,
+\end{equation}
+with affine right-hand sides. It contains an individual lower bound for
+each coordinate of \(z\). A convex piecewise affine right-hand side stands
+for all the inequalities given by its affine pieces. Rows are indexed,
+so that equal inequalities with different indices retain their identities.
+The \emph{support} of a row is \(\{i:c_i>0\}\), and its \emph{slack} at
+\((x,z)\) is \(c\cdot z-\ell(x)\).
+
+Write \(Q(x)\) for the slice at time \(x\). For a set \(I\) of coordinates,
+restrict the system by keeping only coordinates in \(I\) and rows supported
+on \(I\). The restricted slice is exactly the projection of \(Q(x)\) onto
+\(I\). Indeed, a feasible vector on \(I\) extends to \(Q(x)\) by taking
+every omitted coordinate equal to a sufficiently large number. Each
+discarded row has a positive coefficient on at least one such coordinate,
+and there are only finitely many rows. The same argument gives a strictly
+feasible point in every restricted slice. Its individual lower bounds
+exclude lines.
+
+A \emph{crossing} of \([a,b]\) is a continuous polygonal path in \(Q\)
+whose time coordinate starts at \(a\), ends at \(b\), and stays in
+\([a,b]\). It may reverse direction in time. A \emph{segmentation} is a
+finite partition of the path's parameter interval on each part of which
+the whole path is affine. Constant pieces are allowed. A \emph{break} is
+an interior partition point. On a subpath we count only breaks strictly
+inside its parameter interval, so that neighboring traversals cannot
+charge a common endpoint twice.
+
+\subsection{Which coordinates suffice?}
+
+Consider a coordinate \(i\) whose role in the crossing argument can also be
+fulfilled by two other coordinates \(j,k\) together. The usable sets
+are those containing \(i\) or containing both \(j\) and \(k\). More
+generally a coordinate may have several alternatives, each with further
+alternatives of its own.
+
+A \emph{signature} \(T\) is a finite rooted tree. Its height is the largest
+number of edges on a root-to-leaf path. Each edge \(\gamma\) out of the
+root is an \emph{option}, with signature \(T_\gamma\) given by the subtree
+rooted at its child. A \emph{bank} is an occurrence of a signature. A
+\emph{program} on a bank of signature \(T\) makes a finite list of
+\emph{direct requests}. For each such request \(i\) and each option
+\(\gamma\), it specifies a program on a fresh bank of signature
+\(T_\gamma\), the \emph{upgrade} of \(i\) along \(\gamma\). Lists may be
+empty. Each request has its own identity and indexes one coordinate.
+
+Call a set \(I\) of requests \emph{viable} if for every direct request
+\(i\), either \(i\in I\) or some upgrade of \(i\) is itself viable for
+\(I\). At a bank with no options all direct requests must belong to \(I\).
+An empty program is viable for every \(I\). In the example above \(i\) has a
+single upgrade, the terminal list \(j,k\). Adding coordinates preserves
+viability. We may combine programs at one bank by concatenating disjoint
+direct lists and keeping each request's upgrades. The combined program
+is viable precisely when each component program is viable.
+
+One useful program makes one direct request at the root and repeats this
+prescription in every upgrade, down to the leaves of \(T\). It has one
+request per node. A set \(I\) is viable precisely when it contains at
+least one of these requests. Thus \(J+1\) disjoint copies at the same
+bank require \(J+1\) distinct usable coordinates. If these coordinates
+occur only in individual lower bounds and all those bounds are slack,
+their \(J+1\) coordinate directions are independent two-sided motions.
+This is how the construction in Section~\ref{sec:recursion} forces an
+equality on a low-dimensional face.
+
+\begin{definition}[Admissibility]\label{def:admissible}
+Let \(J\ge0\) be an integer and let \(Q\) be a blocking system on the
+requests of a program. At a feasible point \((x,z)\), form the matrix
+\(C\) whose rows are the coordinate normals \(c\) of the tight
+inequalities. The point is \emph{admissible} if there exists a
+set \(I\) of \emph{usable} coordinates such that
+\begin{enumerate}
+\item \(I\) is viable for the program,
+\item every tight row is supported on \(I\), and
+\item \(\dim\ker(C|_I)\le J\), where \(C|_I\) retains the columns in \(I\).
+\end{enumerate}
+A crossing is admissible if each point is admissible, with \(I\)
+allowed to vary from point to point.
+\end{definition}
+
+At fixed \(x\) a direction is feasible for small moves in both signs
+precisely when it annihilates every tight coordinate normal. The
+two-sided directions therefore form the translation space of the
+smallest face of \(Q(x)\) containing \(z\). A point of a slice face of
+dimension at most \(J\) meets Definition~\ref{def:admissible} with \(I\)
+equal to the full coordinate set. For the inner path we can instead use
+a smaller viable set. All tight rows are still tested in the full system.
+The nullity bound then counts the two-sided directions supported on \(I\).
+
+To count the cost of substituting slacks, also consider the forest whose
+vertices are \emph{requests}. The children of a request are all the
+direct requests in all of its upgrades. The \emph{span} of a set of
+requests is the cardinality of its union with all its ancestors in this
+forest. The span of a row is that of its support. When several supports
+have common ancestors, their union counts those ancestors only once.
+
+\subsection{Forcing equality at selected times}
+
+The \emph{scheduler} is a blocking system for a prescribed list of
+time intervals. Its input includes a program \(\pi\), called the
+\emph{client}. For each index \(P\in\{1,\ldots,B\}\), called a
+\emph{bucket}, the scheduler supplies a group of distinguished
+\emph{red rows} for each client request \(i\). A tight row in the group
+\((P,i)\) certifies that \(i\) is usable for bucket \(P\).
+
+Each interval has two endpoints, its \emph{anchors}, and one interior
+\emph{probe} per bucket. At either anchor, only a few buckets can have any
+nearly tight red row. If the number of buckets exceeds twice this
+per-anchor bound, then for any two feasible points at the anchors there
+is a bucket with every red row slack at both points. Near its probe, the
+tight red rows at a vertex certify a viable set of client requests. This
+probe conclusion survives restriction to a viable set of scheduler
+coordinates and small perturbations of the right-hand sides.
+
+\begin{theorem}[Scheduler]\label{thm:scheduler}
+For every integer $r\geq100$ there are arbitrarily large integers $L$
+with an associated label set of size $V$ satisfying $10V\leq L^{3/r}$.
+Fix such parameters, take an integer $h\geq1$, and put $N=L^h$. For each signature
+$T$ of height $H$ and maximum outdegree $G$ there is a signature $T^+$ of
+height at most $h+2H$ and maximum outdegree at most $10V(G+1)$.
+
+Let $\pi$ be any client program on $T^+$ with $m\geq1$ requests in total,
+and let $B\geq1$ be an integer. Prescribe $N$ pairwise disjoint closed intervals
+(\emph{episodes}) in increasing order. In each interval designate its two
+endpoints as \emph{anchors} and choose $B$ interior times
+(\emph{probes}), one for each bucket in order. There is a blocking system
+on a program on $T$ with the following properties.
+\begin{enumerate}
+\item The red rows are partitioned into groups indexed by $(P,i)$, where
+$P$ is a bucket and $i$ a client request. Each group contains between one
+and $2V$ rows. Deleting all red rows leaves an individual lower bound on
+every scheduler coordinate.
+\item Each probe for $P$ lies in the interior of a closed \emph{probe band}.
+The bands are pairwise disjoint and lie inside their respective episodes.
+Fix any time in the band and restrict the scheduler to any
+coordinate set $I$. The coordinate normals tight at any feasible point of
+the restricted slice are independent on $I$. If $I$ is viable for the
+scheduler, then at every vertex of that slice the set
+\[
+   \{i:\text{a retained red row in group }(P,i)\text{ is tight}\}
+\]
+is viable for $\pi$. The bands can be chosen so that both assertions hold
+after arbitrary changes of the row right-hand sides in the slice by less
+than a common positive tolerance.
+\item At each anchor there is a tolerance $\xi>0$ such that whenever
+every scheduler row has slack at least $-\xi$, at most $2Vm$ buckets
+contain a red row of slack at most $\xi$. Here the slack of a row
+in~\eqref{eq:blocking-row} is $c\cdot z-\ell(x)$.
+\item There are at most $10VBm$ scheduler coordinates and
+\[
+               O_{r,L,V}\!\left(NBm\,[1+(Bm)^2]\right)
+\]
+rows. Each row has span at most $C(h+H)+O_{r,L,V}(1)$ for an absolute
+constant $C$.
+\item Fix a bucket and any set of client requests of span $s$. Choose one
+red row in the designated bucket for each request in the set. The union
+of their supports has span at most $5s$ in the scheduler program.
+\end{enumerate}
+The signature $T^+$ is independent of the client program, the number of
+buckets, and the prescribed times.
+\end{theorem}
+
+The two slice assertions in Part~2 have different roles. At a point on a
+positive-dimensional face in the probe band, we can complete its tight
+equalities to those of a vertex in an appropriate restricted slice. The
+vertex supplies viable client requests. Independence counts the additional
+equalities needed for this completion. At the anchors the guarantee comes
+from Part~3 and applies even at a slightly infeasible point of the full
+system. Part~5 controls the number of rows generated when a minimum of
+red slacks is substituted for each coordinate of an inner inequality.
+Sections~\ref{sec:layers}--\ref{sec:compiler} construct the scheduler
+and prove Theorem~\ref{thm:scheduler}.

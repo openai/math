@@ -1,0 +1,105 @@
+import OAI.ThreeFlat.RAM.OrdinalOpLoop
+import OAI.ThreeFlat.RAM.PhysicalExactRun
+
+namespace OAI
+/-! # An ordinal loop with its length in a runtime memory cell -/
+
+namespace Hierarchy.ProbeMaskLoop
+
+open Computability.VPVNP.BurstRAM PrivateRAM Computability.VPVNP.PrimedStackRAM
+open ThreeFlat.RAM ContinuationLink
+open scoped Fin.CommRing
+
+variable {w r k P R K : ℕ}
+
+private def drv {n : ℕ} (pc : Fin (4+n) ↪ Fin P) (i : Fin 4) := pc (i.castAdd n)
+
+private def loc {n : ℕ} (pc : Fin (4+n) ↪ Fin P) : Fin (n+1) → Fin P :=
+  Fin.lastCases (drv pc 3) (fun i => pc (Fin.natAdd 4 i))
+
+def block (w : ℕ) (xs : List (Op r k)) (cursor bound : Fin r) (limit : Fin k) :
+    Block w (4+xs.length) r k where
+  first := (0 : Fin 4).castAdd xs.length
+  emit pc reg pub exit := Fin.addCases
+    ![.constant (reg cursor) 0 (drv pc 1), .publicWord (reg bound) (pub limit) (drv pc 2),
+      .readExternal (reg bound) (reg bound) (drv pc 3),
+      .jumpLt (reg cursor) (reg bound) (loc pc 0) exit]
+    (fun i => ((OrdinalOpLoop.relocate reg pub (xs.get i)).emit (loc pc i.succ) exit).resize w)
+
+private theorem contains (M : Machine w P R K) (bad : Fin P) (xs : List (Op r k))
+    (ρ : Fin r ↪ Fin R) (φ : Fin k → Fin K) (positions : Fin (xs.length+1) → Fin P)
+    (rom : ∀ i : Fin xs.length, M.code (positions i.castSucc) =
+      ((OrdinalOpLoop.relocate ρ φ (xs.get i)).emit (positions i.succ) bad).resize w) :
+    Contains M bad (positions 0) (xs.map (OrdinalOpLoop.relocate ρ φ)) (positions (Fin.last xs.length)) := by
+  induction xs with
+  | nil => exact .nil _
+  | cons o xs ih =>
+    apply Contains.cons (next := positions (⟨0, by simp⟩ : Fin (o :: xs).length).succ) (rom ⟨0,by simp⟩)
+    exact ih (fun i => positions i.succ) (fun i => rom i.succ)
+
+/-- The loop starts from arbitrary scratch registers. Each proved row trace
+increases the ordinal once and preserves the bound, and may read the preceding rows' writes. -/
+theorem advance_block (xs : List (Op r k)) (cursor bound : Fin r) (ne : cursor ≠ bound)
+    (limit : Fin k) (M : Machine w P R K) (pc : Fin (4+xs.length) ↪ Fin P)
+    (reg : Fin r ↪ Fin R) (pub : Fin k → Fin K) (exit : Fin P)
+    (installed : (block w xs cursor bound limit).Installed M pc reg pub exit)
+    (n : ℕ) (fit : n < 2^w) (mem : ℕ → Memory w)
+    (count : mem 0 (M.publicData (pub limit)).val = (n : Word w))
+    (row : ∀ i < n, ∀ (state : Word w) (regs : Regs w R),
+      regs (reg cursor) = (i : Word w) → regs (reg bound) = (n : Word w) →
+      ∃ events out, trace M.publicData state (xs.map (OrdinalOpLoop.relocate reg pub)) regs (mem i) =
+        some (events,out,mem (i+1)) ∧ out (reg cursor) = ((i+1 : ℕ) : Word w) ∧
+        out (reg bound) = (n : Word w))
+    (c : Config w P R) (entry : c.pc = pc (block w xs cursor bound limit).first) :
+    ∃ out, advance M.program (4+n*(1+xs.length)) c (mem 0) = some (out,mem n) ∧ out.pc = exit := by
+  have d₀ := installed ((0 : Fin 4).castAdd xs.length)
+  have d₁ := installed ((1 : Fin 4).castAdd xs.length)
+  have dRead := installed ((2 : Fin 4).castAdd xs.length)
+  have d₂ := installed ((3 : Fin 4).castAdd xs.length)
+  change M.code (drv pc 0) = .constant (reg cursor) 0 (drv pc 1) at d₀
+  change M.code (drv pc 1) = .publicWord (reg bound) (pub limit) (drv pc 2) at d₁
+  change M.code (drv pc 2) = .readExternal (reg bound) (reg bound) (drv pc 3) at dRead
+  change M.code (drv pc 3) = .jumpLt (reg cursor) (reg bound) (loc pc 0) exit at d₂
+  have body := contains M exit xs reg pub (loc pc) (fun i => by
+    simpa only [block, Fin.addCases_right, loc, Fin.lastCases_castSucc] using
+      installed (Fin.natAdd 4 i))
+  rw [show loc pc (Fin.last xs.length) = drv pc 3 from Fin.lastCases_last] at body
+  have run (left i : ℕ) (sum : i+left = n) (cfg : Config w P R)
+      (atGuard : cfg.pc = drv pc 3) (ind : cfg.reg (reg cursor) = (i : Word w))
+      (end_ : cfg.reg (reg bound) = (n : Word w)) :
+      ∃ out, advance M.program (1+left*(1+xs.length)) cfg (mem i) = some (out,mem n) ∧ out.pc = exit := by
+    induction left generalizing i cfg with
+    | zero =>
+      have eq : i = n := by omega
+      have stop : ¬ cfg.reg (reg cursor) < cfg.reg (reg bound) := by simp [ind,end_,eq]
+      refine ⟨{cfg with pc := exit},?_,rfl⟩
+      simp [advance,Machine.program,atGuard,d₂,Instr.run,stop,eq]
+    | succ left ih =>
+      have hi : i < n := by omega
+      have live : cfg.reg (reg cursor) < cfg.reg (reg bound) := by
+        rw [ind,end_,Fin.lt_def,Fin.val_cast_of_lt (hi.trans fit),Fin.val_cast_of_lt fit]
+        exact hi
+      let start : Config w P R := {cfg with pc := loc pc 0}
+      have enter : advance M.program 1 cfg (mem i) = some (start,mem i) := by
+        simp [advance,Machine.program,atGuard,d₂,Instr.run,live,start]
+      obtain ⟨es,rs,act,cur,bd⟩ := row i hi cfg.persistent cfg.reg ind end_
+      have step := HistoryBucketEmitter.advance_trace body cfg.persistent cfg.reg rs cfg.privateMem
+        (mem i) (mem (i+1)) es act
+      rw [List.length_map] at step
+      obtain ⟨out,tail,hpc⟩ := ih (i+1) (by omega) ⟨drv pc 3,cfg.persistent,rs,cfg.privateMem⟩ rfl cur bd
+      refine ⟨out,?_,hpc⟩
+      rw [show 1+(left+1)*(1+xs.length) = (1+xs.length)+(1+left*(1+xs.length)) by rw [Nat.succ_mul]; omega]
+      exact advance_trans (advance_trans enter step) tail
+  let init := ((c.put (drv pc 1) (reg cursor) 0).put (drv pc 2) (reg bound) (M.publicData (pub limit))).put (drv pc 3) (reg bound) (n : Word w)
+  change c.pc = drv pc 0 at entry
+  have boot : advance M.program 3 c (mem 0) = some (init, mem 0) := by
+    simp [advance,Machine.program,entry,d₀,d₁,dRead,Instr.run,init,Config.put,count]
+  obtain ⟨out,act,fin⟩ := run n 0 (by simp) init rfl
+    (by simp [init,Config.put,Function.update_of_ne (reg.injective.ne ne)]) (by simp [init,Config.put])
+  refine ⟨out,?_,fin⟩
+  rw [show 4+n*(1+xs.length) = 3+(1+n*(1+xs.length)) by omega]
+  exact advance_trans boot act
+
+end Hierarchy.ProbeMaskLoop
+
+end OAI

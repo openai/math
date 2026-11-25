@@ -1,0 +1,413 @@
+\section{The spectral price of a character table}\label{geo:section}
+
+The lower bound needs a test that sees rank and sparsity at the same
+time. To build it, give a matrix two copies of its row index and two
+copies of its column index. For a nonzero $N$-by-$N$ matrix $M$ over
+the algebraic closure $k$ of the coefficient field, this is the tensor
+of the diagonal operator
+\[
+    C_M(e_x\otimes e_y)=M_{xy}\,e_x\otimes e_y .
+\]
+Put the input legs at $A,B$ and the output legs at $A',B'$. Bringing
+$A$ to $A'$ and $B$ to $B'$ exposes $M$ across the two remaining sites.
+Bringing $A$ to $B$ and $A'$ to $B'$ exposes a diagonal matrix with the
+entries of $M$ on its diagonal. The two resulting ranks are
+$\operatorname{rank}M$ and $|\operatorname{supp}M|$.
+Between these placements, the planar price from the companion paper
+\cite{oaG} gives a continuous test of the same four-legged tensor.
+A character table attains the largest possible price at every rectangle
+(Theorem~\ref{geo:saturation}).
+
+\subsection{Prices of placed tensors}
+
+A price gives a lower bound on the cost of supplying a tensor by
+wires between sites, allowing linear operations at each site. A
+\emph{restriction} is one such operation applied at every site, after
+grouping all indices there. On a fixed set of sites, tensor products
+group the corresponding factors and direct sums separate the summands
+at every site. In Strassen's asymptotic spectrum a \emph{spectral
+point} is a restriction-monotone semiring homomorphism from these
+tensors to $\mathbb R_{\ge0}$ that preserves zero and one
+\cite{StrassenSpectrum}. We use logarithms to base two.
+
+\begin{theorem}[Spectral plane and copying]\label{geo:spectrum}
+Over an algebraically closed field $k$ of any characteristic there is an
+assignment of a real price $H(T;\mathbf x)$ to each nonzero tensor $T$
+with legs at any finite list of positions $\mathbf x$ in the Euclidean
+plane. This assignment has the following properties.
+\begin{enumerate}
+\item A tensor at one site costs zero. For a finite set $S$ of positive
+diameter we have $H(T;\mathbf x)=\delta(S)\log\Phi_S(T)$, where $\Phi_S$ is a
+spectral point and $\delta(S)$ is half the perimeter of the convex hull
+of $S$. For a segment its perimeter is twice its length. The prices
+$H$ agree upon insertion of trivial legs.
+\item A common label of $q$ values on all sites of a nonempty $S$, represented by
+the diagonal tensor $\sum_{a=1}^q\bigotimes_{x\in S}e_a$, costs
+$\delta(S)\log q$. In particular a wire of dimension $q$ between $X,Y$
+costs $|X-Y|\log q$. Contracting tensor indices placed at a common
+site is a local linear map.
+\item The price of a fixed tensor is jointly convex and positively
+homogeneous in its positions and invariant under simultaneous
+translation. At a fixed placement, its sublevel sets, with the zero
+tensor adjoined, are Zariski closed in every finite tensor format.
+\item Suppose a basis label of width $q$ has the same value on legs at
+$X$ and $Y$ throughout the support of $T$. An additional copy of that
+label at $Z$ increases the price by at most
+\begin{equation}\label{geo:copy}
+ \tfrac12\bigl(|X-Z|+|Y-Z|-|X-Y|\bigr)\log q.
+\end{equation}
+\end{enumerate}
+\end{theorem}
+
+For the construction and the copying inequality, see \cite[Theorem~\ext{G}{thm:main}, Section~\ext{G}{sec:spectra} and Propositions~\ext{G}{prop:joint-convexity} and~\ext{G}{lem:submod}]{oaG}. The closedness of spectral sublevels is also proved in \cite{SpectralSublevels}. 
+If several pairs of matching labels join
+segments through $O$, we may copy all these labels to $O$ at zero
+cost. A linear functional there multiplies the coefficients by any
+prescribed function of the labels. When the multiplier is nonzero on
+the support, the reciprocal gives price equality.
+
+We write $P_M(A,B,A',B')=H(C_M;A,B,A',B')$ for $M\ne0$. To move
+a leg, introduce a wire of the same dimension and contract one end
+against the leg. The wire price bounds the cost of the move.
+For a tensor $T$ put $h_T(\mathbf x)=H(T;\mathbf x)$.
+Joint convexity and homogeneity give subadditivity in the positions.
+For sums of tensors at a single fixed placement, the appropriate
+subadditivity is instead
+\begin{equation}\label{geo:sum}
+   \Phi_S\Bigl(\sum_j T_j\Bigr)\le\sum_j\Phi_S(T_j).
+\end{equation}
+Indeed an ordinary sum is a restriction of the direct sum.
+Multiplicativity of the spectral point makes the price of a grouped product the sum of the prices of its factors.
+
+\subsection{The rectangle test}
+
+Put the row label $x$ on the left side of a rectangle of height $L$ and
+width $W$ and the column label $y$ on the right. The top corners
+are $A=(-W/2,L/2)$ and $B=(W/2,L/2)$, with $A',B'$ directly below.
+Write $P_M(L,W)$ for the price of this placement, $m=\log N$ and
+$D=\sqrt{L^2+W^2}$ for its diagonal length.
+
+Between two sites, row and column operations turn a tensor of flattening
+rank $r$ into a wire of dimension $r$. Collapsing a side of the
+rectangle therefore gives the rank and support readings
+\begin{equation}\label{geo:endpoints}
+   P_M(0,W)=W\log\operatorname{rank}M,\qquad
+   P_M(L,0)=L\log|\operatorname{supp}M|.
+\end{equation}
+At the full rectangle the two different labels may both be copied
+to its center $O$, as in Figure~\ref{geo:rectangle-figure}.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[font=\small,line cap=round,line join=round]
+ \begin{scope}[xshift=-4.2cm]
+  \node at (0,1.35) {$L=0$};
+  \draw[thick,ink] (-.94,0)--(.94,0);
+  \fill[sea] (-.94,0) circle (2pt);
+  \fill[rust] (.94,0) circle (2pt);
+  \node[above] at (-.94,0) {$x$};
+  \node[above] at (.94,0) {$y$};
+  \node at (0,-.75) {$M$};
+ \end{scope}
+ \begin{scope}
+  \node at (0,1.35) {$L,W>0$};
+  \fill[sea!8] (-1.35,.72)--(-1.35,-.72)--(0,0)--cycle;
+  \fill[rust!9] (1.35,.72)--(1.35,-.72)--(0,0)--cycle;
+  \draw[ink!50] (-1.35,.72)--(1.35,.72) (-1.35,-.72)--(1.35,-.72);
+  \draw[thick,sea] (-1.35,.72)--(-1.35,-.72)--(0,0)--cycle;
+  \draw[thick,rust] (1.35,.72)--(1.35,-.72)--(0,0)--cycle;
+  \node[above left,inner sep=2pt] at (-1.35,.72) {$A$};
+  \node[below left,inner sep=2pt] at (-1.35,-.72) {$A'$};
+  \node[above right,inner sep=2pt] at (1.35,.72) {$B$};
+  \node[below right,inner sep=2pt] at (1.35,-.72) {$B'$};
+  \node at (-.93,0) {$x$};
+  \node at (.93,0) {$y$};
+  \fill[ink] (0,0) circle (1.8pt);
+  \node[below,inner sep=2.5pt] at (0,0) {$O$};
+ \end{scope}
+ \begin{scope}[xshift=4.2cm]
+  \node at (0,1.35) {$W=0$};
+  \draw[thick,ink] (0,-.72)--(0,.72);
+  \fill[ink] (0,.72) circle (2pt) (0,-.72) circle (2pt);
+  \node[right] at (0,.72) {$(x,y)$};
+  \node[right] at (0,-.72) {$(x,y)$};
+ \end{scope}
+\end{tikzpicture}
+\caption{At height zero the two-site matrix is $M$ in its row and
+column labels. At width zero it is diagonal in the pair $(x,y)$.
+In the middle, a common row label and a common column label supply the
+two shaded triangles. Each triangle has semiperimeter $(L+D)/2$, and
+a functional at $O$ multiplies their coefficient by $M_{xy}$.}
+\label{geo:rectangle-figure}
+\end{figure}
+
+Sharing $x$ among $A,A',O$ and $y$ among $B,B',O$ costs the sum of
+the two triangle prices. The local functional
+$e_x\otimes e_y\mapsto M_{xy}$ at $O$ supplies the entry for free.
+Consequently
+\begin{equation}\label{geo:upper}
+          P_M(L,W)\le (L+D)m
+\end{equation}
+even when some of the sites coincide.
+
+\begin{theorem}[Price on a rectangle]\label{geo:saturation}
+Let $N\ge1$ and $L,W\ge0$. Every nonzero $N$-by-$N$ matrix over $k$
+has rectangle price at most $(L+\sqrt{L^2+W^2})\log N$. For the full
+character table $F_G$ of any finite abelian group of order $N$
+invertible in $k$,
+\[
+       P_{F_G}(L,W)=(L+\sqrt{L^2+W^2})\log N .
+\]
+More generally the supremum of the rectangle prices in any family
+satisfying Proposition~\ref{geo:first-phase} equals this upper bound.
+\end{theorem}
+
+A permutation matrix, by comparison, uses one common label of size $N$
+on the four corners. After relabeling the legs its tensor is precisely
+that diagonal, of price $(L+W)m$. At unit width the excess for the
+character table is
+\[
+ P_{F_G}(L,1)-(L+1)m
+       = \frac{L^2}{1+\sqrt{1+L^2}}\,m .
+\]
+This is a constant-order gap when $L$ is of order $1/\sqrt m$.
+Section~\ref{bch:proof:section} uses it to distinguish the Fourier
+input and output lists from sparse lists. The proof of
+Theorem~\ref{geo:saturation} recovers the price at all aspect ratios
+from an algebraic operation implemented by two character tables.
+
+\subsection{Why two character tables force the full price}
+
+A \emph{weighted swap} sends $e_x\otimes e_y$ to
+$w_{xy}e_y\otimes e_x$, with all $w_{xy}\ne0$. Place its four legs
+at $(p,r,-r,-p)$ for any unit vectors $p,r$. An ordinary swap is
+the product of two wires on diameters, one carrying $x$ from $p$ to
+$-p$ and the other carrying $y$ from $r$ to $-r$. We can copy both
+labels to their intersection at zero extra cost and multiply there by
+$w_{xy}$ or by $w_{xy}^{-1}$. Hence every weighted swap has the same
+price $4m$ at this placement.
+
+Call $C_M$ a \emph{phase} with matrix $M$. A two-phase construction
+applies $C_M$ and then $C_D$ to the same two registers, allowing
+separate maps $U\otimes V$ before, between and after them.
+
+\begin{lemma}[A swap from two character tables]\label{geo:swap}
+Let $G$ be a finite abelian group of order $N$ invertible in $k$,
+with all $N$ characters defined over $k$. A two-phase construction
+with matrix $F_G$ at both phases realizes a weighted swap.
+\end{lemma}
+
+\begin{proof}
+Choose a symmetric nondegenerate bicharacter on $G$, taking the
+standard pairing on each cyclic factor, to identify the row and
+column indices of $F_G$. Permutations of either index act separately
+on its two copies. In a character basis every translation
+$S_x e_y=e_{y+x}$ is diagonal, with eigenvalues given by the
+characters at $x$ up to inversion. Thus $C_{F_G}$, conjugated on the
+target register and with the character labels ordered appropriately,
+implements the controlled addition $(x,y)\mapsto(x,y+x)$. By symmetry
+of the bicharacter the second phase can use the other register as its
+control. Negating that control in the phase gives the subtraction
+$(u,v)\mapsto(u-v,v)$. After a negation of the first output we have
+\[
+       (x,y)\ \longmapsto\ (x,y+x)\
+         \longmapsto\ (-y,x+y)\ \longmapsto\ (y,x+y).
+\]
+The last pair differs from a swap by the translation $S_y$ on its
+second register. In operator form the composite is $UP$, where $P$
+swaps the registers and $U(e_y\otimes z)=e_y\otimes S_yz$. Choose a
+character basis matrix $Q$ that diagonalizes all translations
+simultaneously. Moving an input basis change through $P$ gives
+\[
+ (I\otimes Q^{-1})UP(Q\otimes I)
+       =\bigl[(I\otimes Q^{-1})U(I\otimes Q)\bigr]P .
+\]
+The bracketed operator is diagonal and invertible. The two extra maps
+on the left act separately on the registers, as required.
+\end{proof}
+
+On the diameters a swap uses the entire price $4m$ available for
+transporting the four legs from the origin. This equality constrains
+how much of the price the first phase must already carry. The next
+statement also applies to two-phase constructions with a weighted swap
+in their border.
+
+\begin{proposition}[Price forced by a swap]\label{geo:first-phase}
+Let $\mathcal A$ be a family of nonzero $N$-by-$N$ matrices over $k$,
+with $N\ge2$ and $m=\log N$. Suppose a fixed weighted swap belongs
+to the Zariski closure of the two-phase constructions whose first
+matrix lies in $\mathcal A$ and whose second matrix is arbitrary.
+At any positions $A,B,A',B'$ in the plane,
+\begin{equation}\label{geo:four-legs}
+ \sup_{M\in\mathcal A}P_M(A,B,A',B')
+ \ \ge\ \frac m2
+  \bigl(|A-A'|+|B-B'|+|A-B'|+|B-A'|\bigr).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+A tuple of vectors $g_i$ is a \emph{force} on a nonzero tensor $T$ if it
+gives a linear lower bound on the price at every placement, namely
+$\sum_i g_i\cdot x_i\le h_T(\mathbf x)$. Since $h_T$ is sublinear
+and continuous, it is the support function of its convex set of
+forces. Moving leg $i$ bounds the price change by its displacement
+times the logarithm of its dimension. Thus $|g_i|$ is at most this
+logarithm and the force set is compact. Translation invariance gives
+$\sum_i g_i=0$.
+
+Two facts about forces describe the constraints at intermediate sites.
+First, a force on the output of a contraction lifts to forces on
+its constituents, cancelling in pairs along the contracted wires.
+Indeed, give the two ends of each wire the same arbitrary position.
+The sum of the constituent prices bounds the output price and is
+the support function of the image of the product of their force sets
+under addition at the shared sites. The output force, extended by
+zero at each internal wire, belongs to this compact convex image by
+separation.
+
+Second, if a three-legged tensor has tensor rank at most $q$, the
+successive partial sums of any of its forces lie in a disk of diameter
+$\log q$. Such a tensor is a restriction of a common $q$-valued
+label, so its price is bounded by half the triangle perimeter times
+$\log q$. For any cyclic ordering of its three positions $x_i$, this
+upper bound is the support function of the triples
+$(u_i-u_{i-1})_{i\in\mathbb Z/3}$ with $|u_i|\le\tfrac12\log q$.
+Indeed, maximize each $u_i\cdot(x_i-x_{i+1})$ separately. Every
+force triple has this form by separation, and its partial sums are
+translates of the points $u_i$. When two legs of a tensor are grouped
+at one site, the sum of their forces gives a force on the grouped leg
+by the defining inequality.
+
+Fix unit vectors $p,r$ and place the external legs at $(p,r,-r,-p)$.
+There are two-phase constructions with prices arbitrarily close to $4m$
+at this placement. Otherwise a closed price sublevel below $4m$
+would contain the weighted swap. Supplying all four legs from the
+origin gives the matching upper bound $4m$ on every construction.
+Take a sequence whose prices tend to $4m$ and divide all forces by
+$m$. Pick a maximizing boundary force for each construction. Its
+four components are in the unit disk and their inner products with
+$p,r,-r,-p$ sum to a quantity tending to four. The components
+therefore tend to $p,r,-r,-p$, respectively.
+
+Lift these forces through the contraction. The separate maps on
+the registers may be absorbed on the legs of the phases. By
+restriction monotonicity, a force on a phase with these maps applied
+is also a force on the original phase. Along a subsequence the two
+bounded internal forces have limits. With the legs in input-output
+order, the limiting tuples on the first and second phases are
+\[
+       (p,r,-a,-b),\qquad (a,b,-r,-p),\qquad a+b=p+r .
+\]
+The last identity is the zero-sum property on the first phase.
+To locate $a,b$, group the two column legs of the first phase.
+The remaining three-legged tensor has rank at most $N$. Its term
+for row $x$ has the single vector $\sum_y M_{xy}e_y^*\otimes e_y$
+at the grouped site and one $x$-vector at each other site.
+Use the cyclic order $A,A',(B,B')$ in the disk bound. Passing to the
+limit puts $0,p,p-a$ in a disk of diameter one. Since $|p|=1$ its
+center must be $p/2$, so $a$ is within $1/2$ of $p/2$.
+
+In the second phase group the two row legs and use the order
+$B',B,(A,A')$. Now $0,-p,b-p$ lie in a disk with center $-p/2$
+and radius $1/2$, placing $b$ in the same disk as $a$. Their midpoint
+$(p+r)/2$ is on its boundary because $|r|=1$. Strict convexity forces
+$a=b=(p+r)/2$ (Figure~\ref{geo:force-figure}).
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[font=\small,line cap=round,line join=round]
+ \begin{scope}[xshift=-2.2cm]
+  \node[draw=sea,fill=sea!6,minimum width=2.3cm,minimum height=5mm] (M) at (0,.8) {$C_M$};
+  \node[draw=rust,fill=rust!6,minimum width=2.3cm,minimum height=5mm] (D) at (0,-.8) {$C_D$};
+  \draw[ink] (-.62,1.33)--(-.62,1.05) (.62,1.33)--(.62,1.05);
+  \node[above] at (-.62,1.29) {$p$};
+  \node[above] at (.62,1.29) {$r$};
+  \draw[thick,ink] (-.62,.55)--(-.62,-.55) (.62,.55)--(.62,-.55);
+  \node[left] at (-.62,.28) {$-a$};
+  \node[right] at (.62,.28) {$-b$};
+  \node[left] at (-.62,-.28) {$a$};
+  \node[right] at (.62,-.28) {$b$};
+  \draw[ink] (-.62,-1.05)--(-.62,-1.33) (.62,-1.05)--(.62,-1.33);
+  \node[below] at (-.62,-1.29) {$-r$};
+  \node[below] at (.62,-1.29) {$-p$};
+ \end{scope}
+ \begin{scope}[xshift=1.0cm]
+  \fill[sea!7] (1,0) circle (1cm);
+  \draw[thick,sea] (1,0) circle (1cm);
+  \draw[densely dashed,ink!65] (0,0)--(2,0);
+  \draw[-{Stealth[length=1.5mm]},thick,ink] (1,0)--(1.5,.866);
+  \node[left] at (1.25,.50) {$r/2$};
+  \fill[ink] (0,0) circle (1.6pt) (1,0) circle (1.6pt) (2,0) circle (1.6pt);
+  \node[left] at (0,0) {$0$};
+  \node[below] at (1,0) {$p/2$};
+  \node[right] at (2,0) {$p$};
+  \draw[rust] (.95,1.184)--(2.05,.548);
+  \fill[rust] (1.5,.866) circle (2pt);
+  \node[above right,inner sep=2.5pt] at (1.48,.92) {$\displaystyle\frac{a+b}{2}$};
+ \end{scope}
+\end{tikzpicture}
+\caption{A boundary force on the two-phase contraction lifts with opposite
+signs on each internal wire (left). The three-leg rank bounds put both
+internal vectors $a,b$ in the disk with diameter $[0,p]$ (right).
+Their midpoint is $p/2+r/2$ on the supporting tangent, so both vectors
+coincide with it.}
+\label{geo:force-figure}
+\end{figure}
+
+It remains to turn this constraint on the intermediate legs into
+distances at an arbitrary placement. Let $M_j\in\mathcal A$ be the
+first matrices on the chosen subsequence. Move the input copies of $x,y$
+out to $Rp,Rr$ while leaving the output copies at $A',B'$. For each
+fixed $R>0$ the limiting first-phase forces give
+\[
+ \liminf_{j\to\infty}\frac{P_{M_j}(Rp,Rr,A',B')}{m}
+       \ \ge\ 2R-\tfrac12(p+r)\cdot(A'+B').
+\]
+We can implement the move by copying each matched pair to the new
+input site and then erasing its old input copy with an all-ones
+covector. By \eqref{geo:copy}, the increase in price divided by $m$
+is at most
+\[
+ 2R-\tfrac12\bigl(p\cdot(A+A')+r\cdot(B+B')+
+                         |A-A'|+|B-B'|\bigr)+o(1),
+\]
+using $|Rp-X|=R-p\cdot X+o(1)$ as $R\to\infty$. Subtracting the
+cost of the move and letting $R\to\infty$ gives
+\[
+ \sup_{M\in\mathcal A}\frac{2P_M(A,B,A',B')}{m}
+ \ \ge\ |A-A'|+|B-B'|+p\cdot(A-B')+r\cdot(B-A').
+\]
+The first two lengths come from the two pairs of matching labels in
+the copying inequality. Maximizing over the independent choices of
+$p,r$ gives the two crossed lengths and proves \eqref{geo:four-legs}.
+The first matrices used to bound the supremum may depend on $p,r$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{geo:saturation}]
+The case $N=1$ has price zero at every placement. For $N\ge2$ the
+upper bound is \eqref{geo:upper}. In Proposition~\ref{geo:first-phase}
+the two same-label distances on a rectangle are $L$ and the two
+crossed distances are $D$. Its lower bound is therefore $m(L+D)$.
+Lemma~\ref{geo:swap} applies with the singleton $\mathcal A=\{F_G\}$.
+\end{proof}
+
+\begin{remark}[Convex quadrilaterals]\label{geo:quadrilateral}
+The same price computation determines $P_{F_G}$ on four sites in
+convex position. If $d_1,d_2$ are the lengths of their hull diagonals,
+then
+\[
+ P_{F_G}(A,B,A',B')
+   =\tfrac m2\bigl(|A-A'|+|B-B'|+d_1+d_2\bigr).
+\]
+The intersection $O$ of the hull diagonals gives an upper bound by
+supplying the common labels on $A,A',O$ and $B,B',O$. The four
+distances from the vertices to $O$ sum to $d_1+d_2$.
+If both diagonals join unlike labels, exchanging the two copies of
+one label if necessary places their lengths in the last two terms
+of \eqref{geo:four-legs}. Exchanging these copies preserves the tensor
+under the coordinate identification of the basis with its dual.
+If the diagonals join like labels, their two wires give the tensor
+up to nonzero character weights, and both wires pass through $O$.
+The copying theorem then preserves their full price under reweighting.
+\end{remark}
+

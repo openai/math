@@ -1,0 +1,324 @@
+\section{A diagonal argument on the external wires}\label{sec:diagonal}
+
+Suppose that $k$ is the largest dimension of a spectral flat over a
+finite field $F$. We shall construct two tensors on the same external wire
+ends whose difference has price strictly below that of the through
+identity $I$. We shall then compute this difference entry by entry and
+obtain $I$ itself.
+
+Each cell of a grid contains copies of a universal weighted RAM
+computation, which we call a \emph{tick}. A program $a$, the controller,
+specifies how to attach the wire ends to the ticks. Let $Z(a)$ be the
+tensor computed by the exact grid. Theorem~\ref{thm:collapse} supplies
+a smaller network $X$ for a group of ticks, with a price gap on the
+error. Replacing each such group and its borrowed wires by $X$ gives a
+second tensor $\widehat Z(a)$. Lemma~\ref{lem:lens} carries the local gap
+to the external wire ends for every choice of $a$.
+
+The program $a$ is chosen last. With $X$ fixed, an entry of
+$\widehat Z(a)$ has a weighted evaluator that takes the controller code
+as data. The saving in the size of $X$ leaves enough time for the
+\emph{exact} ticks, acting together, to run this evaluator. We use one
+branch of $a$ for that computation and one to transmit $I$. Their sum
+will give $Z(a)=\widehat Z(a)+I$.
+
+\subsection{The exact grid and its accelerated evaluator}
+
+Put $V=2^w$, where $w$ tends to infinity through positive integers.
+Use a word RAM with $64w$-bit words and addresses. Fix an instruction set and a universal interpreter. Each instruction on
+boundedly many words has a uniformly constructible bit circuit of size
+$w^{O(1)}$. Boolean operations, shifts, comparisons and ordinary word
+arithmetic with fixed overflow conventions suffice. Memory starts at zero
+apart from the input and advice, which are loaded one pair of bits per word.
+A program can be supplied in a readable prefix of the input. The universal machine includes loading, instruction
+fetch and decoding in its step count. Each fixed program fits in $w^2$
+bits for large $w$. A weighted program may guess one bit in a step.
+Its value is the sum in $F$ of its accepting terminal weights, with
+rejection on invalid instructions or timeout. Simulating a capped machine
+with a fresh address space costs at most a fixed power of $w$ per step,
+for example by storing its visited addresses in a binary trie.
+
+The parameters must meet two budgets. Each tick has $P$ pins on
+which to receive its part of the input. Its time budget is $m$.
+We spread the external wire pairs over enough grid cells to meet the pin
+budget, and use the saving in Theorem~\ref{thm:collapse} to meet the
+time budget.
+
+Fix a sufficiently large integer saving exponent $A$. Its lower bound
+will depend only on the polynomial overheads of the RAM simulation,
+entry evaluation and trace distribution. Round $m\asymp V/w^{c_0}$ to a power of
+two, where $c_0$ is large enough that the universal weighted RAM at cap
+$m$ with $P\le m$ pin bits (including program) has a trivalent network
+of size $\le V$. In the trace construction below, each of $O(m)$ rows
+requires $w^{O(1)}$ gates, including those used to check memory accesses. The exponent $c_0$ is independent of $A$. For
+Theorem~\ref{thm:collapse}, choose uniform envelopes $Q=V^{o(1)}$
+on its replication factor $q$ and $D_*=V^{1-o(1)}\le V$ below its
+pointwise gap. Before applying the theorem choose a pin length
+$P=V^{1-o(1)}$ with
+\[
+         P w^c=o(V)\quad\text{for every fixed }c,\qquad
+         QP=o(D_*).
+\]
+For example take $P=\lfloor D_*/(Q2^{\sqrt w})\rfloor$. This also
+satisfies the theorem's input-pin limit, whatever fixed power of $w$
+that limit uses. To expose the data, sum over the $2^{qP}$
+assignments to the pins, placing their indicators at the common data
+site. The star through that site supplies a summation diagonal of price
+at most $2k$, so Equation~\eqref{eq:price-ordinary-sum} reduces the gap
+by at most $2kqP$.
+Thus a network $X$ approximates the product of $q$ universal ticks,
+all pins exposed, with gap at least $D=D_*/2$. Pad by independent through
+identities to give $X$ exactly
+\[
+                        B=\lceil qV/w^A\rceil
+\]
+catalyst pairs in each direction. This leaves its gap unchanged and
+its size is $O_k(B)$, counting all ports. Over the fixed finite field
+a list of its gates, weights and wiring fits in $B w^2$ bits, with
+padding for all sufficiently large $w$.
+
+Use the $k$-dimensional grid of Lemma~\ref{lem:lens} with $g$ cells
+along each axis. Put $q$ tick slots per cell, for $T=g^kq$ slots.
+Take $K=2g^{k-1}B$ external pairs in each direction, $E=kK$ altogether.
+Choose $g=V^{o(1)}$ tending to infinity fast enough that
+$Bw^c/g=o(P)$ for every fixed $c$. Choose $R\ge8g$, $R=V^{o(1)}$,
+with $Eg^2/R=o(D)$. Such choices exist because $B/P$ and $Eg^2/D$
+are at most $V^{o(1)}$ at their respective steps. One can dominate
+each ratio by a factor $2^{\sqrt w}$. Then $Rg^k=o(D)$. Finally
+choose a selector length $\ell=V^{1-o(1)}$ with
+\[
+                    R\ell=o(D),\qquad \ell=o(P),
+\]
+for example by diminishing $\min(P,D/R)$ by $2^{\sqrt w}$ and
+rounding down. Each length or cap used by a program occupies $O(w)$
+bits. The scale $R$ is used only for the estimate.
+
+For a $w^2$-bit string $a$ define $Z(a)$ and $\widehat Z(a)$ as sums over
+$\ell$-bit selectors, with external indices on the $E$ pairs. For a
+selector run the deterministic controller encoded by $a$ for at most
+$g^kB$ word steps. It can read $a$, the public lengths, the selector
+and the description of $X$. Its settings are independent of the external
+indices. Reject an invalid program, timeout or an illegal setting.
+The controller may also reject explicitly. A rejected selector contributes
+zero to both tensors. A legal setting obeys the following rules.
+\begin{enumerate}
+\item Each external pair is assigned a grid line in its own direction.
+It may be touched at one cell on the line, feeding its incoming and
+outgoing rail bits to two specified pins of a tick there. Pins used are
+distinct. Every remaining pin has a prescribed constant bit.
+\item Each line carries between $B$ and $3B$ pairs. At each cell of
+that line at least $B$ are untouched there. The first $B$ such pairs
+in label order serve as the cell's catalyst passages in this direction.
+\end{enumerate}
+In the exact tensor $Z(a)$ put the product of the $q$ ticks together
+with their through identity at each cell. Untouched passages transmit
+their bits by equality. A touch supplies two bits to the tick. Its
+two sides can take independent values. In $\widehat Z(a)$ substitute
+$X$ for the cell product and its through identity. This substitution
+satisfies Lemma~\ref{lem:lens} separately for every legal term, even
+when the catalyst passages vary along a line. At the sites $\pm R e_j$
+of any spectral $k$-flat its estimate gives
+\begin{equation}\label{eq:diagonal-price}
+ H\bigl(Z(a)-\widehat Z(a)\bigr)
+ \le 2RE-D+O_k(Eg^2/R)+2kR(\ell+g^k)<2RE=H(I).
+\end{equation}
+
+There is a fixed weighted evaluator for an entry of $\widehat Z(a)$
+given $a$, the parameters, the $X$ description and the $2E$ external
+bits. It guesses one of the $\ell$-bit selectors in the definition of
+$\widehat Z(a)$, simulates and checks the controller,
+and contracts the resulting network by guessing internal wire bits
+and multiplying local entries. One can bucket pairs by line, check
+pin assignments by direct addressing, and generate the rail passages
+in line order. Each of the $g^k$ cells uses one listed copy of $X$, each of the $E$
+rails has $g$ passages, and there are $TP$ pins in the settings.
+Thus the path time is $(g^kB+gE+TP)w^{O(1)}$.
+Here $gE=2kg^kB$ and $TP=o(g^kB)$. Take the public evaluator cap
+$U\asymp g^kB w^{c_1}$ a power of two. The exponent $c_1$ can be
+chosen independently of $A$, since the evaluator and its simulation
+use the same algorithms for all public lengths. Its entire input and
+advice, including its fixed program, have length $o(U)$, and
+$\log_2 U\sim w$.
+
+\subsection{Distributing the evaluator's trace}\label{app:trace}
+
+To run this evaluator on the exact grid, we must split its work among
+ticks. Both bits of an external pair must go to a single tick, since a
+rail can supply them together at one cell. The controller must decide
+where to attach the rails before it sees their bit values. We therefore
+need a decomposition whose assignment of input bits depends only on a
+short string. All running times for weighted routines below are
+worst-case times along one path.
+
+\begin{lemma}[Distribution with paired inputs]\label{lem:trace}
+Suppose $U$ is a power of two with $\log_2 U\sim w$. Consider a capped
+weighted computation of time $U$ with an input-advice string of at most
+$U$ bits, divided into consecutive pairs with at most a final singleton.
+For each integer $s\ge1$ with $s=o(w)$, the value on input-advice bits
+$u$ has an exact expansion
+\[
+       \sum_h\sum_{t\in\{0,1\}^{L(h)}} \prod_j f_{h,j}\bigl(u|_{J_{h,j}},t\bigr).
+\]
+Here $h$ ranges over admitted compression histories of $s$ blocks, $t$
+lists the bits on the final wires, and $j$ ranges over final compressor
+positions. For each $h$, the sets $J_{h,j}$ partition the input-advice
+positions, keeping each pair in one set.
+
+For all sufficiently large $w$, each history has at most $V^{0.6}$ factors.
+A canonical history and its numerical descriptors use at most $V^{0.6}$
+bits. Checking the history and constructing the descriptors takes
+deterministic time at most $V^{0.6}$, independently of the values of the
+input bits and shared bits. The descriptors specify the input pairs as
+lists of intervals and the shared string length $L(h)\le 2^{-s}U w^{O(1)}$.
+
+Each $J_{h,j}$ has size at most $V^{0.6}$. A weighted subroutine evaluates
+$f_{h,j}$ from the bits at these positions, with indexed access to $t$
+and the descriptors. Its running time on each path is at most $W_j$, where the
+descriptors give integer charges satisfying
+\[
+                  \sum_j W_j\le U w^{c_2},
+                  \qquad \max_j W_j\le V^{0.6}.
+\]
+The work exponent $c_2$ depends only on the trace simulation and the
+fixed compressor over $F$. It is fixed before choosing the exponent
+$A$ in Theorem~\ref{thm:collapse}.
+\end{lemma}
+
+\input{trace-appendix}
+
+\subsection{Programming the exact computation}
+
+All three overhead exponents $c_0,c_1,c_2$ were fixed independently
+of $A$. Choose $A>c_0+c_1+c_2$, so the mean work charge fits within a tick's time budget.
+\[
+       \frac{Uw^{c_2}}{Tm}
+       =O\!\left(w^{c_0+c_1+c_2-A}\right)=o(1).
+\]
+Apply
+Lemma~\ref{lem:trace} to the evaluator, initializing the two bits
+of every external pair together, and using fixed padding between fields
+where needed. Take $s=o(w)$ large enough that
+$2^{-s}U w^{O(1)}=o(\ell)$. This is possible since
+$\log_2(U/\ell)=o(w)$. The history also has length $o(\ell)$.
+Reserve a fixed-length public input field for $s$, so choosing its
+value preserves all earlier cap and input-length bounds. No program
+needs to compute which $s$ suffices.
+
+The controller uses exactly one selector for an identity branch. It
+distributes pairs equally over lines in each direction, touches none
+and gives every tick a program returning one. Every other accepted selector encodes a history $h$ and final wire
+bits $t$ from Lemma~\ref{lem:trace}. A branch bit, descriptor-specified
+lengths and checked padding give exactly one selector per pair $(h,t)$.
+The evaluator's own guess of a selector for $\widehat Z(a)$ is part of
+the computation expanded by the lemma.
+
+For each such selector distribute the factors of Lemma~\ref{lem:trace}
+among the $T$ ticks. The resources of a factor are its work charge, its
+number of external pairs in each of the $k$ directions, and its number
+of other input-advice bits. Each coordinate is at most $V^{0.6}$.
+For each coordinate separate zero
+and group positive integers in intervals $[b^i,b^{i+1})$, $b=21/20$.
+Group factors by the tuple of their intervals and distribute each group
+round-robin over the ticks. There are $O_k(w^{k+2})$ groups. In a
+single group the number of factors at a tick differs from the group's
+average by at most one. If the total mean load per tick in a coordinate
+is $L$, its load at every tick is therefore between
+\[
+             L/b-O_k(V^{0.6}w^{k+2})
+           \quad\text{and}\quad
+             bL+O_k(V^{0.6}w^{k+2}).
+\]
+Indeed each positive coordinate in a group lies between its lower
+endpoint and $b$ times that endpoint. Summing the per-group estimate
+gives the bounds. Computing the classes takes $w^{O_k(1)}$ work per
+factor, for example by precomputing the integer endpoints with exact
+arithmetic. Factor counts, descriptors and assignment can all be
+processed in time at most $V^{0.8}$ for large $w$.
+
+Assign each external pair to the direction-appropriate line through
+its tick's cell, with its unique touch at that tick. In each direction
+the mean load per tick is $K/T=2B/(gq)=V^{1-o(1)}$, dominating the
+additive allocation error. A line has $gq$ ticks, hence carries
+between $(2/b-o(1))B$ and $(2b+o(1))B$ pairs. Its $q$ ticks at one
+cell touch $O(B/g)$ of them. These bounds ensure at least $B$ untouched
+passages at that cell and a total load between $B$ and $3B$ on the line.
+
+Each tick receives its fixed program, index, parameters, selector
+and the input bits assigned to its factors. The last are provided by
+touches for external pairs and by controller-supplied constants for all
+others, in the interval orders from the descriptors. In particular, the descriptors identify the portion of the evaluator
+program, the description of $X$, and the controller string $a$ needed
+at this tick. The controller sets the corresponding pins. The assigned bit
+count at a tick is
+\[
+       O_k\bigl((E+Bw^2)/T+V^{0.6}w^{k+2}\bigr)=o(P).
+\]
+Here the partition in Lemma~\ref{lem:trace} divides the actual
+input-advice string, of length $O_k(E+Bw^2)$. Each tick also receives
+the shared selector, using $o(P)$ pins. Pad all remaining pins. To emit
+the settings it suffices to describe the line and unique touch of
+each pair and give the pin assignments. Constructing the descriptors
+and allocation, checking the selector and writing these settings costs
+at most
+\[
+             V^{0.8}+(TP+E+B)w^{O(1)}=o(g^kB).
+\]
+Here $g$ dominates any fixed power of $w$, and
+$Pw^c=o(V)$ for every fixed $c$. One line assignment and one touch assignment per pair specify all of
+its passages.
+
+The receiving tick regenerates the descriptors and the allocation from
+its selector and parameters, operating on the interval lists. By using
+their lengths and offsets it locates its own inputs without scanning the
+other ticks' input values. Its setup time is at most
+$V^{0.8}+Pw^{O(1)}=o(m)$. It evaluates its factors successively on
+weighted paths, multiplying their terminal weights. By the allocation
+bound its work is at most $bUw^{c_2}/T+O_k(V^{0.6}w^{k+2})=o(m)$
+in addition to setup. The charged evaluations include local addressing
+and reuse of scratch memory.
+
+Choose $a$ to encode precisely this controller. The tick network and
+its approximation $X$ were chosen for the universal machine before $a$
+was fixed. The accelerated evaluator accepts $a$ as data, and the
+controller reads the bytes of $a$ from its own inputs when specifying
+the exact ticks. The evaluator interprets any $w^2$-bit program up to its public cap.
+The layout of its RAM trace depends only on the universal interpreter
+and the public lengths. Allocation and local evaluation are therefore
+specified before the values of the advice bits, including the program
+bits, are known. Once the field and compressor are fixed, the routines
+are fixed programs with the prescribed padding. The controller can
+supply the ticks with the required bytes of these programs and of its
+own input $a$.
+
+Fix the external bits. On a simulation selector, equality along each
+rail forces the bits on each side of its unique touch, with exactly
+one assignment between that touch and each external endpoint. For the selected $(h,t)$, each tick multiplies the factors assigned to
+it, summing over the internal paths of their weighted evaluations. Thus
+the product over ticks is the corresponding product in
+Lemma~\ref{lem:trace}. Summing over $(h,t)$ gives the specified entry
+of $\widehat Z(a)$, and the unique remaining selector contributes the
+entry of $I$. This holds at every entry over $F$, so
+\[
+           Z(a)-\widehat Z(a)=I,\qquad
+           H\bigl(Z(a)-\widehat Z(a)\bigr)=2RE .
+\]
+This contradicts the strict inequality in
+Equation~\eqref{eq:diagonal-price}. Spectral flats over each finite
+field therefore have unbounded dimension. Restricting to coordinate
+subspaces gives flats of every finite dimension, and the field transfer
+in Lemma~\ref{lem:transfer} proves Theorem~\ref{thm:flats} over every
+field.
+
+\begin{proof}[Completion of the proof of Theorem~\ref{thm:main}]
+The finite-dimensional flats just obtained supply the hypothesis of
+Theorem~\ref{thm:hilbert}. Its compatible prices on any real Hilbert
+space assign each bit wire its length, respect congruences of labeled
+placements, and are homogeneous under dilation for nonzero tensors.
+Any nonempty finite set $S$ of sites lies in a finite-dimensional affine
+subspace. On this subspace Theorem~\ref{thm:flatlaw} gives the price of a
+common $q$-valued label on $S$ as $(\log_2 q)W(S)$, where $W(S)$ is the
+Gaussian mean width normalized to give a segment its length. When
+$S$ has positive diameter, the spectral point on $S$ takes the value
+$2$ on $\Delta_S(2)$. Its base-two logarithm therefore has multiplier
+$H(\Delta_S(2))=W(S)$.
+\end{proof}

@@ -1,0 +1,105 @@
+\subsection{Bit layout and stability for the Walsh--Hadamard transform}
+\label{sec:binary}
+
+At radix two, each recursive call transforms selected bits of an
+address and leaves the other bits available for independent inputs.
+The tape multiplication algorithm in \cite{oaT} uses this layout.
+The same template also computes the normalized Walsh--Hadamard
+transform. Its normalization can be absorbed into the recursive
+calls, giving a fixed coefficient set and a bound on the accumulation
+of numerical error.
+
+\begin{proposition}[Binary implementations]\label{prop:binary-template}
+Fix \(\theta>1/2\) and the arity \(A\), batch size \(W\) and call count
+\(\sigma\) of Equation~\eqref{eq:kernel-template-saving} at \(\ell=2\).
+\begin{enumerate}
+\item An unnormalized batch on \(Af\) bits uses, outside its recursive
+calls, pointwise linear maps on a fixed number of row entries, row
+rewirings, and invertible \(\mathbb F_2\)-linear reindexings of the
+\(A\) bits within each column. Its coefficients are drawn from a fixed
+finite list of dyadic rationals and from signed powers of two with
+exponent of magnitude \(O(f+1)\). Each call transforms a single
+\(f\)-bit axis independently at every setting of the other bits.
+
+The \(A\) axes may occupy contiguous slots consisting of \(f\) blocks
+of \(K\) bits each. For any fixed \(0\le\rho<K\), the template can use
+just bit \(\rho\) of each block. All other bits retain their addresses.
+\item For even \(k\), the normalized transform \(2^{-k/2}D_2^{\otimes k}\)
+has a uniform dyadic linear circuit of size
+\(O_\theta(2^k(1+k)^\theta)\) with coefficients in a fixed finite
+list outside the recursive calls. There are constants \(B,C,c>0\)
+depending only on the template with the following property. If each
+gate value is multiplied by \(1+\delta_g\), where
+\(\lvert\delta_g\rvert\le u\le c(1+k)^{-B}\), the perturbed and exact
+maps differ in Euclidean operator norm by at most \(Cu(1+k)^B\).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+The coefficient ring \(R_2=\mathbb Z[1/2]\) makes the fixed row
+operations dyadic after descent. Table lookups use sums modulo two
+of fixed column functions, and the phases are signs. The remaining
+coefficients are powers of two from the axis normalizations and
+from recovering the unnormalized target from the product \(F\).
+
+By binary elimination each column reindexing is a fixed sequence of
+additions from one axis to another, with an exchange implemented by
+three additions. If \(x\) and \(y\) are the source and destination
+slots for one such addition, the update is
+\begin{equation}\label{eq:reindex}
+ y_{\rho+iK}\longleftarrow y_{\rho+iK}+x_{\rho+iK}
+       \quad\text{in }\mathbb F_2,\qquad 0\le i<f .
+\end{equation}
+Only the selected bits change. Fixing \(s\) inactive bits divides
+one array of \(Z\) entries into \(2^s\) independent streams of
+\(Z/2^s\) entries each. Group these streams into batches of \(W\),
+padding the last batch. The recursive calls process in total
+\[
+ \sigma\lceil2^s/W\rceil\, Z/2^s
+       \ \le\ (\sigma/W)(1+W/2^s) Z
+\]
+entries. This bound continues to hold for every slot width and offset.
+
+For the normalized transform, take \(f\) to be the largest even
+integer at most \((k-r)/A\) whenever this yields a positive child
+width. The remaining \(k-Af<r+2A\) bits have even width and can be
+handled by normalized four-point butterflies, as can the bounded
+base cases. The padding bound and the strict saving in the recurrence
+still apply.
+
+Use a normalized transform in each axis call. For a common kernel
+the \(2D\) calls supply the entire factor
+\((2^{-f/2})^{2D}=2^{-Df}\). For a free rectangle the two partial
+transforms together use those same \(2D\) axes. In a full spectral
+conversion the common normalization commutes through its row table
+and cancels with that of the inverse. Finally, \(F\) is already the
+normalized target up to phases and a permutation. Thus all scalars
+outside the recursive calls and the bounded remainder belong to a
+fixed finite dyadic list.
+
+Give the concatenated work rows their Euclidean norm. Each pointwise
+stage is a direct sum of fixed-size circuits with bounded coefficients,
+so its exact operator norm is bounded and perturbing its gates changes
+the stage by \(O(u)\) for \(u\le1\). Permutations, zero padding and
+restriction have norm at most one. Each recursive stage acts on
+independent fibers by unitary transforms. Its perturbation has norm
+bounded by the largest error on a fiber, even if different gates have
+different errors. The number of successive stages per recursion level
+is fixed. Telescoping their product therefore bounds the worst error
+\(e(k)\) by \(C_0(u+e(f))\) whenever \(e(f)\le1\), with a constant
+that includes the bounded remainder and base cases. The recursion
+has depth \(O(1+\log_A(1+k))\). Iteration gives
+\(e(k)\le Cu(1+k)^B\), and choosing \(c\) sufficiently small ensures
+the child bound \(e(f)\le1\) at every level.
+\end{proof}
+
+Over \(\mathbb Q(\sqrt2)\) one can normalize odd widths as well.
+Remove one bit from an odd-width call, apply \(2^{-1/2}D_2\) to that
+bit, and use the even-width circuit on the rest. One may equally
+normalize every axis call in a one-level template with arbitrary \(f\),
+since its \(2D\) factors still multiply to \(2^{-Df}\). This retains
+the call count, the inactive coordinates and the columnwise
+reindexings. The scalars outside the calls now form a fixed finite
+algebraic list. They can be approximated to \(p\) binary places in
+time polynomial in \(p\) using dyadic arithmetic and the positive
+root of \(2x^2=1\).

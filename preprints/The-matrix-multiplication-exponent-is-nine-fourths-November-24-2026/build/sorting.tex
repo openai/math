@@ -1,0 +1,954 @@
+\section{Stable sorting under a strict square saving}\label{sec:sorting}
+
+A tensor network may have to move a table to the place where it will be
+used, or bring together all the queries addressed to one table. Moving a table involves long records, while gathering its queries
+requires sorting many short ones. We show
+that a strict improvement on the exponent $9/4$ would make both operations
+cheap enough for the final assembly in Sections~\ref{sec:assembly}
+and~\ref{sec:shaving}.
+
+Fix the finite field $k$ from Section~\ref{sec:obstruction} and let $n=2^h$.
+The tagged permutation tensor from Section~\ref{sec:list} allows the
+destination of every record to be part of the input. Write $j_i$ for
+the $h$-bit destination of the $w$-bit source record $x_i$, and $y_j$
+for the proposed record at position $j$. Then $\mathrm{Tag}(h,w)$ is the
+indicator of the event that the $j_i$ are distinct and $y_{j_i}=x_i$
+for every $i$. Similarly, the stable-sort tensor is the indicator that a
+proposed output sorts the input records by a designated key and preserves
+the input order within each key. Both indicators include the payload bits
+in the equality tests.
+
+\begin{theorem}[Conditional stable sorting]\label{thm:sort}
+Suppose $\omega_k<9/4$, and let $n=2^h$.
+\begin{enumerate}
+\item For some $1<p<2$, $\mathrm{Tag}(h,h)$ has an exact trivalent
+network over $k$ of size $O(nh^p)$. The same bound holds for stable
+sorting of records of at most $ch$ bits, for every fixed $c$.
+\item For every $\zeta>0$ there is $a>1$ such that, for every $w\ge h^a$,
+both $\mathrm{Tag}(h,w)$ and stable sorting of $w$-bit records have
+exact trivalent networks over $k$ of size $O_\zeta(nw h^\zeta)$.
+\end{enumerate}
+\end{theorem}
+
+\input{lookup}
+
+\subsection{The two scales of the sorting proof}\label{sec:sort-road}
+
+Assume $\omega_k<9/4$ throughout Part~II. We first route wide records.
+A hop that permutes records within a smaller address set can be handled
+recursively. The objective is to shorten the address by an arbitrarily
+large constant factor while keeping the total width transported in each summand within a
+constant multiple of the input width, independently of that factor. Repeating such
+a reduction gives the wide-record estimate in Theorem~\ref{thm:sort}.
+Once that estimate is available, two levels of radix sorting give the
+ordinary-width estimate. A short key selects a digit within a block,
+and whole packs of records with the same digit then travel together.
+
+Section~\ref{sec:sort-action} uses the incidence inequalities of Part~I
+to compare the price of a target permutation with the prices of hops on
+smaller sets of addresses. The comparison first holds for an action on
+a CAT(0) space. Local price data sufficient to realize such an action
+give the same bound. If the data fail a local consistency test, spectral
+comparison instead supplies a tensor identity that reduces the cost.
+Section~\ref{sec:sort-route} combines these two conclusions to route
+payloads and to bound the number of recursive calls in a fixed network.
+
+Throughout Parts~II--IV we use base-two logarithms for ordinary prices.
+In these units the distance $d$ is the price of carrying one bit.
+On a fixed finite list of sites, price data with bounded scale,
+including scale zero, form a compact set by \eqref{eq:prices-range}
+and Section~\ref{sec:prices-background}. A bound on diameter suffices
+here. Equality along a spanning tree of binary wires realizes the
+full diagonal and bounds its price.
+
+Distances between sites obtained by finitely many geodesic interpolations
+at fixed fractions depend continuously on the original prices. The
+enlarged configurations still have bounded scale. Along any convergent
+subnet the interpolation equalities pass to the limit, where
+Lemma~\ref{lem:geodesic} determines the distances from the original data.
+
+
+\section{From incidence to permutation actions}\label{sec:sort-action}
+
+A permutation can be factored into hops that change only a short
+part of the address. Adding their prices gives a bound proportional
+to the number of factors. Sorting with wide records requires a
+bound independent of that number. We first obtain such a bound on
+displacement in a metric space. We then show that finite tests on
+the addresses suffice to bound the mean price of the payload wires.
+
+\subsection{Two incidence inequalities}
+
+Fix a power $q\ge100$ of the characteristic of $k$. In a placement
+of a bipartite incidence graph, a vertex on either side is assigned
+a site. The incidence energy $e$ is the mean squared distance between
+sites at the ends of a uniform incidence.
+
+\begin{lemma}\label{lem:sort-inc}
+Suppose $\omega_k<9/4$. In any complete $\operatorname{CAT}(0)$
+spectral space over $k$, consider a placement of either of the
+following graphs.
+\begin{enumerate}
+\item The points and lines of the projective space $\mathrm{PG}(\ell-1,q)$,
+where $\ell\ge3$.
+\item The points of $\mathbb F_Q^2$ and the affine lines in the $q+1$
+directions defined over $\mathbb F_q$, where $Q=q^R$.
+\end{enumerate}
+Let $o$ be the barycenter of the point sites. Let $A$ and $B$ be
+the mean squared distances to $o$ on the point and line sides,
+respectively, with uniform weights on each side. Then
+\[
+                 e\ge (1-q^{-1/2})(A+B).
+\]
+\end{lemma}
+
+\begin{proof}
+The field $\bar k$ contains every $\mathbb F_Q$ in the statement
+and satisfies $\omega_{\bar k}\le\omega_k$. To apply
+Theorem~\ref{thm:incidence} there, recall that scalar extension
+preserves the possible joint spectral evaluations on any finite
+placement of $k$-tensors (Section~\ref{sec:prices-background}).
+In particular, each finite subset of our metric space has an isometric
+realization in a complete spectral space over $\bar k$. Take a pointed
+ultralimit of these realizations over the finite subsets containing a
+fixed basepoint, using an ultrafilter containing every tail under inclusion.
+Each original site is eventually present with all its prescribed
+distances. Completeness and uniqueness of geodesics make the resulting
+isometric image closed and convex. For a bounded finite distribution
+in the ultralimit, the barycentric variance inequality identifies its
+barycenter with the limit of the coordinate barycenters. For a
+distribution in the image, nearest-point projection places its
+barycenter in the image as well. It therefore suffices to prove the
+inequalities on placements over $\bar k$.
+
+For the affine plane, apply the unit-mass estimate in the proof of
+Corollary~\ref{cor:inc-link} to the configuration $\mathbb F_Q^2\subset\bar k^2$, retaining $q+1$
+directions. It bounds the cross term in squared-distance comparison
+by $2\sqrt{AB/(q+1)}$, giving the assertion.
+
+For the projective space, map $\bar k^\ell$ linearly into $\bar k^3$,
+preserving the ranks of sets of up to three projective
+representatives. Such maps form a nonempty open set. Indeed, preserving
+each rank is a nonempty open condition and there are only finitely many
+conditions. In the resulting projective plane choose an affine chart
+containing all the images. Preservation of pairs and triples makes the
+images distinct and preserves exactly which triples are collinear.
+The secants of the affine configuration thus represent the lines of
+the original projective space.
+
+There are $j$ lines through each point and $s=q+1$ points on each line.
+Write $r_i=d(o,x_i)$ for point sites and $r_L=d(o,y_L)$ for line sites.
+Set
+\[
+ K_L=\sup_{z\ne o}\Bigl(\sum_{i\in L}
+       r_i\cos\angle_o(x_i,z)\Bigr)_+ ,
+\]
+with zero summands at $r_i=0$. The singleton space satisfies the
+claim directly. In every other case Theorem~\ref{thm:incidence}
+gives $\sum_L K_L^2\le (j-1)\sum_i r_i^2$. If $M$ is the number of
+incidences, triangle comparison and Cauchy--Schwarz bound the mean
+cross term by
+\[
+ \frac{2}{M}\sum_L r_L K_L
+ \le 2\sqrt{\frac{j-1}{js}AB}
+ \le q^{-1/2}(A+B).
+\]
+Here $M$ is both $j$ times the number of points and $s$ times the
+number of lines. Subtracting the cross term from $A+B$ proves the claim.
+\end{proof}
+
+\subsection{Permutations on short address sets}
+
+Choose an integer $\ell\ge3$ and reserve $m$ auxiliary coordinates,
+where $m$ will depend only on $q$. For $n=2^h$ put
+\[
+ r=\left\lfloor \frac{\log_q n}{\ell+m}\right\rfloor,\qquad
+ U=\mathbb F_q^r,\quad N=q^r,\quad
+ c=\left\lceil n/N^{\ell+m}\right\rceil,\qquad
+ \mathcal I=U^\ell\times[c]\times U^m .
+\]
+Here $[c]=\{1,\ldots,c\}$. Identify the original $n$ addresses with
+the first $n$ labels in a fixed ordering of $\mathcal I$ and extend
+the input permutation $\pi$ by fixed points. The padded address set
+satisfies $n\le|\mathcal I|<2n$.
+
+A \emph{permutation function} takes a height $h$ and a valid input
+permutation as parameters and outputs a permutation of $\mathcal I$.
+We require a single deterministic program using $nh^{O(1)}$ operations
+on words of $O(h)$ bits, with the usual word operations of polynomial
+bit complexity. These functions form a countable group $G$ under
+pointwise composition. An explicitly listed permutation has a
+linear-time inverse, and $\pi$ itself is an element of $G$.
+
+Identify $U^\ell$ with $\mathbb F_q^\ell\otimes U$. For a fixed
+subspace $V\le\mathbb F_q^\ell$ of dimension at most two, let $K_V$
+be the subgroup preserving every fiber of the projection
+$\mathcal I\to(\mathbb F_q^\ell/V)\otimes U$. All auxiliary labels
+belong to the fiber. Its size is $cN^{m+\dim V}$, so every hop in
+$K_V$ permutes sets of size at most $2^{th+O(1)}$, where
+\begin{equation}\label{eq:sort-hop-height}
+                         t=\frac{m+2}{m+\ell}.
+\end{equation}
+The additive constant follows from $c\le q^{m+\ell}$. Increasing
+$\ell$ shortens the address within a fiber.
+
+The subgroups $K_V$ generate $G$. We give the coordinate factorization
+of a rearrangeable network \cite{benes} in algorithmic form because
+the routing protocol will use its factors. Treat $[c]\times U^m$ as
+one coordinate. To eliminate a coordinate of size $a$, form a bipartite
+multigraph on the remaining input and output names, with one edge per
+requested transfer. Each vertex has degree $a$. Give the edges $a$
+colors, using each color once at each vertex. In the first stage,
+permute the chosen coordinate to its edge color. In the last stage,
+permute that color to the destination coordinate. Between these stages
+the remaining coordinates are permuted separately for each color.
+Iterating gives a bounded number of stages for fixed $\ell,m$.
+Each ordinary coordinate stage is in its coordinate line subgroup,
+and each auxiliary stage is in $K_0$.
+
+For completeness, the coloring takes deterministic time linear in
+the edge count up to logarithmic factors (see also \cite{color}).
+An even-regular bipartite multigraph splits into two regular halves
+by alternating colors around Euler tours. At an odd degree $a$ we first
+remove one perfect matching. To find it, let $v$ be the number of
+vertices on each side and take the least $H$ with $2^H>av$. Multiply
+each edge multiplicity by $\lfloor 2^H/a\rfloor$ and complete the
+graph to degree $2^H$ with copies of an arbitrary dummy matching. The
+total dummy multiplicity is less than $av<2^H$. Split into regular
+halves repeatedly, keeping the half with fewer dummy copies and
+breaking ties deterministically. Each split divides even multiplicities
+equally and alternates the remaining odd copies around Euler tours,
+distinguishing dummy from original edges. After $H$ splits the retained
+degree-one graph has no dummy copy. Only the original edges and the
+dummy matching need be stored, with multiplicities fitting in a word.
+After the matching is removed the residual even degree splits in half,
+so the full coloring recursion has logarithmically many levels.
+
+\subsection{Uniform displacement}
+
+A bound obtained by adding displacements along the coordinate
+factorization would depend on $\ell$. The fixed point in the next
+lemma bounds the displacement of every product of hops by a single
+absolute constant.
+
+\begin{lemma}\label{lem:sort-geometry}
+Suppose $G$ acts isometrically on a complete $\operatorname{CAT}(0)$
+space $Y$ in which the inequalities of Lemma~\ref{lem:sort-inc}
+hold for all placements. There is an absolute constant $C_0$ such
+that, if $d(x,gx)\le1$ for all $g\in\bigcup_V K_V$, then $G$ fixes
+a point within $C_0/2$ of $x$. In particular $d(x,\pi x)\le C_0$.
+\end{lemma}
+
+\begin{proof}
+Use a triangle for each flag $0\subset L\subset P$, where $L$ is
+a vector line and $P$ a vector plane in $\mathbb F_q^\ell$. We use
+the link-energy argument of Garland and its metric fixed-point
+version \cite{garland,izekinayatani}. Choose the flag uniformly and,
+within it, a vertex or edge uniformly. A placement assigns each $V$
+a point $y_V$ fixed by $K_V$. For each $V$ we seek another such point
+$z_V$ so that, in a uniform flag through $V$,
+\begin{equation}\label{eq:sort-flag-link}
+ \mathbb E\,d(z_V,y_W)^2\le \tfrac34\,
+                           \mathbb E\,d(y_{W_1},y_{W_2})^2 .
+\end{equation}
+The vertices $W_1,W_2$ lie opposite $V$, and $W$ is uniform among them.
+At $V=0$, the opposite edges are the incidences of projective points
+$L$ and projective lines $P$. The barycenter of the $y_L$ is fixed
+by $K_0$. Lemma~\ref{lem:sort-inc} bounds its mean squared distance
+to a neighbor by $1/[2(1-q^{-1/2})]$ times the opposite-edge energy.
+At $V=L$, the barycenter of the $y_P$ with $P\supset L$ is fixed by
+$K_L$. Its variance inequality with test point $y_0$ gives the
+coefficient $1/2$.
+
+\smallskip\noindent
+\emph{The plane vertex.}
+When $V=P$, the opposite edge joins $0$ to a line $L\subset P$.
+Here $y_0$ and the $y_L$ need not be fixed by $K_P$. We use translates
+of these sites to build an affine incidence graph of the same edge
+energy. The point barycenter of this graph will be nearly fixed by
+$K_P$.
+
+Choose coordinates $(x_1,x_2)\in U^2$ along $P$ in each fiber
+modulo $P$, using a fixed basis and linear complement. Each coordinate
+pair names a class of $cN^m$ labels. Consider any other partition of
+each fiber into classes with these same names and cardinalities,
+computed uniformly at all heights and inputs in the time defining
+$G$. It is obtained from the coordinate partition by some $g\in K_P$,
+by sorting and matching equal names within fibers. Explicitly, if $p$
+is the coordinate name, the transported name is $p\circ g^{-1}$.
+Assign the new partition the site $g y_0$. Any other such $g$ differs on the right by an element
+of $K_0$, so this site is well defined. Projecting the names modulo
+$L\otimes U$ gives a coarser partition to which we assign $g y_L$.
+The stabilizer of the reference projected partition is $K_L$.
+Both assignments commute with
+the action of $K_P$. Thus a partition and its projection have site
+distance exactly $d(y_0,y_L)$.
+
+Let $Q=q^R$, where $R\le m$ will be chosen below. Use $R$ auxiliary
+$U$-coordinates as the values of an $\mathbb F_q$-linear map
+$u:\mathbb F_Q\to U$ on a fixed basis of $\mathbb F_Q$. For a uniform
+label in a fiber, $u$ is uniform independently of $(x_1,x_2)$. For
+each $(a,b)\in\mathbb F_Q^2$ form the partition with name
+$(x_1+u(a),x_2+u(b))$. The name is uniform on $U^2$. Along an affine
+line of direction $L$ defined over $\mathbb F_q$, the name modulo
+$L\otimes U$ is constant as a function of $(a,b)$, by linearity of
+$u$. We therefore obtain sites for all points and all retained lines.
+The incidence energy is $e_P=\mathbb E_{L\subset P}d(y_0,y_L)^2$.
+At the point barycenter $b_0$, Lemma~\ref{lem:sort-inc} now gives
+$(1-q^{-1/2})(A+B)\le e_P$.
+
+\smallskip\noindent
+\emph{A fixed center.}
+For $d_*$ independent samples from the point-site distribution, form
+a successive geodesic mean by moving a fraction $1/i$ toward sample
+$i$ at step $i$. Its final value $M_{d_*}$ satisfies
+\begin{equation}\label{eq:sort-mean}
+                  \mathbb E\,d(M_{d_*},b_0)^2\le A/d_*.
+\end{equation}
+Indeed, condition on the previous mean. Squared-distance convexity
+and the variance inequality at $b_0$ bound the new expected squared
+error by $(1-1/i)^2$ times the old error plus $A/i^2$.
+
+Call a tuple of partitions independent if its joint names are uniform
+in every fiber at every height and input. This is a property of a
+realized tuple. Choose a large absolute integer $d_*$ and set $m=R=4d_*$.
+For $4d_*$ independent uniform samples from $\mathbb F_Q$, the probability
+of a linear dependence over $\mathbb F_q$ is at most
+$\sum_{j=0}^{R-1}q^{j-R}<1/(q-1)$. With probability at least $1/2$, the
+two coordinates of each of $2d_*$ sampled affine points give $4d_*$
+linearly independent field elements. Evaluation of $u$ on them is
+then jointly uniform even conditional on $(x_1,x_2)$, so the $2d_*$
+partitions are independent.
+
+The group $K_P$ is transitive on the efficiently specified independent
+tuples of this length, by matching joint names within each fiber.
+Consequently the distance between the means of the two halves is the
+same for all such tuples. Its unconditional expected square is at most
+$4A/d_*$ by \eqref{eq:sort-mean} and the triangle inequality. For
+each independent tuple the square is therefore at most $8A/d_*$.
+The same conditioning gives an independent $d_*$-tuple of affine
+partitions whose mean $M$ satisfies $d(M,b_0)^2\le2A/d_*$.
+
+Fix $g\in K_P$. The tuple giving $M$ and its $g$-translate may be
+dependent. Construct a third tuple jointly independent with each of
+them separately. In each fiber join the old name at a label to its
+translated name by one edge for that label. Both sides of the resulting
+bipartite graph have $N^{2d_*}$ vertices, each of degree
+$cN^{m+2-2d_*}$. The degree is divisible by $N^{2d_*}$. Color its
+edges properly as above and group the colors into $N^{2d_*}$ sets of
+equal size. Regard the color set of an edge as its third name in
+$U^{2d_*}$. At every vertex, each third name occurs equally often,
+which proves the two required independence statements. The coloring
+also supplies the third tuple in the time defining $G$.
+
+The mean of this tuple lies within $\sqrt{8A/d_*}$ of both $M$ and
+$gM$. Hence
+\[
+ d(b_0,gb_0)\le 2\bigl(\sqrt{2A/d_*}+\sqrt{8A/d_*}\bigr)
+                      \le 0.04\sqrt A
+\]
+on choosing $d_*$ sufficiently large. The circumcenter $z_P$ of the
+$K_P$-orbit of $b_0$ is fixed by $K_P$ and lies within $0.04\sqrt A$
+of $b_0$. With half the mass on each side of the affine incidence graph,
+the root mean squared distance to $z_P$ is at most
+$\sqrt{(A+B)/2}+0.04\sqrt A$. In this average an affine point site is a
+translate of $y_0$, and an affine line site of direction $L$ is a
+translate of $y_L$. Since $z_P$ is fixed, these distances are precisely
+the distances from $z_P$ to $y_0$ and $y_L$. The inequality
+$(1/\sqrt2+0.04)^2/(1-q^{-1/2})<3/4$ proves
+\eqref{eq:sort-flag-link} at $P$.
+
+\smallskip\noindent
+\emph{Iteration on the flags.}
+Initialize $y_V$ at the circumcenter of $K_Vx$, within distance one of
+$x$. Replace each $y_V$ by its midpoint with $z_V$, which is still fixed
+by $K_V$. Write $e$ for the mean squared edge length of a flag. By
+convexity of distance between geodesics, the squared distance between
+the new endpoints at $V,W$ is at most
+$\bigl(d(y_V,z_W)^2+d(z_V,y_W)^2\bigr)/2$.
+Averaging \eqref{eq:sort-flag-link} over flags thus gives
+$e_{\rm new}\le3e/4$. By the triangle inequality through a random old
+neighbor, the root mean squared movement per vertex is at most
+$(\sqrt e+\sqrt{3e/4})/2\le\sqrt e$.
+Initially $e\le4$. The movements are summable in the finite weighted
+metric product, and each edge in its limit has length zero. The flag
+graph is connected, so the limiting placement has a single value
+$y_*$. This value is fixed by all the $K_V$ and hence by $G$.
+Summing the movements gives $d(x,y_*)\le1+2/(1-\sqrt{3/4})$.
+We may take $C_0=100$.
+\end{proof}
+
+\subsection{Finite tests on permutation orbits}
+
+We now return to the finite set of addresses. In the routing protocol
+a proposed price is assigned separately to each payload wire. We will
+test these prices in balls of bounded radius. To compare price
+realizations on overlapping balls we must also test the other tensors
+on their common sites.
+
+Take a finite symmetric set of elements of $\bigcup_V K_V$ containing
+the factors of a fixed coordinate factorization of $\pi$ and their
+inverses. Call these the \emph{core generators}. For each input they
+define an undirected graph on $\mathcal I$, with a \emph{core link}
+for the hop from a label to its image under a generator. Its degree
+is bounded by the size of the set. Each $i$ has a path to $\pi(i)$
+along the factors, of length bounded by a fixed rational $a_{\mathrm p}$
+independently of $h$ and the input.
+
+The four test parameters are the core generators, a ball radius,
+a maximum number of sites, and a maximum local dimension. Give each
+payload wire its own commodity index. Also index every nonzero $k$-tensor
+of permitted format on an ordered list of distinct sites in a common
+test ball, using fixed coordinate bases. Assign this index on the
+whole graph, so two balls containing the same tensor on the same
+ordered sites see one price. There are $O(|\mathcal I|)$ indices
+because each ball has bounded size and the field is finite.
+
+Assign each commodity a nonnegative price. Cap a payload price at
+$a_{\mathrm p}$. For each other format choose a uniform rational cap
+sufficient to create the tensor at one site and transport its legs in
+binary coordinates along core links in the ball. On a test ball compare
+the assigned prices of all its commodities with an ordinary spectral
+price on its sites. The error is the largest absolute discrepancy on a
+commodity or positive excess above unit cost on a core link with both
+endpoints in the ball. Duplicate commodities are compared separately
+with the spectral price of the same tensor. The minimum error over ordinary prices, allowing the collapsed price,
+is the \emph{discrepancy} of the test. This minimum is attained.
+Indeed, the core links connect the ball, so a spanning tree bounds
+the scale of any price with bounded error, and prices at bounded scale
+form a compact set. On a singleton use the collapsed price. A center
+\emph{passes} to tolerance $\rho$ if this minimum is at most $\rho$.
+
+\begin{lemma}[Finite detection]\label{lem:sort-local-tests}
+For each $\ell$ there are finite test parameters and $\rho>0$ such
+that the following holds for all sufficiently large $h$ and every
+valid permutation input. If all but a fraction $\rho$ of the centers
+pass to tolerance $\rho$, the assigned payload prices satisfy
+\[
+        |\mathcal I|^{-1}\sum_{i\in\mathcal I} x_{i,\pi(i)}
+                  \le C_0+1 .
+\]
+Here $C_0$ is the absolute constant of Lemma~\ref{lem:sort-geometry}.
+\end{lemma}
+
+\begin{proof}
+If the assertion fails, choose a sequence of counterexamples with
+$h\to\infty$. Enlarge the finite symmetric sets of core generators
+to exhaust the countable union of the $K_V$, and let the radii and format
+bounds tend to infinity. Take the tolerance and permitted exceptional
+fraction tending to zero, keeping the original factorization of $\pi$
+and the payload cap fixed. We use these counterexamples to construct
+an action in which each hop has displacement at most one and the
+target permutation has displacement at least $C_0+1$.
+
+\smallskip\noindent
+\emph{The marked sites.}
+At each passing center $i$ take a complete $\operatorname{CAT}(0)$
+spectral realization of a price attaining the test. At every other
+center use the one-point space. For $g\in G$ mark the site $g^{-1}i$
+in the chart at $i$. A fixed word in subgroup elements represents
+$g^{-1}$, so eventually these hops are tested and the ball contains
+the whole path from $i$ to $g^{-1}i$. Thus the distance from the
+center to this mark is uniformly bounded for each fixed $g$.
+Use the center itself when the mark is unavailable.
+
+At each index take the metric product over all centers with the
+root mean square distance, pointed at the vector of centers.
+Take a pointed ultralimit of the products and let $Y$ be the closed
+convex hull of the resulting marks. The product and ultralimit are
+complete $\operatorname{CAT}(0)$ spaces, as one sees from the
+midpoint inequality. Both incidence bounds of Lemma~\ref{lem:sort-inc}
+hold in $Y$. A product barycenter is coordinatewise, so the squared
+inequalities average over the coordinates. In the ultralimit the
+variance inequality identifies the limit of barycenters with the
+barycenter of a bounded finite placement. Finally, projection onto a
+closed convex subset preserves the barycenter of a distribution in
+that subset.
+
+\smallskip\noindent
+\emph{Translation of the marks.}
+We claim that left multiplication $g\mapsto ug$ extends to an
+isometry of $Y$. A point of a dense subset of $Y$ is given by a
+finite expression of geodesic interpolations of marks. Fix two such
+expressions. At center $i$ the translated expressions have the
+same underlying address labels as the original expressions at center
+$u^{-1}i$, since $(ug)^{-1}i=g^{-1}u^{-1}i$.
+
+For sufficiently large indices, both balls contain these labels.
+Both centers pass outside a fraction tending to zero, since
+$i\mapsto u^{-1}i$ preserves uniform measure. For every fixed tensor
+on the distinct labels the two realizations then differ by at most
+twice the tolerance once the format bounds include that tensor.
+Their evaluations use its common commodity index. It follows that
+the distances between the two expressions in the two charts differ
+by a quantity tending uniformly to zero on such pairs. Indeed, a
+violating sequence has a subsequence with a fixed pattern of coincident
+labels. The finitely many factor words bound the diameter of the
+marked list in both charts, so the tree estimate bounds their price
+scales. By compactness take limiting prices on the list. They agree
+on every tensor by the format exhaustion. Continuity of distances
+between geodesic expressions, from Lemma~\ref{lem:geodesic}, gives
+equal limiting distances, a contradiction.
+
+All expression distances are bounded even on exceptional pairs.
+In a passing chart the fixed word lengths bound all the marks, and
+a failed chart has collapsed to a point. The exceptional pairs
+therefore make a vanishing contribution to the squared mean. Reindexing
+by $i\mapsto u^{-1}i$ proves the claimed equality of distances in the
+limit. The assignment on expressions thus extends to $Y$. Its inverse
+comes from $u^{-1}$, and the group law holds first on expressions and
+then by continuity on $Y$.
+
+Let $x$ be the identity mark. For each individual $g\in K_V$ its hop
+and inverse eventually belong to the tested set, so $d(x,gx)\le1$.
+The mark $\pi^{-1}x$ at center $i$ corresponds to the address $\pi(i)$.
+In a passing chart its distance from the center agrees up to the
+tolerance with the assigned price of the payload wire $i\to\pi(i)$.
+In a failed chart the distance is zero while the price is at most
+$a_{\mathrm p}$. Thus $d(x,\pi^{-1}x)$ is the ultralimit of the root
+mean square payload price. This is at least the limiting lower bound
+$C_0+1$ on the arithmetic means of the counterexamples.
+Since $d(x,\pi^{-1}x)=d(x,\pi x)$, this contradicts
+Lemma~\ref{lem:sort-geometry}.
+\end{proof}
+
+
+\section{Bounded-width permutation routing}\label{sec:sort-route}
+\subsection{From a failed price test to a routing identity}
+
+Fix the core generators and the test parameters of
+Lemma~\ref{lem:sort-local-tests}. Write $M=|\mathcal I|$, so that
+$n\le M<2n$. Sending a bit along the designated path from $i$ to
+$\pi(i)$ pays for every hop on that path. We seek an exact sum of
+networks in which the average transport cost per payload bit has an
+absolute bound, even as the parameter $\ell$ increases.
+
+\begin{proposition}\label{prop:sort-protocol}
+Suppose $\omega_k<9/4$ and fix $H\ge1$. For all sufficiently large
+$h$, every valid set of tags and every $h\le w\le h^H$, the associated
+permutation tensor for $w$-bit payloads is an exact sum over $k$ of
+networks with the following properties.
+\begin{enumerate}
+\item Each label has a bounded number of fixed slots per core generator.
+A used slot carries $O(w)$ bits to a neighbor along the generator or its
+inverse. Both ends belong to the same prescribed group of at most
+$2^{th+O(1)}$ labels. The sum of the carried widths in any summand is
+at most $Cnw$, where $C$ is independent of $\ell$ and $t$.
+\item At each label a fixed trivalent network of size
+$O(w(1+\log w)^{O(1)})$ implements the local maps. Its configuration
+consists of a bounded list of menu indices, widths and offsets.
+\item A summand is specified by $O(n\log(2w))$ bits. Given these bits
+and the tags, a deterministic controller computes the local
+configurations and matchings in $nh^{O(1)}$ word operations.
+The exponents and slot capacities are independent of $H$. The running
+time may have a multiplicative constant depending on $H$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+We use the local replacement argument of
+\cite[Section~\ext{G}{sec:protocol}]{oaG}. A \emph{request} for a
+commodity leaves that tensor to be supplied at specified legs.
+Its cap $a_i$ bounds the cost of supplying it directly, by preparing
+the tensor at one site and sending its legs along designated core
+paths. We encode each leg in binary and pad its unused coordinates
+by zero. Multilinearity permits us to substitute a tensor identity
+for several requests at any stage of a contraction.
+
+\smallskip\noindent
+\emph{The identity on a ball.}
+Let $x\in\prod_i[0,a_i]$ be a price array with positive discrepancy on
+a ball. Request one copy of each commodity with $x_i>0$ on the ball.
+Their tensor product $D$ has assigned total price $L=\sum_{i:x_i>0}x_i>0$,
+since the zero array passes the test. The available supplies $T_j$
+are all the commodities on the ball, at their assigned prices, and
+its binary core links, at price one. On a singleton we can prepare
+every demand locally. On a larger ball there are prices $l_j$ strictly
+above the supply prices and a number $0<L_-<L$ such that every
+normalized spectral log price $P$ satisfies
+\[
+                 P(D)<L_-\max_j\frac{P(T_j)}{l_j}.
+\]
+Indeed a spanning tree of binary core links supplies the full binary
+diagonal, of normalized log price one. Thus the maximum ratio is at
+least the reciprocal of the sum of the $l_j$ over the tree. If the
+strict inequality with $L$ failed for perturbations decreasing to
+the original supply prices, rescale each violating $P$ by dividing
+by its maximum ratio. The tree bound keeps the scales bounded.
+A limit price then satisfies every supply bound and gives $D$ price
+at least $L$. Additivity on products forces equality at each
+positive-priced commodity, and the remaining commodities have price
+zero. This limit would pass the test on the ball. For a fixed
+successful perturbation, compactness permits the decrease from $L$
+to $L_-$ with a uniform strict margin.
+
+Choose an integer $b_0$ and form the direct sum
+\[
+               U=\bigoplus_j T_j^{\otimes\lfloor b_0L_-/l_j\rfloor}.
+\]
+Rounding costs a bounded amount in log price. For sufficiently large
+$b_0$, every normalized spectral price gives $U$ a higher value than
+$D^{\otimes b_0}$. Strict spectral comparison in
+Section~\ref{sec:prices-background} now gives an exact restriction of
+$D^{\otimes b_0r}$ from at most $K(b_0)$ direct copies of
+$U^{\otimes r}$ for every $r\ge1$. Expand the direct sums and apply
+the restricting maps. The resulting ordinary sum supplies $b=b_0r$
+copies of every demand. Each term uses supplies of total price at
+most $bL_-$. Its index specifies a direct copy and an ordered word
+of $r$ supply choices. With $s$ supply types this takes at most
+$\lceil\log_2(K(b_0)s^r)\rceil$ bits. The ratio of this length to
+$b$ can be made arbitrarily small by first increasing $b_0$ and then
+$r$.
+
+Repeat the identity $J$ times. Use only the \emph{histogram} of the
+$J$ term indices as the outer selector. This costs $O(\log(2J))$
+bits because the alphabet is fixed. Within the corresponding network
+a root sums over ordered words, sends each word along the core tree
+and enforces its prescribed histogram. The histogram fixes the
+number of copies of every supply. The word assigns these copies to
+the individual applications of the restricting maps. Each ordered
+word contributes exactly once with its original coefficient over
+$k$. Choose the rate of the term indices low enough that the tree
+transmission costs at most $Jb(L-L_-)/2$. The replacement thus saves
+a positive amount per block of demands, after paying for its own
+control bits.
+
+These demands remain positively priced, and the replacement retains
+a strict saving, throughout a neighborhood of the original array.
+There are finitely many ball types since the field, radius, degrees
+and formats are fixed. Compactness of the price arrays of discrepancy
+at least $\rho/2$ gives a finite menu of replacements. On this set,
+the saving per unit of demand and the selected demand prices both
+have uniform positive lower bounds.
+
+\smallskip\noindent
+\emph{Bounding the total width.}
+Follow one summand in the expansion. Let $wz_i$ be its integer stock
+of outstanding requests for commodity $i$, and let $S$ be its
+installed core width divided by $Mw$. Give the summand the account
+$S+F(z)$, where
+\[
+       F(z)=\frac1M\max_{0\le x\le a}
+                   \sum_i\bigl(z_ix_i-\tfrac12\mu x_i^2\bigr).
+\]
+There are $O(M)$ coordinates with uniformly bounded caps. Choose
+a positive rational $\mu$ such that $\mu\sum_i a_i^2/(2M)\le1$.
+The maximizing price $x_i=\min(a_i,z_i/\mu)$ satisfies
+$z_i\ge\mu x_i$. Its Lipschitz bound gives, for $z+v\ge0$,
+\[
+       F(z+v)-F(z)
+       \le \frac1M\sum_i x_iv_i+\frac1{2\mu M}\sum_i v_i^2 .
+\]
+Fix an integer $B>\max_i\mu a_i$. Whenever a stock exceeds $wB$,
+supply the excess directly. On the interval $z_i\ge B$ the
+marginal price equals $a_i$, so this operation does not increase
+the account.
+
+If the mean maximizing price of the $M$ payloads exceeds $C_0+2$,
+Lemma~\ref{lem:sort-local-tests} gives more than $\rho M$ balls of
+discrepancy greater than $\rho$. A greedy packing selects $\Omega(M)$
+disjoint such balls, allowing a fixed slack in the test. Indeed the
+discrepancy is $1$-Lipschitz in the array of prices. A sufficiently
+fine rational grid can assign a valid menu entry to each cell meeting
+the set of discrepancy at least $\rho$, with the entry valid throughout
+the cell. These finite tables suffice to select and pack eligible balls.
+
+On each packed ball apply its replacement with
+$J=\lfloor\alpha w/b\rfloor$, for a small fixed rational $\alpha>0$.
+The bound $z_i\ge\mu x_i$ and the positive lower bound on selected
+demand prices ensure sufficient stock. Charge each new core link to
+$S$, and enter other supplies as new requests. In the linear bound on
+the account, each ball saves a fixed positive amount per retired demand
+block, including transmission of the word. For large $w$ the packed
+balls therefore save at least $c\alpha$ in the normalized account for
+some $c>0$. The finite menu and the disjoint balls give
+$\max_i|v_i|=O(\alpha)$, so the quadratic error is $O(\alpha^2)$.
+Fix $\alpha$ small enough that each parallel round lowers the account
+by a fixed positive amount in every resulting summand. Supply any
+excess over the stock cap after the round.
+
+Starting from zero, introduce all $w$ copies of each payload in equal
+increments on a fixed fine mesh, rounding to integers with exact total
+$w$. Before each increment use parallel rounds until the mean payload
+price is at most $C_0+2$. The account is nonnegative. The increments
+have total linear cost at most $C_0+2$, and their summed quadratic
+cost is at most one for a sufficiently fine mesh and sufficiently
+large $w$. Supply excess stock after each increment. Every summand
+therefore undergoes only boundedly many rounds, and its final account
+is at most $C_0+3$. Supply all the remaining requests directly.
+Taking $x=a$ in the definition of $F$ gives
+\[
+             \frac1M\sum_i a_i z_i\le F(z)+1.
+\]
+The total width is at most $(C_0+4)Mw\le 2(C_0+4)nw$. This last
+coefficient is absolute.
+
+\smallskip\noindent
+\emph{Realizing the summands.}
+A label lies in at most one packed ball per round. Every direct
+supply that uses a given edge originates within bounded distance of
+it. Bounded degree, boundedly many commodity types per neighborhood,
+and the stock cap thus give boundedly many slots of width $O(w)$
+per generator. The generator prescribes the group containing both
+ends of the slot.
+
+At the sites of a commodity, keep its requests in common order,
+retiring them from the front and appending new requests at the back.
+For each replacement the histogram determines the lengths of the
+lists. Inside its network, prefix counts of the ordered word assign
+supply positions to repeated applications. Comparison sorting on
+addresses of $O(1+\log w)$ bits realizes these permutations and
+partial matchings with $O(w(1+\log w)^{O(1)})$ trivalent gates at a
+site. Complete partial matchings deterministically and set idle
+coordinates to zero. Each individual block map has fixed size over
+$k$ and admits a constant-size trivalent implementation. Only
+boundedly many local fields select the maps, lengths and offsets.
+
+The controller enumerates the bounded neighborhoods, computes prices
+from the stocks, uses the finite tables to pack eligible balls, and
+assigns the slots. There are $O(n)$ histograms over the boundedly
+many rounds, with a unique encoding of $O(\log(2w))$ bits each.
+Enforce valid encodings and zeros in unused selector positions.
+Only local counts and indices enter the controller, while the ordered
+words are summed inside the networks. The enumeration and stock
+updates take $nh^{O(1)}$ word operations on tags of $h$ bits and
+counts of $O(\log(2w))$ bits. This proves the three bounds.
+\end{proof}
+
+\subsection{From local transports to stable sorting}
+\label{subsec:sort-recursion}
+
+Write $S(h,w)$ for the least trivalent size of $\mathrm{Tag}(h,w)$
+over $k$, and put $n=2^h$. Proposition~\ref{prop:sort-protocol} bounds
+the transport used in each summand. To derive a recurrence for $S$,
+we must fit the calls from all summands into a single network.
+Different summands can use the same call if their data can reach it
+at low cost.
+
+\paragraph{Sharing a fixed pool of calls.}
+Fix the dimension $\ell$, the address reduction factor
+$t=(m+2)/(m+\ell)$ and the protocol of Proposition~\ref{prop:sort-protocol}.
+In each term the protocol has at most $Ln$ links of total width at most
+$Cnw$. Of these two constants, $C$ is independent of $\ell$.
+Choose $0<Y\le1$ with $L\le C/Y$ and split each link into chunks of
+$w'=\lceil Yw\rceil$ bits. Pin the padding of a final chunk to zero
+at both ends. The number of nonempty chunks in any term is at most
+\[
+             Cnw/w'+Ln\ \le\ m_*n,\qquad m_*=2C/Y .
+\]
+For this fixed protocol there are $O(n)$ candidate slots, grouped
+according to the short-address sets within which they can communicate.
+Duplicating a group for the boundedly many link ends or chunks it
+handles changes its size only by a constant factor.
+
+We use the assignment graphs of
+\cite[Lemma~\ext{G}{lem:slack-compaction}]{oaG}. Such a graph connects
+at most $cK$ candidates to $K$ slots. Every active subset of at most
+$K/2$ candidates can be assigned injectively to adjacent slots.
+The degrees are bounded in terms of $c$, and the assignment takes
+$O_c(K)$ deterministic word operations with the graph as fixed advice.
+
+Choose a dyadic capacity $U=2^{th+O(1)}$ at least twice the size of
+the largest candidate group. Pack whole groups greedily into lists of
+capacity $U$, closing a list when the next group would exceed that
+capacity. Each closed list is at least half full, so there are
+$O(n/U+1)$ lists. Fix a small dyadic fraction $K/U$. In a list,
+divide its active chunks in order into batches of size $K/2$, allowing
+a shorter last batch. With $K$ slots reserved for each nonempty batch, the total reservation
+is at most
+\[
+             2m_*n+O((n/U+1)K)\ \le\ 3m_*n .
+\]
+Here $U=o(n)$ and we choose $K/U$ after fixing the packing constants.
+
+For each list install enough candidate batches to handle every chunk
+in it. Use one assignment graph to place the source ends of a batch in
+$K$ slots and another for the target ends. A second assignment step
+handles whole batches. Its targets are a shared pool of
+$\lceil6m_*n/K\rceil$ physical modules, each with $K$ input and output
+positions. At most half the pool is active, and the number of candidate
+batches is a bounded multiple of the pool size. Thus the two lists of
+each active batch can be moved together to its assigned module.
+Including idle modules, at most $7m_*n$ positions are installed for
+all large $h$.
+
+Every module uses $\mathrm{Tag}(h',w')$ with $h'=\log_2 K=th+O(1)$.
+Fill unmatched positions in order, pin unused bits to zero and give
+an idle module the identity tags and zero payloads. The assignments
+and padding are deterministic once the term and its tags are given.
+Because the assignment graphs have bounded degree, the switches cost
+$O(nw)$ in total, including those that move two lists of $Kw'$ bits
+at a time.
+
+The remaining control uses only tags, selectors and slot descriptions.
+It can be checked by guessing a time-stamped execution, verifying each
+instruction, and comparison-sorting all memory transactions by address,
+time and access order within each instruction to check every read against the last write. Fixed initial
+memory and padding make the accepting execution unique for every legal
+selector. A conventional comparison network also checks the original
+tags for distinctness and rejects invalid permutations. For each fixed
+$H$ and $h\le w\le h^H$, the size outside the shorter calls is
+\begin{equation}
+  D_{\rm control}(h,w)=
+  O_H\bigl(nw(\log(2h))^{O(1)}+n h^J\bigr),\qquad J>2 .
+  \label{eq:sort-control}
+\end{equation}
+The first term pays for the local maps with their polynomial overhead
+in $\log(2w)$. The second pays for $nh^{O(1)}$ deterministic word
+operations, their bit implementation and the memory check. The
+exponents can be chosen independently of $H$. We have obtained the
+recurrence
+\[
+ S(h,w)\ \le\ D_{\rm control}(h,w)
+       +\frac{7m_*n}{2^{h'}}\,S(h',w').
+\]
+
+\paragraph{Wide payloads.}
+It suffices to prove the estimate for $0<\zeta<1$.
+Choose $\ell$ large enough that $14C t^\zeta<1/4$, and then fix the
+resulting $Y$ and $J$. Shortening an address from $h$ to $h'$ reduces
+the allowed overhead $h^\zeta$ by a factor approaching $t^\zeta$.
+To account for calls close to the width at which conventional sorting
+takes over, we let the overhead exponent decrease gradually with the
+width.
+
+Choose a smooth nonincreasing $u:[1,\infty)\to[\zeta,2]$, equal to
+$2$ on $[1,J]$ and eventually equal to $\zeta$. Take such a long
+transition interval that $b=-u'$ satisfies $0\le b<1$ and
+$Y^{-b}<3/2$ everywhere. Fix $H$ in the interior of the constant
+tail. For $h\ge2$ and $h\le w\le h^H$ we claim
+\begin{equation}
+       S(h,w)\ \le\ D n w h^{u(a)},\qquad a=\log_h w .
+       \label{eq:sort-width}
+\end{equation}
+If $a\le J$, Batcher's bitonic sorting network~\cite{batcher} uses
+$O(nh^2)$ comparators of bit cost $O(h+w)$ to put the tagged sources
+in destination order. Comparing their tags with the prescribed
+positions and their payloads with the proposed outputs gives
+\eqref{eq:sort-width}.
+
+For $a>J$ induct on $h$. For large heights $h'<h$ and $w'\ge h'$.
+Writing $a'=\log_{h'}w'$, we have uniformly on $J\le a\le H$,
+\[
+ a'-a=\frac{\log Y-a\log t+o(1)}{\log h},
+ \qquad
+ \frac{w'(h')^{u(a')}}{w h^{u(a)}}
+   =(1+o(1))\,t^{u(a)+a b(a)}Y^{1-b(a)}.
+\]
+The second formula is Taylor expansion on a compact interval.
+If $w'>(h')^H$, split the payload evenly into
+$\lceil w'/\lfloor(h')^H\rfloor\rceil$ slices, using the same tags
+for each. The number of slices is bounded, their widths sum to $w'$,
+and their width exponents are $H+o(1)$, where $u=\zeta$. Copying
+the tags costs $O(h')$ per slot and slice, within
+\eqref{eq:sort-control}. The same per-slot estimate therefore applies.
+
+After multiplying by the ratio $7m_*=14C/Y$ of installed to original
+positions, the recursive calls use at most the fraction
+$(1+o(1))14C t^\zeta Y^{-b(a)}<1/2$ of the claimed bound.
+The extra cost \eqref{eq:sort-control} is $o(nwh^{u(a)})$ uniformly,
+since $a\ge J$ and $u\ge\zeta$. Enlarging $D$ to cover bounded
+heights closes the induction. For $w>h^H$, split into slices as
+evenly as possible with maximum width $\lfloor h^H\rfloor$. Each
+width exponent is $H+o(1)$ for large $h$, and tag copying costs at
+most a constant times the total data volume. At bounded heights the
+bitonic network costs $O_h(w)$. This proves, for some $A>1$,
+\begin{equation}
+         S(h,w)=O_\zeta(2^h w h^\zeta)\qquad(w\ge h^A).
+         \label{eq:sort-all-wide}
+\end{equation}
+
+\paragraph{From tagged permutations to stable sorting.}
+For $2^s$ records of $v$ bits, a stable sort uses one
+$\mathrm{Tag}(s,v)$ and $O(2^s(s+v))$ additional gates. Give each
+proposed output a guessed destination in the original input list.
+Use the tagged permutation to check that this sends every output back
+to an equal input. Along the output list check strictly increasing
+pairs (key, guessed input position) in lexicographic order. All records
+with a common key must then be exactly the corresponding input
+subsequence. This forces the order and every guessed index, even for
+identical records. The stable-sort relation thus inherits the
+wide-record bound.
+
+\paragraph{Packing ordinary-width records.}
+We use the wide-record bound twice in each radix pass.
+First take $\zeta=1/2$ in \eqref{eq:sort-all-wide}, with threshold
+$a>1$. Then take $\zeta=1/(2a)$ there, with threshold $B>1$.
+Start with $O(n)$ records whose keys and payloads have $O(h)$ bits.
+Choose a radix digit of
+$s=\lfloor h^{1/a}\rfloor$ bits. Run $O(h/s)$ stable passes starting
+with the least significant digit, zero-padding the last digit.
+Address lengths for the two sorts will be about $2s$ and $h$
+respectively.
+
+For one pass, pad the list to blocks of $2^{2s}$ slots. Sort each
+block by a dummy flag and the digit, with dummies last in their old order. Choose a power of two
+$P\in[h^{B-1},2h^{B-1})$. Extend each run of a single real digit to
+a multiple of $P$, inserting dummies at its end. Each pack of $P$
+consecutive slots now contains records of at most one real digit.
+When the packs are sorted stably by digit, equal-digit records retain
+their order both within a block and across blocks. Empty packs sort
+last. Figure~\ref{fig:sort-packs} shows one pass with two blocks.
+
+\begin{figure}[!hbp]
+\centering
+\begin{tabular}{@{}l@{\qquad}c@{\qquad}c@{}}
+\toprule
+Input block in order & Packs of digit $0$ & Packs of digit $1$\\
+\midrule
+$a_1\, b_0\, c_1\, d_1$ & $[b,\cdot]$ & $[a,c]\ [d,\cdot]$\\
+$e_0\, f_1\, g_0\, h_0$ & $[e,g]\ [h,\cdot]$ & $[f,\cdot]$\\
+\bottomrule
+\end{tabular}
+\caption{One radix pass with two records per pack. A subscript is the
+digit being sorted and a dot is a dummy slot. Stable sorting of whole
+packs collects the middle column, then the right column, each from
+top to bottom. Reading the real records gives $b,e,g,h,a,c,d,f$.}
+\label{fig:sort-packs}
+\end{figure}
+
+Within a block a fixed allowance of $O((2^s+1)P)$ extra slots covers
+the padding for all real runs, retains the old dummies and rounds the
+total length to a multiple of $P$. Scans find the length of each run,
+round it up, and assign destinations to all old records, including the
+old dummies. A second local tagged permutation checks these destinations.
+Append new dummies and require their guessed destinations to be strictly
+increasing. Only the unused positions are available to them, so there
+is exactly one valid filling. Additional temporary padding to a power of
+two is removed after the call. Scan each pack to obtain its digit before
+the global stable sort. Dummies, including any inside a pack, are ignored
+when reading the real order.
+
+The list remains of size $O(n)$ across all passes. In one pass its
+multiplicative growth is $1+O(2^{-s}P)$, with an additive cost
+$O(2^{2s}+2^sP)$ for the last block. Over $O(h/s)$ passes the
+multiplicative factors have bounded product because $P$ is polynomial
+in $h$ and $s=\lfloor h^{1/a}\rfloor$. The accumulated additive cost
+is $o(2^h)$ since $s=o(h)$.
+
+Each local call has address length $2s+O(1)$. Padding its records to
+a sufficiently large constant times $h$ meets the first width threshold,
+so it costs $O(hs^{1/2})$ per slot. The global sort has $O(n/P)$ packs
+of $O(hP)$ bits and address length $h+O(\log h)$. Since $hP\ge h^B$,
+constant-factor padding meets the second threshold and the global
+cost is $O(nh^{1+1/(2a)})$. The scans, copies and order checks
+fit the same bound. All passes together cost
+\[
+            O\bigl((h/s)\,nh^{1+1/(2a)}\bigr)
+               =O\bigl(nh^{\,2-1/(2a)}\bigr).
+\]
+
+To realize $\mathrm{Tag}(h,h)$, take the union of the $n$ source records
+and the $n$ proposed target records. Give each source its claimed
+destination and each target its prescribed position, and radix-sort the
+union by destination, breaking ties by source before target. Scan the
+real records, skipping dummies. For each destination in order the scan
+requires one source followed by one target with equal payloads.
+An $O(h)$-bit register suffices. This scan rejects repeated or missing
+source tags and requires no rearrangement of the final dummy slots.
+
+Thus $\mathrm{Tag}(h,h)$ has exponent $p=2-1/(2a)$, with $1<p<2$.
+For width $ch$, split the payload across boundedly many tagged calls
+with the same tags, padding when necessary. The reduction from stable
+sorting to tagged permutations now yields the ordinary-width assertion
+and completes the proof of Theorem~\ref{thm:sort}.

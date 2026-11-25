@@ -1,0 +1,15 @@
+{
+  "challenge_module": "ComparatorChallenges.NearSquareRootMultiplication",
+  "solution_module": "OAI.Computability.NearSquareRoot.Main",
+  "theorem_names": [
+    "OAI.Computability.IntegerMultiplication.sub_nlogn_integer_multiplication",
+    "OAI.Computability.NearSquareRoot.uniformIntegerMultiplication"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

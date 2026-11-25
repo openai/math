@@ -1,8 +1,10 @@
 {
   "challenge_module": "ComparatorChallenges.ExactFourier",
-  "solution_module": "OAI.Computability.FourierCircuit.Main",
+  "solution_module": "OAI.LinearAlgebra.FiniteFourier.Main",
   "theorem_names": [
-    "OAI.ExactFourier.main_theorem"
+    "OAI.ExactFourier.main_theorem",
+    "OAI.LinearAlgebra.FiniteFourier.fourierComplexity",
+    "OAI.LinearAlgebra.FiniteFourier.batchedFourierComplexity"
   ],
   "definition_names": [],
   "permitted_axioms": [

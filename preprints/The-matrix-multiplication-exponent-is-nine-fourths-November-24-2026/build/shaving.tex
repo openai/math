@@ -1,0 +1,128 @@
+\section{Trivalent compression and the exponent}\label{sec:shaving}
+
+Each application of Lemma~\ref{lem:macro} reduces the size per copy and
+raises the maximum arity. We stop while the saving in size still exceeds
+the cost of evaluating the larger tables. Two operations then recover a
+trivalent network over the original field. Batched evaluation uses
+Lemma~\ref{lem:batch-table}, and a single coordinate projection removes
+the field extension used in the local identities.
+
+\begin{lemma}[Descent of a trivalent network]\label{lem:table-descent}
+Let $K/k$ have finite degree $D$. If a trivalent $K$-network of size
+$s$ represents a tensor with entries in $k$, the same tensor has a
+trivalent $k$-network of size $O(sD^2)$ with the same exterior positions.
+\end{lemma}
+
+\begin{proof}
+Choose a $k$-basis of $K$ whose first element is $1$. For
+$\lambda\in K$, let $M_\lambda$ represent multiplication by $\lambda$
+in that basis. Order the stations along a chain and give each of them
+two extra ports carrying the incoming and outgoing basis indices.
+If an assignment to its original ports has weight $\lambda$, the
+enlarged table returns the indicated entry of $M_\lambda$. Pin both
+ends of the chain to the first index. For any fixed assignment to the
+original wires, contracting along the chain now gives the first
+coordinate of the product of the weights. This coordinate map is
+$k$-linear. Summing over the original internal bits therefore takes
+the first coordinate of the old tensor entry, which belongs to $k$.
+
+Encode each basis index in $\lceil\log_2 D\rceil$ bits, giving weight
+zero to unused codes. The enlarged table has at most
+$r=3+2\lceil\log_2 D\rceil$ bits. Every table on $r$ bits has a
+trivalent realization of size $O(2^r)$. In the binary prefix tree
+compute, at each node, the indicator that the input has that prefix.
+At depth $j$, copying the next input bit to the $2^j$ nodes and testing
+the two children of each node costs $O(2^j)$ gates. Give each leaf a
+unary weight equal to its table entry when its indicator is one and to
+$1$ otherwise. Exactly one leaf supplies the selected entry. Summing
+the level costs gives $O(2^r)=O(D^2)$ per original station.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:shaving}]
+Fix the finite field $k$ with $\omega_k<9/4$ and the exterior-bit
+allowance $\eta>0$. Write $h=\lceil\log_2 n\rceil$. The ordinary-width
+sort in Theorem~\ref{thm:sort} supplies an exponent $1<p<2$. Put
+$\rho=p-1$. A total arity increase from $h^\beta$ to $h^{b_*}$ will
+cost $O(h^{\rho b_*})$ per surviving incidence in the final lookup.
+Choose $0<\delta\le1/10$ so that $1-\delta>\rho(1+\delta)$. Take
+$A>0$ sufficiently small, and then $\beta>0$ sufficiently small, that
+$b_*=\beta+(1+\delta)A$ satisfies
+\begin{equation}\label{eq:shaving-margins}
+ b_*<\tfrac12,\qquad \rho b_*<\tfrac12\eta,\qquad
+ \Delta=(1-\delta)A-\rho b_*>0 .
+\end{equation}
+The positive gap $\Delta$ is the net saving on the original network
+size. Choose a fixed integer $J$ large enough that $a=A/J$ satisfies
+Lemma~\ref{lem:macro} uniformly for $\beta\le b\le1/2$ and
+$2a<\eta/2$.
+
+One extension $K/k$ suffices for these $J$ applications. Each width
+scale $T$ lies between a constant times $h^\beta$ and a fixed power of
+$h$. The local identities require a fixed constant extension and a
+field of cardinality at least a fixed power of $T$. Choose $[K:k]$
+large enough for the largest such power and divisible by the degrees
+of the required constant extensions. Since $k$ is finite, we can do
+this with $[K:k]=O(\log h)=O(\log T)$ at every scale.
+
+Let $s_j$ count stations and their total arity after $j$ applications,
+let $d_j$ be the cumulative number of copies, and put $e_j=d_j e$.
+Initially $d_0=1$, $s_0=O(m)$, the arity is at most $3\le h^\beta$,
+and the trivalent $k$-tables have a fixed finite dictionary. At step
+$j<J$ use the size allowance
+\[
+ M_j=\max\{s_j,\lceil e_j h^{2a}\rceil\}.
+\]
+This allows the construction to continue even when the exterior bits
+already account for most of the current size. We have $M_j\ge n$,
+$e_j\le M_j h^{-2a}$ and maximum arity at most
+$h^{\beta+(1+\delta)aj}$. If this application makes $r_j$ copies,
+Lemma~\ref{lem:macro} preserves the short table labels, gives
+$d_{j+1}=r_jd_j$ and yields
+\[
+ s_{j+1}\le r_j M_j q,\qquad q=h^{-(1-\delta)a}.
+\]
+Its construction in Section~\ref{sec:full} has
+$\log_2 r_j=O((\log h)^2)$ uniformly in the input network. Inductively,
+the original bound $s_0,e_0=O(n^{1.05})$, multiplied by a fixed
+number of these copy factors and fixed powers of $h$, gives
+$M_j\le n^{1.05+o(1)}\le n^{1.1}$ at every invocation.
+
+In terms of size per exterior bit, $x_j=s_j/e_j$, the replication
+factor cancels. For large $h$,
+\[
+ x_{j+1}\le q\max\{x_j,2h^{2a}\},\qquad
+ x_J\le \max\{q^J x_0,2q h^{2a}\}.
+\]
+Indeed $q<1$, so every contribution arising from an exterior-bit
+allowance is bounded by the most recent such allowance.
+
+Let $u$ be the final maximum arity. Applying
+Lemma~\ref{lem:batch-table} makes $2^u$ copies and multiplies the
+size per copy by $O((1+u)^\rho)$. The resulting tensor is the
+$d$th power of the original $k$-tensor, with
+\[
+ d=2^u d_J,\qquad
+ \log_2 d\le h^{b_*}+O\bigl(J(\log h)^2\bigr)=o(h).
+\]
+Thus $d=n^{o(1)}$ uniformly at fixed $k,\eta$. Each of its $de$
+exterior positions is retained through lookup and through
+Lemma~\ref{lem:table-descent}. Descent costs $O([K:k]^2)=h^{o(1)}$.
+Combining these bounds, the trivalent size over $k$ divided by $de$
+is at most
+\[
+ O(m/e)\,h^{-\Delta+o(1)}
+       +h^{2a+\rho b_*+o(1)} .
+\]
+Choose $\gamma=\Delta/2$. The strict inequalities
+$\Delta>\gamma$ and $2a+\rho b_*<\eta$ absorb the constants and
+lower-order terms for large $n$. Multiplication by $de$ gives
+Equation~\eqref{eq:shave}.
+\end{proof}
+
+For the distinctness tensor of Theorem~\ref{thm:many}, the independent
+exterior positions are the entries of separate lists. Choosing
+$\eta<\sigma$, Proposition~\ref{prop:finitefield} iterates the
+compression until the volume per exterior bit is $O(w^\eta)$, below
+the required $w^\sigma$. This rules out $\omega_k<9/4$ over every
+finite field. Lemma~\ref{lem:specialize} transfers the lower bound to
+any field, where the matching upper bound gives Theorem~\ref{thm:square}.

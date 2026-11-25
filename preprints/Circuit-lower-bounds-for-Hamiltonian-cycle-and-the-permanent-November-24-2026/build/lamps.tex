@@ -1,0 +1,436 @@
+\section{Simultaneous savings for balanced cuts}\label{sec:lamps}
+
+The circuit decomposition in Lemma~\ref{lem:balanced} allows each summand
+to use a different cut of the rows. To bound the whole sum, we need one
+placement of the rows at which \emph{every} cut admits a saving. Each
+side of a cut gets its own supplier. The two suppliers must be close
+enough to share the rank index at low cost. Moving them away from the
+cone vertex must shorten the legs to their rows in total.
+
+Fix a nonempty class \(\mathcal M\) of Hadamard spaces without ports,
+closed under positive rescaling, closed convex subspaces, pointed
+ultralimits and finite \(\ell_2\) products, as supplied by
+Theorem~\ref{prod:main}. Write \(X=[n]\), \(n\ge2\), and \(m=\log_2 n\).
+All logarithms and entropies in this section use base two. A
+\emph{balanced layout} is a map \(b:X\to\{0,1\}\) taking each value on
+at least \(n/4\) rows. In particular, every balanced cut in
+Lemma~\ref{lem:balanced} defines such a layout.
+
+On a metric cone with vertex \(0\) set
+\(
+ \langle x,z\rangle=(\|x\|^2+\|z\|^2-d(x,z)^2)/2
+\).
+This pairing is homogeneous in each variable under nonnegative dilations.
+It adds coordinatewise in products of cones.
+
+\begin{theorem}[Binary lamp certificate]\label{lamp:certificate}
+For every list of \(L\) balanced layouts on \([n]\) there is a Hadamard
+metric cone in \(\mathcal M\), with unit points \(x_1,\ldots,x_n\)
+of barycenter zero and two points \(Z_{\ell,0},Z_{\ell,1}\) per layout,
+such that
+\[
+ d(Z_{\ell,0},Z_{\ell,1})\le1,\qquad
+ \|Z_{\ell,v}\|\le C\sqrt{m+\log L},\qquad
+ \sum_{i=1}^n\langle x_i,Z_{\ell,b_\ell(i)}\rangle
+     \ge c n/\sqrt m
+\]
+for every layout. The constants are absolute.
+\end{theorem}
+
+For the cost comparison in Section~\ref{sec:comparison}, move the two
+suppliers from the vertex to
+\(\tau Z_{\ell,0},\tau Z_{\ell,1}\). The wire between them has length
+at most \(\tau\). For a unit row site \(x_i\), the initial rate at
+which its leg shortens is \(\langle x_i,Z_{\ell,b_\ell(i)}\rangle\).
+The last estimate guarantees a total first-order saving for each layout,
+and the radius bound controls the quadratic error.
+
+To construct the row sites, first fix an arbitrary distribution on the
+layouts and construct a pair of points for each layout. Row \(i\) selects one point from every
+pair according to its layout bit. Write \(\operatorname{bar}\) for the
+Cartan barycenter, the minimizer of the mean squared distance.
+
+\begin{lemma}[Barycentric separation]\label{lamp:lemma}
+Let \(b_1,\ldots,b_L\) be balanced layouts, with any distribution
+on \([L]\). In a member of \(\mathcal M\) there are points
+\(z_{\ell,0},z_{\ell,1}\) satisfying
+\[
+ d(z_{\ell,0},z_{\ell,1})\le1,\qquad
+ \operatorname{diam}\{z_{\ell,v}\}\le C\sqrt{m+\log L}.
+\]
+For \(u_i=\operatorname{bar}_{\ell} z_{\ell,b_\ell(i)}\) and
+independent uniform \(i,i'\in X\),
+\(
+ (\mathbb E d(u_i,u_{i'})^2)^{1/2}\ge c/\sqrt m
+\).
+The constants are absolute.
+\end{lemma}
+
+To prove Lemma~\ref{lamp:lemma}, we encode a word as the increment of
+one lamp. A layout reports the sides of selected letters. By successively hashing
+the unread information into shorter words, we arrange that the combined
+reports identify a typical increment up to a short list, for any
+prescribed sequence of layouts. The lamp graph charges less for an increment on
+this list than for an arbitrary increment.
+
+Applying Theorem~\ref{thm:entropy} to the lamp graph gives a placement in
+which changing an unprepared lamp has large mean squared length. We compare this change
+with a path that first prepares the reports and then makes the same
+increment. The difference in lengths forces the row barycenters to
+separate. The tangent cone at their barycenter turns separation into
+the first-order saving, and a product of cones realizes the saving for
+all layouts at once.
+
+\subsection{Identifying a word from its reports}
+
+A uniform letter of \(X\) contains \(m\) bits of information, and a
+layout reads one binary digit from it. We use batches of letters. At
+each stage a report conveys about half a bit per letter in the batch.
+A fixed map sends the batch to a shorter one whose distribution, given
+a typical report, is close to uniform.
+
+Choose a small absolute \(\delta\in(0,1/100)\), whose size will be
+fixed below, and put
+\[
+  r=\lceil K_\delta(m+\log L)\rceil,\qquad S=rm,\qquad r_1=r.
+\]
+Given \(r_a\), set
+\(r_{a+1}=\lfloor(1-(1/2+\delta)/m)r_a\rfloor\), stopping before
+the next length would be smaller than \(\delta r\). Denote the last
+index by \(P\) and put \(R=\sum_{a=1}^P r_a\). Geometric decay gives
+\[
+  \delta r\le r_P\le3\delta r,\qquad P=O_\delta(m),\qquad R\le2S,
+  \qquad \sum_a\sqrt{r_a}\le C m\sqrt r.
+\]
+We take \(K_\delta\) large enough for the rounding estimates, for
+\(P(m+1)\le\delta S\), and for \(P\log L\le S\). Thus \(S\) is the
+information in the uniform initial word, and \(R\) will be the storage
+allocated to its successive reports.
+
+Let \(H_\ell\) be the binary entropy of \(b_\ell(i)\) for uniform
+\(i\). Balance gives \(H_\ell>1/2\). The report
+\(F_{a,\ell}(y)\) of \(y\in X^{r_a}\) records the layout bits on
+the first \(\lfloor r_a/(2H_\ell)\rfloor\) letters, padded by zeros
+to length \(r_a\). A report of positive probability \(p\) under the
+uniform word is typical if
+\( |{-\log p}-r_a/2|\le\delta r_a/4\).
+The information content is a sum of independent bounded variables with
+mean within one of \(r_a/2\). Thus the probability of an atypical
+report is at most \(\exp(-c_\delta r_a)\).
+
+For each \(a<P\) choose a map
+\(\sigma_a:X^{r_a}\to X^{r_{a+1}}\) as follows. Assign its values
+independently and uniformly. Inside any typical report cell and for
+each proposed output word, the expected fiber size lies between
+\(2^{3\delta r_a/4}\) and \(2^{5\delta r_a/4+m}\), by the definition
+of \(r_{a+1}\). The multiplicative Chernoff bound puts every fiber within
+a factor \(1\pm2^{-\delta r_a/8}\) of its mean except with probability
+at most \(2\exp(-c2^{\delta r_a/2})\) per test. A union bound covers
+the at most \(L2^{O(mr_a)}\) choices of layout, report and output,
+since \(r_a\ge\delta r\) and \(K_\delta\) is sufficiently large.
+Fix maps satisfying these estimates for all the layouts at each step.
+
+A \emph{chart} is a list \(\theta=(\ell_1,\ldots,\ell_P)\) of layouts,
+one for each batch. For a uniform \(X_1\in X^r\), put
+\(X_{a+1}=\sigma_a(X_a)\). Its report at stage \(a\) is
+\(F_{a,\ell_a}(X_a)\). We use two properties, both uniform in the chart.
+\begin{enumerate}
+\item The joint law of \(X_a\) and all reports before time \(a\)
+is within \(\exp(-c'_\delta r)\) in total variation of the product
+of a fresh uniform batch and the reports of independent uniform
+batches. Indeed, on typical cells the next hash is nearly uniform
+by the fiber estimate. The probability of the other cells and the
+relative fiber errors add at each step under composition of the
+report and hash kernels. The resulting factor \(P\) is absorbed in
+the exponential. In particular all reports are typical with the same
+error bound after decreasing \(c'_\delta\).
+\item If all reports are typical, at most \(2^{8\delta S}\) initial
+words give these reports. Guess the last batch at cost at most
+\(3\delta S\) bits and work backwards. Each fiber then costs at
+most \(1+5\delta r_a/4+m\) bits. The claimed bound follows from
+\(R\le2S\) and \(P(m+1)\le\delta S\).
+\end{enumerate}
+
+\subsection{The lamp graph and its placement}
+
+Identify \(X^r\) with a cyclic group \(A\) of order \(2^S=n^r\)
+by any bijection, so that each word is a possible increment. A state
+\((g,\theta,h)\) consists of an array \(g\in A^M\) of lamp values, a
+chart \(\theta\), and \(R\) report bits \(h=(h_1,\ldots,h_P)\). For
+each chart and report, the associated list consists of the initial words
+whose successive batches give exactly those reports. The graph has the
+following reversible edges. The cost of an edge is a bound on its
+\emph{squared} length.
+\begin{itemize}
+\item A single report bit can be flipped at cost \(\log(1/\delta)\).
+A layout and its report in one batch can be reset at cost \(r\).
+Resetting the entire chart and report costs \(S\).
+\item One can add any word to a specified lamp at cost \(S\).
+When all reports are typical, one can add or subtract a word from
+their list at cost \(\delta S\).
+\end{itemize}
+The number \(M\) of lamps will be an absolute constant. Fix a reference
+chart and report, and call the state with those data and array \(g\)
+the reference state of \(g\). The demand law \(\nu\) joins the
+reference states of independent uniform arrays. Even given the
+starting state, its destination array has \(MS\) bits of entropy.
+
+A physical walk can change the array only through the edges just
+described. To compare this with the independent arrays of a demand
+step, we put the two walks in the setting of Theorem~\ref{thm:entropy}.
+For a symmetric edge law \(\alpha\) on a finite connected weighted
+graph, let \(E_\alpha\) be its mean cost.
+The \emph{padded physical walk} has stationary pair law equal to
+one half \(\alpha\) plus one half the diagonal law of the demand marginal.
+The padded demand walk is defined with the two roles interchanged.
+Both are the stationary Markov chains of their respective pair laws
+and have the same stationary distribution. For a pair law \(\mu\) write
+\(\mathcal E_\mu(f)=\mathbb E_{(u,v)\sim\mu}d(f(u),f(v))^2\).
+The entropy rate of a stationary array process \((G_t)\) is
+\(\lim_{t\to\infty}H(G_1,\ldots,G_t)/t\).
+
+\begin{lemma}[Placing the lamps]\label{lamp:entropy-placement}
+Suppose that all edge costs lie in \([1,S]\), the lamp-array demand
+is as above, and the entropy rate of the array along every padded
+physical walk is at most \(C_0 E_\alpha\). For sufficiently large
+\(M\), depending only on \(C_0\), the graph admits a placement in
+\(\mathcal M\) with every squared edge length at most its cost and
+mean squared demand distance at least \(c_0 MS\), where
+\(c_0>0\) depends only on \(C_0\).
+\end{lemma}
+\begin{proof}
+Let \(B\) be the maximum mean squared demand distance under these edge
+constraints. The possible squared distance tables form a closed convex
+cone by the product, scaling and ultralimit hypotheses. Connectedness
+makes the constrained tables bounded. For any table with demand
+energy one we have \(\max_e d_e^2/c_e\ge1/B\), where \(c_e\) is the
+edge cost. Convex minimax against the probability simplex on the
+edges gives weights \(w_e\) such that
+\(\sum_e w_e d_e^2/c_e\ge1/B\) for every such table.
+Weight edge \(e\) proportionally to \(w_e/c_e\) and orient it uniformly
+to obtain \(\alpha\). Homogeneity now gives the squared energy comparison
+\(\mathcal E_\nu\le(B/E_\alpha)\mathcal E_\alpha\) for all placements
+in \(\mathcal M\). The nontriviality needed to normalize demand energy
+follows since a class of one-point spaces has ports.
+
+Padding divides both energies by two. In the padded demand walk the
+conditional entropy of the destination array given the starting state is
+at least \(MS/2\), as is seen by conditioning also on the coin selecting
+the demand or the diagonal step. By Theorem~\ref{thm:entropy}, with comparison constant \(1+B/E_\alpha\),
+\[
+ MS/2\le C(1+B/E_\alpha)(1+C_0 E_\alpha)\le C'(S+B).
+\]
+The last inequality uses \(1\le E_\alpha\le S\). Choosing \(M\ge4C'\)
+proves the claim.
+\end{proof}
+
+We verify the coding hypothesis with an absolute \(C_0\). Encode the
+initial full state once in a long physical path and then the move type,
+including a hold, with a bounded number of bits per step. On a reset
+encode the new chart and report for the affected batches. For a single
+batch this uses \(O(r)\) bits including its address. For a full reset it
+uses \(O(S)\), since \(P\log L\le S\) and \(R\le2S\).
+On single-bit flips transmit only the move type. Sending a bit address
+at every flip would cost \(\lceil\log R\rceil\) bits per flip. Instead
+the decoder keeps the report last received, and the encoder sends a
+correction when a lamp uses it.
+
+At the next lamp move first correct the decoder's copy. A discrepancy
+of Hamming weight \(D\) costs at most
+\(1-D\log\delta-(R-D)\log(1-\delta)
+=O(1+\delta R+D\log(1/\delta))\) bits by a prefix code for independent
+Bernoulli discrepancies. The sum of the values \(D\) over the path
+is at most the number of single flips, since corrections refresh the copy
+and resets overwrite the corresponding entries. The remaining data are
+the lamp address and either the whole increment or its signed index
+on the current list. Taking \(\delta S\ge1+\log M\), the list bound pays
+for these data at each cheap move. The accumulated description length
+is at most an absolute constant times the accumulated unpadded move costs
+plus the length of the path and the initial description. If several moves realize an observed
+transition, sample the move conditionally from the edge law defining that transition. Each such
+description decodes to the correct array sequence, and its expected
+physical cost is the one charged by \(E_\alpha\). Taking the stationary
+expectation, dividing by path length and taking the limit bounds the
+entropy rate by \(C_0E_\alpha\). In this estimate \(C_0\) is independent
+of \(\delta\). Thus \(M\) may be fixed absolutely, and \(K_\delta\)
+then made large enough for the address bound.
+
+\subsection{Changing one lamp through the batches}
+
+Let \(p(g,\theta,h)\) be the placement furnished by
+Lemma~\ref{lamp:entropy-placement}. For a fixed sequence
+\(y=(y_1,\ldots,y_P)\) of batches take independent layouts with the
+given law, let \(h_a=F_{a,\ell_a}(y_a)\), and average the point
+\(p(g,\theta,h)\) by successive Cartan barycenters in the order
+\(\ell_P,\ell_{P-1},\ldots,\ell_1\). Call the result \(T(g,y)\).
+Each average holds all earlier layouts fixed. This order allows us to
+replace a batch after revealing only the preceding reports.
+Barycenters contract mean distance under any coupling
+\cite{Sturm}, hence also root-mean-square distance.
+
+For the calculations below we recall the coordinate-exchange inequality.
+If \((V_i,V'_i)\) are independent exchangeable pairs, and \(V^{(i)}\)
+uses \(V'_i\) in coordinate \(i\) and \(V\) elsewhere, then
+\begin{equation}\label{lamp:exchange}
+ \mathbb E d(f(V),f(V'))^2
+ \le\sum_i\mathbb E d(f(V),f(V^{(i)}))^2
+\end{equation}
+for any Hadamard-valued map \(f\), by Equation~\eqref{prod:exchange}.
+
+We compare the same increment twice, once with independent batches
+and once with the reports of the increment itself. In each comparison
+we couple the layouts identically. The order of the barycenters then
+allows us to apply Equation~\eqref{lamp:exchange} to individual letters.
+
+The full-reset move puts \(T(g,y)\) within \(\sqrt S\) of its reference
+state for every \(y\). For independent uniform \(g,g'\), their mean-square
+separation after taking barycenters therefore has square root at least
+\(\sqrt{c_0MS}-2\sqrt S\). Enlarge \(M\) absolutely if necessary.
+Applying Equation~\eqref{lamp:exchange} to the \(M\) array entries shows that
+for a uniform lamp index \(j\) and an independent uniform word \(X_1\)
+the root-mean-square distance from \(T(g,y)\) to
+\(T(g+e_jX_1,y)\) is at least \(c_1\sqrt S\). Here \(e_jX_1\) denotes
+the increment at lamp \(j\). This holds also after choosing independent
+uniform batches \(Y=(Y_a)_a\), independently of \(g,j,X_1\).
+
+Write \(Y^{(a)}=(X_1,\ldots,X_a,Y_{a+1},\ldots,Y_P)\), so
+\(Y^{(0)}=Y\), and set \(X^*=(X_1,\ldots,X_P)\). Figure~\ref{lamp:fig-path}
+shows the path. Replace independent batches by those of \(X^*\), one
+at a time. With the entire chain installed, its typical reports put
+\(X_1\) on their list, so the squared cost of adding \(X_1\) to lamp
+\(j\) is at most \(\delta S\). On atypical reports we can still use
+the edge of cost \(S\). Averaging over the same charts bounds the
+root-mean-square length of the increment by
+\(\sqrt{\delta S+S\exp(-c'_\delta r)}\).
+
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[font=\small,
+  state/.style={draw=ink!65,fill=ink!4,rounded corners=2pt,
+    minimum height=20pt,minimum width=76pt,inner sep=3pt},
+  path step/.style={-{Latex[length=2mm]},draw=ink,semithick}]
+\node[state] (a) at (0,0) {$T(g,Y)$};
+\node[state] (b) at (8.0,0) {$T(g,X^*)$};
+\node[state] (c) at (8.0,-1.85) {$T(\widetilde g,X^*)$};
+\node[state] (d) at (0,-1.85) {$T(\widetilde g,Y)$};
+\node[above=3pt of a] {Independent batches};
+\node[above=3pt of b] {Batches of the increment};
+\draw[path step] (a.east) -- node[above]{replace batches \(1,\ldots,P\)} (b.west);
+\draw[path step,draw=sea] (b.south) -- node[left=3pt]{\(O(\sqrt{\delta S})\)} (c.north);
+\draw[path step] (c.west) -- node[below]{restore batches \(P,\ldots,1\)} (d.east);
+\draw[densely dashed,draw=ink] (a.south) -- node[right=3pt]{\(\ge c_1\sqrt S\)} (d.north);
+\end{tikzpicture}
+\caption{The same lamp increment \(\widetilde g=g+e_jX_1\) with two
+choices of reports. The vertical labels give root-mean-square distances.
+The dashed segment compares the endpoints of the three-step detour.
+With the increment's own batches in place, the middle step uses the
+short list with high probability.}
+\label{lamp:fig-path}
+\end{figure}
+
+Let \(J\) be the supremum of the root-mean-square separation in
+Lemma~\ref{lamp:lemma} under its stated distance bounds, with \(C\)
+chosen sufficiently large in terms of \(K_\delta\).
+We claim that the root-mean-square cost of replacing batch \(a\) is at most
+\begin{equation}\label{lamp:path-estimate}
+ \sqrt{r_a\log(1/\delta)}\,J+\exp(-c''_\delta r).
+\end{equation}
+First average over layouts \(\ell_P,\ldots,\ell_a\), holding the
+earlier layouts fixed. The points for \(Y^{(a-1)}\) and \(Y^{(a)}\)
+depend on \(X_1,\ldots,X_{a-1}\) only through their common prefix
+reports. The unaltered \(Y_a,\ldots,Y_P\) are independent
+of the entire hash chain. By the joint law above, in the
+expectation of this squared distance we can replace \(X_a\) by a fresh
+independent uniform batch and use independent prefix reports, with
+error \(O(S\exp(-c'_\delta r))\), since all the points concerned lie in a
+ball of radius \(\sqrt S\) at the same reference state. This estimate
+averages over prefix reports and requires no estimate conditioned on
+one specified report value.
+
+Apply Equation~\eqref{lamp:exchange} to the two independent words at batch \(a\).
+Fix the other letters and the prefix reports. Immediately before the
+average over \(\ell_a\), the letter in question affects only the bit
+read by \(b_{\ell_a}\). If this position is ignored by that layout, the
+two choices give the same point. At each layout the two points are at
+distance at most \(\sqrt{\log(1/\delta)}\), by the flip move and coupling
+all subsequent layouts. Over all layouts these points have diameter
+at most \(\sqrt r\), by a one-batch reset with that same coupling.
+After rescaling by \(1/\sqrt{\log(1/\delta)}\), their averages over
+\(\ell_a\) are precisely a test for \(J\). Each summand in
+Equation~\eqref{lamp:exchange} is thus at most \(J^2\log(1/\delta)\).
+Completing the outer barycenters contracts the mean square. Taking
+square roots and absorbing polynomial factors into the exponential
+gives Equation~\eqref{lamp:path-estimate}. On the return path the translated
+array is again uniform independently of all batches, since \(g\) was
+independent uniform.
+
+Sum the replacement lengths along both horizontal paths in
+Figure~\ref{lamp:fig-path}. The \(L^2\) triangle inequality gives
+\[
+ c_1\sqrt S\le
+ 2J\sqrt{\log(1/\delta)}\sum_a\sqrt{r_a}
+ +\sqrt{\delta S+S\exp(-c'_\delta r)}
+ +2P\exp(-c''_\delta r).
+\]
+Choose \(\delta\) sufficiently small compared with \(c_1^2\), and then
+\(K_\delta\) sufficiently large. Since \(\sum_a\sqrt{r_a}\le C m\sqrt r\)
+and \(S=rm\), this gives \(J\ge c/\sqrt m\). Choosing a placement
+within a factor two of the supremum proves Lemma~\ref{lamp:lemma}.
+
+\subsection{From barycenters to directions}
+
+\begin{proof}[Proof of Theorem~\ref{lamp:certificate}]
+We first normalize the mean squared row norm to one. Given a distribution
+on layouts, take the points of Lemma~\ref{lamp:lemma}, put
+\(p=\operatorname{bar}_i u_i\), and set
+\(\sigma^2=n^{-1}\sum_i d(p,u_i)^2\). The triangle inequality gives
+\(\sigma\ge c/(2\sqrt m)\). In the completed tangent cone at \(p\) take
+\[
+ x_i=\log_p(u_i)/\sigma,\qquad Z_{\ell,v}=\log_p(z_{\ell,v}).
+\]
+To realize the tangent cone in \(\mathcal M\), rescale distances
+by integers \(k\to\infty\). Represent a direction of length \(t\)
+by the points at distance \(t/k\) on its geodesic. In a pointed
+ultralimit this is an isometric embedding and extends to the
+completed cone. Its image is closed and convex. The logarithm map preserves distance to \(p\)
+as norm and contracts pairwise distances. First variation of the mean
+squared distance at its minimizer shows that
+\(\sum_i\langle v,\log_p u_i\rangle\le0\) for each represented direction,
+and hence for every tangent vector by continuity. Thus the \(x_i\)
+have barycenter zero \cite{BH,Sturm}. The bounds on the \(Z\)'s follow
+from contraction and from the diameter bound on the convex hull of
+the original points, which contains \(p\).
+
+Use the variance inequality for the measure with barycenter \(u_i\),
+evaluated at \(p\). It gives
+\[
+ \mathbb E_\ell d(p,z_{\ell,b_\ell(i)})^2
+ \ge d(p,u_i)^2+\mathbb E_\ell d(u_i,z_{\ell,b_\ell(i)})^2 .
+\]
+On expanding the cone pairing and using contraction, we obtain
+\(\mathbb E_\ell\langle x_i,Z_{\ell,b_\ell(i)}\rangle
+\ge d(p,u_i)^2/\sigma\). The total expected score is therefore at
+least \(n\sigma\). Write \(s_\ell=\sum_i\langle x_i,Z_{\ell,b_\ell(i)}\rangle\) for
+the score at layout \(\ell\). For every distribution \(q\) there is
+now a configuration with \(\sum_\ell q_\ell s_\ell\ge cn/\sqrt m\).
+For each configuration the strict inequality
+\(\sum_\ell q_\ell s_\ell>cn/(2\sqrt m)\) defines an open set of
+distributions. These sets cover the compact simplex. A finite subcover
+gives a finite matrix, with configurations as rows, layouts as columns,
+and the scores as entries. Minimax gives a convex combination of its
+rows with score at least \(cn/(2\sqrt m)\) in every column. Realize this combination by
+an \(\ell_2\) product, multiplying the vectors in each factor by the
+square root of its weight. All metric bounds and the normalization
+survive, and barycenters in the product are coordinatewise.
+
+Finally enlarge the original list to include every cyclic translate
+\(i\mapsto b_\ell(i+t)\) of every layout, with indices modulo \(n\).
+Apply the preceding construction to the enlarged list, indexing each
+layout by \((\ell,t)\). In the product of \(n\) copies take the rows
+\(n^{-1/2}(x_{i+t})_t\) and centers
+\(n^{-1/2}(Z_{(\ell,-t),v})_t\). At row \(i+t\) layout
+\((\ell,-t)\) reads the original bit \(b_\ell(i)\). Thus the row
+at position \(i\) has squared norm \(n^{-1}\sum_k\|x_k\|^2=1\).
+The product rows are centered and each layout keeps its score bound. The enlarged list has at most \(nL\) members,
+so \(m+\log(nL)\le2(m+\log L)\) preserves the radius estimate.
+\end{proof}

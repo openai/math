@@ -1,0 +1,56 @@
+\subsection{Earlier bounds}
+
+Karatsuba and Ofman reduced a product to three products of half the
+length. Toom and Cook split the inputs into more pieces and used
+evaluation and interpolation to recover their product
+\cite{karatsubaofman,toom,cook}. The nearly linear algorithms treat
+multiplication as convolution. Sch\"onhage and Strassen obtained
+$O(n\log n\log\log n)$ tape time using Fourier transforms over
+residue rings \cite{schonhagestrassen}. F\"urer reduced the factor
+above $n\log n$ to $2^{O(\log^*n)}$ \cite{furer}. Modular arithmetic
+and short lattice vectors gave further constructions
+\cite{DeKururSahaSaptharishi2013,HarveyHoevenLecerf2016,HarveyHoeven2019Lattice}.
+Harvey and van der Hoeven reached $O(n\log n)$ on a multitape machine
+using Gaussian resampling to obtain multidimensional Fourier transforms
+of power-of-two side lengths \cite{hvh}.
+
+An earlier fixed-tape algorithm combines resampling with a finite
+network that shares butterfly operations and address rearrangements.
+It gives worst-case time $O(n(1+\log n)^{1-2^{-182}})$
+\cite[Theorem~1]{Tape}. Subsequent optimizations of the finite
+schedules give larger numerical savings under explicit assumptions
+on the cost of their component operations \cite{ChenTapeSchedules}.
+Our implementation uses the original stream algorithms and address
+changes. For the main convolution we use short cyclic factors
+and apply the Fourier operations to many occupied rows at once.
+The companion Fourier paper determines the exponent $1/2$ for exact
+binary linear circuits, even when one circuit mixes the inputs of
+independent transforms \cite[Theorem~\ext{F}{thm:main}]{oaF}. It
+also describes earlier savings in operation counts
+\cite{AlmanRao,FiniteFourier,ExplicitFourier,Sussman,Kartal}.
+To obtain a tape algorithm we must move the rows into position,
+compute the coefficients to sufficient precision, and recover every
+product digit exactly.
+
+For online multiplication, which must emit digits as the input arrives,
+Paterson, Fischer and Meyer obtained an $\Omega(n\log n)$ bound even
+on mean time, building on the overlap argument of Cook and Aanderaa
+\cite{CA,PFM}. For moving data, Sto{\ss} proved an
+$\Omega(N^2\log N)$ lower bound for transposing an $N\times N$ bit
+matrix in a model that transports its entries intact \cite{moveonly}.
+An ordinary tape machine may read both operands before writing the
+product and may encode several input bits together before moving them.
+
+Network coding gives a different route to lower bounds. Adler,
+Harvey, Jain, Kleinberg and Lehman connected the undirected
+multiple-unicast conjecture to matrix transposition
+\cite{AHJ}. Assuming that conjecture, Afshani, Freksen, Kamma and
+Larsen proved an $\Omega(n\log n)$ multiplication lower bound for
+Boolean circuits with bounded fan-in and fan-out \cite{AFKL}.
+Two independent constructions exhibit undirected networks where coding
+exceeds the capacity of fractional routing \cite{ZhangLiLi,BravermanHe}. Our lower bound allows arbitrary local coding and charges for
+communicating the resulting bits. It assumes variable-count Weak ETH,
+which is equivalent to the Stearns--Hunt hypothesis for CNF satisfiability
+\cite[Theorem~2.4]{WeakSH}. Subexponential algorithms for 3-SAT
+\cite{Anthropic,falseeth} refute the original Exponential Time Hypothesis
+\cite{IP} and are compatible with this weaker assumption.

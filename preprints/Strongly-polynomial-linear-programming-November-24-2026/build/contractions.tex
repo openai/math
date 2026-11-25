@@ -1,0 +1,279 @@
+\section{Contractions in max norm}\label{sec:contractions}
+
+At a point \(x\) far from a fixed point \(v\), a contraction in max
+norm must move each coordinate of greatest error toward \(v\).
+The signs of these movements give exactly the kind of partial
+information used by Theorem~\ref{thm:prices}. We use them to locate
+\(v\) with a running time polynomial in the number of bits of accuracy.
+
+Let \(C=[-1,1]^n\), \(n\ge1\). A self-map \(f:C\to C\) with
+\[
+ \|f(x)-f(y)\|_\infty\le (1-\gamma)\|x-y\|_\infty,\qquad
+ 0<\gamma\le1,
+\]
+has a unique fixed point \(v\)~\cite{Ban}. Direct iteration may
+require order \(1/\gamma\) evaluations to halve the error.
+We assume an oracle that accepts a dyadic point \(x\in C\) and a
+precision \(m\). It returns a dyadic point of \(C\) with \(m\) bits
+after the binary point and sup norm error at most \(2^{-m}\) from
+\(f(x)\). Dimensions and accuracy parameters are given in unary.
+
+\begin{theorem}[Approximation in max norm]\label{thm:contraction}
+For \(\gamma=2^{-b}\)
+we can, given this access to the contraction \(f\)
+and nonnegative integers \(b,k\), return
+a dyadic \(x\in C\) with \(\|x-v\|_\infty\le 2^{-k}\)
+in deterministic bit time polynomial in \(n,b,k\),
+including all query and answer bits.
+For a nonexpansive map (\(\gamma=0\) allowed
+in the Lipschitz condition), we can instead return a dyadic \(x\in C\)
+with residual
+\(\|x-f(x)\|_\infty\le 2^{-k}\),
+in time polynomial in \(n,k\).
+\end{theorem}
+
+For a contraction, a residual bound \(e\) also gives the distance
+bound \(e/\gamma\). Shellman and Sikorski~\cite{Sik} obtained
+polylogarithmic dependence on inverse accuracy in fixed dimension,
+with an exponent growing with the dimension. Chen, Li and
+Yannakakis~\cite{CLY} balanced the remaining possible locations to
+obtain a residual of at most \(\epsilon\) in
+\(O(n\log(1/\epsilon))\) exact evaluations. Computing the query
+points incurs an additional cost. Feodorov and Haslebacher~\cite{FH}
+combined faster balancing with dimension splits~\cite{CLYsp}
+to obtain subexponential arithmetic time in \(n+\log(1/\epsilon)\)
+with exact evaluations. See also the subsequent work on
+decomposition~\cite{CLYdec}.\footnote{For other norms see~\cite{STWon,HKS,HLSW,DFZ},
+for monotone maps see~\cite{BFGMS}, and for the complexity of total
+search see~\cite{DP,FGMS}.} Soleymani and Farina~\cite{SF} obtained
+quasipolynomial arithmetic complexity for approximating the location,
+counting exact evaluations and using logarithms of inverse gap and
+inverse error as parameters. Theorem~\ref{thm:prices} combines
+balancing with recursive amplification of extremal labels.
+
+\begin{proof}
+First assume \(\gamma=2^{-b}>0\) and set
+\[
+ \epsilon=2^{-k},\qquad \delta=\gamma\epsilon/16,\qquad R=2/\delta .
+\]
+Extend \(f\) to \(\RR^n\) by clipping each input coordinate to
+\([-1,1]\). This preserves the Lipschitz bound and the fixed point.
+Run Theorem~\ref{thm:prices} with \(N=n\) and demand bound \(R\).
+At a queried price vector \(p\), set \(x=\delta p\).
+To obtain a label, clip \(x\) to \(C\), round it to the nearest
+\(\delta\)-grid point, and request \(b+k+4\) bits from the oracle.
+Subtract the original \(x\) from the answer and return the signs,
+breaking ties arbitrarily. Input rounding contributes at most
+\(\delta/2\) to the evaluation error and the oracle at most
+\(\delta\). Thus the labels recover the sign of every component of
+\(f(x)-x\) with magnitude greater than \(2\delta\).
+
+For the analysis, the fixed point defines one hypothesis with both
+slots \((i,h)\), \(h=\pm1\), at every coordinate. Assign the demand
+\[
+ a_{i,h}=\left\lfloor\frac{h v_i-\epsilon/2}{\delta}\right\rfloor.
+\]
+These integers lie in \([-R,R]\). The algorithm need not know them.
+Writing \(d_{i,h}(p)=a_{i,h}-hp_i\), we have
+\[
+ h(v_i-x_i)-\delta
+ <\delta d_{i,h}(p)+\epsilon/2
+ \le h(v_i-x_i).
+\]
+Suppose that \((i,h)\) maximizes the surplus and its surplus is
+nonnegative. With \(u=h(v_i-x_i)\) the displayed bounds give
+\(u\ge\epsilon/2\) and \(\|v-x\|_\infty\le u+\delta\).
+Since \(f(v)=v\), the movement of coordinate \(i\) satisfies
+\[
+ h(f_i(x)-x_i)\ge u-(1-\gamma)(u+\delta)
+     \ge \gamma\epsilon/2-\delta=7\delta .
+\]
+Even after rounding, the reported sign is \(h\).
+This proves consistency of the hypothesis.
+
+At the returned prices all its surpluses are nonpositive, so the
+corresponding \(x\) satisfies
+\(\|x-v\|_\infty\le\epsilon/2+\delta\). Clipping and rounding to
+the same grid yield a dyadic point within \(\epsilon\) of \(v\).
+The running time is polynomial in \(n,b,k\) because
+\(\log R=b+k+5\), and every oracle input and answer is a string
+of polynomial length.
+
+For a nonexpansive \(f\), apply the contraction result to
+\(g=(1-\epsilon/2)f\) with target distance \(\epsilon/4\)
+as in~\cite{CLY,SF}. At the fixed point \(v_g\), the residual
+\(\|v_g-f(v_g)\|_\infty\) is at most \(\epsilon/2\) because
+\(f(v_g)\in C\). Moving to the returned point changes this residual
+by at most \(2(\epsilon/4)\), by nonexpansiveness. To simulate an
+\(m\)-bit query to \(g\), request \(m+1\) bits from \(f\),
+multiply by \(1-\epsilon/2\), and round to the nearest \(m\)-bit
+dyadic. The total error is at most \(2^{-m}\).
+\end{proof}
+
+\subsection{Exact piecewise-affine computation}
+
+For an explicitly given piecewise-affine map, a small residual
+identifies a region on which an exact fixed point can be found by
+LP. Consider a circuit with \(n\) inputs and \(n\) outputs, built
+from scalar affine, minimum and maximum gates~\cite{EY,FGMS}.
+A gate output may feed several later gates. A \emph{selection}
+specifies one attaining operand at each minimum or maximum.
+Adding a variable for each gate output gives linear constraints for
+the inputs and outputs realizing a selection. Ties are allowed, so
+each such cell is closed.
+
+\begin{corollary}[Exact fixed points for rational circuits]\label{cor:pa}
+Given such a circuit with binary rational coefficients, a
+deterministic algorithm uses polynomial bit time to return either an
+exact fixed point in \(C\) or a counterexample to the nonexpansive
+self-map property. A counterexample consists of one point mapped
+outside \(C\) or two points violating nonexpansiveness. All points
+returned are rational.
+\end{corollary}
+
+\begin{proof}
+Fix a selection and minimize \(e\) over the realizing cell in \(C\),
+subject to \(-e\le f_i(x)-x_i\le e\) for every \(i\). Every such LP
+has encoding length bounded by a common polynomial in the circuit
+length. By the usual vertex bounds~\cite{GLS}, its minimum, if
+positive, is at least the reciprocal of an integer of polynomial
+bit length. Choose \(k\), polynomial in the input length, so that
+\(2^{-k}\) is strictly smaller than this lower bound. Every cell
+realizing a residual at most \(2^{-k}\) then contains an exact fixed
+point. This precision argument is due to Etessami and
+Yannakakis~\cite{EY}.
+
+Run Theorem~\ref{thm:contraction}
+for this \(k\), in its nonexpansive version.
+Evaluate the circuit exactly before rounding each oracle reply.
+With the input and a realizing selection prescribed, the gate values
+are the unique solution of a rational linear system. Vertex bounds
+therefore give polynomial bit length for all reduced gate values
+on short-bit inputs.
+Include evaluation at the point output by that theorem.
+If an evaluation breaks range or violates nonexpansiveness
+upon comparison with past evaluations, stop
+and return this counterexample.
+
+If all pass, these exact evaluations extend to
+a nonexpansive self-map of the cube by McShane extension
+\cite{McSh}
+(coordinatewise, take the minimum of recorded
+values plus sup norm distance to the corresponding sample,
+then clip).
+So the residual guarantee holds, even for the original circuit, at
+the output point.
+This extension argument for total search
+(cf.~\cite{CLY})
+applies also to each prefix of passing evaluations,
+so the time bound holds in any case.
+Thus we need only make a selection at the output point
+and solve linear feasibility for a fixed point in that cell
+by bit-polynomial LP.
+\end{proof}
+
+\subsection{Offsets and asymptotics}
+
+A discounted game gives affine gates whose slopes contain
+transition probabilities and discount factors, while rewards enter
+as offsets. The offsets may be arbitrary reals. To study vanishing
+discount, we also need to recover a single selection valid throughout
+an interval \(0<t<t_*\). We do both by determining which linear
+constraints are tight. Their determinant tests depend linearly on
+the offsets, permitting Frank--Tardos rounding in the spirit of
+Tardos's algorithm for LP~\cite{Tardos}.
+
+\begin{proposition}[Real offsets and a vanishing parameter]\label{prop:asym}
+Allow affine gates in Corollary~\ref{cor:pa}
+with operands \(y_j\) and output
+\[
+ z=\sum_j a_j(t)y_j+b(t),
+\]
+where the polynomials are given by coefficient lists. The slope
+polynomials \(a_j\) have binary rational coefficients, and the offset
+polynomial \(b\) has arbitrary real coefficients.
+There is a deterministic strongly polynomial algorithm returning
+either a fixed point in \(C\) or a counterexample to the nonexpansive
+self-map property as in Corollary~\ref{cor:pa}. The coordinates
+are rational functions of \(t\), represented by ratios of real
+polynomials, valid for all sufficiently small \(t>0\).
+With a fixed point we can also return a selection, valid in the
+same sense.
+Here degrees and slope encoding lengths count as part
+of discrete input size.
+\end{proposition}
+
+This includes nonparametric input (and then the output
+can be taken constant).
+
+\begin{proof}
+We solve on short-bit data and transfer the result back.
+For this we recognize possible outcomes by determinant signs.
+
+Indeed, at fixed \(t\), use evaluation constraints with
+selections prescribed. Then asking for a fixed point in \(C\)
+gives linear conditions. To ask if the outputs \(z,z'\)
+at points \(x,x'\in C\) can violate nonexpansiveness,
+specify an output coordinate \(i\) and sign \(h\), and consider
+\[
+  h(z_i-z'_i)\ge \tau+u,\qquad
+  \|x-x'\|_\infty\le\tau\le2,\qquad 0\le u\le1 .
+\]
+A solution with \(u>0\) witnesses a violation. For a range violation
+prescribe a single selection, coordinate \(i\) and sign \(h\), and
+impose \(hz_i\ge1+u\) with \(0\le u\le1\). Again success means
+\(u>0\).
+
+With only its weak inequalities, each system describes a polytope,
+since the inputs lie in the cube and the gate outputs are bounded
+there. A successful outcome thus has a vertex witness, obtained by
+maximizing \(u\) when a violation is sought. A square invertible
+system of tight rows determines this vertex. Its determinant and
+the bordered determinants formed with each inequality row and the
+right-hand side column determine whether the vertex satisfies
+the inequalities. They also determine the sign of \(u\).
+
+All these determinants are univariate polynomials with
+coefficients linear in the vector \(w\)
+of all offset coefficients together with a constant~\(1\)
+(use the \(1\) entry also for tests independent of offsets).
+After a common positive denominator is cleared, these linear
+forms have integer coefficients of \(\ell_1\)-norm bounded
+by \(2^{\poly(L)}\), uniformly over selections,
+with \(L\) our input size counting each offset coefficient as one entry.
+Indeed, clear all slope denominators by their product,
+then use the determinant expansion
+(degrees polynomial, at most polynomially many factors per term,
+at most \(2^{\poly(L)}\) terms).
+Offsets appear only in the right-hand side column.
+
+By Lemma~\ref{lem:ft} use short-bit offsets (normalizing
+the rounded vector so the constant is again one)
+preserving all these coefficient signs.
+At the new offsets, use a positive
+\(t_0=2^{-\poly(L)}\)
+small enough that the lowest nonzero coefficient
+decides every determinant sign at \(t_0\)
+whenever the determinant is nonzero as a polynomial.
+After clearing the new denominators, its coefficients are integers
+of polynomial bit length. A geometric series bounds the terms
+after the lowest nonzero one, so this sign agrees with that at all
+sufficiently small positive \(t\). Identically zero determinants
+stay zero.
+
+Solve the resulting short-bit problem (new offsets, \(t=t_0\))
+by Corollary~\ref{cor:pa}.
+Recover a successful vertex and defining tight rows
+as above, by ordinary bit-polynomial LP
+(use selections at the obtained points, maximizing \(u\)
+where applicable, then getting a vertex).
+The same determinant signs hold with original offsets
+at all sufficiently small positive \(t\).
+Return the corresponding vertex by Cramer's rule,
+with the numerator and denominator polynomials formed by Lagrange
+interpolation. The degree bounds above allow interpolation from
+evaluations at polynomially many small integers, avoiding polynomial
+division.
+This is strongly polynomial by Section~\ref{sec:arithmetic}
+(interpolation uses linear combinations with short-bit coefficients).
+\end{proof}

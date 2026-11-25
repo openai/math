@@ -1,0 +1,499 @@
+\section{Directional coverage and small cuts}\label{sec:probability}
+
+Lemma~\ref{lem:primary} requires frequent occurrences on the micro
+layers and, from each blank term, a path along which all occurrences lie
+at a single other site. To see how the two requirements fit together,
+assign each micro term a color and associate it with one blank term on
+each shore of its site. These two blank terms are its \emph{keys}. An
+outcome selects a color and opens certain keys in that color. An
+occurrence requires a term of the selected color with both keys open.
+
+Follow the outward spine from a blank term. If it encounters an
+occurrence, then at that site it also encounters an open key in its
+direction of travel. It suffices, from the first such key, to find a
+continuation to a leaf whose moves charge no open key outside that
+site. The rules below encode this condition in a graph that compresses
+each straight run of parent steps into one move. A move \emph{charges}
+its direction key if the run could contain a term of the selected color.
+Thus every occurrence encountered on the run forces a charge to an
+open key in the occurrence's site.
+
+The proof builds the rules on a nested sequence of intervals. Within
+one interval and for a fixed color, a collection of successful keys
+\emph{covers} a test if it is charged on every short path towards one
+end of the interval. Low probability of coverage supplies the desired
+continuations. This section bounds the weight of the small sets of keys
+that can cover such a test and orders typical pairs of those sets. In
+Section~\ref{sec:switching} that order will allow the preferred direction
+to change as the interval grows. Section~\ref{sec:finite} realizes the
+rules on terms using a finite probability space.
+
+\subsection{Moves, colors and path tests}
+
+The sites are the integers from $1$ to $L_0$, in their usual order.
+We work in a directed acyclic graph of bounded outdegree. The graph may
+be infinite. Write $m(v)$ for the site of a node $v$. A node is either
+a \emph{micro node} or a \emph{blank node} on the west or east shore of its site. The
+blank nodes are also called \emph{keys}. We say that $u$ reaches $v$ if
+there is a finite directed path from $u$ to $v$, allowing the empty path.
+We call every node reachable from $u$ an ancestor of $u$.
+
+A blank leaf has no moves. From any other blank node there are two
+basic moves. The outward move leads to a blank on the facing shore of
+the adjacent site, and the inward move leads to a micro node in the
+same site. Thus a blank node with no neighboring site across its shore
+is a leaf. Each micro node has a basic move in either direction, leading
+to a key on the corresponding shore of its own site, its
+\emph{direction key}. It may also have jumps in that direction to
+other micro nodes in its site. Every such jump preserves the direction
+key. A \emph{spine} follows basic moves in one geographical direction
+until it reaches a leaf or leaves the interval being tested. At most
+three of its moves originate at a given site, and it visits at most
+one micro node there.
+
+The graph is revealed in rounds. All micro nodes have the same color
+in round zero. At each later round, a deterministic rule assigns a
+shore to each old color. A micro node appends to its old color a datum
+computed at its key on that shore. Once these colors have been
+calculated, the round supplies flags and witness jumps subject to the
+following rules.
+\begin{enumerate}
+\item For each micro node, direction and color there is a flag. When
+the flag is true, every move from that node in that direction charges
+its direction key in the specified color. All other moves carry no
+charge in that color. In particular a blank node never charges a key.
+\item A true flag in a refined color requires a true flag in the same
+direction for its projection to the preceding round.
+\item Each true flag has a witness of the specified color, either the
+micro node itself or a micro node reached by one jump in that
+direction. The round adds at most one such jump per node, direction
+and color. All earlier moves remain available.
+\end{enumerate}
+All flags, witnesses and calculated colors are independent of the
+randomness used for the gates. In the application to free terms, a basic
+move from a micro node compresses travel through several micro layers.
+Its flags record the colors encountered there, and the witness jumps
+recover individual occurrences. A refinement can add paths
+and can remove charges when an old path is read in the refined color.
+At a charging move we may always use the basic move to the charged key
+instead, with the same charge. Alternatively we may reach the witness
+from the source of the charging move in at most one move.
+
+For a cluster (an interval of sites), a \emph{west test at $v$ to depth
+$e$} consists of all paths from $v$ inside the cluster to a leaf or
+through their first west exit. The number of moves originating at any
+one site is at most $e$, including the exiting move. We also use
+depth vectors, with a separate bound for each site. East tests are
+defined by reflection. A set of keys \emph{covers} a test in a color if
+every tested path charges some key in the set in that color. Random
+\emph{coverage} means coverage by the keys whose gates in that color
+succeed. Each test of finite depth is finite, since path length is bounded
+by the sum of the depths and branching is bounded.
+
+Two observations account for the depth bounds below. A depth is
+charged to the \emph{source} of a move. Thus replacing a charging jump
+by the basic move to its direction key preserves both the charge and
+the depth spent at each site. Also, suppose a path prefix from \(v\)
+to \(u\) stays in the cluster, avoids charges to a set \(B\), and spends
+at most \(b_x\) moves at each site \(x\). If \(B\) covers the west test
+at \(v\) to depth vector \(f\ge b\), then \(B\) covers the west test at
+\(u\) to depth \(f-b\). Prepending the prefix to a missed path at \(u\)
+would give a missed path at \(v\). This applies whatever directions
+the prefix follows. Enlarging a depth only enlarges the set of test
+paths. Thus a covering set also covers every shallower test, and a
+path witnessing failure of coverage persists in every deeper test.
+
+A rule at a key is \emph{local} if it reads a bounded outgoing unfolding
+at that key, with the types of the nodes, their sites, flags, labeled
+move slots and the equality relation on nodes in the unfolding. The
+radius may depend on the parameters of the construction. A rule
+refining a color sees only flags and moves already supplied.
+The independent random bits read by a gate are indexed by keys or
+bounded nonempty sets of keys in the unfolding, with auxiliary indices
+such as stages and colors. Different appearances of the same index refer
+to the same bit. Both the radius and the number of slots are uniformly
+bounded once the parameters are fixed.
+
+\subsection{The induction and its screens}
+
+Fix an integer $C\ge 50$ and put
+\begin{equation}\label{eq:prob-parameters}
+ \begin{gathered}
+ K=4C,\quad J=10000K\,4^K,\quad w=3J,\quad h=Cw,\\
+ q=a^w,\quad L_0=a^h=q^C,\quad t=a^{-J},\quad U=at,\quad z=a^{-1/C}.
+ \end{gathered}
+\end{equation}
+Here $a$ is a sufficiently large power of $2$ that is a perfect
+$C$th power. Fix a constant $\lambda>0$ with
+$K\exp(-\lambda/5)<1/4$. Constants in the estimates can depend on $C$
+and $\lambda$. Bounds of the form $a^{o(1)}$ are uniform in the graph.
+
+At stage \(i\), \(0\le i<h\), partition the sites from left to right
+into successive clusters of \(a^i\) sites. Each cluster after stage
+zero has \(a\) children from the preceding partition. Two rounds of
+refinement at each positive stage assign each color a direction.
+Within each cluster a key's gate uses only bits indexed in that cluster.
+
+The induction asserts that for every node and color the probability of
+coverage to per-site depth \(D_i\) in its assigned direction is at most
+\(t\). Here \(D_i\ge4\) and the number of colors are polylogarithmic
+in \(a\), since \(C\) and hence \(h\) are fixed. We need the same bound
+after choosing any collection of \emph{ignored sites}. Fix the raw
+bits at their keys arbitrarily and count only charges originating
+outside those sites. All other bits retain their prescribed laws.
+
+There is an independent raw bit at each key at each stage, shared by all
+colors. At stage $0$ the gate is the raw bit, of success probability
+$q^{-1}$. Assign the unique color the west direction and take $D_0=4$.
+The west spine in a single site has at most one charge, so the initial
+coverage probability is at most $q^{-1}\le t$, also with ignored sites.
+At each positive stage a gate retains the requirements of its projected
+color and adds three requirements. Its new raw bit must succeed (with
+probability $z$), its \emph{screen} must pass, and a specified collection
+of independent \emph{barrier bits} must all succeed. The screen uses
+only randomness of previous stages. The barrier indices depend
+deterministically on the key and color. The construction will give a
+joint passage probability of at least $\exp(-4\lambda)$ for the
+barriers at any one key and color at that stage.
+
+Fix a positive stage $i$ and an old color (the color after stage $i-1$).
+Reflect the sites, and the coordinate $m(v)$ if necessary
+so that the old direction is west. Put \(d=D_{i-1}\). In a new cluster the old probability of west
+coverage to depth \(d\) is at most \(U=at\), including under the
+conditioning on ignored sites. Start in the child containing the
+given node. Unless the test there is covered, choose a missed path
+using only that child's bits. It either terminates at a leaf or exits
+into the adjacent child to the west. In the second case apply the
+same rule from the new starting node. Its location is determined
+before any bits of the new child are inspected. Thus the conditional
+probability of coverage at each step is at most \(t\). The visited
+children are distinct, so concatenating the paths respects every
+per-site depth. A union bound over at most \(a\) children proves
+the estimate.
+
+At a key $g$, let $A_g$ be old west coverage from $g$ in the new cluster
+to depth $d$ with $g$'s own site ignored. In particular
+$\Pr(A_g)\le U$ even conditional on arbitrary raw bits at its site.
+A \emph{pin} at a key means that its raw bits have all succeeded through
+stage $i-1$. Pins at distinct keys are independent, each with probability
+\[
+ p=q^{-1}z^{i-1}.
+\]
+For a set of keys $S$ we write $[S]$ for the event that all its pins are
+present. Put $\alpha_j=U^{1/4^j}$ for $0\le j\le K$. The screen at $g$
+fails if $A_g$ occurs or if
+\begin{equation}\label{eq:pin-screen}
+ [S]\text{ occurs for some } |S|\le K
+ \text{ with }\Pr(A_g\mid [S])>\alpha_{|S|}.
+\end{equation}
+Passing the first part of the screen guarantees a missed path from
+\(g\). Passing the second means that exposing a small set of successful
+pins cannot make the absence of such paths too likely. The second test
+is local as well. The event \(A_g\) depends on only finitely many local
+bits. Removing pins outside that dependence leaves the conditional
+probability unchanged and can only lower the threshold. Thus it
+suffices to check sets \(S\) of local keys. For the rest of this
+section a \emph{screened success} means that the old gate succeeds
+and the current screen passes. The thinning and barrier bits of the
+current stage enter in Section~\ref{sec:switching}.
+
+\begin{lemma}[Conditional cost of a screen]\label{lem:pcost}
+Suppose that a bounded set $P$ of keys satisfies
+$\Pr(A_g\mid[S])\le\alpha_{|S|}$ for each $S\subseteq P$ with
+$|S|\le K$. Conditional on $[P]$, the probability of
+\eqref{eq:pin-screen} is $O_{|P|}(\alpha_K)$.
+The same bound holds for failure of the whole screen if also
+$\Pr(A_g\mid[P])\le\alpha_K$, as holds whenever $|P|\le K$.
+\end{lemma}
+
+\begin{proof}
+Let $X_1,\ldots,X_N$ be independent Bernoulli variables with success
+probability $p$, and $E$ an event, possibly using additional randomness,
+with probability $\mu$. For $u>0$ and $u\ge2\mu$, the probability that
+some set of at most $K$ present successes raises the conditional
+probability of $E$ above $u$ is at most $4^{K+1}\mu/u^2$. To see this,
+expand $\Pr(E\mid X_1,\ldots,X_N)$ in the orthonormal product basis
+whose one-coordinate factor is $(X_j-p)/\sqrt{p(1-p)}$
+\cite[Sections~8.1 and~8.4]{Odonnell2014}. The constant
+coefficient is $\mu$, and the sum of squares of the coefficients is at
+most $\mu$ by conditional Jensen's inequality. Conditioning a proposed
+set $T$ to succeed kills all terms indexed outside $T$. Each surviving
+factor is at most $p^{-1/2}$ in absolute value. If the conditional
+mean exceeds $u$, some nonempty $I\subseteq T$ therefore has coefficient
+of magnitude at least $2^{-K-1}u p^{|I|/2}$. Sum
+$\Pr([I])=p^{|I|}$ over the sets with such a coefficient and apply the
+sum-of-squares bound.
+
+Now suppose \(T\) witnesses~\eqref{eq:pin-screen}, and put
+\(S=T\cap P\), \(j=|S|\). The hypothesis rules out \(T\subseteq P\),
+so \(j<K\). First condition on \([S]\). The pin indicators outside
+\(P\) still form a product measure, and the conditional probability
+of \(A_g\) is at most \(\alpha_j\). The outside pins of \(T\) raise
+this probability above \(\alpha_{|T|}\ge\alpha_{j+1}\).
+For fixed \(S\), the event that some such outside pins are present
+depends only on their indicators: the conditional probabilities
+used to decide which sets qualify are deterministic numbers. Hence
+the further conditioning on \([P]\) leaves the probability of this
+event unchanged. The product-measure estimate with
+\(u=\alpha_{j+1}\ge2\alpha_j\) bounds it by
+\[
+ O_K\bigl(\alpha_j/\alpha_{j+1}^2\bigr)
+   =O_K\bigl(\alpha_{j+1}^{\,2}\bigr)=O_K(\alpha_K).
+\]
+Summing over \(S\subseteq P\) proves the first assertion. The
+additional hypothesis bounds the cost of \(A_g\) itself.
+\end{proof}
+
+\begin{lemma}[Joint screened successes]\label{lem:joint-gates}
+If $k\le K$ distinct keys can all have screened success in the old
+color, their probability of doing so is at least $\gamma p^k$, where
+$\gamma=\tfrac12\exp(-8\lambda hK)$. The bound also holds if, in
+addition, one independently resamples all raw bits at any one site and
+requires the keys at all other sites to retain screened success.
+\end{lemma}
+
+\begin{proof}
+Condition on the $k$ pins. At every required screen, joint possibility
+implies that none of the deterministic conditional-probability tests on
+subsets of these pins violates its threshold. For a screen of an earlier
+stage this applies to the corresponding earlier pins. Later raw bits are
+independent of its inputs. Lemma~\ref{lem:pcost} consequently bounds the
+conditional failure probability at each screen by $O_K(\alpha_K)$,
+using the same $U$ in all stages. Every barrier requires positive
+values of specified bits independent of the raw bits. Overlaps in these
+requirements can only increase their joint probability above the product
+of their individual passage probabilities, so all pass with conditional
+probability at least $\exp(-4\lambda hK)$.
+
+For the second assertion, keep the barrier bits fixed and independently
+resample all raw bits at the chosen site. The only imposed pins in this
+new environment are those outside that site. Every subset of them
+passed the same deterministic tests under the original possibility
+assumption. The conditional failure bound therefore applies to the
+additional screens as well. Their barrier requirements use exactly the
+original indices and bits. Conditional on the pins, all barriers pass
+with probability at least \(\exp(-4\lambda hK)\). Subtract the
+conditional failure probabilities of at most \(2hK\) screens.
+This subtraction requires no independence between screens and
+barriers. For large \(a\) the remaining probability is at least
+\(\gamma\). Multiplying by the original pin probability \(p^k\)
+proves both claims.
+\end{proof}
+
+\subsection{The weight of minimal cuts}
+
+When a set of keys covers a test, every permitted path charges at least
+one of those keys. To bound the probability of coverage by successful
+keys, we count small covering sets that remain minimal when the depth
+is reduced.
+We require the two depths because concatenating a prefix uses up part
+of the depth budget.
+
+Choose the old moves and color, or the moves and a refined color after
+either round of the current stage. Keep this choice fixed when testing
+coverage. In every case the success probability is measured using
+the screened gates for the \emph{old} color. Given per-site depths
+\(d\le e\), \(e+d\le f\), with \(\max f=a^{o(1)}\), form the
+\emph{\((e,f)\) list} at \(v\) of all sets \(B\) of at most \(K\) keys
+satisfying three conditions.
+\begin{enumerate}
+\item \(B\) covers the west test at \(v\) to depth \(f\).
+\item No proper subset of \(B\) covers it to depth \(e\).
+\item The keys in \(B\) can have simultaneous screened success.
+\end{enumerate}
+The depth inequalities are componentwise when \(e,f\) are vectors.
+The west spine ensures that \(B\) is nonempty. For each \(b\in B\),
+a path missed by \(B\setminus\{b\}\) to depth \(e\) must charge \(b\),
+so every listed key occurs in the local unfolding. In particular the
+list is finite and is determined before the bits are sampled. Assign
+each set the weight \(r(B)=p^{|B|}\), the probability of its pins.
+The next lemma bounds both the total weight and the weight of all
+strict extensions of a fixed nonempty set \(S\).
+
+\begin{lemma}[Mass and link of a list]\label{lem:cut-list}
+For every $(e,f)$ list $\mathcal L$ and every nonempty set $S$ of keys,
+\[
+ \sum_{B\in\mathcal L}r(B)\le aU,
+ \qquad
+ \sum_{\substack{B\in\mathcal L\\ B\supsetneq S}}r(B)
+       \le a^{-500K}r(S).
+\]
+\end{lemma}
+
+\begin{proof}
+First we bound the number of cuts on the list that can succeed in
+one outcome. Fix the bits and call a key available if it has screened
+success. Further keys may be excluded arbitrarily. Let \(S\) contain
+at most \(K\) available keys and suppose it fails to cover to depth
+\(e\). We construct at most
+\begin{equation}\label{eq:cut-branch}
+ K\max e+1+d
+\end{equation}
+candidate keys outside \(S\). Every extension of \(S\) by available
+keys that covers to depth \(f\) must contain a candidate, whatever
+the cardinality of the extension.
+
+Choose a depth-$e$ path $P$ missed by $S$. Offer all available keys it
+charges at sites of $S$, at most $K\max e$ in number. For extensions
+using none of these keys, exclude them for the rest of this step. Take
+the first charge along $P$ to any remaining available key $g$. If there
+is none, no such extension covers $P$. Otherwise $g$ lies at a site
+unused by $S$. Its screen guarantees an old depth-$d$ west path from
+$g$ missed by the old successes outside its site. Follow $P$ up to the
+charge, redirect the charging move to $g$, and append this missed path.
+The result is a west test path of depth at most $e+d$ in the selected
+round. The prefix before the charge avoids every still eligible extension,
+and the appended old path can only lose charges under refinement.
+The extension must therefore use $g$ or a key charged on the appended
+path at $g$'s site. Offering these at most $1+d$ possibilities proves
+\eqref{eq:cut-branch}.
+
+Branch from the empty set until $K$ keys have been chosen or the
+depth-$e$ test is covered. In the latter case minimality forces any
+listed extension to equal the current set. Consequently
+at most $M=(K\max e+d+2)^K=a^{o(1)}$ cuts on the list can succeed
+simultaneously. For any subfamily $\mathcal F$ let $E_B$ denote either
+screened success of $B$ or its joint success with one-site resampling
+as in Lemma~\ref{lem:joint-gates}. Counting the successful sets gives
+\begin{equation}\label{eq:cut-multiplicity}
+ \gamma\sum_{B\in\mathcal F} r(B)
+ \le \mathbb E\sum_{B\in\mathcal F}{\bf 1}_{E_B}
+ \le M\Pr\Bigl(\bigcup_{B\in\mathcal F}E_B\Bigr).
+\end{equation}
+Even one successful cut implies old coverage to depth $d$, since all
+old paths of that depth remain available and old charges include their
+refined charges. The union probability for the full list is at most $U$,
+giving the mass bound.
+
+For the link bound suppose the family of strict extensions of $S$ on the
+list is nonempty. By minimality there is a depth-$e$ path $P$ missed by
+$S$. Fix one independently of the bits. The keys it charges at sites of
+$S$ are all outside $S$, at most $K\max e$ in number. Conditional on
+$[S]$, the probability that at least one has a pin is at most
+$K(\max e)p$. For the extensions using such a key, the union of the success events
+requires both $[S]$ and an extra pin on the path. By
+\eqref{eq:cut-multiplicity} their weight is at most
+$M K(\max e)p\,r(S)/\gamma$.
+
+Let $\mathcal R$ be the family of remaining extensions. If it is
+nonempty, let $g$ be the first key in $\bigcup_{B\in\mathcal R}B$
+charged along $P$. Thus its site is free of $S$, the prefix
+before its charge misses the whole family, and some member contains
+$S\cup\{g\}$. Possibility for that member implies
+$\Pr(A_g\mid[S])\le\alpha_{|S|}$ by the screen at $g$.
+Independently resample all raw bits at $g$'s site, recomputing every
+gate and screen with these replacements. Conditional on the
+original pins $[S]$, the same bound on $A_g$ holds in the resampled
+environment. Unless $A_g$ occurs there, choose a missed old path from
+$g$ to depth $d$, using the resampled environment. For $B\in\mathcal R$
+let $E_B$ denote the joint event of Lemma~\ref{lem:joint-gates},
+including resampling. If $E_B$ occurs, $B$ must meet the concatenation
+of the redirected prefix of $P$ with the missed path. All its keys outside
+$g$'s site still succeed after resampling. Thus $B$ must contain $g$ or
+one of at most $d$ keys charged on this path at $g$'s site. Conditional
+on $[S]$, the original raw bits of these candidate keys are independent
+of the resampled environment used to choose the path. The probability
+that at least one has an original pin is at most $(1+d)p$.
+
+Thus $\bigcup_{B\in\mathcal R}E_B$ requires $[S]$ and has conditional
+probability at most $\alpha_K+(1+d)p$ given $[S]$. By
+\eqref{eq:cut-multiplicity},
+\[
+ \gamma\sum_{B\in\mathcal R}r(B)
+ \le M r(S)\bigl(\alpha_K+(1+d)p\bigr).
+\]
+In the two contributions the factor multiplying \(r(S)\) is at most
+\[
+  (M/\gamma)\bigl(\alpha_K+(K\max e+1+d)p\bigr).
+\]
+The factor \(M/\gamma\) and the depths are \(a^{o(1)}\).
+Since \(\alpha_K=a^{-(J-1)/4^K}\), \(p\le a^{-3J}\), and
+\(J=10000K\,4^K\), the displayed factor is at most \(a^{-500K}\)
+for sufficiently large \(a\).
+\end{proof}
+
+Set
+\begin{equation}\label{eq:cut-depths}
+ H=(2K+8)d,\qquad H_-=(K+3)d,\qquad E_0=t a^{-200K}.
+\end{equation}
+
+\begin{lemma}[Coverage by a proper subset]\label{lem:proper-loss}
+On any list at $v$, cuts with a proper subset covering the depth-$H_-$
+west test at a specified node $u$ have total weight at most $E_0$.
+The test at $u$ may use a different one of the permitted refinements
+of the same old color.
+\end{lemma}
+
+\begin{proof}
+For each such cut $B$, record the minimum size of a subset of $B$
+covering the test at $u$ to depths $d,2d,\ldots,(K+2)d$. These numbers
+are nondecreasing and lie between $1$ and $K-1$. For two consecutive
+equal values, take a minimizer $S$ at the larger depth. It is minimal
+even at the smaller depth, and $S\subsetneq B$ has possible simultaneous
+success. Hence $S$ belongs to one of $K+1$ lists at $u$. Summing first
+over $B\supsetneq S$ by the link bound and then over these lists by the
+mass bound gives at most $(K+1)a^{-500K}aU\le E_0$.
+\end{proof}
+
+\subsection{The order of typical cuts}
+
+For switching direction we need more than the weight of individual
+cuts. We compare two cuts on the same list by tracing the first one
+charged along a path. A \emph{core list} has \(e=H\) and \(f\ge4H\).
+Call an ordered pair \(B,D\) of its cuts \emph{bad} if they share a
+key, or if a proper subset of either cut covers the depth-\(H_-\)
+west test from any key of the other. Use the moves and charges of the
+list in these tests. Every other pair is \emph{good}.
+
+\begin{lemma}[Good comparisons]\label{lem:good-comparisons}
+The total product weight of ordered bad pairs on a core list is at most
+$t^2 a^{-100K}$. For a good pair one cut, say $B$, is newer in the
+following sense. Every key of $B$ reaches every key of $D$, and at every
+key of $B$ the set $D$ covers the west test to depth $f-H$, minimally
+even to depth $H$.
+\end{lemma}
+
+\begin{proof}
+The weight of cuts containing a fixed key is at most
+$(1+a^{-500K})p\le2p$ by Lemma~\ref{lem:cut-list}, including the
+possible singleton. Summing over the at most $K$ keys of a cut, and using
+Lemma~\ref{lem:proper-loss} in both orders, bounds the bad product weight
+by $aU\,(2Kp+2K E_0)\le t^2a^{-100K}$.
+
+Consider any path prefix within the cluster to depth $H$ which charges
+one of the two cuts before it charges the other. Suppose the first charge
+is to $b\in B$. Redirect that move to $b$, preserving the prefix depth
+and charge. Any west test path to depth $f-H$ from $b$ can be appended
+to this prefix. The resulting path at $v$ must charge $D$, and the
+prefix does not. Hence $D$ covers the test at $b$. Goodness rules out
+coverage by a proper subset even at depth $H_-$, hence also at depth $H$.
+For each $g\in D$ there is consequently a depth-$H$ path at $b$ missed
+by $D\setminus\{g\}$. That path must charge $g$. Redirecting that charge shows
+that $b$ reaches $g$.
+
+There is such a first charge on the west spine from $v$. Name the cuts
+so that it belongs to $B$. No depth-$H$ prefix can then charge $D$
+first. Otherwise the argument with the roles interchanged would produce a
+key \(g\in D\) reaching every key of \(B\), including \(b\). Since
+\(b\) also reaches \(g\) and the two cuts are disjoint, this would
+give a directed cycle. For any $b'\in B$, minimality at $v$
+provides a depth-$H$ path charging $b'$ and no other key of $B$.
+Its first $B$ charge must precede every $D$ charge. Applying the prefix
+argument again proves the assertion at $b'$.
+\end{proof}
+
+For a core list at an east-shore key $v$, let $l(B)$ be the least site
+of a west-shore key of $B$. Let $r_v^+(B)$ be the site of the first key
+of $B$ charged on the east spine, or $+\infty$ if that spine misses $B$. The west spine must
+charge a west key at or west of $v$, and the east spine leaves $v$'s
+site before its first possible charge. Thus $l(B)\le m(v)<r_v^+(B)$.
+For a good pair with $B$ newer than $D$ we have
+\begin{equation}\label{eq:cut-endpoints}
+ l(D)<l(B),\qquad r_v^+(B)\le r_v^+(D),
+\end{equation}
+and equality on the right requires both endpoints to be infinite.
+Indeed the west spine from a west key realizing $l(B)$ must charge $D$
+and can do so only on a strictly more westerly site. On the east spine
+from $v$, the prefix argument of Lemma~\ref{lem:good-comparisons}
+excludes a first $D$ charge before $B$. The spine has at most one charged
+key per site, and the two cuts are disjoint.

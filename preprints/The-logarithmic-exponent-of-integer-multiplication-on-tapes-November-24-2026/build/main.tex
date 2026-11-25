@@ -1,0 +1,40 @@
+\documentclass[11pt]{article}
+\input{style}
+\articletitle{The logarithmic exponent \titlebreak of integer multiplication on tapes}{Integer multiplication on tapes}
+\hypersetup{pdfsubject={The-logarithmic-exponent-of-integer-multiplication-on-tapes-November-24-2026}}
+\newcommand{\E}{\mathbb E}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A single deterministic multitape Turing machine multiplies two $n$-bit
+integers exactly in $n(1+\log n)^{1/2+o(1)}$ time and visits $O(n)$
+tape cells. Under the variable-count Weak Exponential Time Hypothesis
+for 3-SAT, every deterministic multitape multiplier requires $\Omega(n\sqrt{\log n})$
+steps in the worst case at each sufficiently large length. Under this
+hypothesis the optimal logarithmic exponent is therefore $1/2$.
+Exact integer division and integer square root have the same upper
+and conditional lower bounds.
+\end{abstract}
+
+\input{intro}
+\medskip
+{\small\tableofcontents}
+\clearpage
+
+\part{The multiplication algorithm}\label{part:algorithm}
+\input{interchange}
+\input{permutations}
+\input{walsh}
+\input{integers}
+\input{uniformity}
+
+\part{The conditional lower bound}\label{part:lower}
+\input{graphs}
+\input{lower}
+
+\bibliographystyle{plainnat}
+\bookmarksetup{startatroot}
+\bibliography{references}
+\end{document}

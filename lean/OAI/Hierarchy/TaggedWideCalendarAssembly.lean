@@ -1,0 +1,29 @@
+import OAI.Hierarchy.TaggedWideCalendarAssemblyCore
+import OAI.Hierarchy.TaggedWireTerminalOutputSite
+import OAI.Hierarchy.TaggedWideCalendarMask
+import OAI.Hierarchy.TaggedWideCalendarPrivate
+import OAI.Hierarchy.TaggedWideCalendarPlane
+import OAI.Hierarchy.TaggedWideTimeGuard
+import OAI.Hierarchy.TaggedWideCalendarRows
+import OAI.Hierarchy.TaggedWideCalendarOutputBit
+import OAI.Hierarchy.TaggedWireTerminalPaidRead
+import OAI.Hierarchy.TaggedWideCalendarPreviousBit
+import OAI.Hierarchy.TaggedWideCalendarTurnBounds
+import OAI.Hierarchy.TaggedWideCalendarTurnRank
+import OAI.Hierarchy.TaggedWideCalendarShelf
+import OAI.Hierarchy.TaggedWideCalendarFinish
+import OAI.Hierarchy.TaggedWideDataCost
+import OAI.Hierarchy.TaggedWideCalendarFirst
+import OAI.Hierarchy.TaggedWideCalendarDatePins
+import OAI.Hierarchy.TaggedWideCalendarDateRead
+import OAI.Hierarchy.TaggedWideCalendarDateCost
+import OAI.Hierarchy.TaggedWideCalendarLedger
+import OAI.Hierarchy.TaggedWideCalendarSpillAddress
+import OAI.Hierarchy.TaggedWideCalendarMiddle
+import OAI.Hierarchy.TaggedWideCalendarPacketUse
+import OAI.Hierarchy.TaggedWirePacketMiddleFieldsRead
+
+namespace OAI
+/-! # Fixed calendar assembly together with its physical source circuits -/
+
+end OAI

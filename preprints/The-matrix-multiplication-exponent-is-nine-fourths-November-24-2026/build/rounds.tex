@@ -1,0 +1,366 @@
+\section{Reducing the total arity of a tensor power}\label{sec:rounds}
+
+The concentration estimate of Lemma~\ref{lem:local} divides a network
+into a few large stations and a core of small stations. To lower the cost
+of evaluating the network we must also reduce the \emph{total} arity.
+Indeed, if $u_v$ is the arity at station $v$, the batched evaluation in
+Lemma~\ref{lem:batch-table} costs, per tensor copy, at most a constant
+times the number of stations plus
+\[
+       \sum_{v:\,u_v>0}u_v^p
+           \le \bigl(\max_v u_v\bigr)^{p-1}\sum_v u_v .
+\]
+Here $1<p<2$. We can therefore afford some growth in the largest arity
+if enough incident bits disappear. The construction below makes this
+trade repeatedly, keeping a bound on the sum of squared arities so that
+each new network again meets the concentration hypothesis.
+
+Throughout this part $k$ is a finite field with $\omega_k<9/4$, and
+logarithms are binary. A \emph{table network} over a field $K$ has bit
+wires and a table $\{0,1\}^{s}\to K$ at each station of arity $s$. Its
+size is the number of stations plus the sum of their arities, including
+external legs. Parallel bits between two stations form an ordered
+\emph{bundle}. A label names the station's table in a dictionary fixed
+for the network.
+
+\needspace{12\baselineskip}
+\begin{lemma}[Compression of a tensor power]\label{lem:macro}
+Let $h=\lceil\log_2 n\rceil$, $0<\delta\le 1/10$, and
+$0<\beta\le b\le 1/2$. For every sufficiently small fixed $a>0$
+depending only on $k,\delta,\beta$, and all sufficiently large $n$, the
+following holds. Work over an extension $K/k$ of degree $O(\log h)$
+large enough for Lemma~\ref{lem:local} at the scales used below.
+Suppose that an input table network has maximum arity $h^b$ or less,
+$(\log h)^{O(1)}$-bit table labels, size at most $m$ with
+$n\le m\le n^{1.1}$, and $e\le m h^{-2a}$ external bits. Some
+$d$ with $1\le d=n^{o(1)}$ admits a table network over $K$ for its
+$d$th tensor power, with all $de$ external bits separately accessible,
+such that
+\[
+ \begin{aligned}
+ \text{size}&\le md\,h^{-(1-\delta)a},&
+ \text{maximum arity}&\le h^{b+(1+\delta)a}.
+ \end{aligned}
+\]
+The output labels again have $(\log h)^{O(1)}$ bits. The cutoff for $n$
+may depend on the fixed exponent in the input label-length bound.
+\end{lemma}
+
+Call one application of Lemma~\ref{lem:macro} a \emph{macro}.
+Before the macro the lookup bound is $O(mh^{b(p-1)})$ per copy.
+After it, the bound acquires the factor
+\[
+       h^{-a\{(1-\delta)-(1+\delta)(p-1)\}} .
+\]
+Since $p<2$, choosing $\delta$ small makes the exponent negative.
+Section~\ref{sec:shaving} accumulates this saving before evaluating the
+tables.
+
+\begin{table}[bp]\centering
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Quantity & Meaning within one summand\\
+\midrule
+$H,\ N_b$ & positions of the common host and blocks using it\\
+$r$ & number of blocks combined at each grouping step\\
+$S,\ T_0$ & initial blocks and original copies per block, with $d=ST_0$\\
+$L,\ T$ & total arity budget and working arity scale\\
+$D$ & concentration parameter, fixed for all rounds\\[2pt]
+$X,\ Z$ & width between core stations and total frozen charge\\
+$\Delta,\ \nabla$ & degree bounds for the core host and the full host\\
+$B,\ u$ & maximum packing load and unit of internal width\\
+\bottomrule
+\end{tabular}
+\caption{Parameters for the compression of a tensor power. The budgets
+$L$, $X$ and $Z$ each cover all blocks of the summand.}
+\label{tab:macro}
+\end{table}
+
+The macro expands a power of the original tensor as a sum of products.
+Each product has many factors, called \emph{blocks}. We combine blocks
+in groups of $r$ to pack stations or rearrange their wires. Each round
+first concentrates the squared arities, then uses a fixed number of
+wire reductions to shorten the core, and finally restores bounded
+degree so the next round can start. A wire reduction, called a
+\emph{beat}, consists of several contractions followed by a reset of the
+core degree. The number of rounds grows with $h$. Once $D$ is fixed,
+all repetition counts \emph{within} a round are constant. Table~\ref{tab:macro} collects the budgets and the quantities they measure.
+
+Different summands can use different wirings. The bounds in
+Sections~\ref{sec:rounds}--\ref{sec:full} apply to each summand.
+Section~\ref{sec:assembly} represents their sum on one fixed network
+and completes the proof of Lemma~\ref{lem:macro}.
+
+\subsection{The common graph and its initial loads}
+Each summand is a product of \emph{blocks}, with disjoint lists of
+external bits. In a single summand its $N_b$ blocks use the same simple
+graph of possible adjacencies, the \emph{host}. An occurrence is a
+pair consisting of a host position and a block. It can be empty. Each
+actual internal wire joins stations in the same block, and the local
+port order tells which bits at its ends correspond. Thus a host edge can
+carry different bundles in different blocks. We permit the host to depend
+on the summand.
+
+At a grouping step, relabel the blocks and group them $r$ at a time, with
+$r$ a power of two. In each group the old blocks are multiplied and
+transformed together. New positions may be indexed by an old position, a
+dyadic subinterval of the $r$ indices, and a bounded number of other
+choices. There are fewer than $2r$ intervals. If $H$ denotes the number
+of host positions, the padding allowed in any one step will have
+\begin{equation}\label{eq:round-occurrence}
+ H'\le c rH, \qquad N_b'=N_b/r,
+\end{equation}
+where $c$ is fixed throughout all repetitions of that step. Constants here
+may depend on the round design. Transformations at a single position using
+a fixed number of slots can be included in the adjacent grouping step.
+
+At the beginning of each round, every live occurrence holds one station.
+The host has degree bounded by an absolute constant, and external bits are fixed at
+specified ports. With $T$ a dyadic width and $L$ a total arity budget,
+the charged arity of each live station of actual arity $s_v$ is
+$z_v=\max(s_v,\theta T)$, where $\theta>0$ is a small fixed dyadic
+constant chosen below. Our invariants are
+\begin{equation}\label{eq:round-invariants}
+ \sum_v z_v\le L,\qquad \sum_v z_v^2\le LT,\qquad
+ \max_v z_v\le DT/2 .
+\end{equation}
+All three bounds cover all blocks of the summand. The first pays for
+surviving bits. The second is the input to the next local concentration,
+and the third lets us pack several stations without overflowing one
+cell. The floor $\theta T$ also bounds how many table descriptions can
+enter a pack of a given charge. Remove every scalar station and retain
+its entry as a factor of the summand.
+
+First replace the input by a graph of bounded degree. On the ports of
+each station of positive arity $s$ use a balanced binary tree. The root
+receives its $s$ bits as a bundle, and an identity at each split divides
+one ordered bundle in two, of lengths differing by at most one. Place
+an identity at each leaf and attach the original wires and external bits
+at the leaves. Connecting two of the resulting leaves also handles an input
+wire that was a loop. The arities on either end of a tree edge have bounded
+ratio. The leaf-to-leaf connections have matching unit width. There are
+$O(\log(2+h))$ levels and $O(m\log(2+h))$ total arity. All the new
+tables have short labels.
+
+Choose a dyadic $T_0\in[4h^b,8h^b]$. Stack $T_0$ copies of the network
+just constructed. At a station of arity $s$ let $v$ be the largest dyadic
+integer at most $T_0/s$. Divide the copies into consecutive intervals of
+length $v$. Give each interval its own position carrying the product of
+the corresponding tables. Its arity $sv$ belongs to $(T_0/2,T_0]$.
+Comparable arities on the two ends of each old edge imply that each
+interval meets only boundedly many intervals at the other end. Each edge inherits the order of the old bundle and then of the copies,
+so its two endpoints use the same bit order. The stacked graph has
+bounded degree and $H_0=O(m\log(2+h))$ positions, since a station of
+arity $s$ gives at most $2s$ intervals. The table at an interval is
+specified by the old table label, the interval length, and a bounded
+number of ordered port lengths.
+
+Take $S$ blocks of this stack and pad $H_0$ to order $m\log(2+h)$.
+Include the $d$th power of the product of the removed input scalars as
+a factor of the final tensor. The starting parameters are
+\begin{equation}\label{eq:round-start}
+ d=T_0S,\qquad T=T_0,\qquad L=L_0=CmT_0S\log(2+h).
+\end{equation}
+The total charged arity is at most $L_0$ for a sufficiently large
+absolute $C$. Each station has arity in $(T_0/2,T_0]$, so its square
+is at most $T_0$ times its arity. This gives all three bounds in
+\eqref{eq:round-invariants}. The $ed$ exterior bits retain their
+individual names throughout the construction.
+
+\input{core-width}
+
+\section{The arity budgets after one round}\label{sec:full}
+
+The frozen stations produced by concentration have total arity
+$O(L/\sqrt D)$. The core has small maximum arity but may still use more
+than $L$ bits. Repeated beats reduce its internal width until the total
+charge fits a smaller budget $L/G$. To resume concentration we will
+also need a bound on the squared charges and an absolute degree bound
+on the full host.
+
+\subsection{From concentration to bounded degree}
+Apply Lemma~\ref{lem:local} with arity exponent $\ell=10$. Its absolute degree bound for the core fixes the parameters of a beat in Lemma~\ref{lem:core-width}. Choose
+$\epsilon\in(0,1/100]$ so small that in
+\[
+ J=\lceil2\epsilon\log D\rceil
+\]
+beats the products of the per-beat increases of the maximum load, of the
+reciprocal bundle unit, and of the logarithm of the overall degree are
+each at most $D^{0.03}$ when $D$ is sufficiently large. These three
+per-beat factors are independent of $D$, which permits this choice.
+Increase $D$ below as needed in terms of $k,\delta,\epsilon$.
+
+We require $ed\le L/D$. For each grouping in this round we also require
+\begin{equation}\label{eq:round-slack}
+  H N_b T/r\le c_D L
+\end{equation}
+with $c_D>0$ sufficiently small, using the current host counts and the
+round's starting $L,T$. The choices of $S,r$ meeting these conditions
+in every round are made below.
+
+\paragraph{Concentrating the squared arities.}
+Group $r$ blocks and apply the dyadic partition estimate
+\eqref{eq:core-colonies} to the charged loads at absolute host degree,
+with maximum load $DT/2$ and capacity $DT$. By
+\eqref{eq:round-slack} there are $O(L/(DT))$ occupied intervals over
+all positions and groups. Regard each interval as one vertex of the graph
+to which we apply Lemma~\ref{lem:local}. Include all candidate intervals
+as positions, and allow an edge to an interval at an old neighbor only
+when the two intersect and satisfy the absolute length-ratio bound of the
+dyadic partition. All actual contacts are present. Dyadic nesting bounds
+the simple degree of this new host by an absolute constant.
+
+Inside each occupied interval retain each station of charged arity greater
+than $T$. Pack the other stations in their order, closing a pack
+when its total charged arity reaches $T$. The last pack can be smaller,
+and each pack has arity at most $2T$. Its table is the product of its
+members, with any internal indices contracted. An interval contains
+$O(D)$ resulting stations. Move its external bits, if any, to one
+additional identity station, keeping their order and joining the duplicate
+ports to the original incidences. Designate these exterior identities as the immobile stations. Their number is at most the number of occupied intervals. The old stations and packs had total arity at most $DT$ per interval, and the identity adds at most $2DT$. The old large stations contribute at most $LT$ to the square sum. Each new pack has arity at most $2T$, so the packs contribute at most $2TL$.
+If $f_i$ is the external width of interval $i$, the new identities
+contribute at most
+\[
+ 4\sum_i f_i^2\le 4DT\,ed\le 4LT .
+\]
+With $W=C_1L$ and $C_1$ absolute and sufficiently large, these are
+precisely the occupation, immobility, and square bounds of
+Lemma~\ref{lem:local}. In particular there are at most $D$ retained large stations, $D+1$ packs and one exterior identity in an occupied interval, within its bound of $100D$.
+
+Expand using Lemma~\ref{lem:local}. Write $Z$ for the total charged
+arity of the frozen stations, and $X$ for the total width of the
+internal wires between core stations, counted once per wire. In every
+summand the frozen charges have total $Z=O(L/\sqrt D)$, square sum
+$O(LT)$ and maximum $O(DT)$. The core stations have individual arities
+at most $D^{-10}T$ and total arity $O(L(\log D)^{O(1)})$.
+The constants in these estimates are uniform in $D$. All positive
+internal bundles have width at least $T/D^{O(1)}$.
+
+To apply the packing operations, take an integer unit $u$ below the
+minimum guaranteed internal width, still $u\ge T/D^{O(1)}$, divisible
+by every subdivision prescribed in the $J$ beats. For fixed $D$ this is
+possible once $T$ is large, by rounding down to a multiple of their
+product. Pad each positive internal bundle to the next multiple of $u$
+with bits pinned to zero. The arity and its square grow by at most
+factors two and four. Raise each frozen charge to the larger of its old charge and its padded arity. Its charge grows by at most a factor of two, so the total $Z$ and the square budget still obey the bounds above. Choose a dyadic load bound $B$ of order
+$D^{-10}T$ covering every core station. For packing only, scale the
+frozen charges by a fixed dyadic multiplier of order $B/(DT)$, small
+enough that each is at most $B$. This changes neither the actual widths
+nor the frozen square bound. We take $u$ small enough also to ensure $u\le B$.
+
+\paragraph{Removing the core wires.}
+Apply Lemma~\ref{lem:core-width} $J$ times, with slack
+$\sigma=L/\sqrt D$. The initial full host degree is polynomial in $D$.
+The load bounds at intermediate steps are fixed multiples, depending
+only on $D$, of $T$, so \eqref{eq:round-slack} supplies the required
+slack each time. In the recurrence of Lemma~\ref{lem:core-width} the fixed error $C(Z+\sigma)$ is multiplied by a geometric series of sum less than two. Thus
+\[
+ X_{\mathrm{end}}\le 2^{-J}X_{\mathrm{start}}+O(Z+\sigma)
+      = O\bigl(LD^{-2\epsilon}(\log D)^{O(1)}\bigr).
+\]
+Frozen stations retain their charges, although one occurrence can now
+hold a list of them. Each list has $D^{O(1)}$ members. Indeed, its total scaled load is bounded by the final load bound, while the positive charge floor gives a lower bound on the scaled load of each member. Each core station has
+arity at most $D^{-9}T$. The final bundle unit is still at least
+$T/D^{O(1)}$, the core degree is at most three, and the overall degree
+$\nabla$ satisfies $\log(2\nabla)\le D^{0.04}$ for $D$ sufficiently
+large. The latter estimate uses the initial $O(\log D)$ bound on the
+logarithm of the degree.
+
+\paragraph{Restoring bounded degree.}
+An individual station can meet few \emph{actual} neighbors and still
+have many \emph{possible} neighbors in the common host. At a frozen
+position reserve a slot for each member of its list. The only frozen contacts are tethers to the core. Route them in three stages (Figure~\ref{fig:tether-trees}). First
+split its active tether units into separate outlets, in order. There
+are $D^{O(1)}$ outlets, by the maximum width and minimum unit. Next,
+from each outlet use a binary tree addressing any potential core
+endpoint. At each core endpoint use a binary tree for the potential
+incoming outlets. Link corresponding leaves. An internal branching
+table is the identity on the concatenated strings of its active
+children. Inactive branches need no station. Each block uses the trees
+with precisely its own tether assignments, and the trees and slots
+themselves are fixed on the common host. The first trees have depth
+$O(\log D)$, and the others have depth
+$O(\log(2\nabla)+\log D)=O(D^{0.04})$. Their host size increases
+by a factor depending only on $D$. A core endpoint retains at most three
+core contacts and receives one tree contact, giving overall degree at
+most four.
+
+For the linear budget, the total extra arity is $O(ZD^{0.04})$, since each tether bit travels
+along one route of that length. For the square budget, the first splitting tree is bounded in terms of the frozen arity. On a fixed level of that tree
+the total width is at most the arity of its frozen station. The
+sum of squared arities at that level is at most four times the square
+of this arity. Summing first over the frozen stations and then over
+levels thus gives $O(LT\log D)$. Every other new vertex carries at
+most the width of one unit or all the tether bits of one core station,
+so has arity at most $2D^{-9}T$. Its contribution to the square sum
+is at most $2D^{-9}T$ times its arity. The old core stations have
+total arity at most $2X_{\mathrm{end}}+Z$ and obey the same estimate.
+
+\begin{figure}[tb]
+\centering
+\begin{tikzpicture}[x=1cm,y=.82cm,font=\footnotesize,
+  live/.style={draw=sea,line width=1.3pt},
+  possible/.style={draw=ink!55,densely dashed},
+  branch/.style={circle,draw=ink,fill=white,inner sep=1.35pt},
+  station/.style={rounded corners=2pt,draw=ink,inner sep=3pt}]
+  \node[station,fill=rust!9] (f) at (0,0) {frozen};
+  \node[branch] (split) at (1.2,0) {};
+  \node[branch] (a) at (2.9,.78) {};
+  \node[branch] (b) at (2.9,-.78) {};
+  \node[branch] (c) at (6.45,.78) {};
+  \node[branch] (d) at (6.45,-.78) {};
+  \node[station,fill=ink!7] (c1) at (7.8,.78) {core};
+  \node[station,fill=ink!7] (c2) at (7.8,-.78) {core};
+  \draw[live,line width=2.3pt] (f)--(split);
+  \draw[live] (split)--(a) (split)--(b);
+  \draw[possible] (a)--(3.6,.43)--(5.76,-.43)--(d);
+  \draw[possible] (b)--(3.6,-.43)--(5.76,.43)--(c);
+  \draw[live] (a)--(3.6,1.12)--(5.76,1.12)--(c)--(c1);
+  \draw[live] (b)--(3.6,-1.12)--(5.76,-1.12)--(d)--(c2);
+  \foreach \x/\heading in {1.1/{Split into units},3.9/{Select destinations},6.95/{Collect at endpoints}}{
+      \node[font=\footnotesize] at (\x,1.75) {\heading};
+  }
+\end{tikzpicture}
+\caption{Two units leave one frozen station. The solid routes are
+active in this block. The dashed routes allow either outlet to reach the
+other endpoint in a different block. A splitting tree on the left may
+carry the full frozen arity for $O(\log D)$ levels. In the middle each
+active branch carries a single unit. At the right its width is bounded
+by the tether width at the receiving core station.}
+\label{fig:tether-trees}
+\end{figure}
+
+Together these bounds give charged arities $z_v$ at the end of a
+round satisfying
+\begin{equation}\label{eq:round-costs}
+ \begin{aligned}
+ \sum_v z_v&=O\bigl(LD^{-2\epsilon}(\log D)^{O(1)}\bigr),\\
+ \sum_v z_v^2&=O\bigl(LT(\log D)^{O(1)}\bigr),\qquad
+                   \max_v z_v=O(DT).
+ \end{aligned}
+\end{equation}
+For frozen stations we kept the positive floor from
+Lemma~\ref{lem:local}. Every other remaining station meets a positive
+internal bundle of width at least $T/D^{O(1)}$. Thus all charges in
+\eqref{eq:round-costs} can respect a floor of this order. The constants
+and the powers of $\log D$ in \eqref{eq:round-costs} are independent
+of $D$. In particular the term $ZD^{0.04}=O(LD^{-0.46})$ fits the
+first estimate.
+
+Set $G=2^{\lfloor\epsilon\log D\rfloor}$ and choose a dyadic $q$ with
+$G^{1+\delta/4}\le q\le G^{1+\delta/3}$. This interval contains a
+dyadic integer for $D$ sufficiently large. Restart with
+\begin{equation}\label{eq:round-target}
+                 L'=L/G,\qquad T'=qT .
+\end{equation}
+Indeed $D^{-2\epsilon}(\log D)^{O(1)}=o(1/G)$, and
+$L'T'\ge LTG^{\delta/4}$ absorbs the logarithmic loss in the squares.
+The maximum in \eqref{eq:round-costs} is at most $DT'/2$ for large $D$.
+Finally fix a dyadic $\theta>0$ so small that $\theta qT$ is bounded by
+the positive floor just obtained. None of the estimates used in choosing
+$G,q,D$ requires a lower bound on $\theta$, since the grouping used the total
+load cap and repacked the small stations before applying the local lemma.
+This proves \eqref{eq:round-invariants} for the next round.
+
+\input{round-iteration}

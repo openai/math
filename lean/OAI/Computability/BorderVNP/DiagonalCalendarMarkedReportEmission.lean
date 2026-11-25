@@ -1,0 +1,238 @@
+import OAI.Computability.BorderVNP.DiagonalIssuedCandidateReportEmission
+import OAI.Computability.BorderVNP.DiagonalCalendarFundedReportIntervals
+import OAI.Computability.BorderVNP.DiagonalCalendarPlannerSourceSlots
+import OAI.Computability.BorderVNP.DiagonalReportArgumentEmission
+import OAI.Computability.BorderVNP.DiagonalCalendarIssuedCellDirectory
+
+/-! # Private argument capacity on one observed report of the selected frozen program -/
+
+namespace OAI
+namespace Computability
+namespace BorderVNP
+
+namespace Diagonal
+
+universe u
+
+open Diagonal.ExternalSew Cover Packing Packing.DeckGrid Crossing Branch Epoch PackedHistoryCircuit
+open PackedHistoryCircuit.Normalized SelectedSchedule EnrichedOuter TeamScales TeamContraction ProcessorSlots
+open VPVNP ParseBatch ParseBatchVerifier Prewire VPVNP.ParseGrammar
+open FieldProcessor RoutingISA RoutingISA.Evaluator RoutingISA.Transmission
+open GeometryAdvice GeometryFrameEncoding RoutingISA.Pins VPVNP.BurstRAM RoutingISA.CompactMachine TeamSite
+open DiagonalResidueRAM ResidueEntryInput ResidueRates ResiduePins
+open Diagonal.ExternalSew GridHosts
+open scoped Classical BorderVNP.Epoch.Cube
+
+
+open Packing.Inherited Packing.Inherited.FrozenTape Shortening.PublicCapacity BorderVNP.Epoch.Round
+open ResidueIndex ResidueBox
+attribute [local instance] portFintype
+attribute [local irreducible] Nat.clog UniversalMachine.programPrefix logWidth prefixCapacity
+  FieldProcessor.freeWidth Fintype.equivFin
+set_option maxRecDepth 8200
+set_option maxHeartbeats 4400000
+set_option synthInstance.maxSize 4000
+
+variable {D m : ℕ} [NeZero D] {F K : Type} [Field F] [Field K] {paid : PaidIdentity F D m}
+    {S : SiteSchedule paid} {cube : FixedCube K} {extra E p Q breadth sourcePower : ℕ}
+    {scales : EpochScales S (cube.pred+1) extra}
+    {b : JointSchedule.{0} scales (E+1) (max (5*(E+2)) p) Q 3076 (breadth+10) (sourcePower+1)}
+    {φ : K →+* F} {q : ℕ} {hm : 0 < «m»} {header C A₀ a B₀ b₀ J j coeff addr power cut : ℕ}
+    {adv : ℕ → ℕ} {c charge factor l : ℕ}
+    (cal : SignedCalendarAt cube b φ q hm header C A₀ a B₀ b₀ J j coeff addr power cut adv c charge factor (l+1))
+
+local notation "r₁" => stretch b.ρ (l+1)
+local notation "size₁" => stretch b.σ (l+1)
+local notation "R₁" => b.physical.teamsPred (l+1)
+local notation "w₁" => b.physical.word (l+1)
+local notation "ξ₁" => (scales.τ:ℝ)/5
+local notation "ℓ₁" => TeamScales.link (ξ₁) (R₁+1) (l+1)
+local notation "ec₁" => Wires.sortExponent (block (ξ₁) (l+1))
+local notation "budget₁" => adv (adviceScale b.σ b.ρ (l+1))
+local notation "pins₁" => (pairedTableParameters (l+1) (size₁)+2)*(budget₁+6)
+local notation "d₁" => CoverScale.initialDepth (Cube D) (r₁) (l+1)-1
+local notation "axes" => Fintype.card (Cube D)
+local notation "tiles" => GridHosts.tileCount axes (d₁)
+local notation3 (prettyPrint := false) "order₁" => (Fintype.equivFin (Fin axes → Deck (d₁+2))).symm
+local notation3 (prettyPrint := false) "geo₁" => cal.sites.choose
+local notation3 (prettyPrint := false) "prog₁" => cube.signedSiteProgram paid
+local notation "a₁" => FieldProcessor.freeWidth (prog₁) scales.α 32 64 (r₁) (w₁) (l+1)
+local notation "extra₁" => setupWidth (w₁+1) (l+1)+(prefixCapacity (r₁) 32 64 (w₁) (l+1)+1+a₁)
+local notation3 (prettyPrint := false) "tape₁" => tapeTemplate (R:=R₁) (r:=r₁) (link:=ℓ₁) (regs:=64) (w:=w₁)
+  (e:=ec₁) (width:=w₁+1) (k:=l) (a:=extra₁) (prog₁) (geo₁).fits (pins₁)
+
+variable (grid : LocatedSignedGridAt cube b header (l+1)) (qpos : 1 ≤ Q)
+    (position : (Fin (Fintype.card (Cube D)) → Deck (CoverScale.initialDepth (Cube D)
+      (stretch b.ρ (l+1)) (l+1)-1+2)) → {v : EuclideanSpace ℝ (Fin D) // ‖v‖ ≤ 1})
+local notation "T₁" => epochs scales.τ (l+1)
+local notation "copies₁" => TeamScales.width (l+1) scales.α
+local notation "J₁" => (fan S)^T₁*tiles
+local notation "description" => seedDescriptionWidth (l+1) (r₁) axes (d₁) (header*logWidth (r₁) (l+1))
+  (BottomGridBank.bodyBudget (seedBoxCapacity (l+1) (r₁) axes (d₁) (Fintype.card (Direction axes))))
+local notation "cap₁" => SeedPlan.profileReserve (r₁) (l+1)
+local notation "ceiling₁" => geometryGateCeiling (8*(11920000+1500000+16008100*coeff+37)) (4*(E+2)) (r₁) (l+1)
+local notation3 (prettyPrint := false) "dir₁" => freeDirectory (R₁) (r₁)
+  ((tape₁).program.length+(cutWidth (l+1)+extra₁)) (ℓ₁) tiles (GridHosts.inputBlockWidth (r₁) (l+1) axes (d₁)) J₁ description
+
+variable {ord : Fin (l+1) × Bool ≃ Fin (2*(l+1))}
+    {common : CommonField paid (φ ∘ cube.table) q l (stretch b.σ (l+1)) ord}
+    (chart : AdvisedBranch common) [Fact common.p.Prime] [Algebra (ZMod common.p) chart.E]
+    (reader : ChosenReader chart (b.physical.teamsPred (l+1)+1) (stretch b.ρ (l+1))
+      (b.physical.multBits (l+1)) (b.physical.tally (l+1)) (b.physical.word (l+1))
+      (adv (adviceScale b.σ b.ρ (l+1))+6))
+    (chargeFit : reader.charge ≤ c*(adv (adviceScale b.σ b.ρ (l+1))+1)^charge)
+
+
+local notation3 (prettyPrint := false) "layout₁" => cal.frozenLayout chart reader chargeFit
+local notation3 (prettyPrint := false) "initial₁" => reader.startupArenaWith (n:=l+1) (reg:=64)
+  (prog₁) (a₁) (ℓ₁) (layout₁).header
+local notation3 (prettyPrint := false) "located₁" => cal.locatedGateTable grid qpos position (initial₁)
+local notation3 (prettyPrint := false) "plan₁" => cal.seed.choose
+local notation3 (prettyPrint := false) "W₁" => cal.frozenWitness
+local notation3 (prettyPrint := false) "sites₁" => (Fintype.equivFin (((W₁).routedFine position).Site)).toEmbedding
+local notation3 (prettyPrint := false) "edges₁" => (Fintype.equivFin (((W₁).routedFine position).Edge)).toEmbedding
+local notation3 (prettyPrint := false) "ports₁" => (Fintype.equivFin (Fin (r₁) × Fin (publicWidth (tape₁)))).toEmbedding
+local notation3 (prettyPrint := false) "number₁" => Fintype.equivFin (Cube D → Deck (EnrichedOuter.depth S (d₁+1) T₁+1))
+local notation3 (prettyPrint := false) "tag₁" => ParseTable.signedLiteralCode (s:=size₁) ord
+local notation3 (prettyPrint := false) "x₁" => fun _ : Unit => false
+
+local notation3 (prettyPrint := false) "selectedTask" => cal.frozenTask grid qpos position chart reader chargeFit
+local notation3 (prettyPrint := false) "selectedSites" => cal.frozenSites grid qpos position chart reader chargeFit
+local notation3 (prettyPrint := false) "table₁" => (located₁).raw.reserve ceiling₁
+local notation3 (prettyPrint := false) "directory₁" => freeDirectory R₁ r₁ (initial₁).literal ℓ₁ tiles
+  (GridHosts.inputBlockWidth r₁ (l+1) axes d₁) J₁ description
+local notation3 (prettyPrint := false) "fresh₁" => (initial₁).next+7*(directory₁).candidates
+local notation3 (prettyPrint := false) "origin₁" =>
+  Allocation.dest fresh₁ cap₁ (table₁).size (located₁).outputs w₁
+local notation3 (prettyPrint := false) "P₁" => (signedProgram (cube.cubeID paid)).program
+local notation3 (prettyPrint := false) "free₁" => (selectedSites).enrichedFree prog₁ P₁ (l+1) ec₁ ℓ₁
+local notation3 (prettyPrint := false) "geoSeed" => ((plan₁).execute tape₁ order₁ position Unit).choose
+local notation3 (prettyPrint := false) "arenaBase" =>
+  Allocation.stop ((initial₁).next+7*(dir₁).candidates) cap₁ ceiling₁ (located₁).outputs w₁ w₁
+
+open BorderVNP.Cube.Physical.NativeAssignments DiagonalTallyCellReports CellMacro.Generator
+open Shortening.PublicCapacity Diagonal.CellEntries
+
+local notation3 (prettyPrint := false) "frame₁" => fun u : Fin (R₁+1) => ((selectedSites).publicWords u 0).val
+local notation3 (prettyPrint := false) "scalarIDs" => paid.Entry ⊕ BorderVNP.Cube.TableEntry cube.pred cube.b cube.h cube.copies cube.width
+local notation3 (prettyPrint := false) "ids" => (Fintype.equivFin (scalarIDs)).toEmbedding.trans Fin.valEmbedding
+local notation3 (prettyPrint := false) "labelIDs" => (ParseTable.numberedLabelEquiv ord l size₁).toEmbedding.trans Fin.valEmbedding
+local notation3 (prettyPrint := false) "bounds" => cal.frozenSpliceBounds grid
+local notation3 (prettyPrint := false) "seeds" => fun t i z => ((ExternalSew.RowTrace.seedNumber S (d₁+1) t i) z).val
+local notation3 (prettyPrint := false) "words" => (geoSeed).eval x₁
+local notation3 (prettyPrint := false) "matrices" => (seedBundle (tape₁) axes d₁ (order₁) position copies₁).Tables F
+local notation3 (prettyPrint := false) "leafAt(" vs ")" => (plan₁).frozenLeaf tape₁ order₁ position W₁ tag₁ sites₁ edges₁ ports₁ vs x₁
+local notation3 (prettyPrint := false) "histAt(" vs ")" => (packHistory (leafAt(vs)) (plan₁).compiled.machine.epoch T₁).Index
+local notation3 (prettyPrint := false) "coreAt(" vs "," h ")" =>
+  (plan₁).signedCoreDirectory prog₁ (geo₁).fits W₁ position labelIDs sites₁ edges₁ ports₁ vs
+    words (leafAt(vs)).property seeds free₁ grid.count (Sum.inl : paid.Entry → scalarIDs) ids
+    (bounds).2.1 h cube scales.α ξ₁ (bounds).1 (geo₁).literalSize (bounds).2.2 number₁ (selectedTask).p.privateGap
+local notation3 (prettyPrint := false) "rowsAt(" vs "," h "," rt "," frames ")" =>
+  (plan₁).signedReceivedRows prog₁ (geo₁).fits W₁ position labelIDs sites₁ edges₁ ports₁ vs
+    words (leafAt(vs)).property seeds free₁ grid.count (Sum.inl : paid.Entry → scalarIDs) ids
+    (bounds).2.1 h cube scales.α ξ₁ (bounds).1 (geo₁).literalSize (bounds).2.2 number₁
+    (selectedTask).p arenaBase cap₁ frames (fun _ => origin₁) (Subtype.val rt)
+local notation3 (prettyPrint := false) "wiring₁" => SewnTape.wiring (regs:=64) (w:=w₁) (ec:=ec₁) (width:=w₁+1)
+  prog₁ (geo₁).fits free₁ pins₁
+
+local notation3 (prettyPrint := false) "fmt₁" => Boundary.seedFormat (tape₁) (order₁) position copies₁
+local notation3 (prettyPrint := false) "cells₁" => CoverScale.sites (Cube D) (EnrichedOuter.depth S (d₁+1) T₁)
+local notation3 (prettyPrint := false) "num₁" => (fun z : paid.Entry => cube.scalarNumber paid (.inl z))
+open Packing.RoutingOutputs Diagonal.ExternalSew CellPacketGeometry TerminalCells
+local notation "hooks₁" => Fintype.card scalarIDs
+local notation "short₁" => 60*logWidth (r₁) (l+1)
+local notation "live₁" => (R₁+1)*tiles
+local notation3 (prettyPrint := false) "shape₁" => boundaryShape S (d₁+1) T₁
+local notation3 (prettyPrint := false) "cables₁" => (shape₁).edges+4*(R₁+1)*tiles
+local notation3 (prettyPrint := false) "sources₁" => (ProgramSchemas.epoch S (d₁+1) short₁ fmt₁ T₁).schema.append
+  (Sewn.schema (2*(shape₁).edges+6*(R₁+1)*tiles) short₁)
+local notation3 (prettyPrint := false) "last₁" => FinalTies.tieSchema cables₁ live₁ w₁
+local notation3 (prettyPrint := false) "tpl₁" =>
+  CellPacketGeometry.History.template sources₁ last₁ (scheduledBoxes dir₁ rfl num₁ grid.sites_pos)
+    (cal.frozenPacketTags grid position).1 (cal.frozenPacketTags grid position).2
+    (FinalReports.Spare.priv (C:=cells₁) (g:=hooks₁) (digits:=w₁) (E:=Fin J₁))
+    (FinalReports.Spare.reports (C:=cells₁) (g:=hooks₁) (digits:=w₁) (E:=Fin J₁))
+
+
+
+local notation3 (prettyPrint := false) "bundleAt(" vs "," h ")" =>
+  (plan₁).signedReportBundle prog₁ (geo₁).fits W₁ position labelIDs sites₁ edges₁ ports₁ vs words
+    (leafAt(vs)).property seeds free₁ grid.count (Sum.inl : paid.Entry → scalarIDs) ids (bounds).2.1 h
+    cube scales.α ξ₁ (bounds).1 (geo₁).literalSize (bounds).2.2 number₁ (selectedTask).p arenaBase cap₁
+
+open CellPacketGeometry CellPacketGeometry.SiteWords CellPacketGeometry.History CellPacketGeometry.History.Native
+open RoutingISA.Evaluator RoutingISA.Evaluator.ScheduleClock RoutingISA.SignedTaskArena RoutingISA.FragmentRows
+open Packing.RoutingOutputs RoutingISA.Pins DiagonalTallyAllocation DiagonalTallyCellReports FiniteEvaluator
+
+set_option maxHeartbeats 12500000 in
+set_option maxRecDepth 14000 in
+set_option cleanup.letToHave false in
+private noncomputable def fundedEmissionOfMarkedSite
+    (funding : FrozenPrivateFundingAt cube b header (l+1)) (values : matrices) (hist : histAt(values))
+    (rt : (coreAt(values,hist)).Route cube.width) (u : Fin (R₁+1))
+    {pub : Arg → Word w₁} {mac : TeamOpcode.Macros w₁ 8} {regs : RoutingISA.Bank w₁} {ownedMem : Memory w₁}
+    (stage : OpenSuffix.Inputs) (advance : Returns SignedPrep.controls pub mac regs ownedMem)
+    (run : Returns prepareCellReports pub mac advance.val.2.1 advance.val.2.2)
+    (axis : Fin (cube.pred+1))
+    (input : FreePort R₁ r₁ ((UniversalMachine.programPrefix prog₁).length+(cutWidth (l+1)+extra₁)) → Bool)
+    {ram : ℕ → ℕ} (marked : cal.frozenIssuedMarkers grid qpos position chart reader chargeFit values hist ram) :=
+  let planner := cal.frozenPlannerTask grid qpos position chart reader chargeFit
+  let core := coreAt(values,hist)
+  let dir := cal.frozenIssuedDirectory grid qpos position chart reader chargeFit values hist
+  let ptr := fun j : Fin J₁ => (Sum.inl (Sum.inr j) : (tpl₁).Fields)
+  let tabs := bases origin₁ planner.cube.cables planner.cube.cells (directory₁).entries
+  let liveCount := (directory₁).teams*(directory₁).sites
+  let ctl := controlsBase origin₁ planner.cube.cables planner.cube.cells (directory₁).entries liveCount
+  let assigned := cal.frozenPlannerPublishedSourceSlots grid qpos position chart reader chargeFit values hist marked
+  let owners := cal.frozenIssuedOriginalReceiver grid qpos position chart reader chargeFit values hist marked
+  let quotas := cal.frozenPrivateFunding grid qpos position chart reader chargeFit funding
+  let intervals := cal.frozenFundedReportIntervals grid qpos position chart reader chargeFit funding values hist rt u
+  let finished := cal.frozenIssuedDirectory_returned grid qpos position chart reader chargeFit values hist ram marked.1
+  let anchor := (bounds).2.1.block
+  let adj := GridHosts.gridRoom (V:=tiles) wiring₁ Fintype.card_pos
+  let issue := (plan₁).issuedCandidateReportEmission prog₁ (geo₁).fits W₁ position labelIDs sites₁ edges₁ ports₁
+    values words (leafAt(values)).property seeds free₁ grid.count (Sum.inl : paid.Entry → scalarIDs) ids
+    (bounds).2.1 hist cube scales.α ξ₁ (bounds).1 (geo₁).literalSize (bounds).2.2 number₁ (selectedTask).p
+    arenaBase cap₁ frame₁ (fun _ => origin₁) rt.val u stage advance run anchor adj input core.owner core.owner (fun _ => rfl)
+    (hdr:=header*logWidth r₁ (l+1)) (depth₀:=(tpl₁).publicDepth) (depth₁:=(tpl₁).chunkDepth)
+    (axis:=axis) (cursor:=planner.after.reportCursor) (ctl:=ctl) (offsets:=tabs.ends) («liveBase»:=tabs.livePairs)
+    (portCount:=liveCount) dir ptr ram (args:=assigned.choose)
+  PLift.up <| fun ready place low fromHost seed alloc headers fit cc emission owned wiring counts address memories here wordsAt
+    {rawBase : ℕ} {placed : Memory w₁} {written : ℕ → ℕ} {I : Type} [Fintype I]
+    {host : I → Fin cells₁} {idx : I ↪ ℕ} {width : I → ℕ} {pins : RoutingISA.Pins.Layout} slotted keep arenaFit =>
+    show ReportArgumentEmission (p:=(tpl₁).publicDepth) (d:=(tpl₁).chunkDepth) (H:=header*logWidth r₁ (l+1))
+      («description»:=(directory₁).description) (length:=l+1) (ctl:=ctl) (offsets:=tabs.ends)
+      (team:=u.val) («live»:=tabs.livePairs) (ports:=liveCount) dir ptr ram
+      (fun j => (bundleAt(values,hist) j).header.siteSlot) (fun j => (bundleAt(values,hist) j).factors)
+      ((rowsAt(values,hist,rt,frame₁)).cells u) planner.after.reportCursor run emission from
+    issue ready place low rfl intervals.1 fromHost (fun c j inside => (owners c j).mp inside)
+      seed alloc headers fit cc emission owned wiring counts address memories here wordsAt
+      (rawBase:=rawBase) (placed:=placed) (written:=written) (host:=host) (index:=idx) (width:=width) (pinRegion:=pins)
+      slotted keep arenaFit rfl assigned.choose_spec.1 assigned.choose_spec.2 hm quotas.1.batch quotas.1.short
+      quotas.1.gadgets quotas.2.1 core.owner_site (by simpa only [one_mul] using quotas.1.scale)
+      quotas.2.2.2.1 quotas.2.2.2.2.1 quotas.2.2.2.2.2.1 quotas.2.2.2.2.2.2.1
+      (fun c => ⟨(finished c).1,(finished c).2 (header*logWidth r₁ (l+1))⟩)
+
+set_option maxHeartbeats 12500000 in
+set_option maxRecDepth 14000 in
+/-- At the true original program and report layout the marked site directory supplies all
+selected scalars, report sizes, receiver addresses, and private time bounds. -/
+theorem SignedCalendarAt.frozenMarkedReportEmission
+    (funding : FrozenPrivateFundingAt cube b header (l+1)) (values : matrices) (hist : histAt(values))
+    (rt : (coreAt(values,hist)).Route cube.width) (u : Fin (R₁+1))
+    {pub : Arg → Word w₁} {mac : TeamOpcode.Macros w₁ 8} {regs : RoutingISA.Bank w₁} {ownedMem : Memory w₁}
+    (stage : OpenSuffix.Inputs) (advance : Returns SignedPrep.controls pub mac regs ownedMem)
+    (run : Returns prepareCellReports pub mac advance.val.2.1 advance.val.2.2)
+    (axis : Fin (cube.pred+1))
+    (input : FreePort R₁ r₁ ((UniversalMachine.programPrefix prog₁).length+(cutWidth (l+1)+extra₁)) → Bool)
+    {ram : ℕ → ℕ} (marked : cal.frozenIssuedMarkers grid qpos position chart reader chargeFit values hist ram) :
+    type_of% ((fundedEmissionOfMarkedSite cal grid qpos position chart reader chargeFit funding values hist rt u
+      stage advance run axis input marked).down) :=
+  (fundedEmissionOfMarkedSite cal grid qpos position chart reader chargeFit funding values hist rt u
+    stage advance run axis input marked).down
+
+end Diagonal
+
+end BorderVNP
+end Computability
+end OAI

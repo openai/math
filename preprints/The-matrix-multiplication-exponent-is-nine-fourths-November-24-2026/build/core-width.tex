@@ -1,0 +1,375 @@
+\section{Reducing the width between unfrozen stations}
+\label{subsec:core-width}
+
+After concentration, some stations remain frozen for the rest of this
+round. The others form its \emph{core}. We shall reduce the width
+between core stations before restoring bounded degree and passing all
+the stations to the next round. Each core occurrence carries one
+tensor. Each frozen occurrence holds a list of tensors and the charge
+assigned to each when it was frozen. All exterior legs are on frozen
+tensors. We discard host adjacencies between frozen stations, since they
+carry no wires.
+
+Let \(X\) be the sum, over all blocks, of the widths of the core--core
+wires, counting each wire once. Let \(Z\) be the total frozen charge.
+The core--frozen wires, called \emph{tethers}, have total width at most
+\(Z\). For packing, give each core occurrence load equal to its arity
+and each frozen occurrence load equal to the sum of its charges times
+a fixed dyadic factor in \((0,1]\). Write \(B\) for an upper bound on
+one load. The sum of all loads satisfies \(\mathcal M\le 2X+2Z\).
+Each internal width is a multiple of an integer \(u\le B\).
+
+The host records possible contacts across all blocks. Write \(\Delta\ge3\)
+for a bound on its core degree and \(\nabla\ge\Delta\) for a bound on
+its full degree. A core station can meet different frozen stations in
+different blocks, so even a core of degree three can have many potential
+tethers. The width estimate below is uniform in their number.
+
+\begin{lemma}[Reduction of core width]\label{lem:core-width}
+Fix a bound on the incoming core degree and assume the hypothesis of
+Theorem~\ref{thm:sort}. There is a fixed sequence of grouping and
+contraction steps, called a \emph{beat}, with the following bounds
+in each summand, for slack \(\sigma>0\).
+\[
+ X_{\rm out}\le \tfrac12 X+C(Z+\sigma),\qquad
+ \Delta_{\rm out}\le3,\qquad Z_{\rm out}=Z.
+\]
+The identity retains all exterior legs separately. The maximum load,
+the reciprocal bundle unit and \(\log(2\nabla)\) increase by at most
+fixed factors. These factors and \(C\) are independent of the
+incoming full degree.
+
+At a step with \(H\) host positions and \(N_b\) blocks, a power of two,
+choose dyadic \(r\mid N_b\). Grouping leaves \(N_b/r\) blocks and uses
+at most \(crH\) positions. It suffices to take
+\(r\ge c_*\), \(c_*HN_bB/r\le\sigma\) at each step and a starting
+unit divisible by the product of the subdivision factors. The
+position and slack constants \(c,c_*\) may depend on the degree
+bounds at the step in question.
+\end{lemma}
+
+A beat consists of several wire-saving subrounds and one reset. Each
+subround trades some core width for more possible core contacts. The
+reset routes the surviving wires through a core of degree three. We
+shall choose the number of subrounds so that their combined saving
+pays for this routing.
+
+\subsection{A wiring identity}
+Place six parties in the triangular array of Figure~\ref{fig:two-layouts}.
+A pair is \emph{permitted} if it lies in one row or one column. The
+desired equality wires \(AB\) and \(CD\) lie in neither. We shall express
+their product as a sum of networks on permitted pairs and then contract
+an entire row or column partition. This leaves a choice of two layouts
+for the same summand.
+
+\begin{figure}[htb]
+\centering
+\begin{tikzpicture}[x=1.06cm,y=1.32cm,font=\small,
+ party/.style={circle,inner sep=1pt,minimum size=4mm},
+ part/.style={rounded corners=2.8pt,line width=.65pt},
+ demand/.style={draw=ink,densely dashed,thick}]
+\foreach \panel/\shift/\heading in {0/0/Demanded wires,1/4.2/Row partition,2/8.4/Column partition}{
+ \begin{scope}[xshift=\shift cm]
+ \node[font=\sffamily\small] at (1.14,1.96) {\heading};
+ \ifnum\panel=1
+  \draw[part,draw=sea,fill=sea!8] (-.33,1.15) rectangle (2.61,1.65);
+  \draw[part,draw=sea,fill=sea!8] (-.33,.45) rectangle (1.47,.95);
+  \draw[part,draw=sea,fill=sea!8] (-.33,-.25) rectangle (.33,.25);
+ \fi
+ \ifnum\panel=2
+  \draw[part,draw=rust,fill=rust!8] (-.33,-.25) rectangle (.33,1.65);
+  \draw[part,draw=rust,fill=rust!8] (.81,.45) rectangle (1.47,1.65);
+  \draw[part,draw=rust,fill=rust!8] (1.95,1.15) rectangle (2.61,1.65);
+ \fi
+ \ifnum\panel=0
+  \draw[demand,shorten <=2.6mm,shorten >=2.6mm] (0,1.4)--(1.14,.7);
+  \draw[demand,shorten <=2.6mm,shorten >=2.6mm] (2.28,1.4)
+    .. controls (2.64,-.14) and (1.26,-.23) .. (0,0);
+ \fi
+ \foreach \x/\y/\name in {0/1.4/C,1.14/1.4/M,2.28/1.4/A,0/.7/N',1.14/.7/D,0/0/B}{
+  \node[party] at (\x,\y) {\(\name\)};
+ }
+ \end{scope}}
+\end{tikzpicture}
+\caption{An equality wire between \(C\) and \(M\), for example, disappears
+when the rows are contracted and survives when the columns are contracted.
+Every permitted wire disappears in one layout. Across all copies of the
+identity in a summand, the cheaper of the two common layouts retains at
+most half the replacement width.}
+\label{fig:two-layouts}
+\end{figure}
+
+An \(s\)-bit wire is the equality tensor on the two \(s\)-bit indices.
+For a scale-one ordinary price over \(k\), let \(m\) be the greatest
+price-distance on a permitted pair. A spanning tree of the permitted
+graph supplies one bit shared by all six parties, by equating its
+incident bits at each vertex. Thus \(1\le5m\). Both demanded distances
+are at most \(2m\). If \(d(C,D)=2m\), the paths \(C,M,D\) and \(C,N',D\)
+make \(M\) and \(N'\) the same midpoint in a CAT(0) extension. If also
+\(d(A,B)=2m\), then \(C\) and \(M=N'\) are both midpoints of \(A,B\).
+This would give \(C=M\) although \(d(C,M)=m>0\). Compactness of
+scale-one prices therefore gives a uniform \(\lambda_*<2\) with
+\[
+ d(A,B)+d(C,D)\le2\lambda_*m .
+\]
+
+Choose \(\lambda_*<\lambda_0<2\). For fixed \(\eta'>0\) and arbitrarily
+large \(b\), we claim that the two width-\(b\) demands admit an ordinary
+sum of at most \(2^{\eta'b}\) networks, each with total permitted width
+at most \(2\lambda_0b\). Indeed, choose \(h_0\) large enough that
+\(\lfloor2\lambda_0h_0\rfloor>2\lambda_*h_0\). As supply, take the
+direct sum over permitted pairs of a single wire on that pair of width
+\(\lfloor2\lambda_0h_0\rfloor\). At each spectral point the price of
+this supply exceeds that of the two width-\(h_0\) demands. Strict
+spectral comparison makes the width-\(b\) demands, for \(b=h_0r\),
+a restriction of boundedly many direct copies of the \(r\)th supply power.
+Expanding the direct sums and applying the local restriction maps gives
+the claimed networks. With \(E_{\rm perm}\) the set of permitted pairs,
+a summand index takes \(r\log_2|E_{\rm perm}|+O_{h_0}(1)\) bits.
+Choose \(h_0\) and then \(r\) large to fit \(\eta'b\). The identity
+over \(k\) extends to every field \(K/k\). For the subround we need a
+fixed number of choices even when each wire carries many copies of a bit.
+
+\begin{lemma}[A fixed choice of widths]\label{lem:powered-gadget}
+There are constants $b\in\mathbb N$ and $\lambda<2$ such that for
+every $z\ge1$ the two width-$bz$ demands are the sum of a bounded
+number of networks on the same six parties. Each uses at most
+$2\lambda b$ bundles of $z$ bits on permitted edges. Its local
+tensors are specified by $z$, the party and the index of the summand.
+The index set and choices of widths (in units of $z$) can be fixed independently of $z$.
+\end{lemma}
+
+\begin{proof}
+Raise the finite identity above to its $z$th tensor power. A term is
+initially indexed by a sequence of $z$ selectors, with at most
+$\lceil\eta'b\rceil$ bits per selector. For each permitted edge round
+up the total number of bits on it to a multiple of $z$. Allowing empty groups, group the
+sequences by the vector of rounded numbers in units of $z$. This
+vector belongs to a fixed finite set, and rounding costs at most one
+unit per permitted edge. Within each group choose a spanning tree
+of the connected permitted graph and send the full sequence on each
+tree edge, using at most $\lceil\eta'b\rceil$ extra units per edge.
+A local table checks identical valid sequences on all incident tree
+edges, membership in the group, and zeros in padding positions.
+It uses the sequence to split positions on each original edge into
+the prescribed slices and evaluates the product of the $z$ local
+tables. Connectivity makes the encodings of a sequence unique once
+the sequence is specified. Summing the tree variables therefore gives
+precisely the sum for that group. The total in units of $z$ is at most
+$2\lambda_0 b+|E_{\rm perm}|+5\lceil\eta'b\rceil$. Choose $\eta'$
+sufficiently small and then $b$ sufficiently large to bound this by
+$2\lambda b$ with $\lambda<2$.
+\end{proof}
+
+
+\subsection{Subrounds}
+In a subround we group occurrences at each position into packs. Two
+outgoing units from different packs can play the roles \(AB\) and \(CD\).
+We first arrange enough such pairs, with a bound on how many packs a
+single contraction can merge.
+
+\paragraph{Balanced partitions.}
+Within each group of \(r\) block indices use the dyadic intervals in their common order. Give every host edge \(e\) a propagation distance
+\[
+ s_e=64\lceil\log_2(2x_e)\rceil,\qquad
+ x_e=\begin{cases}\Delta&\text{on core edges},\\
+                     \nabla&\text{on tethers}.\end{cases}
+\]
+At each position mark every interval of load greater than \(AB\), with \(2\le A\le r\) dyadic. Marks require splitting. Propagate each mark to its parent at the same position and to its ancestor \(s_e\) levels higher at the other end of each incident edge \(e\), whenever the ancestor exists. The leaves, called colonies, have load at most \(AB\) and length at least \(A\). Intersecting colonies at opposite ends of \(e\) differ in length by a factor at most \(2^{s_e}\), by propagation from the parent of the smaller colony.
+
+A common permutation of the indices inside each group gives a total colony count
+\begin{equation}
+ Q\le C_1\left( HN_b/r+\mathcal M/(AB)\right)
+ \label{eq:core-colonies}
+\end{equation}
+with \(C_1\) absolute. To see this, identify the indices with \(\mathbb F_r\) in a binary basis and multiply by a uniformly random nonzero element. The probability that two distinct indices fall in one depth-\(j\) interval is at most \(2^{-j}\). At a source position in one group let \(x_i\le1/A\) be the loads divided by \(AB\), and put \(x=\sum_i x_i\). An initially marked interval has at least \(1/2\) in ordered cross products of distinct normalized loads. Thus the expected number of initial marks at depth \(j\) is at most \(2x^2 2^{-j}\). The sum of \(2^{-s_e/16}\) over incident edges is at most \(1/2\) at every vertex. Summing the resulting path weights shows that at most \(2\cdot2^{s/16}\) positions are reachable with total propagation distance at most \(s\). Fix the total upward displacement \(s\), allowing steps to parents at the same position. At each reachable position, depth-\(j\) source marks then reach at most \(2^{j-s}\) distinct ancestors. The expected count there, summed over \(j\ge s\), is at most
+\[
+ \sum_{j\ge s}\min\{2^{j-s},2x^2 2^{-j}\}=O(x2^{-s/2}).
+\]
+Summing over distances, sources and groups bounds the number of marks in expectation by \(O(\mathcal M/(AB))\). Each binary partition has one more leaf than marked internal nodes. Choose a multiplier minimizing the actual count.
+
+\paragraph{A wire-saving subround.}
+Orient all core edges. Color each block thick or thin, using one affine
+functional over \(\mathbb F_2\) on its within-group index. Every position
+in a block receives the same color. To pack tensors at one position,
+take their tensor product and retain their wires. Any loops created by
+later mergers are contracted into the local table. At each core colony gather all thick tensors in one pack. In order, close a thin pack once it reaches load \(B\). There are \(O(A)\) thin packs, each of load at most \(2B\). At a frozen colony concatenate the lists. Let
+\(P=2^{64\lceil\log_2(2\Delta)\rceil}\) and \(K_1=\Delta P\).
+Pairwise independence of the colors bounds the expected absolute imbalance of thick and thin outgoing widths in a colony by \((B\sum_i a_i)^{1/2}\), where \(a_i\) is the outgoing core amount of its \(i\)th occurrence. Summing gives a coloring of total imbalance at most \(\sqrt{BQX}\).
+
+For a source colony, group thick outgoing units by their destination pack. There are at most \(K_1\) bins by the length ratio along core edges. Treat the outgoing units of each thin pack as one item and match the entire item into any bin with enough remaining capacity. At the first failure every remaining capacity is below \(2B\), so the unmatched part of the smaller total is at most \(2BK_1\). The one-sided matched width therefore satisfies
+\[
+ I\ge \tfrac12X-\tfrac12\sqrt{BQX}-2BK_1Q.
+\]
+The colony bound~\eqref{eq:core-colonies} and the slack condition with \(c_*\ge A\) give \(BQ=O((X+Z+\sigma)/A)\). Take \(A\) a sufficiently large dyadic multiple, up to rounding, of \(1+K_1\). Then \(I\ge X/4-O(Z+\sigma)\) with absolute implicit constant.
+
+Within each bin pair its matched thin units with distinct thick units.
+Use Lemma~\ref{lem:powered-gadget} with \(b_*=b\) and \(z=u/b_*\), an
+integer by the subdivision hypothesis. In each pair the thick wire plays
+\(AB\), with \(A\) its source, and the thin wire plays \(CD\), with \(C\)
+its source. The sources share a colony. The destinations \(B,D\) belong
+to thick and thin packs, respectively, because a wire stays in one
+block and the color is common to that block. Introduce fresh auxiliary
+parties \(M,N'\) for each pair. Across all pairs, the two demanded
+widths have total \(2I\), and the replacement wires have total width at
+most \(2\lambda I\) in each product summand.
+
+In one such summand, add the widths that survive the row contractions
+over all pairs. Do the same for the column contractions. Every
+replacement wire is internal to one of the two layouts, so the two
+totals sum to at most \(2\lambda I\). Perform the cheaper contraction
+in every pair. Further identifications can only decrease the surviving
+width. The unmatched wires contribute at most \(X-2I\), hence
+\[
+ X'\le X-(2-\lambda)I\le\rho X+C(Z+\sigma),\qquad
+ \rho=1-(2-\lambda)/4<1 .
+\]
+
+Matching each thin item in its entirety controls the growth in both load and degree. The merged old packs form stars. A thin pack in its source role joins its own thick pack in the row layout or its one chosen thick destination in the column layout. In its destination role it joins only an auxiliary party. Thus one thick center absorbs at most \(O((1+K_1)A)\) thin packs. Every auxiliary is absorbed into a demand endpoint, to which its new incidences can be charged at a constant multiple of the matched width. A dyadic load multiplier \(g\), polynomial in \(\Delta\), bounds both the resulting core loads and the scaled loads of the frozen lists. The new unit is \(u/b_*\).
+
+Reserve pack slots at every potential dyadic interval. Possible core contacts run between packs of one colony or of intersecting neighboring intervals with ratio at most \(P\). There are \(O(P+\log(2P))\) possible intervals per neighbor for each given interval. The stars and the four matched endpoints have bounded diameter in this graph. Taking a fixed graph power gives a common core support of degree at most \(C_2\Delta^{C_2}\). A tether needs just one old tether adjacency with its own length ratio, followed by a bounded number of core adjacencies. Hence the full degree is at most \(C_2\nabla^{C_2}\), with absolute \(C_2\) enlarged if necessary. There are fewer than \(2r\) potential intervals per position. This gives the claimed bound on positions and keeps tethers attached to their respective frozen tensors.
+
+\subsection{Resetting the core degree}\label{subsec:reset}
+Use \(H,N_b,\Delta,\nabla\) for the parameters immediately before the
+reset, and put \(P=2^{64\lceil\log_2(2\Delta)\rceil}\),
+\(K_1=\Delta P\). The reset replaces the core by a degree-three host.
+Its principal cost is a permutation network at each core base. Fix a
+trivalent network of size \(c_0Yw_0\) that realizes all permutations
+of \(Y\) rows of width \(w_0\) by fixing its tags, where \(4K_1\le Y\)
+and \(c_0\ge1\). Call this network the \emph{rotor}.
+
+Figure~\ref{fig:reset} shows the two routes. First partition the blocks
+at each position into intervals called \emph{bases}, using their mean
+loads, and reserve capacity between each pair of adjacent core bases.
+Mixing the blocks makes most bases fit these reservations. A wire
+between two such bases crosses a direct link between dedicated rotor
+outputs. Every core wire incident to an exceptional base takes a longer
+route through binary trees. We must bound the total load on those bases
+before charging the extra hops.
+
+\begin{figure}[htb]\centering
+\begin{tikzpicture}[x=1cm,y=1cm,
+                        font=\footnotesize,term/.style={circle,draw,fill=white,inner sep=2pt}]
+% pair of good bases
+\foreach \d/\off in {1/-5,-1/5}{
+  \begin{scope}[xshift=\off cm,xscale=\d]
+    \draw[draw=black!60,rounded corners=6pt](-1.45,-1.5) rectangle (3.36,1.5);
+    \node[font=\sffamily\small] at (1,1.8){good base};
+    \node at (-.05,1.18){inputs};
+    \node at (2.6,1.18){outputs};
+    \foreach \y in {.75,0,-.75}{
+      \draw (0,\y) -- (2.6,\y);
+      \draw (0,\y) -- (-.65,\y) --(-.87,\y+.21);
+      \draw (-.65,\y)--(-.87,\y-.21);
+    }
+    \draw[sea, very thick] (0,0)--(.8,0) (1.8,.75)--(2.6,.75);
+    \draw[draw=ink,rounded corners,fill=ink!8] (.8,-1.26) rectangle (1.8,1.12);
+    \draw[sea,very thick] (.8,0) -- (1.8,.75);
+    \node[font=\scriptsize] at (1.3,-.59){rotor};
+    \foreach \y in {.75,0,-.75}{
+       \node[term] at (0,\y){};
+       \node[term] at (2.6,\y){};
+    }
+  \end{scope}}
+\draw[sea,very thick] (-2.29,.75) -- node[below,text=black]{reserved link} (2.29,.75);
+
+% link from bottom input on left to a terminal in a bad base
+\draw[draw=black!60,rounded corners=5pt] (-2.15,-3.94) rectangle (0.2,-2.23);
+\node[anchor=west,align=center] at (.42,-3.1) {leaf of a bad base};
+\node at (-.61,-2.7) {input};
+\draw (-1.41,-3.26) --(-1.68,-2.9);
+\draw[rust,thick,densely dashed] (-5.11,-.75)--(-5.65,-.75)--(-5.87,-.96)
+  -- (-5.87,-3.6)-- (-1.68,-3.6) -- (-1.41,-3.26)--(-.6,-3.26);
+\node[term] at (-.6,-3.26){};
+\node[align=center] at (-4,-2.91) {via contact trees};
+\end{tikzpicture}
+\caption{Routing during a reset. Between good bases, each end of a
+wire reaches a dedicated output through a rotor (solid). A contact
+with a bad base joins input terminals through binary contact trees
+(dashed). Old tensors and their tethers stay at the inputs. Only
+selected terminals are shown.}\label{fig:reset}
+\end{figure}
+
+\paragraph{Bases and capacities.}
+Choose dyadic $F\ge Y^2w_0$; require $c_*\ge F$ in this step. For the mean load \(\mu_v\) at each position over the \(N_b\) blocks, put
+\[
+ \nu_v=\max\left\{ FB/r,\ 
+      \max_{\pi:y\to v} \mu_y\,2^{-\sum_{e\in\pi}s_e/2}\right\},
+\]
+allowing a path of length zero. The sum of the attenuated weights of paths from each position is bounded by an absolute constant, as in the colony count. Hence \(\sum_v\nu_v\le HFB/r+C\sum_v\mu_v\). At position \(v\) partition into bases of the largest dyadic length \(s_v\le FB/\nu_v\), between \(F\) and \(r\). All partitions of block indices respect their grouping into consecutive $r$'s. Neighboring base depths differ by at most \(s_e/2\). Their total number is \(O((\mathcal M+\sigma)/(FB))\). For each pair of intersecting bases at neighboring core positions \(v,w\), reserve capacity
+\[
+ \overline y_{vw}\min(s_v,s_w)+FB/K_1 ,
+\]
+where \(\overline y_{vw}\) is the mean core amount of that contact per block. The first terms sum to at most \(s_v\mu_v\le FB\) at any base, and there are at most \(K_1\) reservations. Hence total reserved capacity at a base is at most \(2FB\). Base lengths and capacities are fixed from the means before permuting the blocks. In each group the output terminals for a given pair of base positions will therefore occupy the same host slots.
+
+\paragraph{Mixing.}
+Permute all block indices by one invertible binary matrix. Within the bases, mark dyadic subintervals (including possibly the bases themselves) of load above \(2FB\), propagating with the same edge distances. Leaves have load at most \(2FB\), length at least \(F\), and the previous length-ratio bounds (base splits above the marked region already satisfy propagation by comparison of the base depths; propagate as in colony packing). Call a base bad if it splits or an incident core reservation overflows. For any \(\delta_*>0\), choosing \(F\) sufficiently large in terms of \(\Delta,Y,\delta_*\) gives a permutation with
+\begin{equation}
+ \sum_{\text{bad bases}}\mathrm{load}\le\delta_*(\mathcal M+\sigma).
+ \label{eq:core-badbases}
+\end{equation}
+To prove this uniformly in the full degree, count how far one overloaded interval can propagate. For a given position having \(n_v=N_b/s_v\) bases, normalize old loads by \(FB\), obtaining \(x_i\le1/F\). At depth \(j\) below the bases let \(a_J\) be the normalized interval loads and \(\overline a\) their mean, at most \(2^{-j}\). Both \(V_j=\sum_J(a_J-\overline a)^2\) and \(U_j=\sum_J a_J^2-\sum_i x_i^2\) bound the number of overloaded intervals and half their (normalized) load. The prefix collision probability for distinct indices under a random invertible binary matrix is at most the reciprocal of the number of intervals. Consequently
+\[
+ \mathbb E V_j\le\sum_i x_i^2\le n_v/F,\qquad
+ \mathbb E U_j\le n_v2^{-j}.
+\]
+A mark at depth \(j\) can force a base split only along paths with \(\sum s_e\le 2j\), since neighboring base depths change by at most half the edge distance. For this source mark, dyadic nesting gives at most one affected base at each reachable position. The path count used in~\eqref{eq:core-colonies} therefore bounds the number affected by \(2\cdot 2^{j/8}\). At depth \(j\), use \(V_j\) if \(1/F\le2^{-j}\) and \(U_j\) otherwise. Weight this estimator by \(4\cdot 2^{\lceil j/8\rceil}\). Split the sum at \(j=\log_2 F\). The expected charge is at most a constant times \(n_v\sum_{j\ge0}2^{j/8}\min\{F^{-1},2^{-j}\}=O(n_vF^{-7/8})\). Bases with load above \(2FB\) are paid for directly by the depth-zero estimate. For core capacity overflows use the variance estimator for the contact width divided by \(FB\) at the depth of the base intersections. The \(FB/K_1\) buffer above the mean ensures that each overflow contributes at least \(1/K_1^2\). Summing the unweighted variances in expectation over core edges costs at most \(X/(F^2B)\). Each overflow affects at most two bases. Those whose load exceeds \(2FB\) have already been paid for at depth zero, and every other affected base costs at most \(2FB\). Let \(\Phi\) be the sum of the weighted interval estimators and \(K_1^2\) times the contact variances. We have bounded total bad load deterministically by $O(FB\Phi)$ and have shown
+\[
+ FB\,\mathbb E\Phi = O(F^{-7/8}(\mathcal M+\sigma)+ K_1^2X/F).
+\]
+A matrix with estimator at most the mean proves \eqref{eq:core-badbases}. Section~\ref{sec:assembly} finds such a permutation by computing collision scores.
+
+\paragraph{The routes.}
+After mixing, group consecutive runs of \(r\) blocks. Give every core leaf \(Y\) input terminals. Assign its old tensors whole to a least-loaded terminal successively, so each terminal receives at most \(2FB/Y+B\le 3FB/Y\). Keep all tethers at their assigned terminals, with their other ends in the concatenated frozen list. For every good core base the rotor connects its input terminals to \(Y\) output terminals. A reservation of capacity \(c\) receives \(\lceil cY/(8FB)\rceil\) pairs of dedicated output terminals, joined by direct links. This needs at most \(Y/4+K_1\le Y\) terminals per base. Divide the units of a good--good contact evenly among its pairs. Their output loads are at most \(8FB/Y+u\le9FB/Y\).
+
+At a good base write \(m_{ij}\) for the number of units routed from input \(i\) to output \(j\). The row and column sums of \((\lceil m_{ij}/w_0\rceil)\) are at most
+\[
+ 9FB/(Yuw_0)+Y\le10FB/(Yuw_0).
+\]
+Bring every row and column sum to the largest sum by adding edges.
+Hall's Theorem decomposes the resulting regular bipartite multigraph
+into perfect matchings. Each matching configures a layer of the rotor with bit edges powered to width \(u\). Pin unused inputs and corresponding outputs to zero. Take the tensor product of the layer tables at each rotor position.
+This uses only the prescribed equality tensor obtained by pinning the rotor tags. Balanced binary trees at each rotor row collect its \(w_0\) ports, at \(O(\log(2w_0))\) hops per unit. Including direct links this costs \(O((c_0+\log(2w_0))FB)\) per good base.
+
+For a core contact with a bad endpoint use balanced binary contact trees attached to its input terminals. The possible neighboring leaf intervals have length ratios at most \(P\), with \(Y\) terminals per leaf, giving depth \(O(\log(2\Delta Y))\). Route ordered lists through the trees by equality tensors. The assigned lists at both ends give a unique internal assignment to the transmitted bits. Choose \(\delta_*\) in \eqref{eq:core-badbases} small enough to pay this routing depth. Thus for an absolute \(A_0\),
+\[
+ X'\le A_0(1+c_0+\log(2w_0))(X+Z+\sigma).
+\]
+This counts every core link in the rotors, collecting trees, direct connections and contact trees. The unit remains \(u\). At every input terminal, output terminal, tree vertex, and rotor vertex the load is \(O(FB)\), as follows from the terminal and layer bounds. For a frozen leaf its scaled list load is at most \(2FB\). The core has degree at most three. Rotor vertices have this degree; input terminals have at most rotor-row (via one edge to a row tree) and contact-tree connections within the core; output terminals have at most a rotor-row connection and a direct link. Each binary tree has degree at most three. For tethers the common host allows every input terminal at every possible intersecting core leaf of the prescribed length ratio. The resulting full degree is bounded by a fixed power of \(2\nabla\), with constants depending on this reset. Reserving this hardware at all possible interval slots costs at most \(c r H\) positions.
+
+\subsection{Paying for the reset}
+Write
+\[
+ \kappa=A_0(1+c_0+\log(2w_0))
+\]
+for the width multiplier of the reset. Take \(t\) to be the least
+positive integer such that \(\kappa\rho^t\le1/2\). Repeated use of the
+subround estimate gives core width at most
+\(\rho^tX+C(Z+\sigma)/(1-\rho)\) just before the reset. After it,
+the coefficient of the incoming \(X\) is at most one half. The
+remaining cost is a fixed multiple of \(Z+\sigma\), provided we can
+choose a rotor with \(Y\ge4K_1\) for the degree reached after \(t\)
+subrounds.
+
+Starting at bounded core degree, the recurrence
+\(\Delta'\le C_2\Delta^{C_2}\) gives
+\[
+ \log_2(4K_1)\le C^{t+1}
+      \le C''(2+c_0+\log(2w_0))^{C'} .
+\]
+Here \(C,C',C''\) depend only on the incoming core degree and the
+subround constants. For \(Y=2^y\), Theorem~\ref{thm:sort} gives
+\(w_0=\lceil y^{a_\zeta}\rceil\) and \(c_0=O_\zeta(y^\zeta)\) for
+each \(\zeta>0\). Fix \(\zeta<1/(2C')\), then take \(y\) large. The
+displayed polynomial bound is at most \(y\), so this rotor covers the
+required core degree.
+
+The number of subrounds \(t\), the rotor, \(F\) and \(\delta_*\)
+depend only on the incoming core-degree bound and the conditional
+sorting construction. These parameters bound the growth of the maximum
+load. The full degree governs tether propagation and the number of host
+positions to reserve. All subrounds together divide \(u\) by
+\(b_*^t\), and their polynomial degree bounds, followed by the reset,
+multiply \(\log(2\nabla)\) by at most a fixed factor.
+
+This completes the proof of Lemma~\ref{lem:core-width}.

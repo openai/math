@@ -1,0 +1,34 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[
+  x=1cm,y=1cm,font=\small,align=center,
+  endpoint/.style={draw=#1,fill=#1!5,line width=.55pt,rounded corners=2pt,
+        text width=2.55cm,minimum height=2.25cm,inner xsep=3pt},
+  query/.style={draw=ink!70,fill=ink!3,rounded corners=2pt,
+        text width=4.3cm,inner sep=4pt},
+  edge/.style={draw=ink,-{Stealth[length=1.6mm]},line width=.48pt}]
+\node[endpoint=sea] (source) at (-4.3,0)
+  {\textbf{Source \(v\in I\)}\\[3pt] Partial Fourier transform along \(H\)};
+\node[endpoint=rust] (dest) at (4.3,0)
+  {\textbf{Destination \(w\in J\)}\\[3pt] Complete the transform along the dual axes};
+\node[query] (first) at (0,.85)
+  {Reindex, scale and mix rows by \(B_{1a}\)};
+\node[font=\small] at (0,0) {\(\vdots\)};
+\node[query] (last) at (0,-.85)
+  {Reindex, scale and mix rows by \(B_{ma}\)};
+\foreach \op/\off in {first/5mm,last/-5mm}{
+  \draw[edge] ([yshift=\off]source.east)--(\op.west);
+  \draw[edge] (\op.east)--([yshift=\off]dest.west);
+}
+\node[font=\footnotesize,text=ink] at (0,1.7)
+  {Sum source arrays over \(I\) in common coordinates, then copy to \(J\).};
+\node[font=\footnotesize,text=ink] at (0,-1.7)
+  {At each destination, sum the \(m\) contributions before its Fourier transform.};
+\end{tikzpicture}
+\caption{Fourier calls for one free rectangle \(I\times J\) and one power
+\(a\). A source takes its partial transform once for all \(m\) queries.
+Between the endpoints the common coordinates are \((x_C,y_C,s_1,t'_1)\)
+in each column. The transposed destination transform acts along
+\(H^\perp\). Both endpoint transforms use only auxiliary axes.}
+\label{fig:route}
+\end{figure}

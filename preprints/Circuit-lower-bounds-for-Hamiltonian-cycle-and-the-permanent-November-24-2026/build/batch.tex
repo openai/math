@@ -1,0 +1,92 @@
+\section{Hardness of batches}\label{sec:batches}
+
+The two parts of Theorem~\ref{thm:gap} give two ways to recover the
+count specified by one description. Wiring the signed processors realizes the
+success count of a public program. Substituting a hypothetical batch
+network into that wiring lets an evaluator recover the count with
+enough time left, after compression, for the program to add one.
+
+\begin{proof}[Proof of Theorem~\ref{thm:batches}]
+Fix the finite field $F$ and write $p=\operatorname{char}F$.
+Choose the compressor scalars in $\mathbb F_p$. Take $b,\rho$ as in
+Theorem~\ref{thm:gap}, decreasing $\rho$ below as needed, and take
+$0<\delta<b/2$ and $0<\sigma<\rho$. Suppose that for some sufficiently
+large $n$ and some $1\le k\le 2^{n^\sigma}$ a trivalent network
+$\mathcal B$ of volume at most $kn^{1+\delta}$ realizes
+$(U_n^*)^{\otimes k}$ over $F$. Put
+\[
+                    R=k\,2^{\lceil n^\rho\rceil}.
+\]
+This choice meets the clock hypotheses and partitions the processors
+into $R/k$ whole batches. Use the wiring of Theorem~\ref{thm:gap}(1)
+with the private machine fixed by Theorem~\ref{thm:gap}(2).
+For a description $D$, let $Z(D)\in\mathbb F_p$ be the value of this
+wiring with its pins set to $D$. It is the integer success count of the
+stored program, reduced modulo $p$.
+
+Reserve fields in $D$ for its public code, the size parameters, and
+an indexed description of $\mathcal B$ with all its local entries in
+$F$. Each tensor has bounded degree and $F$ is fixed, so the network
+uses $O(kn^{1+\delta})$ words, even giving each wire endpoint and each
+local entry its own word. All active fields, including the code chosen
+below, fit in $\lfloor R/10\rfloor$ words for large $n$. The public
+machine can read its entire description, including its program.
+
+\smallskip
+\noindent\emph{Evaluate the substituted network.}
+Fix an evaluator $E$ whose input is a description $D$ with this network
+and these size parameters. Generate the pins and links for $D$, and
+replace each consecutive group of $k$ processors by a copy of
+$\mathcal B$. This preserves the scalar in $F$ for every choice of the
+public code in $D$. Guess each summed wire bit once and multiply the
+selected tensor entries in $F$, enforcing the pins and links.
+
+To turn a product $u\in F$ into an acceptance count, fix an
+$\mathbb F_p$-linear map $\lambda:F\to\mathbb F_p$ with $\lambda(1)=1$.
+Guess $\lceil\log p\rceil$ bits and accept when the resulting integer
+is smaller than the representative of $\lambda(u)$ in $[0,p-1]$.
+Summing over assignments applies $\lambda$ to the entire contraction.
+Since $Z(D)$ lies in $\mathbb F_p$, the evaluator satisfies
+\[
+                    \#E(D)\equiv Z(D)\pmod p ,
+\]
+where $\#E(D)$ is its integer number of accepting paths and the
+congruence identifies $\mathbb F_p$ with residues modulo $p$.
+
+The evaluator only reads the stored instructions as literal data
+when setting the pins. Generating the genuine wiring takes
+$O(Rn\operatorname{poly}(w))$ ticks by Theorem~\ref{thm:gap}(1).
+Each exterior slot has an $O(w)$-bit identifier for its batch and
+corresponding leg. Traversing the $R/k$ copies of $\mathcal B$,
+checking the assignments and multiplying their entries therefore takes
+$O(Rn^{1+\delta}\operatorname{poly}(w))$ ticks in all. The exponent
+on $w$ is fixed, so $\delta<b/2$ and a sufficiently small $\rho$ put
+this procedure within $T_+$, without private jobs.
+
+\smallskip
+\noindent\emph{Choose the program whose pins are evaluated.}
+Give the public program two branches. The first accepts once.
+The second runs the compressed simulation of $E$ on its actual $D$
+using Theorem~\ref{thm:gap}(2). All layout generators, field offsets
+and description sizes can be chosen before installing this
+constant-length program. To present $D$ to the evaluator, copy the
+active words, including the stored instructions, and fill unused
+words with zeros. This costs $O(R)$ ticks. The evaluator generates
+pins from these words without any recursive call to the program.
+
+On a successful public path of the simulation, evaluate the
+compressor monomial in $\mathbb F_p$ from its public exponent tallies.
+Use the same binary-guess test as above to accept with this
+multiplicity modulo $p$. Every successful completion of the private
+jobs receives the prescribed public weight. The simulation takes
+$o(T_-)$ ticks, leaving room for the copy, the prime-field arithmetic
+and the extra branch. Thus the program at cap $T_-$ has count
+$1+\#E(D)$ modulo $p$. Its genuine wiring has value $Z(D)$, while
+the substituted wiring used by $E$ has the very same value.
+Figure~\ref{fig:clock} displays the resulting contradiction
+\[
+                Z(D)=1+\#E(D)=1+Z(D)\quad\text{in }\mathbb F_p .\qedhere
+\]
+\end{proof}
+
+\input{clock-figure}

@@ -1,0 +1,195 @@
+\section{Geometric grids and the Fourier upper bound}\label{sec:last}
+
+The character table of a finite abelian group factors into cyclic
+character tables. The following result allows arbitrary geometric
+progressions on the axes, allows interpolation in place of evaluation,
+and admits triangular Toeplitz factors in the same product. Only the
+prescribed factors must be defined over the base field. Auxiliary
+Fourier transforms will take place in an extension whose coordinates
+hold independent fibers of the original input.
+
+\begin{theorem}[Geometric grids and triangular Toeplitz factors]\label{up:grid}\label{up:fourier}
+Let \(K\) be any field, \(a_1,\ldots,a_r\ge2\), and \(N=\prod_i a_i\).
+For each \(i\), let \(T_i\) be a matrix of side \(a_i\) over \(K\).
+It may be the geometric evaluation matrix
+\(V_{a_i}(q_i)=(q_i^{jk})_{0\le j,k<a_i}\) at distinct nodes with
+\(q_i\in K^\times\), its inverse, or an invertible upper or lower
+triangular Toeplitz matrix. For every \(\alpha>1/2\), the operator
+\(\bigotimes_i T_i\) has a binary linear circuit over \(K\) of size
+\(O_\alpha(N(1+\log N)^\alpha)\), with an implied constant uniform
+in the field, the dimensions and the factors.
+\end{theorem}
+
+\begin{proof}
+Fix \(1/2<\beta<\min(\alpha,1)\), put \(t=\lceil\log_2 N\rceil\) and
+take \(c=1/24\). An axis of length \(a>N^c\) can be handled individually.
+Corollary~\ref{cor:toe} applies a triangular Toeplitz factor on all
+\(N/a\) fibers for \(O_\beta(N(1+t)^\beta)\) gates. By the Newton
+factorization (Lemma~\ref{up:newton-lemma}), geometric evaluation and
+its inverse satisfy the same bound. There are at most \(1/c\) such axes.
+
+Group the smaller axes by multiplying their lengths until the product
+first reaches \(N^c\), then start a new group. The last group may
+fall short. There are \(O(1/c)\) groups and each has volume
+\(B\le N^{2c}\). Fix one group. The \(h=N/B\) choices of complementary
+coordinates supply \(h\) independent arrays, each of size \(B\).
+Our two budgets for the group are a word of length \(O(1+\log t)\)
+on \(O(B)\) registers, and an extension of degree at most \(h\).
+The first will bound the number of passes through these arrays.
+The second will let us fill the extension coordinates with data.
+
+\paragraph{Choosing auxiliary lengths.}
+A Fourier word for one factor of size \(a\le N^c\) needs a working
+length \(b_a\) between \(2a\) and \(6a\) (Lemma~\ref{up:toeplitz}).
+Directly padding to a power of the radix \(\ell\) could introduce
+\(O(\log a)\) successive stages. We choose \(b_a\) with pairwise
+coprime factors of size \(O(t^2)\). Their cyclic transforms can then
+be synchronized and only the short factors need radix padding.
+
+Use \(\ell=2\) except in characteristic two, where \(\ell=3\).
+List the primes in \([t,t^2]\), omitting \(\ell\) and the
+characteristic. By the prime number theorem their product exceeds
+\(2N\) for large \(t\), even after the omissions. Let \(P\) be the
+product of the longest prefix with \(P<2a\), taking \(P=1\) for the
+empty prefix. Set \(b_a=P\ell^j\) for the least \(j\ge0\) with
+\(P\ell^j\ge2a\). Then \(2a\le b_a<6a\). The next available prime
+would have sufficed in place of \(\ell^j\), so \(\ell^j\le3t^2\).
+The primes in \(P\) and this radix power give pairwise coprime
+factors \(d\le3t^2\). For each \(d\ge2\), take the least power \(s_d\)
+of \(\ell\) with \(s_d\ge2d\), so \(2d\le s_d<6d\).
+
+Let \(M\) be the least common multiple of the lengths \(b_a,s_d\)
+in this group and set \(E=K(\zeta_M)\) for a primitive \(M\)th root.
+Every working length is prime to the characteristic and divides \(M\).
+All the \(s_d\) are powers of one radix and their maximum is \(O(t^2)\).
+If the group has \(k\) axes, then \(2^k\le B\), giving
+\(\prod_a b_a\le6^k B\le B^4\), with one factor per axis. Hence
+\begin{equation}\label{up:capacity}
+               e=[E:K]\le M=O(t^2B^4)\le N/B=h
+\end{equation}
+for all sufficiently large \(N\), since \(B\le N^{1/12}\).
+
+\paragraph{Constructing the word.}
+Begin with the radix Fourier word of length \(O(1+\log t)\) on
+\(s_d=O(t^2)\) coordinates from Section~\ref{sec:lay}.
+Lemma~\ref{up:toeplitz} with \(a=d\), \(b=s_d\) gives a word of the same
+order of length for \(F_d\), with \(O(d)\) registers.
+Good's prime-factor factorization \cite{Good} expresses \(F_{b_a}\)
+as the tensor product of these short transforms at appropriate primitive
+roots, up to the Chinese remainder permutations on the input and output
+indices. Lemma~\ref{up:fibers} synchronizes them within the same length
+bound using \(O(b_a)\) registers.
+
+Apply Lemma~\ref{up:toeplitz} a second time, now using \(F_{b_a}\) to
+implement the prescribed factor \(T_i\) with \(a_i=a\). Synchronize these
+axis words by Lemma~\ref{up:fibers}. The result is the desired word
+of length \(O(1+\log t)\) on \(O(B)\) registers, acting as the tensor
+product of the prescribed factors and restoring its other registers.
+The original sizes \(a_i\) may be divisible by the characteristic.
+Only the auxiliary Fourier lengths had to avoid it.
+
+\paragraph{Returning to the base field.}\label{up:packing}
+Let \(T\) be the transform of this group of axes. Pack \(e\) independent
+input arrays \(x_0,\ldots,x_{e-1}\) entrywise in the power basis of
+\(\zeta_M\). The intermediate word uses \(E\)-scalars, but \(T\) itself
+has entries in \(K\). Thus each base coordinate returns its own answer,
+\[
+       T\left(\sum_{\nu=0}^{e-1}\zeta_M^\nu x_\nu\right)
+        =\sum_{\nu=0}^{e-1}\zeta_M^\nu T x_\nu .
+\]
+By \eqref{up:capacity}, \(\lceil h/e\rceil\le2h/e\) batches suffice,
+using zeros for unused coordinates of the last batch.
+
+One monomial layer permutes or scales \(O(B)\) extension entries per
+batch. Multiplication by a prescribed \(E\)-scalar costs
+\(O_\beta(e(1+\log e)^\beta)\) binary linear gates over \(K\). Indeed,
+multiply in the power basis and reduce modulo the fixed monic minimal
+polynomial of \(\zeta_M\). The reversed quotient is a truncated product
+of the reversed high coefficients with the reciprocal of the reversed
+divisor. Subtracting the product of quotient and divisor gives the
+remainder. Each convolution has one fixed operand, so
+Corollary~\ref{cor:toe} supplies the stated bound. Over all batches
+the layer costs \(O_\beta(N(1+t)^\beta)\), since \(e\le h\le N\).
+
+A shear layer has blocks of total size \(O(B)\). On a block of size
+\(2^j\) the entries of \(U^{\otimes j}\) lie in the prime field.
+The block therefore acts independently on the \(e\) base coordinates.
+By Lemma~\ref{lem:shear}, each costs \(O_\beta(2^j(1+j)^\beta)\)
+gates. Since \(j=O(1+t)\), the entire shear layer also costs
+\(O_\beta(N(1+t)^\beta)\) over all batches. There are \(O(1+\log t)\)
+layers per group and boundedly many groups. The factor \(1+\log t\)
+is \(O_{\alpha,\beta}((1+t)^{\alpha-\beta})\), which yields the claimed
+bound. Direct circuits cover the finitely many smaller \(N\).
+\end{proof}
+
+\begin{proof}[Completion of the proof of Theorem~\ref{thm:main}]
+Write a group as \(G=\prod_i C_{a_i}\), and choose a primitive
+\(a_i\)th root \(q_i\) in the given splitting field. Its character
+transform is \(\bigotimes_i V_{a_i}(q_i)\), up to the order of the
+characters and group elements. Its inverse is the tensor product of the inverse factors. Theorem~\ref{up:grid} supplies a circuit
+of size \(O_\alpha(N(1+\log N)^\alpha)\) for either choice. Applying
+these circuits separately to the \(J\) independent blocks gives the
+upper bound with one constant for all \(J\), all groups of the given
+order and all common splitting fields. Together with the lower bound
+this determines the exponent.
+\end{proof}
+
+\subsection{The logarithmic exponent of formal convolution}
+
+Fixing one operand of a polynomial product makes the output linear in
+the other operand. A suitable choice puts a cyclic Fourier transform
+among the output coefficients. Extracting the linear part at every gate
+then transfers the Fourier lower bound to division-free circuits for
+multiplication.
+
+\begin{corollary}[Independent formal convolutions]\label{cor:conv-exponent}
+For every field \(K\), \(n\ge2\) and \(J\ge1\), let \(S_K(J,n)\) be
+the minimum size of a binary division-free arithmetic circuit computing
+\(J\) independent products of polynomials of degree less than \(n\).
+All coefficients of all products are required as formal outputs. Then
+there is an absolute \(c>0\) and, for each \(\alpha>1/2\), a constant
+\(C_\alpha\) such that
+\[
+       cJn\sqrt{\log n}\ \le\ S_K(J,n)\
+                  \le\ C_\alpha Jn(1+\log n)^\alpha .
+\]
+In particular the logarithmic exponent for formal convolution is
+\(1/2\), uniformly in the field and the number of products.
+\end{corollary}
+
+\begin{proof}
+Theorem~\ref{thm:conv} supplies the upper bound by computing each
+product separately. For the lower bound, extend a size-\(s\) circuit
+from \(K\) to \(\overline K\). For \(n\ge8\), choose
+\(m=\lfloor n/2\rfloor\) or \(m=\lfloor n/2\rfloor-1\) invertible in
+this field, and let \(q\) be a primitive \(m\)th root. Both lengths
+are comparable to \(n\), and at most one is divisible by the
+characteristic.
+
+Bluestein's chirp identity \cite{Bluestein} uses the integer
+\(b(k)=k(k-1)/2\), which satisfies \(b(i)+b(-j)-b(i-j)=ij\).
+In each product set \(y_j=q^{b(-j)}x_j\) for \(0\le j<m\), using an
+independent vector \(x\) for each block. Fix the other operand in every
+block to the same polynomial \(H\), with coefficients
+\(H_{m-1+d}=q^{-b(d)}\) for \(|d|<m\). Its \(2m-1\) coefficients fit
+in length \(n\). Padding with zeros as needed gives, in each block,
+\[
+  q^{b(i)}[X^{m-1+i}]\left(H(X)\sum_{j=0}^{m-1} y_j X^j\right)
+       =\sum_{j=0}^{m-1} q^{ij}x_j,\qquad 0\le i<m .
+\]
+
+Take the homogeneous linear part at each gate in \emph{all} remaining
+variables together. Sums and differences combine the linear parts of
+their arguments. At a product \(uv\) the linear part is
+\(u(0)v_1+v(0)u_1\), using one binary linear gate for the linear
+parts \(u_1,v_1\), even if both depend on many blocks. Input and output
+scalings in the chirp identity can be absorbed into coefficients and
+readouts. Thus a linear circuit with at most \(s\) gates computes
+\(J\) independent Fourier transforms on \(C_m\). Theorem~\ref{thm:main}
+gives \(s=\Omega(Jm\sqrt{\log m})=\Omega(Jn\sqrt{\log n})\).
+For the finitely many smaller \(n\), the \(J(2n-1)\) output
+coefficients are distinct nonzero quadratic forms. Each needs a gate
+output distinct up to scalars from those for the others, which gives
+the required linear bound in \(Jn\). The constants are uniform in
+\(J\) and \(K\).
+\end{proof}

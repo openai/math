@@ -1,0 +1,93 @@
+\section{Borrowed wires and the cost of an error}\label{sec:catalysts}
+
+We now use a maximal $k$-flat to route a permutation. Each payload must
+reach its prescribed output. Alongside the payloads we supply pairs of
+binary ports at opposite ends of the coordinate axes and require the
+router to return an identity wire on every pair. These extra wires are
+the \emph{catalysts}. Their placements have two roles. In the construction
+of Section~\ref{sec:protocol}, keeping all $k$ directions at full price
+constrains the local wire distances available to the router. In
+Section~\ref{sec:width}, a term that saves sufficiently much on the
+catalysts may be discarded, and the surviving terms leave little budget
+for transporting payloads. We define the permutation tensor and make
+precise how much error this argument permits.
+
+\paragraph{Bit networks.}
+A bit network has a binary index at each port. A wire equates two
+indices and sums over their common bit. The entry at an assignment of
+the open bits is the sum, over internal bits, of the product of the local
+tensor entries. A trivalent network has at most three ports per local
+tensor. Size counts tensors and wires with multiplicity, including a wire
+for each open port. Equivalently, an open port can be a terminal wire end,
+counting both ends when both are open. Joined ends cease to be open and may
+be joined without subdividing the edge. A closed wire with no vertex
+contributes the field element $2$.
+
+Any fixed arity reduces to three at constant cost by expanding the local
+table in elementary tensors and testing the selected entry. Bit copying
+and Boolean gates have trivalent implementations, with the cost of
+fan-out included. In particular, a deterministic verification computes
+the indicator tensor of its relation over any field if each accepting
+input has exactly one witness, including its padding bits. Unless
+specified otherwise, we bound network size without a uniformity
+requirement.
+
+\begin{definition}[Tagged permutation]\label{def:tag}
+For integers $h,w\ge1$, put $n=2^h$. The open data of
+$\operatorname{Tag}(h,w)$ are an ordered list $(p_a)_{a=0}^{n-1}$ of
+$w$-bit payloads and a list $((a_i,q_i))_{i=0}^{n-1}$ of records with
+$h$-bit address and $w$-bit payload. The tensor entry is one exactly when
+the addresses $a_i$ are a permutation of $0,\ldots,n-1$ and
+$q_i=p_{a_i}$ for every $i$. All other entries are zero.
+\end{definition}
+
+\subsection{Approximation on an ordered Euclidean frame}
+
+Let $e_1,\ldots,e_k$ be the coordinate vectors. A tensor $X$ has data ports
+at the origin and $b_j$ pairs of catalyst ports, with one port per pair at
+each of $-e_j$ and $+e_j$. Write $I_X$ for the product of identity wires
+on these pairs and $h_X=2\sum_j b_j$ for its price. We say that $X$
+\emph{approximates} a data tensor $f$ with \emph{gap} $D$ if
+\begin{equation}\label{eq:catalyst-gap}
+ H(X-f\otimes I_X)\le h_X-D
+\end{equation}
+for every isometric placement of this ordered frame induced by a spectral
+$k$-flat over $F$, in any spectral space. The estimate consequently holds
+at translated and rotated frames and, with both sides multiplied by the
+dilation factor, on dilated frames. The latter statement follows by first
+rescaling the entire spectral space. Thus $D$ measures the saving in
+price of the error relative to the exact return of the borrowed wires.
+If $X=f\otimes I_X$, every finite gap is admissible. All open catalyst
+bits contribute to network size.
+
+Exposed data ports in \eqref{eq:catalyst-gap} remain available for arbitrary
+local contractions. For designated \emph{pins} we sometimes require the
+estimate only after fixing all their bit values. Exposing $p$ such pins costs
+at most $2kp$ in gap. In fact the full tensor is the sum of the $2^p$
+conditional tensors tensored with their local pin indicators. The star
+joining $0$ to the $2k$ catalyst sites bounds the summation scale by $2k$.
+Fixing an exposed bit is a restriction and cannot increase the error price.
+
+The following estimate accounts for the loss of gap when several
+approximations are used in the same contraction.
+\begin{lemma}[Substitution]\label{lem:substitution}
+Suppose a contraction approximates $g$ with gap $D$ using $m$ exact data
+tensors $f_i$, counted by occurrence. Replace occurrence $i$ by
+$X_i$ of gap $D_i\ge0$ relative to $f_i$, keeping all new catalyst pairs
+open. The resulting gap is at least
+$\min(D,D_1,\ldots,D_m)-2km$. Pointwise estimates can be used on any pins
+whose values stay fixed throughout the contraction.
+\end{lemma}
+\begin{proof}
+Expand each replacement as $f_i\otimes I_{X_i}$ plus its error. In the term
+with no replacement errors, subtract the target. The original error bound
+applies with the prices of the new identity wires added. For a nonempty set of
+replacement errors, carry out the old contraction at the origin, placing the
+new catalyst ports in their prescribed frames. At every erroneous occurrence
+save $D_i$ from its through price. Other new pairs cost only their through
+prices. Move the old exterior catalyst bits from the origin to their
+prescribed sites. This costs one per bit, in total exactly the budget for the
+old through wires. Thus every term is below the combined through budget by at
+least the indicated minimum. There are at most $2^m$ terms, and
+\eqref{eq:price-ordinary-sum} with the star bound proves the result.
+\end{proof}

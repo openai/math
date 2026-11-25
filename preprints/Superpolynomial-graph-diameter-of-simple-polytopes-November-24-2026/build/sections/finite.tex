@@ -1,0 +1,240 @@
+\section{One finite probability space for all layer lengths}\label{sec:finite}
+
+Lemma~\ref{lem:final-gates} assigns random bits to keys and to sets of keys
+in a directed acyclic graph. A term of Section~\ref{sec:numerical} can have
+arbitrarily many distinct ancestors. Assigning a fresh bit to each ancestor
+would make the probability space depend on the term. We instead index the
+bits by finite descriptions of keys, called names. Two keys with the same
+name receive the same bits. We choose the depth of the descriptions at
+random. At each fixed key, with high probability the equalities between
+names in its neighborhood are exactly the equalities of keys in some legal
+graph. This local guarantee will suffice both for the occurrence probability
+and for the path in Lemma~\ref{lem:primary}.
+
+\subsection{Recognizing a legal neighborhood}
+
+Fix the parameters of the gate construction. The \emph{unfolding} at a key
+to radius \(R\) is the rooted tree of its move sequences of length at most
+\(R\). A named unfolding records the node data, the available labeled move
+slots and an equivalence relation on the occurrences, namely equality of
+names. At each fixed depth there are only finitely many such patterns up
+to renaming, since branching, slots and node data are bounded.
+
+A color refinement is a function of a finite pattern from earlier rounds.
+Give the function an arbitrary default on patterns where it was undefined,
+proceeding through the rounds in order. Extend the local prescriptions of
+raw, barrier and screen tests to all patterns in the same manner. These
+extensions use only equality of names and preserve the bit indices on
+realizable patterns.
+
+\begin{lemma}[Local realizability]\label{lem:local-extension}
+For every \(R\) there exists \(R'\ge R\) such that the radius-\(R\)
+restriction of a named unfolding to radius \(R'\) is realized in the graph
+model of Section~\ref{sec:probability} if it passes the following checks.
+\begin{enumerate}
+\item Equal names have the same node data. Whenever a move slot is
+exposed at two occurrences of one name, it has the same target name.
+\item The basic move rules and the prefix and witness rules for flags hold
+wherever the neighborhoods needed to test them are exposed. In these
+checks the colors are calculated by the extended refinement rules.
+\item Identifying equal names in the graph of exposed moves creates no
+directed cycle.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+If no such radius exists, there are counterexamples of arbitrarily large
+radii. By successive extraction, stabilize their patterns at each finite
+depth. In the limiting tree identify equivalent occurrences. The first
+check makes each move well defined on the quotient. A directed cycle
+would use finitely many exposed moves and name equalities, contradicting
+the third check at a finite depth.
+
+The second check gives the basic moves. Suppose the first rounds of
+colors and flags already satisfy the rules of the graph model. These
+rounds admit a legal completion by making all subsequent flags false.
+The next refinement reads only the completed earlier rounds, so its
+extended value is its specified value on the graph. The second check now
+gives the prefix and witness conditions for the next flags. Induction
+produces a legal graph, possibly infinite, whose root realizes the
+stabilized radius-\(R\) pattern. This contradicts the choice of the
+counterexamples.
+\end{proof}
+
+Put \(d=D_{h-1}\). Choose \(R\) large enough to evaluate the color
+refinements and gate tests at the root, including the flags and gates at
+charged keys along every path in the final screen. Such a path uses at
+most \(dL_0\) moves. Fix the resulting \(R'\) from
+Lemma~\ref{lem:local-extension}. A pattern passing its checks inherits
+the probability bounds and the missed path of Lemma~\ref{lem:final-gates}.
+Indeed, realization preserves every equality among the indices read by
+these tests, so the local bits have precisely their graph-model joint law.
+
+\subsection{Giving names to the keys of a term}
+
+The two blank layers of each site are its shores. A nonleaf blank term has
+its two parent steps as basic moves. Attach two temporary blank leaves to
+each micro leaf, one on each shore of its site. From a micro term, a
+straight run of parent steps in either direction now reaches a first blank
+term, its direction key. Compress this straight run, or \emph{leg}, into
+one basic move to its key. A witness jump in the same direction will end
+at a strictly older micro term on the leg, with the same direction key.
+When we return to the original terms we stop a path at the micro leaf
+preceding a temporary blank.
+
+Choose a radius \(j\) uniformly among the integers
+\(N_*,\ldots,2N_*-1\). In round zero this range is a single bin. In each
+later round subdivide every preceding bin into equally many consecutive
+bins of equal size. We first choose the subdivision counts, then take
+\(N_*\) sufficiently large and divisible by the number of final bins.
+Each bin in a round has its own flags and witness slots.
+
+To define names, retain the moves and flags for \emph{all} bins, the site,
+the node type and an auxiliary symbol. The \(j\)-name of a term is the
+tree of its moves truncated after \(j\) levels, with these data through
+depth \(j\). It records neither identities of terms nor the positions of
+micro layers within a site. Once the parameters and subdivision counts
+are fixed, the number of outgoing move slots is bounded. Choose a finite
+ordered alphabet larger than the number of strict ancestors that can be
+reached in \(2N_*\) enriched moves. Each term takes the first symbol
+absent at those ancestors. The symbol is part of its name, but the local
+rules use names only for equality. In particular, the check radius
+\(R'\) was fixed before choosing the auxiliary alphabet.
+
+Process terms in order of construction, with temporary blanks first and
+parents before their merges.
+\begin{itemize}
+\item A blank term has known outgoing moves. Assign its symbol, form
+its names and compute every round's refinement outputs for every \(j\).
+Use equality of \(j\)-names and the bins containing \(j\) in the
+previous rounds. Call a round's bin \emph{stable at the key} if the vector
+of outputs for all input colors is constant on that bin. Round zero is
+stable.
+\item In a bin a micro term is \emph{live} if both direction keys are
+stable in that bin and in every containing bin of earlier rounds. Its
+calculated color is then constant on the bin. On each leg set flags for
+exactly the colors of the live micro terms encountered, including the
+source. Witness each flag by the first such occurrence of its color.
+If the source is the witness, no jump is needed. Otherwise the
+corresponding slot jumps to the witness. Assign the source its auxiliary
+symbol after all these moves have been determined.
+\end{itemize}
+In the second step the source's liveness and color are calculated from
+its two keys, both strictly older, so the specification is recursive.
+Every witness keeps the same direction key along the leg. Its liveness
+in the preceding bin supplies the flag for its prefix color.
+
+\begin{lemma}[Finite names]\label{lem:finite-names}
+Given \(\varepsilon>0\), the subdivisions and \(N_*\) can be chosen
+independently of the numbers of micro layers so that, for each fixed blank
+term, with probability at least \(1-\varepsilon\) over \(j\),
+\begin{enumerate}
+\item the bin containing \(j\) is stable at this key in every round, and
+\item the unfolding at this key computed with the bins of \(j\) and
+equality of \(j\)-names passes the radius-\(R'\) checks of
+Lemma~\ref{lem:local-extension}.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+Inside a bin of the preceding round, the flags and move slots read by the
+current refinement are fixed. It inspects at most \(u\) occurrences. Here
+\(u\) may be chosen uniformly for the fixed local rules, since the
+refinement reads one bin per earlier round. Increasing \(j\) only refines
+the partition of these occurrences by name equality. Each strict
+refinement adds at least one class. Between refinements the output vector
+is constant, so at most \(u-1\) of the new bins can be unstable. Choose
+enough bins at each subdivision that, summed over the finitely many
+rounds, the probability of instability is less than \(\varepsilon/2\).
+
+With these counts fixed, the radius-\(R'\) tree using the slots of
+\emph{all} bins contains at most \(M\) occurrences, independently of
+\(N_*\) and the lengths of the sites. Its partition by \(j\)-names
+can strictly refine at most \(M-1\) times between depths \(j\) and
+\(j+1\). For every other \(j\), equal \(j\)-names among these occurrences
+have identical \((j+1)\)-names and hence, in every exposed slot, targets
+with identical \(j\)-names. This gives the first check. The decoration
+gives the second, since each witness is evaluated with the same bin and
+the same name equalities that supplied its flag.
+
+For the third check, suppose the identified graph has a simple directed
+cycle of length \(m\le M\). Follow the cycle's slots in the actual tree
+starting at its first representative. After one step the subtree agrees
+with the next representative to depth at least \(j-1\): the chosen slot
+occurs in the starting name and its target has the next representative's
+name. At each succeeding step at most one more level of agreement is
+lost. If \(N_*>M\), the terminal term agrees with the starting one at
+least through depth zero. It therefore has the same auxiliary symbol,
+although it is a strict ancestor within \(m\le 2N_*\) enriched moves.
+The choice of symbols excludes this. Finally choose \(N_*\) so large
+that \((M-1)/N_*<\varepsilon/2\). This bounds the probability of failure
+of the checks and completes the proof.
+\end{proof}
+
+\begin{proof}[Proof of the Primary Lemma (Lemma~\ref{lem:primary})]
+Call a blank key \emph{good} at \(j\) when both conclusions of
+Lemma~\ref{lem:finite-names} hold there, with
+\(\varepsilon=L_0^{-10}\). An outcome selects \(j\), a uniform final color,
+and a common table of independent gate bits, independently of one another.
+Supply entries for every syntactically possible index of a raw or barrier
+bit. Replace keys by names and sets of keys by sets of names, and retain
+the prescribed stages, colors, and other index data, including the sizes
+of sets when these affect a bit's law. The screens read this same table.
+All trees naming the bits have bounded depth over a finite alphabet.
+Hence the outcome space \(\Omega\) is finite and works for every choice
+of the numbers of micro layers.
+
+For a micro term \(v\) let \(P(v)\) consist of the outcomes for which
+both direction keys are good, the term has the selected final color,
+and both keys' final gates succeed in that color. For a blank term put
+\(P(v)=\varnothing\).
+
+The two keys of \(v\) are good together with probability at least
+\(1-2L_0^{-10}\). Fix such a radius. Conditional on selecting the color
+of \(v\), their joint raw successes have probability at least \(q^{-4}\)
+by Lemma~\ref{lem:final-gates}, since their opposite shores distinguish
+their names. Condition on these successes. At each key the sum of the
+conditional failure probabilities of its screens is \(o(1)\). To see
+why the conditioning at the other key is allowed, if its name occurs
+in the local test, it denotes a key of the same site in the realizing
+graph. If its name is absent, its raw bits are independent of that test.
+
+At each key the required barrier bits pass with probability at least
+\(\exp(-4h\lambda)\). Shared barrier bits require the same success, so
+the probability that both prescriptions pass is at least
+\(\exp(-8h\lambda)\). These bits are independent of the raw bits.
+Subtracting the sum of the conditional screen failure probabilities
+therefore gives, with \(k_f=a^{o(1)}\) final colors,
+\[
+ \Pr(P(v))\ \ge\ (1-2L_0^{-10})\,k_f^{-1}q^{-4}
+       \bigl(\exp(-8h\lambda)-o(1)\bigr)\ \ge\ q^{-5}.
+\]
+The last inequality holds for sufficiently large \(a\), since \(q=a^w\)
+and \(h,\lambda,w\) depend only on \(C\). The allowed powers of two \(a\)
+in~\eqref{eq:prob-parameters} give arbitrarily large powers of two \(q\).
+
+Fix an outcome and a starting blank term in site \(s\). Say a charge
+succeeds if its key is good and its final gate succeeds in the selected
+color. Expand each compressed move to its straight sequence of parent
+steps. A potential occurrence on this sequence, with the source included
+and the destination excluded, forces a successful charge at that move.
+Indeed, such an occurrence is a live micro term of the selected color
+on the source's leg, and the common direction key is good with
+a successful gate. The color at that occurrence sets the source's flag.
+The half-open convention includes a micro leaf whose move ends at a
+temporary blank.
+
+Follow the basic spine pointing out of \(s\). If no charge succeeds, it
+ends at a leaf without an occurrence. Otherwise its first successful
+charge takes the basic move to its key in a site \(s'\ne s\). Its
+expansion so far can have occurrences only on this last leg, which lies
+in \(s'\). At this good key local realizability and Lemma~\ref{lem:final-gates}
+supply a continuation to a leaf on which all charges to successful final
+gates of the selected color belong to \(s'\). The path lifts by following
+its labeled slots in the actual term. Our choice of \(R\) includes every
+move of the path and every gate test at its charged keys. Thus every
+potential occurrence on its expanded path belongs to that site.
+The two pieces use at most \(3L_0\) and \(dL_0\) compressed moves
+respectively. Each expands in a single direction, so the path has at
+most \((d+3)L_0\) turns. Stop at the original leaf before any temporary
+blank. This gives the path and the uniform turn bound of
+Lemma~\ref{lem:primary}.
+\end{proof}

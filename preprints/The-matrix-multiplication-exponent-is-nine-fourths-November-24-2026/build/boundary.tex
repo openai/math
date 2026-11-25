@@ -1,0 +1,211 @@
+\section{A lower bound from the price of a shared label}\label{sec:boundary}
+
+Consider a square matrix product of side \(n\), with its two inputs
+and its output at the tips of a tripod with three unit arms. Each of
+the three matrix indices is shared by two tips at distance \(2\), so
+the product tensor has price \(6\log n\). A rank-\(r\) decomposition
+supplies that tensor from a label with \(r\) values shared by all
+three tips. If the rate of this shared label is \(8/3\), its price is
+\((8/3)\log r\), and price monotonicity gives \(r\ge n^{9/4}\).
+We will find such a tripod in the family constructed in
+Section~\ref{sec:motion}. We first test the shared-label rate when one
+arm is much longer than the other two. The following principle carries
+the resulting equality to three equal arms.
+
+\begin{proposition}[Tripod principle]\label{prop:tripod}
+Over an algebraically closed field, place three sites at pairwise
+distances \(a_i+a_j\) for \(i\ne j\), where \(a_1,a_2,a_3\ge0\).
+Their common-label rate \(D(a)\) satisfies
+\[
+       D(a)\ \ge\ D_*(a)
+       :=a_1+a_2+a_3-\bigl(a_1^{-1}+a_2^{-1}+a_3^{-1}\bigr)^{-1}.
+\]
+The reciprocal term is zero when any \(a_i=0\).
+
+Now fix three infinite rays in a spectral space that form a metric
+tripod with origin \(O\), and suppose that their prices are
+homogeneous under radial dilation. In \(D(a)\), place site \(i\) on
+ray \(i\) at distance \(a_i\) from \(O\). If \(D(a)-D_*(a)\)
+vanishes at one positive triple, it vanishes at every positive
+triple. The same conclusion holds if the defect tends to zero as one
+arm tends to infinity with the other two held at fixed positive lengths.
+\end{proposition}
+
+The first assertion applies to any placement with the specified
+distances. The second compares placements on a single tripod.
+Sections~\ref{sec:profiles}--\ref{sec:contact} prove both assertions by
+studying how the price of polynomial multiplication changes with its
+degree and with the positions of its coefficients.
+
+\subsection{A decoder for rectangular multiplication}
+
+Multiply an \(s\times q\) matrix by a \(q\times s\) matrix over the
+algebraically closed field \(F\) of Section~\ref{sec:motion}, taking
+\(s=N^{1/2}\) and \(q=N^{1/4}\) for a fourth power \(N\). The product
+has \(N\) entries. Place its output at \(A\) and its inputs at
+\(C,D'\), with respective arm lengths \(c,a,b\). The outer indices
+give wires of size \(s\) on \(AC,AD'\), and the inner index gives a wire
+of size \(q\) on \(CD'\). The price of the product, divided by
+\(\log N\), therefore satisfies
+\[
+   c+\tfrac34(a+b)
+   \ \le\ c+a+b-\frac{ab}{a+b}
+   \ \le\ D_*(c,a,b)\ \le\ D(c,a,b).
+\]
+Here \(ab/(a+b)=0\) if \(a=b=0\). This gives the rectangular bound
+associated with half-width multiplication \cite{uznanski,abvz}.
+
+In particular, for every \(\eta>0\) there are arbitrarily large
+such \(N\) for which the exact tensor rank is at most \(N^{1+\eta}\).
+Indeed, start with a sufficiently large fourth power \(N_0\)
+and a full diagonal of size \(\lceil N_0^{1+\eta/2}\rceil\).
+The displayed inequality at every spectral point gives strict
+spectral comparison with this diagonal. Each tensor power of the product
+is a restriction of a bounded number of copies of the corresponding
+power of the diagonal. At sufficiently large powers the exponent
+\(1+\eta\) absorbs both this multiplicity and the rounding.
+
+\begin{lemma}[A decoder with short rows]\label{lem:secondary}
+For every \(\epsilon>0\) there is a \(\delta>0\) such that for
+unbounded fourth powers \(N\) the \(N\) output bilinear forms \(B_e\)
+of this product admit decompositions
+\[
+    B_e=S_e+R_e,\qquad
+    \operatorname{rank}S_e\le N^\epsilon,\qquad
+    \dim\langle R_e:1\le e\le N\rangle\le N^{1-\delta}.
+\]
+\end{lemma}
+
+The two bounds have different uses. A short sum of simple products
+computes each \(S_e\) once the output index \(e\) is shared.
+The corrections \(R_e\) may be expensive individually, but their
+entire span can be sent across a single wire. To obtain the bounds
+uniformly in the base format, we implement a tensor power of a decoder
+using one work register. For related nonrigidity estimates for
+Kronecker products, see \cite{almanrigidity,kivva}.
+
+\begin{proof}
+It suffices to take \(0<\epsilon<1\). Fix an integer \(K>10/\epsilon\).
+For a base format with \(d\) output entries and rank
+\(d\le r\le d^{1+\eta}\), let \(M\) be the \(d\times r\) matrix that
+expresses its outputs in terms of \(r\) simple bilinear products.
+We will choose \(\eta\) below. The \(Km\)-th tensor power has
+\(N=d^{Km}\) entries. Pad each decoder block \(M^{\otimes m}\) with
+zero rows and columns to side \(2^t\), where \(t=\lceil m\log_2 r\rceil\).
+The full padded decoder has side \(T=2^{Kt}\). An index consists of
+\(K\) registers of \(t\) bits each.
+
+Apply the first block matrix to the first register. For each subsequent
+block, swap its register with the first, apply the block matrix there,
+and swap back. An exchange of registers performs \(t\) simultaneous
+exchanges of pairs of bits. A bit exchange transposes two of four
+letters, \(01\) and \(10\). Its matrix factors into a fixed number of
+elementary shears and diagonal signs, over any field. Thus a register
+exchange consists of a fixed number of stages, each applying the same
+local shear or diagonal sign at every bit position.
+
+For a shear, let the high letter be the target of its off-diagonal
+entry. Immediately before and after the stage, project onto the
+coordinates whose register pair contains between \(t/4-\rho t\) and
+\(t/4+\rho t\) high letters, for a fixed small \(\rho>0\).
+The discarded fraction of coordinates is at most \(e^{-c_\rho t}\)
+for large \(t\), by the binomial tail. Telescoping over the \(O(K)\)
+projections bounds the rank of the discarded part of the decoder by
+\(O(K)Te^{-c_\rho t}\le T^{1-\gamma}\), with \(\gamma=\gamma(K,\rho)>0\).
+On a path retained at a shear stage, every change creates a high
+letter, so at most \(2\rho t\) positions change.
+
+Only the first register is acted on by a block matrix. Every other
+register participates in just two exchanges, so its input lies within
+Hamming distance \(C\rho t\) of its output on a retained path, for an
+absolute constant \(C\). Each output row of the retained decoder
+therefore has at most
+\[
+       2^t\left(\sum_{j\le C\rho t}\binom{t}{j}\right)^{K-1}
+       \ \le\ T^{1/K+o_{\rho\downarrow0}(1)}
+\]
+nonzero entries. Choose \(\rho\) so that this exponent is below
+\(\epsilon/2\), then choose \(\eta\) sufficiently small. Since
+\(T\le 2^K N^{1+\eta}\), for all large \(m\) the two bounds become
+\(N^\epsilon\) entries per retained row and rank \(N^{1-\delta}\)
+for the discarded matrix, with \(\delta=\gamma/2\). Remove the
+zero padding and apply both matrices to the list of simple bilinear
+products. The retained rows give the forms \(S_e\), and the image of
+the discarded row space spans the \(R_e\).
+\end{proof}
+
+\subsection{Two copies of the output near a collision}
+
+Choose the collision in Section~\ref{sec:motion} where site \(4\)
+approaches site \(3\), and denote sites \(1,2,3,4\) by \(A,B,C,D'\).
+At parameter \(r\) write \(L=2\ell\) and \(h=L-r\), with \(0<h<L\).
+The distances within \(AB\) and \(CD'\) are both \(h\), and all four
+cross distances are \(L\). Write \(D_\ell(h)\) for the four-site
+common-label rate. At the collision \(D_\ell(0)=L\), and at the
+generic four-site placement \(D_\ell(L)=D_\ell\). Convexity gives
+\[
+                   D_\ell(h)\le L+\frac hL(D_\ell-L).
+\]
+
+Duplicate the output index \(e=(i,i')\) of the rectangular product at
+\(A\) and \(B\), leaving its two inputs at \(C,D'\). The resulting tensor is
+\[
+ U_N=\sum_e e_e\otimes e_e\otimes B_e
+     =\sum_{\substack{1\le i,i'\le s\\1\le j\le q}}
+        e_{ii'}\otimes e_{ii'}\otimes e_{ij}\otimes e_{ji'} .
+\]
+The index \(i\) is a shared label at \(A,B,C\), the index \(i'\) is a
+shared label at \(A,B,D'\), and \(j\) travels on the short wire \(CD'\).
+Writing \(D_{ABC},D_{ABD'}\) for the two triple rates, we have
+\[
+   \frac{H(U_N)}{\log N}=\frac{D_{ABC}+D_{ABD'}}2+\frac h4 .
+\]
+Both triples have arms \((h/2,h/2,L-h/2)\). Their reciprocal
+correction in Proposition~\ref{prop:tripod} is at most \(h/4\), so
+both rates are at least \(L+h/4\).
+
+Use the decomposition \(B_e=S_e+R_e\) from Lemma~\ref{lem:secondary}.
+In units of \(\log N\), the tensor formed from the \(S_e\) costs at
+most \(D_\ell(h)+\epsilon h\). Share the label \(e\) at all four sites,
+then use a wire of size at most \(N^\epsilon\) on \(CD'\) to supply
+the simple products for the specified \(e\). The tensor formed from
+the \(R_e\) has matrix rank at most \(N^{1-\delta}\) across the cut
+\(AB\mid CD'\). A wire between \(A\) and \(C\) supplies this rank, and
+wires within the two pairs deliver the legs at \(B\) and \(D'\), each
+of dimension at most \(N\). This costs at most \((1-\delta)L+2h\).
+
+Take \(h/L<\delta/2\). The correction then costs less than \(L\), and
+\(D_\ell(h)\ge L\) by restriction to a cross pair. For a fixed placement
+the ordinary-sum price bound costs an additive constant independent of
+\(N\). Sending \(N\) to infinity along the formats of Lemma~\ref{lem:secondary} and
+then using Equation~\eqref{eq:motion-upper} at fixed \(h/L\) gives
+\[
+  \frac{D_{ABC}+D_{ABD'}}2+\frac h4
+  \ \le\ D_\ell(h)+\epsilon h
+  \ \le\ L+\bigl(\tfrac12+\epsilon+o_{\ell\downarrow0}(1)\bigr)h .
+\]
+Subtract the lower bound \(D_{ABD'}\ge L+h/4\) to obtain
+\[
+        D_{ABC}\le L+h/4+\bigl(2\epsilon+o_{\ell\downarrow0}(1)\bigr)h.
+\]
+
+The first three sites lie on the fixed rays \(z_1,z_2,z_3\) out of
+the depth-zero point. Take the tangent tripod there by placing sites
+at depths \(t a_i\), dividing prices by \(t\), and letting \(t\downarrow0\)
+in a spectral ultralimit. On these fixed rays the rescaled price of
+every nonzero tensor has a limit, since its original price is convex
+in \(t\) and vanishes at zero. The limiting prices are homogeneous
+under radial dilation.
+
+Set \(t=h/2\) and hold \(b=2L/h-1\) fixed. The three depths become
+\(t(1,1,b)\). Dividing the last inequality by \(t\) gives
+\(D(1,1,b)\le b+3/2+4\epsilon\), whereas
+\[
+             D_*(1,1,b)=b+\tfrac32+\frac{1}{4b+2}.
+\]
+Thus \(0\le D(1,1,b)-D_*(1,1,b)\le4\epsilon\) for every sufficiently
+large rational \(b\), and for real \(b\) by continuity. Sending \(b\)
+to infinity and then \(\epsilon\) to zero gives contact at infinity
+on this fixed tripod. Proposition~\ref{prop:tripod} now gives
+\(D(1,1,1)=3-1/3=8/3\). The three-wire price comparison at the start
+of this section yields \(r\ge n^{9/4}\), proving Theorem~\ref{thm:motion}.

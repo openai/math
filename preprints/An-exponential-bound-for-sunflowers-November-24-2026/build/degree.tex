@@ -1,0 +1,130 @@
+\subsection{Why the degree tensor has the price of a shared label}\label{sec:degree}
+
+Lemma~\ref{lem:vote} needs the price of \(W_m(C)\) for the resource it
+supplies and the price of \(W_s(C)\) for the resource it returns. For
+general \(s\), a direct degeneration extracts a smaller common label.
+To obtain the exact price at powers of \(p\), we let the sites vary in
+Euclidean space. The partial diagonals and the degree tensors have
+the same price on a segment. A degeneration on intersecting sets of
+sites will force their prices to agree on every convex hull.
+
+For these comparisons use the joint Euclidean assignment of
+\cite[Theorem~\ext{G}{thm:main} and Proposition~\ext{G}{prop:joint-convexity}]{oaG}.
+Its unnormalized price for a nonzero tensor is jointly convex in
+the placements of its factors, invariant under Euclidean isometries
+and homogeneous under simultaneous dilation. At coincident sites the
+factors form a single local space. Adding a scalar factor does not
+change the price, and placing all factors together gives price zero.
+On a fixed finite set \(S\) of positive width the unnormalized price
+is \(D h\), where
+\begin{equation}\label{eq:euclidean-price}
+ D=\delta(S),\qquad
+ w(P)=\frac{\delta(P)}{D},\qquad
+ \delta(P)=\sqrt{2\pi}\,\mathbb E\max_{v\in P}\langle g,v\rangle ,
+ \qquad g\sim N(0,I).
+\end{equation}
+The quantity \(\delta\) depends only on the convex hull, adds under
+Minkowski sums and equals length on segments.
+
+\begin{proof}[Proof of Lemma~\ref{lem:degree-width}]
+Fix a power \(m>1\) of \(p\). For a nonempty finite set \(A\) in the
+Euclidean flat, let \(f(A)\) be the unnormalized price of \(W_m(A)\)
+divided by \(\log m\). The remainder construction of Section~\ref{sec:vote} gives a restriction
+of \(G_A(m)\) at each \(z\ne0\) and gives \(W_m(A)\) at zero. Polynomial
+specialization therefore gives \(0\le f(A)\le\delta(A)\). To prove equality we adapt the mean-width
+argument for diagonal tensors in \cite[proof of Theorem~\ext{G}{thm:flatlaw}]{oaG}.
+
+\emph{Intersecting sets of sites.}
+For finite sets \(A,B\) with nonempty intersection \(I=A\cap B\), we
+claim that
+\begin{equation}\label{eq:degree-submod}
+                 f(A\cup B)+f(I)\le f(A)+f(B).
+\end{equation}
+Represent \(W_m(A)\otimes W_m(B)\) by coefficient extraction at
+\(t^{m-1}u^{m-1}\) in \(\mathbb F[t,u]/(t^m,u^m)\). The local
+inputs are polynomials in \(t\) on \(A\setminus I\), in \(u\) on
+\(B\setminus I\), and in both variables on \(I\). In the inputs from
+\(B\setminus I\), substitute \(t+zu\) for \(u\).
+
+At \(z\ne0\) this changes the form only by invertible local maps and a
+nonzero scalar. Indeed, \(t\mapsto t,\ u\mapsto t+zu\) is a graded
+automorphism of the quotient algebra because
+\((t+zu)^m=t^m+z^m u^m\). Apply it to the full product after applying
+its inverse to the inputs at \(I\). The automorphism scales the
+one-dimensional top-degree component by \(z^{m-1}\).
+At \(z=0\) every site contributes to the \(t\)-degree, and precisely
+the sites in \(I\) contribute to the \(u\)-degree. The specialized
+form is \(W_m(A\cup B)\otimes W_m(I)\). Taking prices proves
+\eqref{eq:degree-submod}.
+
+\emph{From segments to polytopes.}
+Restricting the local degree at a new site to zero recovers the old
+tensor, so \(f\) is monotone under inclusion. At a repeated site the
+map \(v_e\mapsto\sum_{a+b=e} v_a\otimes v_b\) inserts an extra slot,
+and selecting degree zero in that slot reverses the map. If a new
+site lies in \(\operatorname{conv}(A)\), convexity bounds its price
+by the price of adjoining it at one of the old sites. Monotonicity
+gives the reverse bound. Hence \(f(A)\) depends only on
+\(K=\operatorname{conv}(A)\).
+
+The resulting function on polytopes satisfies
+\(f(K+L)\le f(K)+f(L)\). Take vertex lists \((x_i)\) of \(K\) and
+\((y_j)\) of \(L\), and give \(W_m\) one slot for each pair \((i,j)\).
+For the placements \(x_i\) and \(y_j\) the values are \(f(K)\) and
+\(f(L)\), since repeated sites have no effect. At the midpoint
+placement the convex hull is \((K+L)/2\), so joint convexity and
+homogeneity give the inequality.
+
+For a vector \(v\) and an integer \(N\ge1\), form the chain of
+translates \(A,A+v,\ldots,A+Nv\). When adjoining the adjacent pair
+\((A+hv)\cup(A+(h+1)v)\) to the preceding union, the intersection
+already contains \(A+hv\). By \eqref{eq:degree-submod} and translation
+invariance, each increment in price is at most \(f(K+[0,v])-f(K)\).
+The whole union contains \(x,x+Nv\) for any \(x\in A\). At two sites
+\(W_m\) is a diagonal after reversal of one degree basis. Since its
+unnormalized price divided by \(\log m\) is the distance, we obtain
+\[
+ N\|v\|\le f(K+[0,Nv])
+              \le f(K)+N\bigl(f(K+[0,v])-f(K)\bigr).
+\]
+Dividing by \(N\) and taking \(N\to\infty\) gives
+\(f(K+[0,v])\ge f(K)+\|v\|\). Subadditivity gives the other inequality.
+Iterating from a point shows that \(f=\delta\) on every finite sum
+of segments.
+
+\emph{Averaging rotations.}
+If two polytopes \(K,L\) have Hausdorff distance at most \(t\), each
+lies in the sum of the other with \(tQ\), where \(Q\) is a fixed cube
+containing the unit ball. Monotonicity and subadditivity give
+\(\lvert f(K)-f(L)\rvert\le t\delta(Q)\). Thus \(f\) extends
+continuously to compact convex sets. The Minkowski average of all
+orthogonal images of \(K\) is a ball \(B\) centered at the origin,
+since its support function is constant on the unit sphere.
+Approximating the rotation average by finite averages gives
+\(f(B)\le f(K)\) by subadditivity and invariance. The same averaging
+applied to a segment expresses any origin-centered ball as a limit of
+finite Minkowski sums of segments. Hence \(f(B)=\delta(B)\).
+Invariance and Minkowski additivity of \(\delta\) give
+\(\delta(B)=\delta(K)\), so
+\[
+                   \delta(K)=f(B)\le f(K)\le\delta(K).
+\]
+Normalizing as in \eqref{eq:euclidean-price} proves the power-of-\(p\)
+formula. At \(m=1\) the tensor is the scalar unit.
+
+\emph{Arbitrary remaining degree.}
+Let \(|C|=a+1\ge2\). At \(a\) sites of \(W_s(C)\) retain degrees
+\(x_1,\ldots,x_a\) in \(\{0,\ldots,\lfloor(s-1)/a\rfloor\}\).
+At the final site retain degree \(s-1-a x_0\) with \(x_0\) in the
+same interval. The remaining support satisfies \(\sum_{i=1}^a x_i=a x_0\).
+Scale each term by \(z\) to the power
+\[
+      \sum_{i=1}^a x_i^2-a x_0^2=\sum_{i=1}^a(x_i-x_0)^2 .
+\]
+On the left the exponent is a sum of local integer weights, so the
+scaling is local for \(z\ne0\). On the right it is nonnegative on
+the support and vanishes precisely at equality. Specializing at zero
+therefore gives a diagonal of size \(1+\lfloor(s-1)/a\rfloor
+=\lceil s/a\rceil\), whose price is the claimed lower bound. For a
+single site both the price and \(w(C)\) are zero.
+\end{proof}

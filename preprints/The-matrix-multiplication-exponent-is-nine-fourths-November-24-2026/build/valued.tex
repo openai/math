@@ -1,0 +1,330 @@
+\section{A valued lift and a submean inequality}\label{sec:valued}
+
+In the synchronization argument, one parameter can approach several
+different values. We need to compare the rate at which the tensor
+price falls near each of them. The scalar model is a polynomial with
+several roots. The valuation records how closely the parameter
+approaches a root, and the multiplicity gives the rate of decrease
+of the scalar price. For tensors, Lemma~\ref{lem:star} bounds the sum
+of these rates by the growth of the price on an enclosing disk.
+The scalar comparison is familiar from the potential theory of the
+nonarchimedean projective line~\cite{BakerRumely}. Our tensor
+inequality follows by interpolation once we construct a price over
+a field with a valuation.
+
+\subsection{The Gauss lift}
+
+Let $H$ be an ordinary price of scale $D>0$ over a field $E$, and put
+$\phi(A)=\exp(H(A)/D)$, with $\phi(0)=0$. The ring $E[t^{\mathbb Q}]$
+consists of finite sums of rational powers of $t$. On its fraction
+field $K$ take the additive valuation $\nu$ given by the least
+exponent on nonzero elements of the ring. Thus $\nu(t^r)=r$, and a
+nonzero constant in $E$ has valuation zero. Write $[t^j]T$ for the
+coefficient tensor of $t^j$. A monomial tensor $t^j A$ should have
+price $H(A)-j$. For a general tensor we form powers using the same
+$t$ in every factor and take the largest coefficient price with
+this valuation adjustment.
+
+\begin{theorem}[Gauss lift]\label{thm:gauss}
+There is a valued price $p$ of scale $D$ on $K$ extending $H$. On tensors
+with entries in $E[t^{\mathbb Q}]$ it is given by
+\begin{equation}\label{eq:gauss-price}
+ p(T)=\lim_{n\to\infty}\frac1n
+       \max_{j\in\mathbb Q}\bigl(H([t^j]T^{\otimes n})-j\bigr).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Choose a common denominator $m$ for the exponents and write
+$x=t^{1/m}$. Temporarily assign $x$ an arbitrary weight $b>0$. For
+a nonzero Laurent tensor $A(x)$ consider the weighted coefficient sum
+and its regularization
+\[
+ N_b(A)=\sum_i e^{-bi/D}\phi([x^i]A),
+ \qquad
+ p_b(A)=\lim_{n\to\infty}\frac Dn\log N_b(A^{\otimes n}).
+\]
+The sum bound for $\phi$ makes $N_b$ subadditive. Applying the same
+bound to coefficient convolution and using multiplicativity of $\phi$
+shows that $N_b$ is submultiplicative. Hence the limit exists by
+subadditivity of the logarithms. The lowest coefficient of
+$A^{\otimes n}$ is the $n$-th power of the lowest coefficient of $A$,
+which gives a finite lower bound for the normalized logarithms.
+
+There are $O_A(n+1)$ exponents in $A^{\otimes n}$. Replacing the sum
+by its largest term therefore costs $O_A(\log(n+1)/n)$ in normalized
+logarithmic price. It follows that $p_b(A)$ is a limit of maxima of
+affine functions of $b$, whose slopes lie in a fixed bounded
+interval. In particular, $p_b(A)$ is convex and Lipschitz. Setting
+$b=1/m$ gives Equation~\eqref{eq:gauss-price}, independently of the
+common denominator.
+
+\smallskip\noindent\emph{Separating the maximal coefficients.}
+Submultiplicativity gives $p_b(T\otimes U)\le p_b(T)+p_b(U)$.
+For the reverse inequality, a maximal coefficient from each power
+may contribute to a convolution coefficient in which other terms
+cancel it. We isolate that pair by varying $x$ in the first factor
+alone. Multiplying by $x^a$ shifts $p_b$ by $-ba$, so it suffices to
+consider nonzero polynomials $T,U$.
+
+First fix $b$ at which $b\mapsto p_b(T)$ is differentiable. For each
+$n$, choose indices $i=i_n$ and $j=j_n$ maximizing the weighted
+coefficient sizes of $T^{\otimes n}$ and $U^{\otimes n}$. An index
+a fixed fraction of $n$ away from $i$ incurs a uniform deficit.
+Indeed, for each $\xi>0$ there is a $\delta>0$ such that for all
+sufficiently large $n$,
+\begin{equation}\label{eq:gauss-deficit}
+ \frac{H([x^h]T^{\otimes n})-bh}{n}
+   \le p_b(T)-\delta \qquad (|h-i|\ge \xi n).
+\end{equation}
+Along any asymptotically maximizing sequence with $h/n\to v$,
+comparison at $b'$ gives $p_{b'}(T)\ge p_b(T)-(b'-b)v$.
+Differentiability forces $v=-\frac{d}{db}p_b(T)$. Compactness of the
+interval of possible $h/n$ gives both convergence of $i/n$ to this
+number and the deficit in Equation~\eqref{eq:gauss-deficit}.
+
+At $k=i+j$, introduce a variable $w$ and write
+\[
+\begin{aligned}
+ C_s
+ &= [x^k w^s]\bigl(T((1+w)x)^{\otimes n}\otimes U(x)^{\otimes n}\bigr)\\
+ &= \sum_h \binom hs\, [x^h]T^{\otimes n}\otimes[x^{k-h}]U^{\otimes n}.
+\end{aligned}
+\]
+Changing $s$ changes the integer multipliers of the same coefficient
+products. Consecutive values of $s$ suffice to isolate any one
+index in a short interval in every characteristic.
+
+Fix $0<\eta<1/4$. Let $I_n$ consist of the nonnegative indices within
+$\eta n/3$ of $i$, and put $m_n=|I_n|$. For large $n$,
+$m_n-1\le\eta n$. The matrix
+$(\binom hs)_{0\le s<m_n,\ h\in I_n}$ has determinant one over
+the integers. Indeed, its columns are the coefficients of consecutive
+powers of $1+w$ modulo $w^{m_n}$. Multiplication by the first power is
+unitriangular, and the powers with exponents $0,\ldots,m_n-1$ form
+a unitriangular basis. Inverting this matrix over $E$ gives a linear
+combination $C$ of $C_0,\ldots,C_{m_n-1}$ with multiplier one at $i$
+and zero on $I_n\setminus\{i\}$. The isolated product has weighted
+size $\exp(n(p_b(T)+p_b(U)+o(1))/D)$. By
+Equation~\eqref{eq:gauss-deficit} with $\xi=\eta/3$, each of the
+$O(n)$ remaining products has weighted size smaller by an exponential factor.
+Their scalar multipliers in $E$ have no cost. Applying subadditivity
+of $\phi$ to the isolated product, written as $C$ minus these
+remaining terms, gives
+\begin{equation}\label{eq:gauss-lower}
+ e^{-bk/D}\phi(C)\ \ge\
+ \exp\!\left(\frac nD\bigl(p_b(T)+p_b(U)-o(1)\bigr)\right).
+\end{equation}
+
+To bound the same combination from above, put
+$B_\ell(x)=[w^\ell](T((1+w)x)\otimes U(x))$ and $d=\deg T$.
+Then $B_0=T\otimes U$, and the term contributing to $C_s$ with
+shift degrees $\ell_1,\ldots,\ell_n$ has at most $s$ nonzero
+$\ell_a$. If there are $l$ of them, its weighted coefficient size
+is at most
+\[
+ N_b(B_0^{\otimes(n-l)})\,\max(1,N_b(B_1),\ldots,N_b(B_d))^l,
+\]
+where the maximum is $1$ if $d=0$. Here we have permuted copies
+simultaneously at every site to group the unchanged factors.
+The number of choices for $l\le\eta n$ is at most
+$\sum_{l\le\eta n}\binom nl(1+d)^l$. Its logarithm is
+$O_d(n\eta\log(1/\eta)+\log(n+1))$. Moreover
+$D\log N_b(B_0^{\otimes(n-l)})=(n-l)p_b(B_0)+o(n)$ uniformly in
+this range. The $O(n)$ coefficients used to form $C$ have logarithmic
+cost $O(\log(n+1))$. Taking logarithms in Equation~\eqref{eq:gauss-lower},
+dividing by $n/D$ and letting $n\to\infty$ gives
+\[
+ p_b(T)+p_b(U)\le p_b(T\otimes U)+O_{b,T,U}\bigl(\eta\log(1/\eta)\bigr).
+\]
+Let $\eta\downarrow0$. Differentiability points are dense, so continuity
+establishes the identity for every $b>0$.
+
+\smallskip\noindent\emph{Scalars and integral maps.}
+For a nonzero scalar Laurent polynomial the lowest coefficient of
+each power has the largest weighted size, since all nonzero scalar
+coefficients have ordinary price zero. Thus $p(f)=-\nu(f)$.
+Multiplicativity now gives a well-defined extension to fractions by
+$p(A/f)=p(A)+\nu(f)$.
+
+Consider a local map with polynomial entries of nonnegative degree.
+After taking its $n$-th power, the matrix at each site has degree
+$O(n)$. Each output coefficient of degree $j$ is a sum over the
+degrees chosen at the finitely many sites. There are polynomially
+many terms in $n$, and each is an ordinary restriction of an input
+coefficient of degree at most $j$. The input coefficient controls
+its term by monotonicity of $H$, and the degree weight only decreases.
+The resulting logarithmic loss is $O(\log(n+1))$, which vanishes
+after normalization. For a matrix of integral rational entries,
+choose a common denominator and remove its lowest power from both
+numerator and denominator. The numerator matrix then has only
+nonnegative powers and the denominator has valuation zero. Doing
+this at each site proves monotonicity for every integral restriction.
+
+For the ordinary sum bound, the binomial expansion, with local
+permutations of copies, gives
+\[
+ N_b((T+U)^{\otimes n})\le\sum_{j=0}^n\binom nj
+        N_b(T^{\otimes j})N_b(U^{\otimes(n-j)}).
+\]
+For a fixed nonzero $T$ and all $0\le j\le n$ we have
+$D\log N_b(T^{\otimes j})=jp_b(T)+o(n)$ uniformly. The binomial
+formula yields $\exp(p(T+U)/D)\le\exp(p(T)/D)+\exp(p(U)/D)$.
+Common denominators give this inequality on $K$. The lift agrees with
+$H$ on constants, including every diagonal tensor, so the diagonal test of Section~\ref{sec:prices} gives
+the direct-sum identity. Set $p(0)=-\infty$.
+\end{proof}
+
+\subsection{Prices on disks}
+
+We now need a generic value of the price on each disk of parameters.
+Take an algebraically closed field $F$ and an ordinary price on a fixed
+finite set of sites over $F$. Enlarge the coefficient field to
+$E=F(\mathcal U)$ for an uncountable set $\mathcal U$ of independent
+indeterminates. For a rational tensor depending on finitely many of
+these variables, define its ordinary price over $E$ as the supremum
+over its $F$-valued specializations on the domain of definition.
+
+The fixed-format bound in Equation~\eqref{eq:prices-range} makes this
+supremum finite for every nonzero rational tensor. Its fixed-format
+price sublevel sets over $F$ are Zariski closed
+(Section~\ref{sec:prices-background}). Hence the specializations
+within any positive tolerance of the supremum contain a nonempty
+open set. Finitely many such sets meet on the common domain of
+definition. Applying the price axioms at these simultaneous
+specializations and letting the tolerance tend to zero gives the
+axioms over $E$. The extension is consistent on subfields generated
+by subsets of $\mathcal U$ and invariant under permutations of
+$\mathcal U$.
+
+Apply Theorem~\ref{thm:gauss} over $E$. Write $\mathcal O$ for the
+valuation ring of $K=\operatorname{Frac}(E[t^{\mathbb Q}])$.
+A \emph{fresh} $u\in\mathcal U$ occurs in none of the data being
+compared. For $r\in\mathbb Q$ the disk with center $a\in K$ and
+valuation bound $r$ is $a+t^r\mathcal O$. Its generic price is the
+price at $a+t^r u$. Increasing $r$ shrinks the disk.
+
+\begin{lemma}[Specialization and the star inequality]\label{lem:star}
+For a polynomial tensor $T(c)$ over $K$, let $P(c)=p(T(c))$ on the
+base sites, or let $P(c)=\beta_p(T(c))$ when $T$ has additional
+sites. With a fresh $u$ and $P_*=P(u)$, one has
+\[
+ P(c)\le P_* \quad (c\in\mathcal O), \qquad P_*=\sup_{a\in F}P(a).
+\]
+The generic price stays the same after an affine change of variable
+$c\mapsto a+bc$ with $a\in\mathcal O$ and $b\in\mathcal O^\times$.
+Here $u$ is fresh also for $a$ and $b$.
+
+Suppose $T$ is nonzero of degree $d$. Choose finitely many centers
+$c_j\in\mathcal O$ with distinct residues and positive rational
+numbers $r_j,r_\infty$. Let
+\[
+ P_j=P(c_j+t^{r_j}u),\qquad P_\infty=P(t^{-r_\infty}u).
+\]
+Then
+\begin{equation}\label{eq:valued-star}
+ \sum_j\frac{P_*-P_j}{r_j}
+ \ \le\ \frac{P_\infty-P_*}{r_\infty}\ \le\ d .
+\end{equation}
+Equivalently, the first inequality bounds the center price $P_*$
+by the weighted average of the prices at the ends of the star.
+The weights are proportional to $1/r_j$ and $1/r_\infty$. We call
+the values on the star \emph{harmonic} if the center equals this
+average. The weighted-average inequality also holds for the zero
+family.
+\end{lemma}
+
+For instance, a scalar polynomial $T(c)=\prod_j(c-c_j)^{m_j}$
+with distinct $c_j\in F$ has generic price zero on the unit disk.
+On the inner disk at $c_j$ its price is $-m_jr_j$, giving a drop
+of $m_j$ per unit of valuation length. On the outer disk its price
+is $r_\infty\sum_j m_j$. Both inequalities in
+Equation~\eqref{eq:valued-star} are equalities.
+
+\begin{proof}
+The zero family is immediate. First let $P(c)=p(T(c))$ with
+$T\ne0$, and write $Q(c)=T(c)^{\otimes n}$. Its degree is at most
+$nd$. Interpolation on $nd+1$ fresh indeterminates uses only integral
+Lagrange weights at any $c\in\mathcal O$, since the nodes have unit
+differences. All the samples have price $nP_*$ by permutation symmetry,
+so the ordinary sum bound gives
+\[
+ p(Q(c))\le nP_*+D\log(nd+1).
+\]
+Dividing by $n$ and letting $n\to\infty$ proves specialization.
+Conversely, interpolate at $nd+1$ distinct nodes of $F$ and evaluate
+at $u$. The same argument gives $P_*\le\sup_{a\in F}P(a)$. Applying
+specialization to an integral affine change of variable and its
+integral inverse proves the asserted invariance. Specialization on
+nested disks also gives $P_j\le P_*\le P_\infty$.
+
+The inverse Vandermonde matrix at these nodes has integral entries,
+so interpolation controls coefficients as well as evaluations.
+On the unit disk it gives $p([c^\ell]Q(c))\le nP_*+D\log(nd+1)$.
+Evaluating at $t^{-r_\infty}u$ can increase any coefficient price by
+at most $nd r_\infty$. The price of their sum incurs another
+$D\log(nd+1)$, proving $P_\infty-P_*\le d r_\infty$ in the limit.
+
+To prove the other inequality, we use interpolation on each inner
+disk to bound the low Taylor coefficients at its center and on the
+outer disk to bound the high coefficients at infinity. More
+precisely, interpolating $Q(c_j+t^{r_j}v)$ and $Q(t^{-r_\infty}v)$
+in $v$ and removing the scalar power of $t$ gives
+\begin{align}
+ p([v^\ell]Q(c_j+v)) &\le nP_j+r_j\ell+D\log(nd+1),\notag\\
+ p([c^\ell]Q(c)) &\le nP_\infty-r_\infty\ell+D\log(nd+1).
+ \label{eq:valued-jets}
+\end{align}
+
+Suppose the sum of the inner drops per unit length exceeds the outer
+growth per unit length. Choose $a_j$ strictly between zero and
+$(P_*-P_j)/r_j$ on the arms with positive drop and zero on the other
+arms, so that
+\[
+ \sum_j a_j>b>(P_\infty-P_*)/r_\infty
+\]
+for some $b$. Put $m=\lceil nb\rceil$ and $m_j=\lfloor na_j\rfloor$.
+The strict inequalities and Equation~\eqref{eq:valued-jets} give
+$\epsilon>0$ such that, for all large $n$, the coefficients
+\[
+ [c^\ell]Q(c)\quad(m\le\ell\le nd),\qquad
+ [v^\ell]Q(c_j+v)\quad(0\le\ell<m_j)
+\]
+all have price at most $n(P_*-\epsilon)$. Together they determine $Q(u)$ by an integral linear combination.
+Indeed, subtract the high-degree part of $Q$. The remaining polynomial
+has degree $<m$ and its Taylor coefficients through order $m_j-1$
+give its residue modulo $(c-c_j)^{m_j}$ at each center. For large
+$n$, the total multiplicity $\sum_j m_j$ is at least $m$. The moduli
+are pairwise comaximal over $\mathcal O$ because the center
+differences are units. The Chinese remainder theorem thus recovers
+the low-degree polynomial by an $\mathcal O$-linear map in monomial
+coordinates. Computing the Taylor coefficients of the subtracted
+part and evaluating at $u$ are integral operations as well. These
+identities hold coefficientwise for tensors over $K$.
+
+The reconstruction expresses $Q(u)$ using only $O(n+1)$ coefficients
+from the displayed list. The sum bound would give
+$nP_*=p(Q(u))\le n(P_*-\epsilon)+O(\log(n+1))$, a contradiction.
+
+For the assisted cost, fix a power $m$ in
+Equation~\eqref{eq:prices-beta} and write $A(c,\mathbf z)$ for the
+closure of $T(c)^{\otimes m}$ with functional entries
+$\mathbf z=(z_1,\ldots,z_s)$. These entries occur polynomially.
+For any fixed $c$, the supremum of $p(A(c,\mathbf z))$ over
+$\mathcal O^s$ equals the supremum over $F^s$. Indeed, interpolate
+$A(c,\mathbf z)^{\otimes n}$ on a rectangular grid in $F^s$. For
+fixed $m$, there are $O_m(n+1)$ nodes per coordinate and polynomially
+many nodes in total. Evaluation at integral arguments has integral
+weights, so the logarithmic cost per tensor copy tends to zero.
+
+Consequently $\beta_p(T(c))$ is the supremum of the functions
+$p(A(c,\mathbf z))/m$ over $m$ and constant closing data. Omit
+identically zero tests when $T\ne0$. The other tests are nonzero at
+all the generic points. Their specialization inequalities pass to
+the supremum, and taking suprema over $a\in F$ and over tests in
+either order gives the generic-value identity. Their weighted-average
+inequalities pass to the supremum because each weight is positive.
+Finally, each test satisfies the outer growth bound $d r_\infty$
+after division by $m$, since $\deg_c A\le md$. This common bound
+also holds for the supremum.
+\end{proof}
