@@ -1,0 +1,14 @@
+{
+  "challenge_module": "ComparatorChallenges.Sunflower",
+  "solution_module": "OAI.Combinatorics.Sunflower.FixedBase",
+  "theorem_names": [
+    "OAI.Combinatorics.Sunflower.erdosRadoSunflower"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": false
+}

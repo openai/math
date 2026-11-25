@@ -1,0 +1,367 @@
+\section{Concentrating the arity of a tensor network}\label{sec:local}
+
+
+Our aim is to gather the large tables of a tensor network at a few
+stations while preserving its contraction. The relevant budget is the
+sum of the squared arities. For example, \(W/T\) stations of arity
+\(T\) have budget \(WT\). Gathering \(D\) at a time into stations of
+arity \(DT\) would multiply that budget by \(D\).
+Lemma~\ref{lem:local} keeps the budget of the large stations at \(O(WT)\)
+while reducing their number to \(O(W/(DT))\). Their total arity is then
+\(O(W/\sqrt D)\). The transformation also introduces small tables.
+Part~IV shortens the wires of this small-table network between successive
+concentrations, then uses batched table lookup to evaluate the result.
+
+A \emph{station} is a tensor given by an arbitrary table on an ordered
+list of bits. Its arity counts the external bits as well as its ends of
+internal wires. Group the stations into cells of a host graph of maximum
+degree \(g\). Wires run within a cell, between adjacent cells, or to the
+exterior. The same host may carry several networks. A cell used in two
+networks counts twice. A station designated \emph{immobile} retains its
+external bits and its cell. All external bits must belong to such stations.
+
+\begin{lemma}[Local concentration]\label{lem:local}
+Fix a finite field \(k\) with \(\omega_k<9/4\), a degree bound \(g\), and
+an integer \(\ell\ge1\). For each sufficiently large fixed integer \(D\),
+the following holds for all sufficiently large integers \(T\). Use an
+extension \(K/k\) containing a fixed finite extension, with \(|K|\) at
+least a sufficiently large polynomial in \(T\) and
+\([K:k]=O_D(\log T)\). The input tables may already be over \(K\).
+
+Suppose there are at most \(W/(DT)\) occupied cells and at most
+\(W/(DT)\) immobiles in total. In any one network each cell has at most \(100D\) stations
+of total arity at most \(100DT\), and over all stations of all networks
+\(\sum_i t_i^2\le WT\). The tensor of each network is a sum over \(K\)
+of networks with the same exposed bits. Every choice of one term per network, taken together, satisfies the following bounds.
+\begin{enumerate}
+\item There are \(O(W/(DT))\) \emph{frozen stations}, including the
+holders of the original external bits in their original cells. Their
+maximum arity is \(O(DT)\), their squared arities sum to \(O(WT)\),
+and their arities sum to \(O(W/\sqrt D)\).
+\item All other stations, called the \emph{core}, have arity at most
+\(D^{-\ell}T\) and total arity \(O(W(1+\log D)^2)\).
+\item A common host replaces each original cell by \(D^{O(1)}\) positions,
+with possible contacts only within and between neighboring cells. The
+induced host on the core positions has absolute bounded degree.
+No two frozen stations touch by a wire. For some \(c=c(g,\ell,k)\) all active
+internal bundles can have width at least \(\lceil T/D^c\rceil\), and
+the bounds in the first two conclusions continue to hold when every
+station is charged at least that arity.
+\item The outer summation uses \(O_D(\log(T+1))\) control bits per
+occupied cell. For its computational bound, represent each input table
+by a label and its ports by ordered bundles, one per station pair,
+specified by lengths and endpoint slots. Bits agree in order along a
+bundle. Any local reordering is part of the supplied table label.
+Given a fixed coloring with \(O_D(1)\) colors separating cells
+within a bounded distance depending on \(D,g\), the validity of the indices, output
+layout, and tracking of exposed sublists can be determined in \(O_D(1)\)
+rounds of communication on the old host. With input labels of at most
+\(A\) bits, the work and communication per occupied cell are
+\(O_D(A+(1+\log T)^{O(1)})\) bit operations and bits. Each output table
+has a label of length \(O_D(A+\log(T+1))\) in a dictionary fixed by the
+input dictionary and the parameters.
+\end{enumerate}
+The implicit constants in the first three conclusions can depend on
+\(k,g,\ell\), independently of \(D,T,W\). A fixed change of the numerical
+input bound \(100\) changes only these constants.
+\end{lemma}
+
+
+The proof uses two sphere forms in each occupied cell.
+The first joins neighboring cells along pairs of legs called \emph{seams}.
+It represents a station by an insertion at a marked point. The energy
+of this insertion bounds the square of the width needed to encode its
+state. Moving insertions across seams and merging them at common marks
+will concentrate their energy at the frozen stations. The seams have
+a separate energy budget. A crossing spends some of this budget, and
+at the end each seam is divided among many small tables.
+
+To begin the motion we must realize the actual wires of the input
+network. The second sphere, which stays in its cell, serves this purpose.
+Corollary~\ref{cor:universal} allows its insertions to encode the
+prescribed wiring on the first sphere. Both sphere legs participate in
+mergers, but only the first can cross a seam. The two spheres use
+different numbers of species and different energy scales. These choices
+make the private leg left behind at a crossing thin.
+
+\subsection{Sphere forms and a transposition identity}\label{subsec:seam}
+
+We use the algebraic free-fermion construction of Section~\ref{sec:fermions}, now with many species.
+Write \(V^{(r)}_e\) for the energy-\(e\) subspace of the exterior algebra
+on generators \(\psi_{s,m}\) with species \(1\le s\le r\), mode \(m\ge0\),
+and energy \(m+\tfrac12\). Use the wedge basis in lexicographic order
+on \((s,m)\). Every basis vector has length congruent to \(2e\pmod2\). 
+
+Put \(c_0=\pi/\sqrt3\). For \(q>0\) the single-species generating
+function is \(Z(q)=\prod_{m\ge0}(1+\exp(-q(m+1/2)))\).
+Since \(t\mapsto\ln(1+\exp(-t))\) is convex, integration on the
+successive intervals of length \(q\) gives
+\(\ln Z(q)\le q^{-1}\int_0^\infty\ln(1+\exp(-t))\,dt=\pi^2/(12q)\).
+For \(r\) species, \(\dim V^{(r)}_e\le\exp(qe)Z(q)^r\).
+Minimizing over \(q\) for \(e>0\), and using the vacuum for \(e=0\), gives
+\begin{equation}\label{eq:local-width}
+      \dim V^{(r)}_e\le \exp(c_0\sqrt{re}).
+\end{equation}
+
+We encode a leg by the binary index of its basis state, padding unused
+codes with zero weights.
+
+At distinct points \(z_i\in K\), the sphere form \(C_r\) sends a tuple
+of wedges to a Pfaffian. List their generators in site order. Pairings
+at a common site or between different species vanish. For a single
+species the pairing of modes \(m,n\) at distinct sites \(i,j\), in that
+order, is
+\[
+ [x^m y^n]\,(z_j+y-z_i-x)^{-1}.
+\]
+The Pfaffian of the empty matrix is one and an odd list gives zero.
+Exchanging adjacent homogeneous sites of energies \(e,d\) costs the sign
+\((-1)^{(2e)(2d)}\). In particular all such signs are scalar when the energies
+are fixed. These definitions include characteristic two by reduction of
+the integral alternating pairing formula.
+
+If two adjacent sites in that order at \(z,z+u\) have energies \(e,m\), respectively, their
+coefficient at \(u^{e'-e-m}\) is obtained by replacing the pair by one
+site of energy \(e'\) at \(z\), precomposed with the map
+\[
+ I_{e'}:V^{(r)}_e\otimes V^{(r)}_m\longrightarrow V^{(r)}_{e'}.
+\]
+Only \(e'\ge0\) with \(e'-e-m\in\mathbb Z\) occur. To compute
+\(I_{e'}\), sum over partial internal pairings between the two sites at
+offsets \(0,1\), translate the unmatched generators by expanding around
+zero, and wedge them in order at energy \(e'\). More precisely, the
+translation at offset \(a\) replaces \(\psi_{s,d}\) by
+\(\sum_{f\ge d}\binom fd a^{f-d}\psi_{s,f}\). This is the fusion
+formula of Proposition~\ref{prop:fusion} extended to many species. Its proof decomposes a full
+matching into its internal and external pairs and applies species by
+species. As a function of any one position, the form has poles only at
+the other positions and is bounded at infinity.
+
+To join two spheres, contract the legs at two specified sites using
+equality on the wedge basis at an energy \(e\). We call the pair a
+\emph{seam}. To move an insertion through the seam, we need to transpose
+a fusion coefficient against this ordinary equality pairing.
+
+\begin{lemma}[Transposition at a seam]\label{lem:seam}
+Let \(a,b\) be basis states at energies \(e,e'\), and
+\(x\in V_m^{(r)}\). There are parity-preserving maps
+\(S_j:V_m^{(r)}\to V_j^{(r)}\) for \(j\le m\), independent of \(a,b\),
+and a nonzero scalar \(\alpha=\alpha(e,e',m)\) such that
+\begin{equation}\label{eq:seam-adjunction}
+ [I_{e'}(a,x)]_b
+    =\alpha\sum_{j\le m}[I_e(b,S_jx)]_a .
+\end{equation}
+The coefficient is taken in the indicated wedge basis.
+\end{lemma}
+\begin{proof}
+Include a square root \(i\) of \(-1\) in the fixed extension of \(k\).
+Use \(y\) as the local coordinate at infinity, so the position is \(1/y\).
+Before extracting a mode as a coefficient in \(y\), multiply the kernel
+once for each generator there by
+\(i/y\). The pairing between finite coordinate \(U\) and that chart is
+then \(i/(1-Uy)\). Consequently the two-point form at zero and infinity
+pairs equal basis states of length \(d\) with coefficient
+\[
+      (-1)^{d(d-1)/2}i^d=
+      \begin{cases}1& d\ \text{even},\\ i& d\ \text{odd},\end{cases}
+\]
+and all other coefficients vanish. In the three-point form
+at \(0,1,\infty\) on \(a,x,b\), first take the internal matchings at
+zero and one. Pairing the remaining generators with infinity performs
+exactly the translation and wedge defining \(I_{e'}(a,x)\). Thus the
+three-point value is its \(b\)-coefficient times the displayed parity
+factor.
+
+Inverting the finite coordinate by \(V=1/U\) preserves the two-point
+kernel when each argument receives the factor \(-i/U\). Indeed
+\((-i/U_1)(-i/U_2)/(1/U_2-1/U_1)=1/(U_2-U_1)\).
+The old infinity chart becomes an ordinary finite chart with factor one,
+and the old zero becomes an infinity chart with one minus sign per
+generator. At the middle site, take the exterior power of the
+single-generator substitution
+\[
+ \psi_{s,d}\longmapsto
+ \sum_{f=0}^{d}
+ \left([X^d]\,\frac{-i}{1+X}
+       \left(\frac{1}{1+X}-1\right)^{\!f}\right)\psi_{s,f}.
+\]
+Projection to energy \(j\) gives \(S_j\). Each term retains the length
+and has energy at most \(m\). Reverse the site order and evaluate the
+three-point form with \(b\) at zero and \(a\) at infinity. The order
+reversal, the signs from the old zero, and the two diagonal parity factors
+depend only on the three original parities. Taking their ratio proves
+\eqref{eq:seam-adjunction}.
+\end{proof}
+
+For one species take \(a=1\) and \(b=x=\psi_0\). At energy
+\(1/2\) the near-side fusion passes \(x\) unchanged. After inversion the
+middle insertion is \(-i\psi_0\), and its far-side contraction with
+\(b\) at offsets \(0,1\) gives \(-i\) at energy zero. The factor
+\(\alpha=i\) recovers the original coefficient one. The same exchange
+of input and output levels will carry a general insertion across a seam.
+
+\input{local-plant}
+\input{local-motion}
+
+\section{Accounting for the new arities}\label{subsec:local-output}
+
+
+After the motion, each collector has two homogeneous sphere legs and may
+also hold external bits or thin wires. A seam can still have large energy.
+We divide the species into groups so that each group meets a small table,
+even when one group receives the entire energy of a seam.
+
+Choose \(M\), a power of \(D\) specified below. Both species counts
+\(R,R'\) can be taken divisible by \(M\) in
+Equation~\eqref{eq:plant-scales}. Divide the species of each sphere
+into \(M\) consecutive equal chunks, preserving whole blocks in the
+private construction. Expand each remaining homogeneous leg as a
+direct sum over its tuple of chunk energies, using the prescribed tuple
+at each untouched auxiliary insertion and the same tuple on both sides
+of a seam. Every basis state occurs once in this expansion. For fixed
+chunk energies, the sphere form factors into the chunk forms.
+Reordering the generators contributes a single sign determined by the
+parity of each chunk at each site.
+
+Consider a generic leg of energy \(e\) on \(r\) species, and write
+\(e_j\) for the energy in chunk \(j\), so \(\sum_j e_j=e\).
+By Equation~\eqref{eq:local-width} and Cauchy--Schwarz, the total
+coded width satisfies
+\begin{equation}\label{eq:local-chunk-size}
+ \sum_{j=1}^M\left\lceil\frac{c_0}{\ln 2}\sqrt{(r/M)e_j}\right\rceil
+ \le \frac{c_0}{\ln 2}\sqrt{r e}+M .
+\end{equation}
+A layout can use the integer width \(\lceil4\sqrt{(r/M)e_j}\rceil\)
+instead. This amounts to a rounded integer square root since \(2e_j\)
+is an integer, and the same bound holds with coefficient four.
+
+An untouched auxiliary
+leg uses the actual product subspace specified by its selector. Within a
+chunk, the total number of bits can be read from the counts of block types
+and block energies, since a block of type \((d_i)_i\) with rounded entropy bounds
+\(u_i\) needs at most \(O(bu_i)\) bits on leg \(i\). Under a fixed selector these codes inject
+into the corresponding tensor product of homogeneous spaces. The table
+for the chunk form decodes them and assigns weight zero to unused words.
+
+One arbitrary table implements the form at each cell and chunk on the
+first and, separately, the private sphere. The number of legs in a cell
+is polynomial in \(D\). Equation~\eqref{eq:local-chunk-size}, applied
+to a single chunk, bounds a generic port there by \(O(DT/\sqrt M+1)\),
+and the bounds on actual auxiliary subspaces give \(O(R/M+1)\) per
+auxiliary leg and chunk. Thus the total arity at one of these tables is
+at most \(D^{c_1}T/\sqrt M+O_D(1)\), before the small selector wires
+are supplied. The exponent \(c_1\) can be chosen independently of
+\(M,b\) and the selector rate. Take \(M\) to be a sufficiently large
+power of \(D\) to put this quantity below \(D^{-\ell}T/10\). Use
+selector rate small enough for the routing bounds of
+Section~\ref{subsec:motion} with this \(M\), then choose the block
+size \(b\) in the planting. This order permits all three choices to be
+made before \(T\) grows.
+
+\paragraph{Frozen stations.}
+The collectors become the frozen stations. At one collector of weighted
+energy \(e\), the total width of its two sphere legs is
+\(O(T\sqrt{e/H})+O(M)\) by Equations~\eqref{eq:plant-widths}
+and~\eqref{eq:local-chunk-size}. The motion bounds give
+\(\sum e=O(WH/T)\) over all collectors and \(e=O(D^2H)\) at any
+one of them. Thus the energy term in the width has squared sum \(O(WT)\)
+and maximum \(O(DT)\). The sum over collectors of the squares of their total external widths
+is controlled by the input bound, since every immobile retains its own
+external ports. All additional wires from motion and selectors together
+have total width \(O(D^{-2\ell}T)\) per cell. Their squared widths added at
+collectors cost at most \(O(D^{-4\ell}T^2)\) per cell, even if all
+end at the same collector. Additive rounding costs from constantly
+many chunks, with \(D\) fixed, obey the same bounds for sufficiently
+large \(T\). Combining the three charges using
+\((x+y+z)^2\le3(x^2+y^2+z^2)\) proves the squared-arity bound, including
+the original external widths. The collector count and Cauchy--Schwarz give
+\[
+ \sum_{\rm frozen}t_i\le
+ \left(O\!\left(\frac W{DT}\right)\,O(WT)\right)^{1/2}
+ =O(W/\sqrt D).
+\]
+
+\paragraph{Core stations.}
+To bound the total arity at the chunk tables, first sum their port widths
+over all chunks. Untouched auxiliary insertions have total coded width
+\(O(DT(1+\log D))\) per cell by Section~\ref{subsec:plant-private}.
+The seams have at most \(g\) ports per cell of total width \(O_g(DT)\)
+after summing over chunks in Equation~\eqref{eq:local-chunk-size}.
+A cell also has \(O_g(D^2)\) residual private legs. Each costs
+\(O_g(DT/\sqrt F)+O(M)\) across all chunks by
+Equations~\eqref{eq:plant-widths} and~\eqref{eq:local-chunk-size},
+so all residual legs together cost \(O(T)\) per cell for large \(T\).
+Legs paired with collectors contribute at most the global frozen arity.
+The ordinary wires from motion, the selector wires, and any scalar
+tables contribute \(O(T)\) per cell. Thus core arity before controlling the host
+degree is \(O(W(1+\log D))\). Untouched auxiliaries have individual
+arity \(O(T/a)\), the residues have individual arity
+\(O(DT/\sqrt F)\), and the chunk tables and routing wires have each been
+made smaller than \(D^{-\ell}T\) by a fixed margin. These and the
+selector checks exhaust the core tables.
+
+To build a common host, reserve slots in each cell for each kind of
+table and bundle that can occur simultaneously in a single summand.
+This requires \(D^{O(1)}\) slots per cell. The block size changes table
+entries and selector lengths, while the same slots serve every block
+type. Combine scalar factors in their cell. Initially allow all
+connections between slots in the same cell or in neighboring cells.
+Split any direct connection between collectors with a core identity table
+on the thin wire carried along their paths. For each core station, attach a fixed balanced binary tree with one
+leaf per possible bundle. Its root receives the table's ordered ports,
+and each internal vertex separates its list of bits into the sublists
+destined for its two children. The corresponding equality tables pass
+each bit along a unique path of length \(O(1+\log D)\) and no internal arity exceeds
+twice the original station arity. This proves the asserted degree and
+total core bounds. Finally take \(c\) larger than the exponents in these
+counts by a margin depending on \(\ell\). Padding a nonempty bundle to
+\(\lceil T/D^c\rceil\), or making this minimum charge for any one
+station, then uses at most \(O(D^{-2\ell}T)\) extra bits per cell.
+Unique zero padding preserves the tensor. It also absorbs any bounded
+number per cell of weight-only tables in these counts. This proves the first three
+conclusions of Lemma~\ref{lem:local}.
+
+\paragraph{Indices of the outer sum.}
+Encode each bundle by its endpoint slots, its length, and its position
+in the ordered ports at its ends. The input label already includes any local permutation of bits. No individual exterior address is
+needed when a bundle is carried as an ordered list. The branching data
+at one occupied cell comprise the initial chunk histograms, the motion
+and fusion choices (positions, energies, interpolation points and
+orders), and the final chunk splittings. Their number of entries is
+bounded for fixed \(D\), including the size of the alphabet of the
+histograms. Each integer ranges over \(T^{O_D(1)}\). A field point
+uses \(O_D(\log T)\) bits. All private selector bits are wires inside
+the summand and are excluded from this count. Zero unused entries
+give a unique padding of a term index.
+
+Use the supplied coloring of the \((4D^5+20)\)-th power of the host.
+Greedy coloring gives such a coloring with \(O_D(1)\) colors for
+fixed \(g\). Start motions successively by color and station slot. Concurrent motions affect disjoint neighborhoods,
+since each has at most \(D^5\) crossings. A complete padded schedule
+therefore has length bounded in terms of \(D,g\) only. In each step
+the cells may send their local descriptions to their neighbors. A
+merger concatenates the descriptions of its two input tables and the
+operation parameters. A crossing adds the named interpolation, the
+fusion, and the new endpoints of its thin wire. The history of any
+resulting table draws on a bounded number (depending on \(D\)) of
+these records. Thus a label of length \(O_D(A+\log(T+1))\) specifies
+each entry as a function of its ports through the fixed dictionary.
+The dictionary may use arbitrary interpolation weights, restriction maps
+and internal contractions. Generating its labels requires no
+evaluation of its entries.
+
+It remains to check that the short computations never require inspecting
+the selector bits. Counts in a chunk histogram fix the energies and
+coded widths. Range and total checks admit every realizable histogram;
+the selector check gives zero whenever an admitted histogram is
+unrealizable. Interpolation may use a fixed ordered collection of all
+regular field points and weights indexed by the local pole bounds.
+The scheduler only checks avoidance of marks, the ranges of the indices,
+and the rules of fusion and motion. Zero coefficients may be retained.
+The checks and length estimates use arithmetic on
+\(O_D(\log(T+1))\)-bit integers or field coordinates, including division
+with remainder and rounded square roots. The scheduler copies old labels
+as strings in fixed padded slots. At each cell the number of records and
+operations on them is bounded independently of \(T\), giving
+\(O_D(A+(1+\log T)^{O(1)})\) bit operations and bits communicated.
+This proves the final conclusion of Lemma~\ref{lem:local}.

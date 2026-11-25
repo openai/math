@@ -1,0 +1,363 @@
+\section{The cost of partial transposition}\label{sec:partial}
+
+Transposing a binary matrix makes each input bit available at a new
+place. Bit $(i,k)$ enters with row $i$ and leaves with column $k$.
+On tapes the heads can decide where to move from the data they have
+already seen. Fixing their movements at a coarse resolution gives a
+small network, but only for the inputs that follow those movements.
+We first bound the size of a network that transposes correctly on
+even an exponentially small set of inputs.
+
+\begin{theorem}[Partial transposition]\label{thm:table}
+Assume Weak ETH and fix $0\le\rho<1-1/\sqrt2$. Let a rational tensor
+network have maximum degree $D$ in edge bundles, each of width at most
+$DN$ bits. Give its $N$ input row strings and $N$ output column strings
+of length $N$ distinct terminals. Suppose that on a fraction at least
+$2^{-\rho N^2}$ of all binary $N\times N$ inputs, fixing the row strings
+gives a nonzero scalar multiple of the basis vector for the transposed
+output. Then the network has $\Omega_{D,\rho}(N\sqrt{\log N})$ vertices
+for every sufficiently large $N$.
+\end{theorem}
+
+Two estimates give the bound. The first places the network so that the
+cost of its edges falls by a factor of order $\sqrt{\log N}$ compared
+with that of typical row-to-column wires. The second turns the entropy
+of the successful inputs into a lower bound on the cost of those wires.
+
+\subsection{Charging the wires of a small network}
+
+Represent a shared string of $q$ bits by a wire of width $q$. Place the
+vertices of the network in a spectral space from Section~\ref{sec:graphs}.
+The price of each wire is its width times the distance between its ends.
+If $q_e$ is the width of edge $e$, the total supply price is
+\begin{equation}\label{eq:supply-cost}
+ S=\sum_{e=uv}q_e\,d(x_u,x_v).
+\end{equation}
+
+We need a placement with three properties. The network edges must be
+short, typical row and column terminals must be far apart, and there
+must be a central point from which we can identify the chosen input
+rows at moderate cost. We normalize the typical terminal distance to one.
+
+\begin{lemma}[Short edges and distant terminals]\label{lem:geometry}
+Assume Weak ETH. Let a multigraph have $P_0$ vertices, maximum
+degree $D$, and edge widths at most $Db$. For all sufficiently large $P_0$
+there is a placement in some $X\in\mathcal X$ and a point $o\in X$ with
+the following properties. Write $P$ for the least power of two at least
+$P_0$. All constants below depend only on $D$.
+\begin{align}
+ S &\le C_D bP/\sqrt{\log P},                                           \label{eq:short-supply}\\
+ \E_{a\in A,\,t\in B}\bigl(d(x_a,x_t)-1\bigr)^2
+   &\le C_D P/(N\log P),                                                \label{eq:terminal-distance}\\
+ \sum_v h_v d(x_v,o)
+   &\le \frac1{\sqrt2}\sum_v h_v+
+       C_D\left(\frac{P}{\log P}\sum_v h_v^2\right)^{1/2}.             \label{eq:central-cost}
+\end{align}
+Here $A,B$ are any two lists of $N$ vertices distinct within each list,
+the draws from the two lists are independent and uniform, and $h_v\ge0$
+are arbitrary. In particular, when $P=O(N\sqrt{\log N})$,
+the mean absolute deviation in \eqref{eq:terminal-distance} is $o(1)$.
+If also $\max h_v=O(b)$ and $\sum h_v=O(Nb)$, the error in
+\eqref{eq:central-cost} is $o(Nb)$. These bounds are uniform over the lists, and the weights with the indicated bounds.
+\end{lemma}
+
+\begin{proof}
+Add vertices to reach $P$ and superimpose a scalar expander on all $P$
+vertices, of fixed degree and with a fixed spectral gap \cite{HLW,Friedman}.
+Add diagonal arcs to make every degree equal to a fixed power of two
+$d_0\ge2$ depending only on $D$. Each nonloop edge gives two reverse arcs, and each diagonal arc
+counts once.
+Under Weak ETH (Theorem~\ref{thm:noports}), the logarithmic obstruction
+\cite[Theorem~\ext{P}{thm:loggraph}]{oaP}, based on
+nonlinear spectral calculus \cite{MN}, applies to $\mathcal X$
+(a class of Hadamard spaces without ports).
+It says that the best uniform Poincar\'e constant of
+this graph over $\mathcal X$ (in the squared form)
+is at least
+$c_{d_0}\log P$. Thus for $P$ large some placement in a rescaled space has
+\[
+ \E d(x_U,x_V)^2=1,\qquad
+ \E d(x_I,x_J)^2=O_D(1/\log P).
+\]
+Here $U,V$ are independent uniform vertices and $(I,J)$ a uniform
+directed arc of the augmented graph. Its $d_0P$ arcs include the
+original edges. Multiplying their mean length by $d_0P$ and by the
+maximum width $Db$ gives \eqref{eq:short-supply} by Cauchy--Schwarz.
+The scalar Poincar\'e
+inequality on the expander subgraph now gives, for every real
+$1$-Lipschitz $f$ on $X$,
+\begin{equation}\label{eq:scalar-variance}
+ \operatorname{Var} f(x_U)\le C_D/\log P.
+\end{equation}
+In particular, the bound holds for distance to any fixed point and for
+$g(x)=\E d(x,x_U)$. The conditional variance formula, applied first with
+$V$ fixed and then to $g(x_V)$, gives
+$\operatorname{Var}d(x_U,x_V)=O_D(1/\log P)$. Since the second moment
+is one, the mean $\mu$ is $1+O_D(1/\log P)$.
+
+A list of $N$ distinct vertices has uniform density $N/P$.
+Consequently its average of a nonnegative function is at most $P/N$
+times the average over all vertices. For every $t$ we therefore have
+$\E_{a\in A}(d(x_a,x_t)-g(x_t))^2\le C_D P/(N\log P)$.
+The same bound holds for $\E_{t\in B}(g(x_t)-\mu)^2$.
+Adding these deviations in $L^2$ proves \eqref{eq:terminal-distance}.
+
+Take $o$ to be the barycenter of the uniform distribution on the $P$
+points. In a complete $\operatorname{CAT}(0)$ space the mean squared
+distance to a finite distribution has a unique minimizer $o$, and its
+value at $y$ exceeds its minimum by at least $d(o,y)^2$.
+Both facts follow from strong convexity along geodesics, first on
+midpoints of a minimizing sequence and then along the segment from
+$o$ to $y$ \cite{BH,Sturm}. Averaging the inequality at $y=x_V$ gives
+$2\E d(x_U,o)^2\le1$. Apply \eqref{eq:scalar-variance} to $d(\,\cdot\,,o)$
+and extend the weights by zero to the added vertices. Cauchy--Schwarz
+bounds the weighted deviations from the mean by the last term of
+\eqref{eq:central-cost}.
+\end{proof}
+
+\subsection{Turning successful inputs into independent wires}
+
+On a good input each bit of an array appears at two prescribed
+terminals. The bits need not be independent, and the network may
+produce an incorrect output on other inputs. To charge a price for
+the bits that do appear, allow a central source at $o$ to select the
+local tables for a good input. A \emph{pin} is the index of one such
+choice at a vertex, incorporating all choices at that vertex. 
+Lemma~\ref{lem:entropy} charges for transmitting the pins and credits
+each terminal pair with the new information in its bit. Write $H$ for
+Shannon entropy in bits.
+
+\begin{lemma}[Entropy at paired terminals]\label{lem:entropy}
+Let a network have pairs of indicated vertices (terminals)~$(a_j,t_j)$, $1\le j\le L$, and let
+$W=(W_1,\ldots,W_L)$ be a random binary vector. For each $w$ in its support,
+suppose pins $C_v(w)$ at the vertices make the contracted tensor
+over the rationals equal to a nonzero scalar multiple of
+\[
+ \bigotimes_{j=1}^L\bigl((e_{w_j})_{a_j}\otimes(e_{w_j})_{t_j}\bigr).
+\]
+For every placement in $X\in\mathcal X$, every $o\in X$, and every
+ordering of the coordinates, numbered in that order, we have
+\begin{equation}\label{eq:entropy-price}
+ \sum_{j=1}^{L} H(W_j\mid W_1,\ldots,W_{j-1})\,d(x_{a_j},x_{t_j})
+ \ \le\ S+\sum_v H(C_v(W))\,d(o,x_v).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+To apply the price comparison we must extract a product of independent
+equality wires. Over many uses the two endpoints of pair $j$ see the
+same binary column. We assign a label to that column so that the labels
+can be chosen independently, at a rate approaching the conditional
+entropy of coordinate $j$.
+
+It suffices by continuity to treat a rational probability law $p$ on
+the given support. Take the tensor product of $r$ copies of the network, allowing joint
+local maps at each vertex, and take $r$ through multiples of a common
+denominator of $p$. We use arrays of $r$ payloads having joint type $p$,
+meaning that each $w$ occurs exactly $rp(w)$ times. The number of
+possible $j$th columns compatible with a fixed prefix of the prescribed
+type is
+\[
+ M_j=\prod_{u\in\{0,1\}^{j-1}}
+       \binom{r\,p(W_{<j}=u)}{r\,p(W_{<j}=u, W_j=1)}.
+\]
+Each such extension still has the prescribed prefix type and can be
+continued to a full array. The type-counting estimate gives
+$r^{-1}\log M_j\to H(W_j\mid W_{<j})$ \cite[Theorem~11.1.3]{CT}.
+
+We need a map of the $j$th column alone, since its endpoints see only
+that column. Put $\ell_j=\max(0,\lfloor\log(M_j/r^2)\rfloor)$.
+There is a coloring of the binary $r$-columns by $2^{\ell_j}$ colors
+such that every compatible prefix admits every color as an extension.
+Indeed, if $\ell_j>0$, independent uniform colors miss a given color
+among the $M_j$ extensions with probability at most $\exp(-r^2)$.
+There are at most $2^{r(j-1)}$ prefixes and $2^r$ colors, so the union
+bound applies for large $r$ with $L$ fixed. For $\ell_j=0$ the claim
+is immediate. Choosing columns successively, every tuple of colors
+has a preimage array of type $p$. Fix one such array for each tuple.
+
+We now supply exactly the arrays selected by these labels. At $v$
+each array determines a stream of $r$ pins whose type is the law
+of $C_v(W)$. There are at most $2^{rH(C_v(W))}$ such streams, so a wire
+of $\lceil rH(C_v(W))\rceil$ bits from a new vertex at $o$ can supply
+its index. A basis index for a stream $(c_1,\ldots,c_r)$ selects at $v$
+the tensor product of its $r$ prescribed local tables. This defines a
+linear local map by extension from the basis indices. At $o$ form the sum, over the color tuples, of the basis vectors for
+their joint pin indices. Distinct selected arrays give distinct pin
+streams somewhere in the network, because the pins determine every
+displayed bit. Each selected array has the same output scalar
+$c_*=\prod_w c(w)^{rp(w)}$, where $c(w)\ne0$ is the one-copy scalar.
+Divide the tensor at $o$ by $c_*$. Applying the coloring map at both
+ends of every column now gives each possible tuple of labels exactly
+once, with coefficient one. The output is therefore the product of
+$\ell_j$-bit equality wires between $a_j$ and $t_j$.
+
+The original edges have total cost $rS$. Including the wires from $o$,
+the cost comparison using \eqref{eq:supply-cost} reads
+\[
+  \sum_j \ell_j d(x_{a_j},x_{t_j})
+     \le rS+\sum_v \lceil rH(C_v(W))\rceil\,d(o,x_v).
+\]
+Divide by $r$ and let $r$ tend to infinity.
+\end{proof}
+
+
+
+\subsection{The price gap for partial transposition}
+
+\begin{proof}[Proof of Theorem~\ref{thm:table}]
+Write $n=N^2$ and $A_i,B_k$ for row and column terminals.
+Take $W$ uniform on the good arrays. At terminal $A_i$, pin
+its row and copy it to both the input and fresh external indices
+there. The resulting tensor has a pair of external copies of every
+bit of $W$, at its row and column (Figure~\ref{fig:advice}).
+It suffices to consider networks with $P_0\le N\sqrt{\log N}$ vertices.
+
+In the placement of Lemma~\ref{lem:geometry} with $b=N$ the error in pricing all
+$N^2$ terminal-pair distances at one unit, in any sum with weights in $[0,1]$,
+is $o(n)$. Thus the left side of \eqref{eq:entropy-price} is
+$H(W)$ up to $o(n)$ by the chain rule. Since row entropies are at most
+$N$, we can use \eqref{eq:central-cost} on the right side at a cost of
+$\le n/\sqrt2+o(n)$ for delivering pins (recall all the relevant weights
+are nonnegative and vanish off row terminals). We obtain
+\[
+ (1-\rho)n \ \le\
+ O_D\!\left(\frac{N P_0}{\sqrt{\log P_0}}\right)+\frac n{\sqrt2}+o(n).
+\]
+The gap $1-\rho-1/\sqrt2$ is strictly positive, while $P_0\ge 2N$
+by the distinct terminal assumption. The network must therefore have
+$P_0=\Omega_{D,\rho}(N\sqrt{\log N})$ vertices.
+\end{proof}
+
+\input{advice}
+
+\subsection{From adaptive heads to a network}
+
+\begin{theorem}[Transposition on a subset of inputs]\label{thm:transpose}
+Assume Weak ETH and fix $0\le\rho<1-1/\sqrt2$. On a fixed deterministic
+multitape machine $\mathcal M$, suppose that by time
+$T$ it has halted with the correct transpose on a fraction at least
+$2^{-\rho N^2}$ of all binary $N\times N$ matrices. Inputs and outputs occupy prescribed contiguous
+intervals in row-major order. The initial machine configuration may
+include auxiliary data fixed independently of the matrix. Then, at
+every sufficiently large side length $N$,
+\[
+                 T=\Omega_{\mathcal M,\rho}(N^2\sqrt{\log N}).
+\]
+The constants and threshold are uniform over the auxiliary data.
+In particular the bound holds for the worst-case time of an exact
+transposition machine.
+\end{theorem}
+
+\begin{proof}
+Fix the auxiliary data and let $\mathcal G$ be the matrices correctly
+transposed by time $T$. We may assume $T\le N^2\sqrt{\log N}$. Divide
+each tape into blocks of $N$ consecutive cells and the first $T$ steps
+into epochs of $N$ steps. Use at least one epoch, pad the final epoch,
+and freeze each halted configuration while enforcing the deadline.
+
+At each epoch boundary record just the block containing each head.
+A head's recorded block number changes by at most one per epoch, so
+there are at most $2^{O_{\mathcal M}(1+T/N)}$ records with the fixed
+starting positions. Keep a record shared by the largest number of
+inputs in $\mathcal G$. The fraction of \emph{all} matrices in this
+set is at least
+\[
+             2^{-\rho N^2-O_{\mathcal M}(1+T/N)}.
+\]
+Choose any fixed $\rho'$ between $\rho$ and $1-1/\sqrt2$. Since
+$T/N=O(N\sqrt{\log N})=o(N^2)$, the fraction is at least
+$2^{-\rho'N^2}$ for all sufficiently large $N$. Individual head
+offsets and scanned symbols can still differ on these inputs.
+
+Build a network with one vertex per epoch, using the recorded block
+numbers to specify the graph (compare the blocking method of
+\cite{hpv}). During an epoch a head can meet only its starting block
+and its two neighbors. For each of these blocks carry its contents
+after the epoch to the next epoch in whose neighborhood it appears.
+Pass the control state and each head's offset in its boundary block
+to the next epoch. The contents of a block require $O_{\mathcal M}(N)$
+bits and all offsets and control information require
+$O_{\mathcal M}(1+\log N)$ bits.
+
+Figure~\ref{fig:epoch-block} shows how an epoch can pass the contents of
+a block directly over an intervening epoch that cannot reach it.
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[font=\small,
+ epoch/.style={draw=ink,rounded corners=1.5pt,fill=ink!4,align=center,
+               inner xsep=5pt,inner ysep=4pt,minimum width=2.54cm},
+ state/.style={draw=ink,-{Stealth[length=1.6mm]},line width=.5pt},
+ memory/.style={draw=sea,-{Stealth[length=1.7mm]},line width=.8pt}]
+\foreach \i/\x/\b/\neighbors in
+  {1/0/4/{3,4,5},2/3.45/5/{4,5,6},3/6.90/6/{5,6,7},4/10.35/5/{4,5,6}}{
+  \node[epoch] (E\i) at (\x,0)
+    {\textbf{Epoch \i}\\ start in block $\b$\\ $\{\neighbors\}$};
+}
+\foreach \i/\j in {1/2,2/3,3/4}
+   \draw[state] (E\i.east)--(E\j.west);
+\draw[memory] ([xshift=3mm]E1.south) -- ++(0,-.56)
+   -| ([xshift=-3mm]E2.south);
+\draw[memory] ([xshift=3mm]E2.south) -- ++(0,-.56)
+   -| ([xshift=-3mm]E4.south);
+\node[font=\footnotesize,text=sea,fill=white,inner sep=1.5pt] at (1.725,-1.16)
+      {block $4$};
+\node[font=\footnotesize,text=sea,fill=white,inner sep=1.5pt] at (6.9,-1.16)
+      {block $4$};
+\end{tikzpicture}
+\caption{Four epochs on one tape, each labeled by the blocks it may reach.
+The horizontal edges communicate the
+controller state and head offset at successive boundaries. The lower
+edges carry the contents of block $4$ between possible uses. A head
+starting in block $6$ during Epoch 3 cannot reach block $4$ in $N$ steps,
+so its contents pass directly from Epoch 2 to Epoch 4.}
+\label{fig:epoch-block}
+\end{figure}
+
+The local table for an epoch is the indicator of a legal internal
+run with the specified incoming and outgoing block contents, states
+and head positions. Feed each block its initial contents at first use
+and read its final contents at last use. Any unused block whose
+initial contents affect the output can pass them through directly.
+The final state must be halted by the deadline. Thus local runs
+with matching boundary data concatenate to an actual machine run,
+and every run that halts by the deadline with this record satisfies the
+local relations. By
+determinism, on each selected input the network has support only at
+the correct output, with positive coefficient.
+
+The fixed tape count bounds the number of incident bundles per epoch.
+Use a distinct terminal for each row and column. An external string
+crossing a block boundary is joined from at most two consecutive
+blocks, and a block meets at most two such strings at either interface.
+These extra vertices preserve bounded degree. In total there are
+$O_{\mathcal M}(N+1+T/N)$ vertices, with all widths
+$O_{\mathcal M}(N)$. Applying Theorem~\ref{thm:table} at density
+$2^{-\rho'N^2}$ gives
+\[
+             N+1+T/N=\Omega_{\mathcal M,\rho}(N\sqrt{\log N}),
+\]
+as required.
+\end{proof}
+
+\begin{proof}[Proof of the multiplication lower bound in Theorem~\ref{thm:lower}]
+Let $M(m)$ be the worst-case time of a fixed exact multiplier on two
+$m$-bit operands. Given $m$, the reduction of Harvey and van der Hoeven
+\cite[full version, Corollaries~6.2 and~6.3]{hvhtranspose} transposes
+a bit matrix of side $N=\lfloor\sqrt m\rfloor$ in
+\[
+                O\bigl(M(m)+m(1+\log\log(2m))\bigr)
+\]
+steps. In that reduction, padding to a larger dyadic length is followed
+by splitting each padded multiplication into a bounded number of calls
+at length $m$. Thus the bound uses the actual value $M(m)$ at the
+specified length. Copying, padding and adapting the ordinary binary
+input and output conventions here take $O(m)$ additional steps.
+
+Use $m$ as auxiliary data in Theorem~\ref{thm:transpose}, with
+$\rho=0$. The lower bound on the resulting transposer is uniform in
+$m$. Since $N^2\sqrt{\log N}=\Theta(m\sqrt{\log m})$ and
+$m(1+\log\log(2m))=o(m\sqrt{\log m})$, it follows that
+$M(m)=\Omega(m\sqrt{\log m})$ at every sufficiently large $m$.
+\end{proof}

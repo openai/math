@@ -1,0 +1,226 @@
+\section{Moving insertions through a sewn surface}\label{subsec:motion}
+
+The planting construction expresses the original tables on pairs of
+spheres in each cell. We now combine these tables at a small number
+of marks. Two outcomes of a Laurent expansion suffice. At an insertion
+mark, a coefficient fuses the moving table with the table already
+there. At a seam, a sufficiently negative coefficient transfers the
+moving table to the neighboring cell and lowers the energy of the
+seam. This decrease bounds both the number of crossings and the amount
+of energy that any cell can receive.
+
+In each cell, designate the marks of the original immobile stations
+and one additional vacuum mark as \emph{collectors}. They stay in their
+cell. Process the original movable stations in turn, skipping those
+already absorbed. The moving table keeps its ordinary bit ports. If its
+current legs on the sewn sphere $A$ and private sphere $B$ have
+energies $m_A,m_B$, put
+\[
+       m=m_A+m_B/P,\qquad \mu=m+H,\qquad L=\lceil 2P\mu\rceil .
+\]
+Here $P$ is the exchange rate of Equation~\eqref{eq:plant-scales}.
+The reserve $H$ stays with this move from its start until it ends, while
+$m$ is updated after every fusion or crossing.
+
+\subsection{Reconstructing an evaluation from collisions}
+
+Fix the branch of the outer sum and, for the following identity, the
+private selectors. The branch determines the energies, so the same
+identity works for all allowed selector values. Hold all other positions
+and insertion tables fixed. Each entry of the contraction is a rational
+function of the mover's $B$-coordinate $z$. Its $A$-coordinate is $z^P$.
+The sphere kernels have poles only at other marks on the current sphere
+and are bounded at infinity. Near a mark with $B$-coordinate $z_0$, write
+$s=z-z_0$. Since $P$ is a power of the characteristic, the corresponding
+coordinate difference on $A$ is $s^P$. Hence an $A$-fusion of order $i$
+and a $B$-fusion of order $v$ contribute to order $j=Pi+v$ of the
+contraction. At an insertion of weighted energy $m_0$ the merged energy is
+\begin{equation}
+            m_{\rm new}=m_0+m+j/P.                     \label{eq:motion-fusion}
+\end{equation}
+Indeed each fusion adds its order to the two incident energies, by
+Proposition~\ref{prop:fusion}. Nonnegativity of the two output energies
+bounds $i$ and $v$ below. Thus the pole orders are bounded, and only
+finitely many pairs $(i,v)$ contribute at each $j$.
+
+To reconstruct the value at the current position, use the following
+coefficients at the other marks of the cell.
+\begin{itemize}
+\item at every insertion, its entire principal part;
+\item at the designated vacuum collector, also the orders $0,\ldots,gL$,
+even after this collector has absorbed a table;
+\item at each seam, only the orders $j\le -L$ within its pole bound.
+\end{itemize}
+A function on which all these coefficients vanish has poles only at the
+at most $g$ seams, of order at most $L-1$ each. It has a zero of order
+at least $gL+1$ at the designated collector and no pole at infinity.
+The degree of the divisor of a nonzero rational function on the projective
+line is zero, so this function vanishes identically. On the space with
+the prescribed pole bounds, evaluation at the mover's position is
+therefore a linear combination of the listed coefficients. This
+combination acts entrywise, independently of the tables.
+
+A coefficient at an insertion is a sum over the compatible pairs
+$(i,v)$. For each pair, apply the two fusion maps and contract them
+with the moving and stationary tables, including the sign of their
+chosen order. A collision with a collector ends the move. At any
+other insertion only $j<0$ is used, so the combined table continues
+with at most the sum of the two original weighted energies. This step
+can absorb an auxiliary insertion, an original station awaiting its
+turn, or a private insertion left by an earlier crossing.
+
+\subsection{Crossing a seam}
+
+Suppose the selected coefficient has order $j\le-L$ at a seam of
+energy $e$. Only sphere $A$ is sewn there. The insertion on $B$ at the
+seam is the vacuum, so the $B$-expansion has Taylor orders $v\ge0$.
+For each such $v$ with $i=(j-v)/P$ integral and in the fusion range,
+the new $A$-energy at the seam satisfies
+\begin{equation}
+       e'=e+m_A+i\le e+m_A-2\mu\le e-\mu .             \label{eq:motion-drop}
+\end{equation}
+Terms with $e'<0$ vanish. With $i$ fixed, interpolate the $B$ Taylor
+coefficient using evaluations at fresh regular positions. Each resulting
+term has one private insertion of energy $m_B$ left behind, with
+vacuum on $A$. Its index is carried to the original table by an ordinary
+equality wire. We call this private insertion the \emph{residue} of the
+crossing.
+
+To identify the new moving table, fix its old $A$-state $x$ by
+linearity. Let $a,b$ range over wedge basis states of energies $e,e'$,
+respectively, and denote the two remaining sphere forms by
+$C_{\rm near},C_{\rm far}$, suppressing their spectator arguments.
+Lemma~\ref{lem:seam} gives the identity
+\[
+\begin{aligned}
+ &\sum_b C_{\rm near}(b)\sum_a [I_{e'}(a,x)]_b\,C_{\rm far}(a)\\
+ &\hspace{1em}=\alpha\sum_{t\le m_A}\sum_b C_{\rm near}(b)
+                      \sum_a [I_e(b,S_t x)]_a\,C_{\rm far}(a).
+\end{aligned}
+\]
+On the right, the inner sum is the Laurent coefficient of order
+$e-e'-t$ for an insertion $S_t x$ approaching $b$ on the far-side
+$A$-sphere. This order is integral, since $e'-e-m_A=i$ and $m_A-t$
+are integers for nonzero terms. Interpolate the coefficient by far-side
+regular evaluations, with vacuum in the corresponding $B$-position.
+The sum over $b$ sews the two spheres at energy $e'$. The new moving
+table, now on the far side with energies $(t,0)$, retains its ordinary
+ports and the wire to the residue (Figure~\ref{fig:motion-crossing}).
+All reordering signs depend only on the specified energies, and the
+identity remains valid when $x$ is coupled to the private index or to a
+spectator.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm, font=\small,
+ cell/.style={draw=ink!50,fill=ink!3,rounded corners=2pt},
+ tab/.style={draw=ink,fill=white,rounded corners=1pt,inner sep=3.2pt,
+             font=\small,align=center}]
+ \node[font=\small\bfseries] at (-3.62,1.45) {Near cell};
+ \node[font=\small\bfseries] at (3.62,1.45) {Far cell};
+ \draw[cell] (-5.36,-1.11) rectangle (-1.88,1.13);
+ \draw[cell] ( 1.88,-1.11) rectangle ( 5.36,1.13);
+ \node[align=center] at (-3.62,.55) {sewn sphere $A$};
+ \node[align=center] at ( 3.62,.55) {sewn sphere $A$};
+ \fill[sea] (-1.88,.55) circle (2pt);
+ \fill[sea] ( 1.88,.55) circle (2pt);
+ \draw[sea,line width=.9pt] (-1.88,.55) -- (1.88,.55);
+ \node[fill=white,inner sep=2pt,text=sea] at (0,.55) {seam energy $e'$};
+ \node[tab] (res) at (-3.62,-.40) {private residue\\ $(0,m_B)$};
+ \node[tab] (mov) at ( 3.62,-.40) {moving table\\ $(t,0)$};
+ \draw[dashed,rust,line width=.75pt] (res.east)--(mov.west);
+ \node[fill=white,inner sep=2pt,text=rust] at (0,-.40) {$B$-state index};
+\end{tikzpicture}
+\caption{A moving insertion of energies $(m_A,m_B)$ crosses from the near
+cell to the far cell. The solid wire identifies seam states of energy $e'\le e-\mu$. The dashed
+wire carries the old private state to the new moving table, whose sewn
+energy is $t\le m_A$.}
+\label{fig:motion-crossing}
+\end{figure}
+
+Both interpolations can be made over the same finite field $K$ as the
+original contraction. Multiplying by a common denominator embeds the
+space of rational functions bounded at infinity with prescribed poles
+into the polynomials of degree at most the total pole bound. Evaluation
+at more than that many regular field points is injective, so these
+evaluations span the dual and recover each required Laurent coefficient.
+Exclude all occupied positions. The map $z\mapsto z^P$ permutes $K$, so
+regular evaluations can use corresponding positions on both spheres.
+The accounting below bounds the degrees by $O_D(T)$ and the number of
+occupied positions per cell by a polynomial in $D$. One can first
+obtain those bounds over the algebraic closure and use them to choose
+$K$ before any interpolation. Fix an ordering of the field
+elements and, for each allowed set of regular points in this order,
+store the entries of one reconstruction matrix in the table dictionary. The local control need only
+name the selected point and check its availability.
+
+Allow at most $U=D^5$ crossings in a move. When this limit is reached,
+its current mark becomes a collector. Nonterminal fusions between
+successive crossings remove one stationary insertion each. A completed
+move never releases a new mover, so this procedure terminates in every
+summand.
+
+\subsection{Accounting for motion}
+
+We first bound the energy stored in the final insertions. An original
+station of arity $t_i$ has initial weighted energy $O((1+t_i/T)^2H)$.
+The auxiliaries contribute at most $DH$ per occupied cell. Also allocate
+one reserve $H$ to each original movable station. The initial insertion
+energy and reserves are $O(D^2H)$ per cell. Over all cells, including
+all networks in the batch, the bound is
+\[
+ O\!\left(H\left(D\,\#\{\text{occupied cells}\}
+                  +\#\{i\}+T^{-2}\sum_i t_i^2\right)\right)
+       =O(WH/T).
+\]
+
+A continuing fusion cannot increase the sum of participating energies,
+by Equation~\eqref{eq:motion-fusion}. Keep only the reserve of the
+current move. In a crossing the energy $m$ pays for $t\le m_A$ on the
+far side and $m_B/P$ at the near-side residue. At a final fusion the
+collector may gain up to $m+gL/P\le(1+3g)\mu$, since $H\ge1$ and
+$P\ge1$. Count energy at collectors with weight $1/(1+3g)$ and energy
+elsewhere, including reserves, with weight one. The sum cannot
+increase at any of the three operations or when a move expires. The
+total insertion energy in every resulting summand is consequently
+$O_g(WH/T)$.
+
+There is also a bound in each cell. A crossing brings in at most
+$t+H\le\mu$ of charge. By Equation~\eqref{eq:motion-drop} the seam loses
+at least this much energy. A cell has at most $g$ seams, each initially
+of energy $O_g(D^2H)$. Adding the initial charge within the cell bounds
+its current insertion energy by $O_g(D^2H)$ at every step. Moreover,
+each crossing decreases the seam energy by at least $H$, so throughout
+the construction a cell has $O_g(D^2)$ crossing incidences. Only these
+incidences can introduce new stationary residues. With $H=O_D(T)$ and
+$P$ fixed, these energy and mark bounds give the asserted $O_D(T)$ total
+pole bound. The number of expired moves over all cells is at most the
+total number of crossings divided by $U$. Including the initial immobiles
+and designated collectors, the total number of collectors is $O(W/(DT))$.
+
+It remains to route the ordinary wires created in the expansion. By
+Equation~\eqref{eq:plant-widths}, the private state left at a crossing
+uses $O_g(DT/\sqrt F+1)$ bits. One endpoint follows the mover. The
+other stays at the residue until another insertion absorbs it, then
+travels with that insertion. A residue that can still be absorbed
+carries only the endpoint created at its own crossing. Once a moving
+endpoint finishes a move, its collector stays fixed. A move visits at
+most $U+1$ cells counting repetitions, collecting at most $O_g(D^2)$
+residue endpoints per visit and creating at most $U$ of its own.
+Hence it carries $O_g((U+1)D^2)$ endpoints along any one hop. Using
+the bound on incident crossings and including terminations gives the
+looser bound $O_g((U+1)D^6)$ local wire segments per cell. Successive
+motions within a single cell require only one local connection. With
+$F$ from Section~\ref{subsec:planting}, these segments have total width
+$O(D^{-2\ell-1}T)+O_D(1)$ there.
+
+The private-selector wires start at marks that read them and at the
+stations checking the selectors and evaluating the sphere forms. Their
+endpoints follow the same paths. Each cell starts with polynomially
+many such ports in $D$ and the number of chunks, so the path and
+crossing bounds give a polynomial bound in the same quantities on
+incident selector segments and copies. This count is independent of
+$b$ and of the selector rate. After fixing the number of chunks, choose
+the rate small enough that the total selector width, including equality
+copies, is at most $D^{-2\ell}T$ per cell. The next section converts the
+remaining energy levels into table arities.

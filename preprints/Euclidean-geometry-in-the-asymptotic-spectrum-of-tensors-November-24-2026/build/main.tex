@@ -1,0 +1,44 @@
+\documentclass[11pt]{article}
+\input{style}
+\articletitle{Euclidean geometry \titlebreak in the asymptotic spectrum of tensors}{Euclidean geometry in the asymptotic spectrum}
+\newcommand{\paperidentifier}{Euclidean-geometry-in-the-asymptotic-spectrum-of-tensors-November-24-2026}
+\hypersetup{pdfsubject={\paperidentifier}}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Over any field, we assign costs to tensors with indices placed in a real
+Hilbert space so that a bit shared by two sites costs exactly their distance.
+On each finite set of two or more sites, the costs are scaled logarithms of
+invariants that add under direct sums, multiply under tensor products, and
+cannot increase under local linear maps. In every such system, a bit shared
+among finitely many sites costs the mean width of their convex hull,
+normalized to give a segment its length. For a triangle this is half its
+perimeter. Companion papers use these costs to compare tensors with the
+networks that produce them, yielding lower bounds for arithmetic circuits
+and an exponential bound on the size of sunflower-free set families.
+\end{abstract}
+
+\input{intro}
+
+\clearpage
+{\small\tableofcontents}
+\clearpage
+\part{The geometry of spectral prices}
+\input{prices}
+\input{curvature}
+\input{ew}
+\input{hilbert}
+\input{ports}
+\input{catalysts}
+\input{protocol}
+\input{width}
+\input{compressor}
+\input{exact}
+\input{descent}
+\input{diagonal}
+
+\bibliographystyle{plainnat}
+\bookmarksetup{startatroot}
+\bibliography{references}
+\end{document}

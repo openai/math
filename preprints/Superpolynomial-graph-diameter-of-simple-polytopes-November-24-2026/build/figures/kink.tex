@@ -1,0 +1,21 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=.8cm,font=\small,>=Stealth]
+  \fill[lagoon!9] (-2.9,2.63) -- (-2.9,2.45) -- (0,0)
+       -- (2.9,2.45) -- (2.9,2.63) -- cycle;
+  \draw[lagoon,thick] (-2.9,2.45) -- (0,0) -- (2.9,2.45);
+  \draw[ink!65,dotted] (0,-1.05) -- (0,2.64);
+  \draw[ember,thick,dashed] (0,0) -- (1.21,-1.02);
+  \fill[ink] (0,0) circle[radius=2pt];
+  \node[left=2pt,ink] at (0,-.2) {\(x=a\)};
+  \node[ink] at (0,1.7) {feasible values of \(z_i\)};
+  \node[lagoon,anchor=west] at (3.05,2.4) {\(z_i\ge |x-a|\)};
+  \node[ember,anchor=west] at (1.32,-.91) {affine continuation};
+\end{tikzpicture}
+\caption{A coordinate that attains its lower bound at \(x=a\) cannot be affine
+through the crossing. Continuing the left branch past \(a\) violates the
+right-hand inequality. More generally, the two inequalities require an
+affine line through the contact point to have slope at most \(-1\) on the
+left and at least \(1\) on the right.}
+\label{fig:kink}
+\end{figure}

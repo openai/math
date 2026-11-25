@@ -1,0 +1,124 @@
+\section{From crossings to diameter}\label{sec:diameter}
+
+A move in a face can be drawn as a straight chord. We force a path of
+such chords to change direction many times as it crosses the level
+sets of a linear functional. The construction starts with a polyhedron
+\(Q\) in coordinates \((x,z)\in\mathbb R\times\mathbb R^p\). We call
+\(x\) the time and write \(Q(x)=\{z:(x,z)\in Q\}\). A \emph{crossing}
+of a closed interval is a polygonal path in \(Q\) that joins its two
+endpoint slices and stays between them. Its time coordinate may reverse
+direction any number of times. A \emph{segmentation} partitions the
+parameter interval into affine pieces. Its interior partition points
+are the \emph{breaks}.
+
+\begin{theorem}[Finite-scale crossing bound]\label{thm:seed}
+Fix an integer \(K\ge2\) and \(0<\eta<1\). There are an integer
+\(L\ge2\) and a constant \(\gamma>0\) with the following property. For
+every sufficiently large power \(N=L^h\), every integer \(R\ge1\), and
+every choice of \(N\) pairwise disjoint nondegenerate closed intervals in
+\((0,1)\), there is a polyhedron \(Q\) defined by \(F\) inequalities of
+the form \(c\cdot z\ge\ell(x)\), with \(c\ge0\) nonzero and \(\ell\)
+affine. Each coordinate of \(z\) has an individual lower bound among
+these rows, and
+\[
+                  p+1\le N^\eta,\qquad F+3\le R N^{1+\eta}.
+\]
+Set \(k=\lfloor N^\gamma\rfloor\). Suppose that along a crossing, at
+every point \((x,z)\), the smallest face of \(Q(x)\) containing \(z\)
+has dimension at most \(k+1\). Every segmentation of a crossing of
+\([0,1]\) has at least \(RN^K\) pieces. Every segmentation of a
+crossing of one of the prescribed intervals has at least \(RN^{K-1}\)
+interior breaks. Both bounds hold in either orientation.
+\end{theorem}
+
+Section~\ref{sec:recursion} proves Theorem~\ref{thm:seed} using the
+scheduler of Section~\ref{sec:framework}. The distinction between pieces
+and interior breaks matters when we add the costs of separate intervals.
+A break inside a trimmed crossing is still a break of the original path.
+
+\subsection{A bounded simple rational realization}
+
+\begin{lemma}\label{lem:cap}
+For \(K,\eta,L,\gamma,N,R,k\) as in Theorem~\ref{thm:seed} there is a bounded simple rational polytope of dimension at most \(N^\eta\) with at most \(R N^{1+\eta}\) facets and a linear functional \(x\) of positive range. Every pair of vertices on its opposite extreme \(x\)-faces has \(k\)-move distance at least \(RN^K\). More generally, two vertices whose \(x\)-coordinates differ by a fraction \(g\) of the full range have distance at least
+\[
+                         RN^{K-1}\max\{0,Ng-8\}.
+\]
+\end{lemma}
+\begin{proof}
+Prescribe intervals \(I_i=[(i+1/4)/N,(i+3/4)/N]\) inside cells \(C_i=[i/N,(i+1)/N]\), \(0\le i<N\). Add the bounds
+\[
+             -1/N\le x\le1+1/N,\qquad \sum_{j=1}^p z_j\le M .
+\]
+The individual lower bounds on the \(z_j\) are uniform on this compact
+time interval. The sum bound then gives a bounded polytope. At each
+extreme time all original rows can be made strict by taking all
+coordinates \(z_j\) equal and sufficiently large. Choose \(M\) so that
+these two witnesses satisfy the sum cap strictly as well. The capped
+polytope has interior and both extreme time faces are facets.
+
+\emph{Stability of the crossing costs.}
+Keep the two time bounds fixed and perturb the right-hand sides of the other rows. The strict witnesses persist. We claim that the following two costs hold for all sufficiently small such perturbations. Across the full time range, polygonal paths whose individual segments lie in faces of dimension at most \(k\) require at least \(RN^K\) segments. Across each \(C_i\), such paths staying in the cell require at least \(RN^{K-1}\) interior breaks. Endpoints here may be arbitrary points of the capped polytope.
+
+Suppose a sequence of perturbations tends to zero while violating one
+of these bounds. The offending paths have boundedly many pieces.
+Pass to a subsequence with the same number of pieces throughout. Put
+\(D=p+1\). On each piece choose \(\max\{D-k,0\}\) independent row normals
+tight along it, which is possible by the face-dimension bound. The
+normals do not vary with the perturbation. A further subsequence fixes
+the choice of rows for every piece. All endpoints belong to one compact
+set by the individual lower bounds and the sum cap. Taking their limits
+gives a segmented path in the unperturbed capped polytope. Each piece
+retains its selected equalities, and collapsed pieces can be discarded.
+
+The space of directions annihilating the selected normals has dimension
+at most \(k\). Restricting to fixed-time directions can only decrease
+that dimension. The time bounds impose no constraint on fixed-time directions. Dropping the sum bound increases their dimension by at most one. Thus in the original slice the minimal face containing each point of the limiting path has dimension at most \(k+1\). Trimming the full traversal to \([0,1]\) or the cell traversal to \(I_i\) cannot increase the number of pieces or interior breaks. To trim, take the last hit of the near endpoint before the first hit of the far endpoint. This contradicts Theorem~\ref{thm:seed}. There are only finitely many cells, so one perturbation tolerance suffices.
+
+\emph{Simplicity and rationality.}
+Choose a perturbation in this neighborhood for which every simultaneously tight set of normals is independent. For a minimally dependent set, consistency of its equalities imposes a nontrivial linear equation on the right-hand sides. This rules out a proper affine hyperplane of choices unless the dependence involves only the two time bounds, whose equalities are inconsistent. Avoid the finite union of these hyperplanes. Every vertex now lies on exactly \(p+1\) independent rows, and the polytope is simple.
+
+We can approximate this realization by a rational one with the same face lattice and move the \(x\)-coordinate of every vertex by less than \(1/(4N)\), keeping the time rows fixed. Here is a direct justification. Nearby systems remain uniformly bounded, since otherwise a normalized unbounded sequence of feasible points would give a nonzero recession direction in the limit. Every old vertex persists continuously as the intersection of its defining rows, with all other inequalities strict. Any sequence of new vertices would limit, after a subsequence, to a point with the same \(p+1\) specified tight rows. These rows are independent in the original perturbed system by its genericity, so the limit was one of the old vertices and its continuation accounts for that vertex. The active row sets and hence all face incidences persist. Rational coefficients are dense in this neighborhood. Both time facets still contain their corresponding vertices.
+
+\emph{Separating objective levels.}
+Transfer any walk by \(k\)-moves in the rational polytope to the real polytope by the face isomorphism. Join successive vertices there by chords. The extreme-face cost is preserved. If the rational endpoints differ in time by \(g(1+2/N)\), their corresponding real endpoints differ by at least \(g(1+2/N)-1/(2N)\). At most \(2/N\) of this time interval lies outside \([0,1]\), and at most two partial cells need be discarded. The remaining interval contains at least \(\max\{0,Ng-8\}\) complete cells. Orient the path from the lower-time endpoint to the higher one. For
+each complete cell, stop its traversal at the first hit of the upper
+endpoint and start it at the last preceding hit of the lower endpoint.
+By this start the path has already reached the preceding cell's upper
+endpoint. Thus the selected traversals have disjoint parameter
+interiors even when the path backtracks. Each contributes its own
+\(RN^{K-1}\) interior breaks to the chord segmentation.
+\end{proof}
+
+\subsection{Prescribing dimension and facet count}
+If \(A,B\) are polytopes, every face of \(A\times B\) is a product of faces. Hence projection of a face cannot increase dimension, and projection of a path cannot increase its number of moves. Facet counts and dimensions add. We use rational polygons with any prescribed number \(t\ge3\) of sides, for instance the convex hull of \(t\) distinct rational points on a circle.
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+For each integer \(j\ge2\) use \(K=j+2,\ \eta=1/(4j),\ R=1\). For a target facet count \(n\), choose the largest power \(N\) of the resulting \(L\) with \(N^{1+\eta}\le n/2\). At fixed \(j\),
+\[
+ (n/2)^{1/(1+\eta)}/L<N\le n,\qquad N\ge n^{1-1/j}
+\]
+for all sufficiently large \(n\). Pad the seed of Lemma~\ref{lem:cap}, with \(f\le n/2\) facets, by a product with an \((n-f)\)-gon. Keep the objective \(x\) on the seed factor.
+
+Choose strictly increasing thresholds \(n_j\to\infty\) so that for \(n\ge n_j\) the seed exists, the displayed estimates hold, \(\lfloor N^\gamma\rfloor\ge s(n)\), and \(N^\eta+2\le n^{1/j}\). At each fixed \(j\), \(N\) grows as a positive power of \(n\), whereas
+\(s(n)=n^{o(1)}\). Hence these thresholds exist and can be chosen
+before specifying the objective gap. On \([n_j,n_{j+1})\) use the construction for \(j\). Its dimension is \(n^{o(1)}\), and \(N\ge n^{1-1/j}\). Fix \(0<\alpha<1\). For \(g\ge n^{-\alpha}\), \(Ng-8\ge1\) eventually as \(j\to\infty\). Lemma~\ref{lem:cap} gives distance at least \(N^{j+1}\ge n^{(1-1/j)(j+1)}\), as claimed.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:excess}]
+Here \(d\) and \(E\) are prescribed separately. We use \(N\) to fit
+both dimension and facet budgets, and \(R\) to convert the unused facet
+budget into distance. In particular \(R\) supplies the factor \(E\)
+even when \(E\) is arbitrarily large compared with \(d\). Fix \(\eta=1/2\), and choose \(K\) so large that \(u=K-1-\eta\) satisfies \(u/(1+\eta)\ge a\) and \(u/\eta\ge b\). Take the largest permitted power \(N\) of \(L\) at most
+\[
+ X=\min\{(E/16)^{1/(1+\eta)},(d/16)^{1/\eta}\},\qquad
+ R=\left\lfloor E/(4N^{1+\eta})\right\rfloor .
+\]
+Here \(X/L<N\le X\), \(R\ge E/(8N^{1+\eta})\), and \(N\) is sufficiently large uniformly as \(m=\min(d,E)\) tends to infinity. The seed has dimension \(d_0\le d/16\) and \(f\le E/4\) facets. Take its product with a simplex of dimension \(d-d_0-2\) and a polygon with \(E+d_0-f+1\) sides. Both factors exist for large \(m\). The product has dimension \(d\) and exactly \(d+E\) facets. The distance inherited from the seed is at least
+\[
+     RN^K\ge EN^u/8\ge cE\min\{E^a,d^b\}
+\]
+for a constant \(c>0\). Since \(N\ge c' m^{1/(1+\eta)}\), any fixed \(0<\delta<\gamma/(1+\eta)\) gives \(\lfloor m^\delta\rfloor\le k\) for large \(m\).
+\end{proof}
+
+In particular, for each prescribed \(s(m)=m^{o(1)}\) there exists \(H(m)=m^{\omega(1)}\) such that the distance is at least \(E H(m)\) for \emph{all} sufficiently large \(m=\min(d,E)\), allowing \(s(m)\)-moves. Apply Theorem~\ref{thm:excess} with \(a=b=j+1\) and increase \(j\) only after its constants and move allowance guarantee \(H(m)=m^j\). The thresholds depend only on \(m\), so this conclusion is uniform over
+all pairs \((d,E)\) with the same minimum.

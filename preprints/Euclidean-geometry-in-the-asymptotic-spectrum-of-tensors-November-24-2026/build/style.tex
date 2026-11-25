@@ -1,0 +1,67 @@
+% Shared preamble
+\usepackage[papersize={8.5in,11in},textwidth=437pt,textheight=634pt,hcentering,top=81pt,headsep=22pt,headheight=16pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{mathtools,amssymb,amsthm}
+\usepackage{microtype}
+\usepackage{booktabs,array}
+\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+\usepackage[shortlabels]{enumitem}
+\usepackage{needspace}
+\usepackage{tikz}
+\usetikzlibrary{calc,positioning,arrows.meta}
+\definecolor{ink}{HTML}{213650}
+\definecolor{sea}{HTML}{19706F}
+\definecolor{rust}{HTML}{AA5034}
+\usepackage[numbers,sort&compress]{natbib}
+\renewcommand\bibfont{\small}
+\usepackage[nottoc,notlof,notlot]{tocbibind}
+\usepackage{fancyhdr}
+\usepackage{url}
+\usepackage[colorlinks,linkcolor=ink,citecolor=sea,urlcolor=ink,psdextra]{hyperref}
+\usepackage{bookmark}
+
+\fancyhf{}
+\newcommand\shorttitle{OpenAI}
+\fancyhead[L]{\small\scshape\shorttitle}
+\fancyhead[R]{\small\thepage}
+\renewcommand\headrulewidth{0pt}
+\pagestyle{fancy}
+\newcommand{\articletitle}[2]{\title{\fontsize{20}{24}\selectfont\bfseries\color{ink}#1}\renewcommand\shorttitle{#2}%
+  \hypersetup{pdftitle={#1},pdfauthor={OpenAI}}}
+\author{OpenAI}
+\date{November 24, 2026}
+\setcounter{tocdepth}{1}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\numberwithin{equation}{section}
+\emergencystretch=1em
+\clubpenalty=3500
+\widowpenalty=3500
+\raggedbottom
+
+% For numbers of results in companion papers
+\makeatletter
+\newcommand\ext[2]{\@ifundefined{ref@#1:#2}{??\@latex@warning{Undefined companion label #1:#2}}{\csname ref@#1:#2\endcsname}}
+\newcommand\extdef[3]{\@namedef{ref@#1:#2}{#3}}
+\makeatother
+\input{locators}
+
+\newcommand\titlebreak{\texorpdfstring{\\}{}}
+\settocbibname{References}
+
+% Lightweight contents, with numbered bookmarks
+\bookmarksetup{numbered}
+\makeatletter
+\renewcommand\@pnumwidth{2.1em}
+\renewcommand\@dotsep{12}
+\renewcommand*\l@section[2]{\addvspace{.35em}\@dottedtocline{1}{\z@}{2em}{#1\nobreak\hspace{.5em}}{#2}}
+\makeatother

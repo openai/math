@@ -1,0 +1,51 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+  row zero/.style={circle,draw=ink,fill=ink,inner sep=0pt,minimum size=4.8pt},
+  row one/.style={rectangle,draw=sea,fill=white,inner sep=0pt,minimum size=4.8pt},
+  supplier/.style={circle,draw=ink,fill=white,inner sep=0pt,minimum size=7pt,line width=.9pt},
+  leg/.style={draw=ink!60,line width=.55pt},
+  rank wire/.style={draw=rust,line width=1.5pt}]
+\foreach \panel/\shift in {star/0,cut/5.8}{
+  \begin{scope}[xshift=\shift cm]
+    \foreach \i/\xx/\yy in {1/1.4/.90,2/1.85/0,3/1.4/-.90}{
+      \coordinate (\panel-l\i) at (-\xx,\yy);
+      \coordinate (\panel-r\i) at (\xx,\yy);
+    }
+  \end{scope}
+}
+\node[text=ink] at (0,1.47) {\textbf{One supplier}};
+\node[text=ink] at (5.8,1.47) {\textbf{Two suppliers for a cut}};
+\coordinate (origin) at (0,0);
+\coordinate (supplier0) at (5.04,0);
+\coordinate (supplier1) at (6.56,0);
+\foreach \i in {1,2,3}{
+  \draw[leg] (origin) -- (star-l\i);
+  \draw[leg] (origin) -- (star-r\i);
+  \draw[leg] (supplier0) -- (cut-l\i);
+  \draw[leg] (supplier1) -- (cut-r\i);
+}
+\draw[rank wire] (supplier0) -- (supplier1)
+   node[midway,above=3pt,font=\footnotesize,text=rust] {$R$ labels};
+\path (origin) -- (star-r2) node[midway,above=1pt] {$1$};
+\path (supplier1) -- (cut-r2) node[midway,above=1pt] {$r_i$};
+\foreach \panel in {star,cut}{
+  \foreach \i in {1,2,3}{
+    \node[row zero] at (\panel-l\i) {};
+    \node[row one] at (\panel-r\i) {};
+  }
+  \node[right=2pt] at (\panel-r2) {$x_i$};
+}
+\node[supplier,label=below:$o$] at (origin) {};
+\node[supplier,label=below:$y_0$] at (supplier0) {};
+\node[supplier,label=below:$y_1$] at (supplier1) {};
+\end{tikzpicture}
+\caption{Two supplies on the same row sites, drawn schematically for one
+copy. Filled circles and open squares indicate the two sides of a balanced cut.
+At the tip $o$, the total cost of the legs is at most $d\mathcal F(1)$.
+Placing a supplier $y_b$ on each side reduces the sum of the leg bounds
+to $\sum_i\mathcal F(r_i)$, where $r_i$ is the distance from $x_i$ to
+its supplier. The rank index travels on the wire joining the suppliers
+at a cost of at most $\tau\log R$.}
+\label{fig:supply}
+\end{figure}

@@ -1,0 +1,31 @@
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[
+  font=\small,align=center,
+  repair box/.style={draw=#1,fill=#1!4,rounded corners=1.5pt,
+    inner xsep=6pt,inner ysep=4pt,text width=4.1cm,minimum height=1.26cm},
+  repair path/.style={-{Stealth[length=1.7mm]},draw=ink,line width=.55pt},
+  repair note/.style={font=\footnotesize,inner sep=2pt,align=center}
+]
+\node[anchor=south,font=\small\bfseries] at (0,.89) {Ordinary coordinates};
+\node[anchor=south,font=\small\bfseries] at (7.7,.89) {At one frequency \(\nu\)};
+\node[repair box=sea] (checks) at (0,0)
+  {Form \(HX\) and \(HPX\),\\ each on \(s\) rows.};
+\node[repair box=rust] (recover) at (7.7,0)
+  {Use \(H\widehat{PX}-zH\widehat X\)\\ to recover \(e_J\).};
+\node[repair box=rust] (coeffs) at (7.7,-1.95)
+  {Choose \(a\) so \((H^{\mathsf T}a)_i=D_z(p_i)e_i\) on \(J\). Return \(a\) and \(za\).};
+\node[repair box=sea] (lift) at (0,-1.95)
+  {Lift by \(H^{\mathsf T}\) to obtain\\ \(Z\) and \(FZ\) on all \(W\) rows.};
+\draw[repair path] (checks.east) -- node[repair note,above]{\(\mathcal S\)}
+   node[repair note,below]{\(2s\) rows} (recover.west);
+\draw[repair path] (recover.south) -- (coeffs.north);
+\draw[repair path] (coeffs.west) -- node[repair note,above]{\(\mathcal S^{-1}\)}
+  node[repair note,below]{\(2s\) rows} (lift.east);
+\end{tikzpicture}
+\caption{Repairing the predictor on \(W\) independent inputs. Only
+\(2s\) rows cross into spectral coordinates and back. The table
+prescribes the lifted correction on \(J(\nu)\). At every other row
+\(p_i=z\), so subtracting \(PZ-FZ\) has no effect there.}
+\label{fig:repair-table}
+\end{figure}

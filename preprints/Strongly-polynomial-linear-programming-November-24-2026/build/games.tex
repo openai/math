@@ -1,0 +1,534 @@
+\section{Games on graphs}\label{sec:games}
+
+In a mean-payoff game, two players choose a walk in a directed graph.
+Max wants the walk to earn a high average reward and Min wants it to
+earn a low one. We compute the value from every starting state and
+optimal policies for both players. The algorithm is strongly polynomial
+when each action determines its outcome. If an action draws a random
+outcome, the step bound also counts the bits specifying its
+probabilities. The proof combines two earlier results. A fixed-point
+computation proposes actions for the two players, and linear programming
+determines what each proposed policy guarantees against a best response.
+
+\paragraph{Arena and payoffs.}
+The arena is finite and explicit. Each of its \(n\ge1\) states belongs
+to Max or Min, whose turn it is to choose an action there. Every state
+has at least one action. An action \(a\) has a nonempty finite set
+\(E_a\) of outcomes. Outcome \(e\) leads to state \(j(e)\) and pays a
+real reward \(r_e\). Conditional on the entire history and the chosen
+action, \(e\) has probability \(p_e\). Each action belongs to a single
+state and each outcome to a single action. Players observe all actions
+and outcomes and may randomize as a function of the entire history.
+A \emph{policy} is a pure positional strategy, specifying one action
+at each state owned by that player.
+
+For a play with outcomes \(e_1,e_2,\ldots\), the ordinary mean payoff is
+\[
+    \liminf_{N\to\infty}\frac1N\sum_{k=1}^N r_{e_k}.
+\]
+We also allow \emph{priority mean payoff} \cite{GZ}. Each outcome has
+a weight \(w_e>0\) and a positive integer priority \(q_e\). Let
+\(q=\liminf_k q_{e_k}\), the least priority visited infinitely often.
+The payoff is
+\[
+  \liminf_{N\to\infty}
+  \frac{\sum_{k\le N:\,q_{e_k}=q} w_{e_k}r_{e_k}}
+       {\sum_{k\le N:\,q_{e_k}=q} w_{e_k}} .
+\]
+The denominator is eventually positive. Equal priorities and unit weights
+give ordinary mean payoff. Priorities are discrete input and can be
+replaced by their ranks \(1,\ldots,Q\), with \(Q\) at most the number
+of outcomes. In a \emph{discounted} game, each outcome has a discount
+factor \(0\le\beta_e<1\). Its payoff is
+\[
+   \sum_{k\ge1} r_{e_k}\prod_{l<k}\beta_{e_l}.
+\]
+For each of these payoffs Max maximizes its expectation and Min
+minimizes it.
+
+\begin{theorem}[Values and optimal policies]\label{thm:games}
+For discounted and priority mean-payoff games on finite turn-based
+arenas of perfect information, there is a deterministic algorithm that
+computes the exact value vector \(v\) and a pair of policies. From
+every initial state \(i\), the Max policy guarantees expected payoff
+at least \(v_i\) and the Min policy guarantees at most \(v_i\) against
+every strategy of the opposing player.
+\begin{itemize}
+ \item In a two-player game with binary rational transition
+ probabilities, the step bound is polynomial in the size of the arena,
+ including its discrete data and the transition probability bit
+ lengths. Rewards, weights, and discount factors may be arbitrary real
+ scalars.
+ \item In a Markov decision process, where only one player has choices,
+ the step bound is polynomial in the size of the arena and its discrete
+ data even for arbitrary real transition probabilities supplied as scalars.
+\end{itemize}
+On rational input all intermediate numbers and outputs have bit lengths
+polynomial in the complete input length. In particular, both cases have
+polynomial bit complexity on binary rational input.
+\end{theorem}
+
+In a deterministic arena there is one outcome per action, so the
+two-player algorithm is strongly polynomial, including for arbitrary
+real rewards. Against pure strategies the policy guarantees hold for
+the resulting individual play. For both mean-payoff objectives the
+same values and policies apply when the liminf is replaced by a limsup.
+
+\paragraph{Reachability and parity.}
+Making a target absorbing and assigning reward one there and zero
+elsewhere turns the mean payoff of each play into the indicator of
+reaching the target. Theorem~\ref{thm:games} therefore gives a
+polynomial-time algorithm for simple stochastic games, whose threshold
+problem Condon placed in NP \(\cap\) coNP \cite{Cond}. For reductions
+among simple stochastic games, discounted games and mean-payoff games,
+see Zwick--Paterson \cite{ZP} and Andersson--Miltersen \cite{AM}.
+
+In a parity game Max wins when the least priority occurring infinitely
+often is even. Set \(r_e=\mathbf 1_{\{q_e\ {\rm even}\}}\) before
+relabeling the priorities. The priority mean payoff of each play then
+equals its win indicator \cite{GZ}, so the algorithm computes the
+optimal win probability even with binary rational transitions.
+The deterministic parity problem also reduces to ordinary deterministic
+mean payoff with exponentially large rewards \cite{Jur}. Earlier
+quasipolynomial algorithms for deterministic parity games include the
+breakthrough of Calude, Jain, Khoussainov, Li and Stephan \cite{Cal}
+and Parys's recursive approach \cite{Parys}. The distinct
+\emph{mean-payoff parity} objective imposes a parity condition on a
+mean-payoff game \cite{OAIMe}.
+
+\paragraph{Earlier algorithms.}
+Shapley \cite{Shap} introduced discounted stochastic games and the
+contraction argument, allowing simultaneous moves. Gillette \cite{Gillet}
+studied long-run average reward. Positional optimality for
+perfect-information games has a long history, including
+Liggett--Lippman \cite{LL} and, for deterministic games,
+Ehrenfeucht--Mycielski \cite{EM}.
+
+Pseudopolynomial algorithms for integer rewards use finite horizons
+\cite{ZP} or an energy objective with initial credit \cite{BC}.
+See also \cite{GKK,Puri} and algorithms parameterized by the number
+of chance positions \cite{BEGM,AGKS}. Randomized strategy iteration
+draws on subexponential simplex methods \cite{Kalai,MSW,HZ}. It has
+been applied to simple stochastic games \cite{Lud} and mean-payoff
+games \cite{BSV,BV}, with an LP-type interpretation \cite{Hal} and
+improved expected bounds \cite{Uz}. Complementarity formulations are
+available for discounted and simple stochastic games
+\cite{JSav,HIJ,GR}, although their matrices can fail the monotonicity
+hypothesis of Section~\ref{sec:quadratic} \cite[Theorem~23]{HIJ}.
+
+Ohlmann \cite{Ohl} gave a symmetric recursive algorithm for
+deterministic mean-payoff games. Recent deterministic and randomized
+algorithms give quasipolynomial bounds for binary-encoded integer
+rewards \cite{OAIDe,OAIRa}, and a deterministic quasipolynomial
+bound is known for turn-based stochastic games \cite{OAITu}. For
+connections with contractions see \cite{SF}. Truffet's proposals
+use max-atoms and tropical optimization \cite{Tru1,Tru2}. See
+\cite[Section~1 and Appendix~A]{OAIRa} for discussion.
+
+\paragraph{Proof of Theorem~\ref{thm:games}.}
+We first solve the discounted fixed-point equation when its slopes
+have short binary encodings. Taking discounts to one then yields
+mean-payoff values and policies by Blackwell optimality. To remove
+the dependence on discount bits, we use LP to evaluate a fixed policy
+with arbitrary real data. These one-player evaluations give lower and
+upper guarantees on the two-player value. A clipped fixed-point
+computation halves the gap between the guarantees, and a bound on
+the possible scales of a positive gap gives exact termination.
+
+\subsection{Discounted values and the mean-payoff limit}
+\label{sec:shortslopes}
+
+At a state \(i\), write \(\mathrm{ext}_i\) for the maximum over actions
+if Max owns \(i\) and for the minimum if Min owns it. The Bellman
+(Shapley) operator for a discounted game is
+\begin{equation}\label{eq:T}
+ T_i(x)=\mathop{\mathrm{ext}_i}_{a\text{ at }i}
+        \sum_{e\in E_a}p_e(r_e+\beta_e x_{j(e)}).
+\end{equation}
+It preserves the coordinate order and contracts the sup norm by a
+factor at most \(\bar\beta=\max_e\beta_e<1\). Suppose \(x\le T(x)\).
+At each Max state choose an action attaining the maximum. At a Min
+state every action has score at least \(x_i\). Under this Max policy,
+iteration of the one-step inequality gives expected discounted reward
+through \(N\) steps, including discounted terminal value \(x\), at
+least \(x_i\) from start \(i\). The terminal contribution has magnitude
+at most \(\bar\beta^N\|x\|_\infty\), so the same guarantee holds for
+infinite play. Reversing the inequality gives Min's upper guarantee.
+At the fixed point these bounds coincide. An extremizing action in
+each state gives an optimal policy for its owner.
+
+Suppose the discount factors and probabilities are given as binary
+rationals. Scale the rewards by \(1/S\), where
+\[
+ S=\max\{1,\max_e |r_e|/(1-\beta_e)\}.
+\]
+Every term \(r_e/S+\beta_e x_{j(e)}\) then lies in \([-1,1]\) on the
+unit cube. The circuit for~\eqref{eq:T} has binary rational slopes
+and arbitrary real offsets, as required by Proposition~\ref{prop:asym}.
+Multiplying its fixed point by \(S\) recovers the value vector.
+The extremizing actions survive the scaling. The arithmetic uses
+only a constant number of layers of scalar formulas and subroutine calls.
+
+The same contraction estimate gives an approximation result for
+discounted games \emph{with simultaneous moves}. Here the players
+choose independently randomized actions at each state, and the
+outcome distribution depends on the pair of actions. All history is
+public. Shapley's operator replaces the extremum in~\eqref{eq:T} by
+the value of the one-stage matrix game \cite{Shap}. Optimal mixed
+actions at its fixed point give the same finite-horizon guarantee.
+With the scaling above, the map preserves the cube and contracts it by
+\(\bar\beta\), since an entrywise perturbation of size \(\epsilon\)
+changes a matrix-game value by at most \(\epsilon\). For binary
+rational input of length \(L\), \(1-\bar\beta\ge 2^{-L}\). Each
+evaluation can use bit-polynomial LP. Theorem~\ref{thm:contraction}
+therefore approximates the value vector to absolute error \(2^{-k}\)
+in bit time polynomial in \(L\) and \(k\). Undoing the scaling costs
+only polynomially many extra bits of accuracy. See
+\cite{EPRY,BFGMS,FH} for related fixed-point methods.
+
+\paragraph{From discounts to mean payoff.}
+In a turn-based priority game, introduce the parameter \(t>0\) and set
+\begin{equation}\label{eq:gz}
+   \beta_e=1-w_e t^{q_e},\qquad
+   \widetilde r_e=(1-\beta_e)r_e .
+\end{equation}
+Use \(q_e\) after relabeling. For small \(t\), the resulting discounted
+payoff is the expected reward in a process that stops after outcome
+\(e\) with probability \(1-\beta_e\) and pays \(r_e\) upon stopping
+\cite{GZ}. Lower priorities have larger stopping probabilities as
+\(t\) tends to zero.
+
+For binary rational probabilities and weights, the slopes in the
+discounted operator are polynomials with binary rational coefficients.
+The scaling \(S=\max\{1,\max_e|r_e|\}\) works for every small \(t>0\).
+Proposition~\ref{prop:asym} supplies the discounted values as rational
+functions of \(t\) and a pair of \emph{Blackwell optimal} policies,
+optimal for all sufficiently small \(t>0\). For background on
+Blackwell optimality see \cite{Bla,AHM,GZDet,GZMD}. Determinant signs
+have also been used to establish stabilization as discounts tend to one
+\cite{AM,GGK}. See also \cite[Section~2.1]{OAITu}.
+
+Gimbert and Zielonka's Theorem~6 \cite{GZ} transfers these policies
+to priority mean payoff and identifies the values with the limits of
+the discounted values. Their theorem uses rewards, priorities and
+weights on states. To apply it here, duplicate each state to record
+its incoming outcome. Give each original state an additional starting
+copy with fixed dummy data. From a specified starting copy the observed
+histories in the two games determine one another, and an original
+policy lifts by ignoring the incoming outcome. The initial state
+datum adds a fixed first discounted payoff and multiplies the
+remaining payoff by a positive factor tending to one. The additive
+term tends to zero. Thus the lifted policies are Blackwell optimal,
+and the extra initial datum does not affect priority mean payoff.
+Applying the theorem with parameter \(1-t\) gives its limsup
+conclusion. Exchanging players and negating the rewards gives the
+liminf conclusion with the same policies.
+
+The transfer holds for arbitrary real game data. The encoding
+assumptions above enter the computation of the Blackwell policies.
+Once the value functions are known, their limits are obtained from
+their lowest nonzero coefficients. The values are bounded, and an
+identically zero numerator gives value zero.
+
+\subsection{The one-player case}\label{sec:mdp}
+
+In a Markov decision process (MDP) only one player chooses among
+actions. After negating rewards if necessary, take this player to be
+Max. We allow arbitrary real probabilities. More generally, we allow
+rewards and discounts to be polynomials in \(t\) of explicitly given
+degree, provided that the discounts belong to \([0,1)\) for all
+sufficiently small \(t>0\). We will compute a single optimal policy
+and rational value functions valid throughout such an interval.
+
+Dynamic programming \cite{BELL,PUT,HOW} and LP \cite{Dpen} are
+classical approaches to MDPs. Ye \cite{Ye,YeSim} gave strongly
+polynomial algorithms for a fixed discount factor, including simplex
+and policy iteration. Hansen, Miltersen and Zwick \cite{HMZ} extended
+the strategy iteration bound to two players with a fixed discount.
+Post and Ye \cite{PY} gave a strongly polynomial simplex algorithm
+for deterministic MDPs with variable discounts. See also \cite{Uz}.
+
+For a fixed discounted Max MDP, the value vector is the unique minimizer
+of the linear program
+\[
+      \text{minimize }\ \sum_i x_i
+      \qquad\text{subject to}\quad x\ge T(x).
+\]
+There is one inequality for each action. The fixed point is feasible,
+and every feasible \(x\) bounds it above by iterating \(x\ge T(x)\).
+Theorem~\ref{thm:lp} solves the LP for arbitrary scalar data.
+
+For polynomial data, impose primal feasibility, dual feasibility and
+equality of the two objectives, and write the joint system in standard
+form \(A(t)y=b(t)\), \(y\ge0\). Let \(m\) be its number of variables
+and \(D\) a bound on its coefficient degrees. At each sufficiently
+small \(t>0\) there is a basic feasible solution. Along some sequence
+tending to zero the same basic columns and independent defining rows
+occur. Cramer's rule gives all coordinates over a common denominator,
+with numerator and denominator degrees at most \(mD\). The unused
+equations hold identically, because they hold on an infinite sequence.
+The inequalities hold throughout a sufficiently small positive
+interval, because every rational function has a stable sign there.
+For related asymptotic LP methods see \cite{Jero,FAA,Vein}.
+
+It suffices, therefore, to seek polynomials \(Y,s\) of degrees at most
+\(mD\) satisfying
+\[
+       A(t)Y(t)=s(t)b(t),\qquad Y(t)\ge0,\qquad s(t)>0
+       \quad\text{for all sufficiently small }t>0 .
+\]
+The equality is a system of linear equations in the coefficients.
+For each polynomial in a sign condition, the first nonzero coefficient
+in order of increasing degree determines the sign. Starting at degree
+zero, impose nonnegativity of the current coefficient in every active
+condition. Use Theorem~\ref{thm:lp} to find a feasible point at which
+every coefficient that can be positive is positive simultaneously.
+The coefficient system is homogeneous, so positivity of a coefficient
+can be tested by adding the bound that it be at least one. Average the
+witnesses from the successful tests. If a coefficient is forced to zero, prescribe that
+equality and advance that condition by one degree. A weak condition
+whose coefficients are all zero is satisfied. The strictly positive
+denominator condition cannot be exhausted, since each relaxation
+contains every true solution. When no coefficient is forced to zero,
+the current point satisfies every sign condition. The number of
+advances is at most the number of coefficients. Each LP uses the
+original coefficient data and the prescribed zeros.
+
+Divide \(Y\) by \(s\) and recover the value coordinates from the
+standard-form variables. Choose an action tight identically in \(t\)
+at each state. Such an action exists since the action scores are
+rational functions and their order stabilizes for small \(t>0\).
+This yields a Blackwell policy for~\eqref{eq:gz}, including arbitrary
+positive real weights. All degrees are polynomial and the coefficient
+arithmetic uses a constant number of layers of sums and products, as
+in Section~\ref{sec:arithmetic}.
+
+\subsection{Two players with arbitrary discounts}
+\label{sec:longdiscounts}
+
+For two players, the Bellman operator may contract by an arbitrarily
+small amount even with a fixed number of states. We will halve the gap
+between two policy guarantees by estimating the values on a scale set
+by that gap. Only the transition probabilities will enter the slopes
+of the fixed-point computation at this scale.
+
+First fix the discounts and rewards. An action \(a\) at state \(i\)
+has expected reward \(r_a=\sum_{e\in E_a} p_e r_e\), transition row
+\(P_a\), and discounted transition row \(B_a\), where
+\[
+   P_a x=\sum_{e\in E_a}p_e x_{j(e)},\qquad
+   B_a x=\sum_{e\in E_a}p_e\beta_e x_{j(e)} .
+\]
+Thus the action score in~\eqref{eq:T} is \(r_a+B_a x\). We have
+\(0\le B_a\le P_a\) coordinatewise. Write
+\(\lambda_a=1-B_a\mathbf1>0\) for the mass lost to discounting.
+The row \(P_a-B_a\) has mass \(\lambda_a\).
+
+\paragraph{Policy guarantees.}
+Start with any Max policy and any Min policy. Fix Max's policy and
+solve the resulting Min MDP to get its vector of guarantees \(L\).
+Fix Min's policy and solve the Max MDP to get \(U\). Then
+\(L\le v\le U\). If \(W=\|U-L\|_\infty=0\), these policies are
+optimal and \(v=L\). For \(W>0\) we construct two new policies whose
+width is at most \(W/2\).
+
+\paragraph{The clipped update.}
+Given \(y\in\RR^n\) with \(\|v-y\|_\infty\le 2H\), \(H>0\), we seek
+a correction \(u\) that halves the error bound. Keep the discounted
+score at the center \(y\), propagate the correction using \(P_a\),
+and clip each coordinate to \([-H,H]\). Thus we solve
+\begin{equation}\label{eq:clip}
+ u_i=\left[\mathop{\mathrm{ext}_i}_{a\text{ at }i}
+              \Phi_a(u)\right]_{-H}^{H},\qquad
+ \Phi_a(u)=r_a+B_a y-y_i+P_a u .
+\end{equation}
+Here brackets denote projection onto the indicated interval. This
+map is nonexpansive, because \(P_a\) is a probability row and clipping
+preserves the Lipschitz bound. The discounts enter only the offsets.
+After scaling coordinates by \(1/H\), Proposition~\ref{prop:asym}
+finds a fixed point in the unit cube. For earlier uses of clipping in
+mean-payoff games see \cite{OAIRa,OAIDe}.
+
+Every solution \(u\) of~\eqref{eq:clip} satisfies
+\begin{equation}\label{eq:dom}
+    \|v-(y+u)\|_\infty\le H .
+\end{equation}
+To prove the lower bound, translate by the clipping radius and put
+\(z=y+u-H\mathbf1\). For every action \(a\) at \(i\),
+\begin{equation}\label{eq:compensate}
+ r_a+B_a z-z_i
+ =\Phi_a(u)-u_i+H\lambda_a-(P_a-B_a)u
+ \ \ge\ \Phi_a(u)-u_i ,
+\end{equation}
+because \(u\le H\mathbf1\) and \(P_a-B_a\) has mass \(\lambda_a\).
+If \(u_i>-H\), taking the extremum in~\eqref{eq:compensate} gives
+\(z_i\le T_i(z)\). If \(u_i=-H\), the initial error bound gives
+\(z_i=y_i-2H\le v_i\). A positive maximum
+\(d=\max_i(z_i-v_i)\) would therefore be attained at a state where
+\(z_i\le T_i(z)\). But monotonicity and contraction would give
+\[
+  d\le T_i(z)-T_i(v)
+    \le T_i(v+d\mathbf1)-T_i(v)\le\bar\beta d<d .
+\]
+Thus \(z\le v\). Negate values and exchange the owners to get
+\(v\le y+u+H\mathbf1\), proving~\eqref{eq:dom}.
+
+If \(y<v\) componentwise,~\eqref{eq:dom} also forces \(u_i>-H\) at
+every state. The maximizing actions for \(\Phi_a(u)\) in~\eqref{eq:clip}
+then certify \(z\le T(z)\) in~\eqref{eq:compensate}. They give a Max
+policy guaranteeing \(z\ge v-2H\mathbf1\). Figure~\ref{fig:clip}
+shows the translation in a two-state game. With discount \(1/2\),
+let Max at \(A\) and Min at \(B\) choose between staying and moving
+to the other state. Let their action scores be
+\[
+ T_A(x)=\max\{3/4+x_A/2,\ x_B/2\},\qquad
+ T_B(x)=\min\{1+x_B/2,\ -1/4+x_A/2\}.
+\]
+The fixed point is \(v=(3/2,1/2)\), with Max staying and Min moving.
+At the low estimate in the figure, staying at \(A\) gives the larger
+clipped-problem action score and thus certifies the lower guarantee
+at both states.
+
+\input{update}
+
+\paragraph{Halving the width.}
+The midpoint \(y=(L+U)/2\) has error at most \(W/2\). Apply the
+clipped update three times with radii \(W/4,W/8,W/16\), replacing
+\(y\) by \(y+u\) each time. By~\eqref{eq:dom} the resulting
+\(y_*\) has error at most \(W/16\). Set \(H=W/8\). The lower estimate
+\(y_*-H\mathbf1\) is strictly below \(v\) with error at most \(2H\),
+so one more clipped solve gives a Max policy guaranteeing at least
+\(v-(W/4)\mathbf1\). Likewise \(y_*+H\mathbf1\) gives a Min policy
+guaranteeing at most \(v+(W/4)\mathbf1\). The two new MDP guarantees
+thus have width at most \(W/2\).
+
+\paragraph{The possible scales of a policy error.}
+Halving alone gives an approximation. To get exact termination in
+polynomially many iterations, we show that each positive width lies
+within a factor \(2^{p(N)}\) of one of polynomially many positive
+numbers, for a fixed polynomial \(p\). Here \(N\) is the length of the
+discrete input, including the probability bits. The scales may depend
+on the real input. The algorithm does not compute them.
+
+Each of \(L,U\) is the payoff vector of a pair of policies, since a
+best response in an MDP is positional and works from every state.
+Moreover,
+\[
+   \max\{\|v-L\|_\infty,\|U-v\|_\infty\}\le W
+      \le 2\max\{\|v-L\|_\infty,\|U-v\|_\infty\}.
+\]
+It therefore suffices to control the error of each policy pair. Write
+\(\Delta\) for the vector of its payoffs minus \(v\) and suppose that
+\(G=\|\Delta\|_\infty>0\). The \emph{action gaps}
+\(\delta_a=r_a+B_a v-v_i\), defined for every action \(a\) at \(i\),
+are common to all pairs. For the action used by the pair at \(i\),
+\[
+     \Delta_i=\delta_a+B_a\Delta .
+\]
+Thus \(g=\max_{a\ {\rm used}}|\delta_a|\le 2G\), and \(g>0\) by
+contraction. When \(G\) is much larger than \(g\), the transition
+chain must retain a large error across a whole closed set of states.
+
+Indeed, change the signs of \(\Delta,\delta\) if necessary so that
+some \(\Delta_i=G\). Write \(D_i=G-\Delta_i\). For the used action
+\(a\) at \(i\),
+\[
+   \lambda_aG+B_aD=D_i+\delta_a\le D_i+g,\qquad
+   P_aD\le 2(D_i+g).
+\]
+For the second inequality use \(D\le2G\mathbf1\) and
+\((P_a-B_a)\mathbf1=\lambda_a\). Every positive transition has
+probability at least \(2^{-\mathrm{poly}(N)}\). Along a transition
+\(i\to j\), the last display bounds \(D_j\) by
+\(2^{\mathrm{poly}(N)}(D_i+g)\). Each state reachable from a maximum
+can be reached by a path of length at most \(n-1\). Starting with
+\(D_i=0\) at the maximum, we obtain \(D_j\le Kg\) throughout its
+reachable set for some uniform \(K=2^{\mathrm{poly}(N)}\).
+
+If \(G\le2Kg\), the single gap of magnitude \(g\) supplies the scale.
+Otherwise \(G/2\le\Delta_j\le G\) on the reachable set. This set is
+closed under the undiscounted transitions of the pair. Choose a
+stationary distribution supported there, assigning mass \(d_a\) to the
+used action in each state. Such a distribution can be taken at a vertex
+of the stationarity equations with nonnegative coordinates summing to
+one. These equations use only transition probabilities, so every
+positive \(d_a\) has polynomial bit length. Stationarity and the
+recursion for \(\Delta\) give
+\[
+    \sum_a d_a\delta_a=\sum_a d_a(P_a-B_a)\Delta .
+\]
+The rows \(P_a-B_a\) are nonnegative, stay in the same reachable set,
+and have masses \(\lambda_a\). Hence
+\[
+   (G/2)\sum_a d_a\lambda_a
+   \le \sum_a d_a\delta_a\le G\sum_a d_a\lambda_a .
+\]
+The weighted discount loss \(\sum_a d_a\lambda_a\) is within a factor
+\(2^{\mathrm{poly}(N)}\) of the largest \(\lambda_a\) in the support.
+The numerator in the middle is a nonzero short rational combination
+of the action gaps.
+
+It remains to bound the number of scales for such numerators. Fix the
+polynomial bit bound for their coefficient vectors. Take a maximal
+collection of nonzero magnitudes of combinations of the gaps that
+differ pairwise by factors greater than \(2^{p(N)}\), where \(p\) is
+chosen below. By maximality each nonzero magnitude is within that
+factor of one in the collection. The selected coefficient vectors are
+linearly independent. Indeed, any dependence contains a dependence on
+at most \(m+1\) vectors, where \(m\) is the number of actions. Clearing
+denominators and applying determinant bounds gives integer dependence
+coefficients of \(\ell_1\)-norm less than \(2^{p(N)}\) for a
+sufficiently large fixed polynomial \(p\). Applying that dependence to
+the combination values gives a contradiction. The term of largest
+magnitude among the values with nonzero coefficient exceeds the sum of
+the magnitudes of all smaller terms even after weighting by their
+coefficients.
+
+There are at most \(m\) numerator scales. For \(G>2Kg\), divide one
+of them by one of the \(m\) discount losses \(\lambda_a\). For
+\(G\le2Kg\), use one of the \(m\) individual gap magnitudes. After
+increasing \(p\) to absorb the comparison factors, these at most
+\(m^2+m\) scales work for every pair, hence for every positive \(W\).
+A sequence of successive halvings has at most \(2p(N)+1\) widths
+in the interval from \(2^{-p(N)}\) to \(2^{p(N)}\) times any one scale.
+The algorithm therefore reaches \(W=0\) after polynomially many
+iterations.
+
+\paragraph{Arithmetic and parameter dependence.}
+Only the two discrete policies pass between iterations. Within each
+iteration a constant number of MDP evaluations and clipped solves
+suffice. The step count is polynomial in \(N\), and the bit bounds of
+Section~\ref{sec:arithmetic} apply to each iteration.
+
+Finally let the rewards and discounts be polynomials in \(t\), valid
+for all sufficiently small positive \(t\). Their degrees count in the
+input size, and the probabilities are fixed binary rationals. The MDP
+algorithm of Section~\ref{sec:mdp} returns best responses and
+guarantees as rational functions. Compare two such functions using
+their signs at \(0^+\), so the policy selections hold throughout a
+sufficiently small positive interval.
+
+In a clipped solve the height \(H\) and offsets
+\(c_a=r_a+B_a y-y_i\) are now rational functions. Choose a common
+denominator \(d\), positive near \(0^+\), so that \(dH\) and every
+\(dc_a\) are polynomials. Let \(K>0\) bound \(|dH|\) on \(0<t<1\),
+for example one plus the sum of the absolute values of its
+coefficients. In the scaled coordinates \(\xi=du/K\), Equation
+\eqref{eq:clip} has offsets \(dc_a/K\), rows \(P_a\), and clipping
+endpoints \(\pm dH/K\). These endpoints lie in \([-1,1]\) near
+\(0^+\). The resulting nonexpansive map of the unit cube fits
+Proposition~\ref{prop:asym}, which yields a rational \(\xi\) and the
+required extremizing actions. Recover \(u=K\xi/d\).
+
+Degrees remain polynomial because each iteration has a constant number
+of layers of calls, and passes only policies to the next iteration.
+Products and sums of polynomially many polynomials of these degrees
+can be computed by evaluation and interpolation using polynomial-size
+formulas in their coefficients, as required in
+Section~\ref{sec:arithmetic}. Every finite sequence of symbolic
+iterations agrees with a run at a common sufficiently small \(t>0\).
+The pointwise iteration bound is uniform in \(t\), so the symbolic
+algorithm has the same bound. Applied to~\eqref{eq:gz}, it supplies
+Blackwell optimal policies even for arbitrary positive real weights.
+The mean-payoff limit of Section~\ref{sec:shortslopes} completes the
+proof of Theorem~\ref{thm:games}.

@@ -1,0 +1,380 @@
+\section{Logarithmic compression on demand}\label{sec:compression}
+
+Calibration requests the sizes of particular minors as it chooses pivots.
+The choices must also be consistent with minors that never occur in a
+pivot calculation, since such minors can enter a circuit. This is the
+extension requirement in Theorem~\ref{thm:compression}. Write \(\ell_u\)
+for the base-two logarithm of the magnitude of a nonzero minor. We seek
+short rational answers to individual requests that extend to a vector
+of the same linear type as a small perturbation of \(\ell\).
+
+The procedure learns a set \(J\) of minor indices. Between restarts it
+uses the logarithms at these indices to set common scales for all its
+answers. A failure to represent a requested logarithm at those scales
+enlarges \(J\). The bound on the number of restarts comes from the fact
+that products of minors are polynomials of bounded degree in the same
+matrix entries.
+
+Throughout, an integer is \emph{short} if its bit length is polynomial
+in \(d,K\). Fix
+\[
+ D=(d+1)^6,\qquad
+ \eta^{-1}=\text{the least power of two at least }4D\cdot2^K .
+\]
+We first work with fixed proxies \(v_u\) satisfying
+\(|v_u-\ell_u|\le\eta\) and access to the signs of integer affine
+forms in these proxies. The final subsection constructs proxies for
+which the required sign tests can be implemented in the arithmetic
+model of Section~\ref{sec:arithmetic}.
+
+\subsection{A bound on independent logarithms}
+
+Call a set \(I\) of minor indices \emph{dissociated} if the subset sums
+of \((v_u)_{u\in I}\) are pairwise at distance greater than two.
+Equivalently, every nonzero coefficient vector in
+\(\{-1,0,1\}^I\) gives a sum of absolute value greater than two.
+This is a version with tolerance of the usual additive notion
+\cite{LY}. If \(I\) is maximal, every proxy is within two of a signed
+subset sum on \(I\). Indeed, for an index outside \(I\), any relation
+preventing its addition must have coefficient \(+1\) or \(-1\) on the
+new index.
+
+\begin{lemma}\label{lem:dissociated}
+Every dissociated set has size less than \(D\).
+\end{lemma}
+\begin{proof}
+Suppose there is a dissociated set of size \(D\). The logarithms of
+the magnitudes of its \(2^D\) subset products of signed minors differ by more
+than \(2-D\eta>1\). In increasing order of magnitude each product
+therefore has magnitude greater than the sum of all preceding
+magnitudes. It follows that all \(2^{2^D}\) subset sums of these
+products are distinct at the input matrix. Two unequal subsets
+differ at a largest product, whose contribution survives cancellation.
+
+These sums are consequently distinct integer polynomials in the
+at most \(d^2\) matrix entries. Each has degree at most \(dD\) and
+coefficients of absolute value at most \(2^D(d!)^D\), by the
+determinant expansion. Counting possible coefficients at each
+monomial gives
+\[
+ 2^{2^D}\le
+ \big(1+2^{D+1}(d!)^D\big)^{(dD+1)^{d^2}}.
+\]
+Two logarithms yield
+\(D\le d^2\log(dD+1)+\log(2+D(1+d^2))
+\le(7d^2+8)\log(d+1)\), contradicting \(D=(d+1)^6\).
+\end{proof}
+
+Goemans's bound on geometrically decreasing sequences of small integer
+combinations uses a related counting argument
+\cite[Lemma~3.5 in the preprint]{Newton}, attributed there via
+Radzik~\cite{Rad}. Here the integer combinations are products of
+minors expanded in monomials. Counting subset sums brings the
+number of monomials into the dissociation bound only logarithmically.
+
+\subsection{Extending partial answers}
+
+Let \(S\) contain the indices answered since the last restart. To
+certify answers on \(S\), we shall enforce agreement of linear type
+at a larger coefficient bound \(M\) on \(S\) alone. Lemma~\ref{lem:extend}
+shows why this suffices. A maximal dissociated set expresses all the
+missing logarithms, to within a rounded offset, in fewer than \(D\)
+variables. Projecting out these variables determines \(M\).
+
+\begin{lemma}[Extension]\label{lem:extend}
+Set
+\[
+ A=2^K(D+4)/\eta,\qquad M=(D+1)A^{D+1}.
+\]
+Suppose on a subset \(S\) of the indices we have
+\begin{equation}\label{eq:answered}
+ f_S\sim_M g_S,\qquad \|g_S-v_S\|_\infty\le\eta ,
+\end{equation}
+where \(f_S\) has a short common denominator and short numerators.
+Then \(f_S,g_S\) extend to vectors \(f,g\) satisfying
+\eqref{eq:compress} on all the minor indices. The vector \(f\) again
+has a short common denominator and short numerators.
+\end{lemma}
+\begin{proof}
+Choose a maximal dissociated set \(I\). For every \(u\notin S\),
+write \(v_u\) as a signed subset sum on \(I\) plus an offset in
+\([-2,2]\). Round the offset to the \(\eta\)-grid, and let \(h_u(x)\)
+be the resulting affine form in \(x\in\RR^I\). Set
+\(g_u=h_u(v_I)\). On \(S\) and its complement alike,
+\(|g_u-\ell_u|\le 2\eta\le2^{-K}\).
+
+Now impose the sign conditions
+\[
+  \big(y_S,\,(h_u(x))_{u\notin S}\big)\sim_{2^K}g .
+\]
+Here \(y_S\) is a parameter and \(x\) is an independent variable,
+even when \(I\) meets \(S\). Write each sign as a strict inequality or
+as two weak inequalities in the zero case. After clearing the grid
+denominator, each row has integer coefficients of total absolute
+value at most \(A\). For \(y_S=g_S\) we have the solution \(x=v_I\).
+Since \(|I|<D\) by Lemma~\ref{lem:dissociated} and \(f_S\sim_M g_S\),
+Lemma~\ref{lem:projection} gives a solution also at \(y_S=f_S\).
+
+If \(U\) bounds the common denominator and the absolute numerators
+of \(f_S\), the rows after substitution and clearing that denominator
+have coefficient norm at most \(AU\). The second assertion of
+Lemma~\ref{lem:projection} supplies \(x\) with a common denominator
+and absolute numerators at most \((AU+1)^{D+1}\). Set \(f_u=h_u(x)\)
+for \(u\notin S\). The product of the two common denominators and
+\(1/\eta\) works for the whole vector. Both it and the absolute
+numerators are bounded by \((D+2)(AU+1)^{D+1}U/\eta\).
+\end{proof}
+
+\subsection{Extracting common scales}
+
+The maximal set \(I\) in Lemma~\ref{lem:extend} serves only to prove
+existence. The procedure maintains its own dissociated set \(J\),
+starting with the empty set. To decide whether it can answer a
+request, it needs a test that succeeds on every proxy within two of
+a signed subset sum on \(J\). Enumerating those sums would cost
+exponential time. Instead we expand \(v_J\) at a sequence of common
+scales. At each scale the vector of digits is integral and the
+remaining error is a small fraction of the scale. This is the
+simultaneous approximation step of Frank--Tardos rounding~\cite{FT}.
+
+\begin{lemma}\label{lem:peel}
+Let \(w\in\RR^m\), and fix integers \(\epsilon^{-1}\ge2\) and
+\(H\ge0\). Put \(C=2^{m(m+1)}(2/\epsilon)^{m+1}\).
+Given the signs of integer-coefficient affine forms on \(w\), one
+can find integer vectors \(z_1,\ldots,z_p\) and positive scales
+\(\lambda_1,\ldots,\lambda_p\), represented by rational linear forms
+on \(w\), such that
+\[
+ \begin{aligned}
+ &p\le m,\qquad \|z_j\|_\infty\le C,\qquad \lambda_j>H/C,\\
+ &\left\|w-\sum_{i=1}^j\lambda_i z_i\right\|_\infty\le\epsilon\lambda_j
+       \quad (1\le j\le p),\qquad
+   \left\|w-\sum_{i=1}^p\lambda_i z_i\right\|_\infty\le H .
+ \end{aligned}
+\]
+Counting each sign query as one operation, the bit time and the
+lengths of all queries and outputs are polynomial in \(m\) and the
+bit lengths of \(\epsilon^{-1},H\).
+\end{lemma}
+\begin{proof}
+Start with remainder \(w'=w\). If \(X=\|w'\|_\infty>H\), use binary
+search to find a rational vector \(u\) within \(\epsilon/(2C)\) of
+\(w'/X\) in each coordinate. Consider the lattice of vectors
+\((qu-z,q/C)\) for integral \(q,z\), of determinant \(1/C\).
+Lattice reduction~\cite{LLL}, as in~\cite[Theorem~(5.3.19)]{GLS},
+produces in polynomial bit time a nonzero vector of Euclidean norm
+at most \(2^{m/2}C^{-1/(m+1)}\le\epsilon/2\). Such a vector must
+have \(q\ne0\), since a nonzero integer vector has length at least
+one. Choose its sign to give \(1\le q\le C\). Then
+\[
+ \|q w'/X-z\|_\infty\le\epsilon ,\qquad \|z\|_\infty\le q.
+\]
+For the second bound use integrality and \(\epsilon<1\).
+
+Take \(\lambda=X/q>H/C\) and replace \(w'\) by \(w'-\lambda z\).
+The new remainder has norm at most \(\epsilon\lambda\). At a zero
+coordinate the digit is zero. At a coordinate attaining \(X\) in
+absolute value the digit equals \(+q\) or \(-q\), so that coordinate
+now vanishes as well. Thus at most \(m\) steps are needed to reach
+residual norm at most \(H\). For \(m=0\) the expansion is empty.
+
+Each comparison for the binary search can be made after multiplying
+by \(X>0\). At every stage \(X\) is a signed coordinate of the
+remainder, chosen by comparisons, so both the remainders and the
+scales are rational linear forms in the original \(w\). A step
+multiplies their common denominator by at most \(q\) and increases
+the maximum absolute numerator by at most a factor \(2C\). Clearing
+these denominators in the comparisons, including those on the
+\(\epsilon/(2C)\)-grid, gives sign queries of the asserted length.
+\end{proof}
+
+For a homogeneous form, a nonzero integer digit contributes at least
+one whole scale. Choosing the residual small compared with that scale
+lets the first nonzero digit determine the sign. We record the usual
+Frank--Tardos consequence used to round offsets in
+Section~\ref{sec:contractions} and, through that computation, to
+solve games in Section~\ref{sec:games}.
+
+\begin{lemma}\label{lem:ft}
+Given \(w\in\RR^m\) and an integer \(M\ge1\), one can find an integer
+vector preserving the sign on \(w\) of every homogeneous linear form
+with integer coefficients of \(1\)-norm at most \(M\). The procedure
+is strongly polynomial with the bit length of \(M\) counted as
+additional input size, and returns the entries in bits.
+\end{lemma}
+\begin{proof}
+Apply Lemma~\ref{lem:peel} with \(\epsilon=1/(2M)\) and \(H=0\)
+(cf.\ \cite[Theorem~(6.2.13)]{GLS}). For a form whose first nonzero
+digit occurs on \(z_j\), the remaining contribution has magnitude
+at most \(M\epsilon\lambda_j<\lambda_j\). A form vanishing on every
+digit also vanishes on \(w\), since the final remainder is zero.
+Consequently the integer vector
+\(\sum_{j=1}^p(2CM+1)^{p-j}z_j\) has the required signs. Its first
+nonzero digit dominates the geometric sum of all later digits,
+whose evaluations have magnitude at most \(CM\) each. The short
+linear forms queried in Lemma~\ref{lem:peel} can be evaluated as in
+Section~\ref{sec:arithmetic}.
+\end{proof}
+
+For affine forms, append a coordinate equal to one before applying
+Lemma~\ref{lem:ft}. Its rounded value is positive by sign agreement.
+Dividing the rounded vector by that value preserves the homogeneous
+signs and restores the last coordinate to one.
+
+\subsection{Answering a request}
+
+Start each sequence of requests by applying Lemma~\ref{lem:peel} to
+\(v_J\). Use \(M\) from Lemma~\ref{lem:extend} and set
+\[
+ m=|J|,\qquad \epsilon^{-1}=100(m+1)M,\qquad H=100MC ,
+\]
+where \(C\) is determined by \(m,\epsilon\) in Lemma~\ref{lem:peel}.
+All extracted scales \(\lambda_j\) exceed \(100M\). They remain fixed
+throughout the sequence.
+
+For a request at \(u\), look for integer digits \(b_{u1},\ldots,b_{up}\)
+of magnitude at most \(mC\) satisfying
+\begin{equation}\label{eq:request}
+ \begin{aligned}
+ \left|v_u-\sum_{i=1}^j\lambda_i b_{ui}\right|
+       &\le\frac{\lambda_j}{10M} && (1\le j\le p),\\
+ \left|v_u-\sum_{i=1}^p\lambda_i b_{ui}\right|
+       &\le mH+2 .
+ \end{aligned}
+\end{equation}
+Once the previous digits are fixed, the permitted interval for
+\(b_{uj}\) has length \(1/(5M)<1\). Binary search therefore finds the
+unique digit or detects failure. Check the last residual bound even if
+there are no digits.
+
+\paragraph{A failed request enlarges the dissociated set.}
+If \(v_u\) lies within two of a signed subset sum on \(J\), take
+the same signed sum of the digit vectors of \(v_J\) at each scale.
+This gives digits of magnitude at most \(mC\) with residuals at most
+\(m\epsilon\lambda_j+2\le\lambda_j/(10M)\) at position \(j\)
+and at most \(mH+2\) at the end. Thus failure implies that \(u\)
+lies outside \(J\) and that \(J\cup\{u\}\) is dissociated.
+In that case retain the enlarged set, discard the expansion and
+previous answers, and declare a restart. Each restart increases
+\(|J|\) by one, so Lemma~\ref{lem:dissociated} bounds the total
+number by \(D-1\).
+
+\paragraph{A successful request gives a short answer.}
+Round the final residual down to the \(\eta\)-grid by binary search,
+obtaining \(e_u\) with \(|e_u|\le mH+2\) and error at most \(\eta\).
+For \(B=10M(mH+3)\), return \(f_u\) and define its comparison value
+\(g_u\) by
+\[
+ f_u=\sum_{j=1}^p B^{p+1-j}b_{uj}+e_u,\qquad
+ g_u=\sum_{j=1}^p\lambda_j b_{uj}+e_u .
+\]
+Replacing the true scales by powers of \(B\) makes \(f_u\) rational
+with common denominator \(1/\eta\) and absolute numerator at most
+\(B^{p+2}/\eta\). Retaining the true scales in \(g_u\) gives
+\(|g_u-v_u|\le\eta\).
+
+To verify \(f_S\sim_M g_S\), write an integer affine form of norm at
+most \(M\) as \(a_0+\sum_{u\in S}a_u x_u\). At position \(j\), its
+combined digit is the integer \(\sum_{u\in S}a_u b_{uj}\). If all
+combined digits vanish, the two evaluations equal
+\(a_0+\sum_{u\in S}a_u e_u\). Otherwise let \(j\) be the first
+nonzero combined digit. For \(g_S\), the magnitude contributed
+after position \(j\), including the constant term, is bounded by
+\[
+ M\max\{\lambda_j/(10M)+\eta,1\}<\lambda_j
+\]
+by \eqref{eq:request} and the rounding error. For \(f_S\), each later
+combined digit and the final affine term in \(e\) have magnitude at
+most \(B/10\). Their geometric sum is smaller than \(B^{p+1-j}\).
+The digit at \(j\) therefore determines both signs. The answers made
+in this sequence satisfy \eqref{eq:answered}, and
+Lemma~\ref{lem:extend} extends them to all minor indices.
+
+Only \(J\) and its expansion are needed to answer the next request.
+The comparisons in \eqref{eq:request} involve at most \(m+1\)
+proxies. The product of the denominators \(q\) in Lemma~\ref{lem:peel}
+clears coefficients in the scales, and a further factor \(10M/\eta\)
+clears the residual and grid comparisons. All these integers
+are short since \(p\le m<D\).
+Thus initialization and each request require polynomial bit time with
+sign access. A uniform integer bound \(F\) for Theorem~\ref{thm:compression}
+is available at initialization by using \(U=B^{p+2}/\eta\) in
+Lemma~\ref{lem:extend} and taking the largest bound over
+\(0\le p\le m<D\).
+
+\subsection{Implementing the sign tests}
+
+A sign test on exact logarithms amounts to comparing a product of
+powers of minors with a power of two. An exponent can have short bit
+length and still produce very large rational intermediates. We use
+rounded logarithms whenever their magnitudes are small. A large
+logarithm, when it occurs, certifies that the rational input itself
+has sufficient bit length for the power comparison.
+
+Before defining the proxies, fix a short power of two \(T\) such
+that every integer sign query used above has coefficient \(1\)-norm
+at most \(T\eta\). This bound is uniform over choices of the proxies.
+For example, the common denominators and absolute numerators for the
+scale coefficients are bounded by \((2C)^m\), and the other
+coefficients in the queries were bounded above in terms of \(d,K\).
+These estimates allow \(T\) to be fixed for the worst case \(m<D\).
+
+\paragraph{Determining the proxy.}
+For each minor needed in a comparison, compute its absolute value
+and invert it if necessary to obtain \(z_0=2^{|\ell_u|}\ge1\).
+Compute powers \(2^k\) by squaring for \(k=1,2,4,\ldots,T\), stopping
+at the first \(k\) for which \(z_0<2^k\). If no test succeeds then
+\(|\ell_u|\ge T\) and we take \(v_u=\ell_u\), represented by the
+minor itself. Otherwise binary search using powers of two supplies
+the integer part of \(\log z_0\). The scalar powers computed in these
+tests have exponents at most \(\max\{1,2|\ell_u|\}\). On rational
+data this is polynomial in the input length by the determinant bound
+of Section~\ref{sec:arithmetic}. The operation count is polynomial
+in \(d,K\), since \(T\) is short.
+
+After removing that integer power of two, the remaining factor
+\(z\) lies in \([1,2)\). Compute the first \(\log(1/\eta)+6\) terms of
+\[
+ \ln z=\sum_{j\ge1}\frac{(1-1/z)^j}{j}
+\]
+and divide by the corresponding partial sum at two. Both series
+tails admit a geometric bound, and the partial sum at two is at
+least \(1/2\), so the quotient approximates \(\log z\) to error at
+most \(\eta/4\). Use binary search to round to the nearest point of
+the \(\eta\)-grid, breaking ties deterministically. Restoring the
+integer part and sign produces explicit bits for a proxy within
+\(\eta\) of \(\ell_u\). The fractional-part computation uses
+polynomial-size formulas in \(z\) and short constants, and needs
+only comparisons to perform the rounding.
+
+\paragraph{Evaluating an affine form.}
+If every participating minor has \(|\ell_u|<T\), evaluate the query
+on the explicit proxy bits. Otherwise substitute the rounded proxies
+and multiply by \(1/\eta\). The result is an integer constant plus
+an integer combination of true logarithms. The constant and each
+coefficient have magnitude at most \(2T^2\), by the norm bound
+\(T\eta\) on the original form. Exponentiation to base two reduces
+the sign test to comparing a product of integer powers of two and
+of absolute minor values with one.
+
+Binary powering gives a polynomial operation count in \(d,K\).
+For rational data in this branch, some \(|\ell_u|\ge T\), so the
+determinant bound puts \(T\) itself within a polynomial in total
+input length. Each powering here could therefore be expanded into a
+formula with polynomially many leaves in that length, proving the
+required bound on intermediate log heights in both arithmetic
+conventions of Section~\ref{sec:arithmetic}. Each query uses the
+input matrix and short discrete data afresh. This proves
+Theorem~\ref{thm:compression} and finishes the proof of
+Theorem~\ref{thm:cal}.
+
+\begin{remark}
+The dissociation bound uses only the number of input variables, the
+degree, and the coefficient \(1\)-norm of the minor polynomials.
+The same compression procedure applies to any family of nonzero
+values of integer polynomials in at most \(d^2\) scalar inputs whose
+degrees are at most \(d\) and coefficient \(1\)-norms at most \(d!\).
+It suffices that the indices are short and that each evaluation has
+a deterministic strongly polynomial implementation in the chosen
+arithmetic convention.
+\end{remark}

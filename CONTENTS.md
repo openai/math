@@ -1,6 +1,6 @@
 # Mathematics manuscript collection
 
-**722 manuscripts covering 374 result families.**
+**730 manuscripts covering 375 result families.**
 
 [**Read the overview PDF**](overview.pdf).
 
@@ -2701,7 +2701,7 @@ We prove that the complex border determinantal complexity of the $`m\times m`$ p
 <tbody><tr>
 <td>
 
-**109. Integer multiplication below $`n\log n`$.** Multiplies two <i>n</i>-bit integers exactly at every input length in deterministic worst-case time $`O(n(\log n)^{1-\kappa})`$, with $`\kappa=2^{-182}`$, on one fixed finite-alphabet Turing machine with finitely many one-dimensional tapes. This disproves the Schönhage–Strassen $`n\log n`$ optimality conjecture in the ordinary multitape bit model.
+**109. Integer multiplication below $`n\log n`$.** Multiplies two <i>n</i>-bit integers exactly at every input length in deterministic worst-case time $`O(n(\log n)^{1-\kappa})`$, with $`\kappa=2^{-182}`$, on one fixed finite-alphabet Turing machine with finitely many one-dimensional tapes. This disproves the Schönhage–Strassen $`n\log n`$ optimality conjecture in the ordinary multitape bit model. ([Lean](lean/docs/109.md))
 
 </td>
 </tr></tbody>
@@ -9167,16 +9167,95 @@ We give a deterministic algorithm for exactly counting the satisfying assignment
 <tbody><tr>
 <td>
 
-**379. Separation of VP and VNP over every field.** An explicit VNP family requires border arithmetic circuits of size at least $`\exp(\Omega((\log n)^{5/4}))`$ over every field. The same bound holds for the directed Hamiltonian cycle polynomial over every field and for the permanent outside characteristic two. ([Lean](lean/docs/379.md))
+<a name="family-379"></a>**379. Euclidean tensor geometry and its applications to complexity and combinatorics.** Euclidean tensor prices yield strict separations of the arithmetic hierarchy, circuit lower bounds for Hamiltonian cycle over every field and for the permanent outside characteristic two, and an exponential bound for sunflower-free families with a fixed number of petals. The square matrix multiplication exponent is $`9/4`$ over every field. The logarithmic exponent of finite abelian Fourier transforms is $`1/2`$. Integer multiplication on tapes takes $`n(1+\log n)^{1/2+o(1)}`$ time on one fixed machine, and variable-count Weak ETH gives the matching logarithmic exponent. ([Lean](lean/docs/379.md))
 
 </td>
 </tr></tbody>
 <tbody><tr>
 <td>
 
-&emsp;[VP and VNP are different](preprints/VP-and-VNP-are-different-November-23-2026/paper.pdf)
+&emsp;[Euclidean geometry in the asymptotic spectrum of tensors](preprints/Euclidean-geometry-in-the-asymptotic-spectrum-of-tensors-November-24-2026/paper.pdf)
 
-We prove that VP differs from VNP over every field. The lower bound holds for border circuits and is superpolynomial, of the form $`\exp(\Omega((\log n)^{5/4}))`$. In particular it applies to the permanent outside characteristic two. The proof trades two kinds of hardness against one another: the rigidity of tensor networks priced in Euclidean space, and the ability to diagonalize even against degenerating nonuniform circuits by replaying their computations inside a wire budget.
+Over any field, we assign costs to tensors with indices placed in a real Hilbert space so that a bit shared by two sites costs exactly their distance. On each finite set of two or more sites, the costs are scaled logarithms of invariants that add under direct sums, multiply under tensor products, and cannot increase under local linear maps. In every such system, a bit shared among finitely many sites costs the mean width of their convex hull, normalized to give a segment its length. For a triangle this is half its perimeter. Companion papers use these costs to compare tensors with the networks that produce them, yielding lower bounds for arithmetic circuits and an exponential bound on the size of sunflower-free set families.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[Paths, trees and grids separate Valiant’s hierarchy](preprints/Paths-trees-and-grids-separate-Valiants-hierarchy-November-24-2026/paper.pdf)
+
+We prove that $`\mathsf{VP}\ne\mathsf{VNP}`$ over every field. Our witness is the state sum on an $`n\times n`$ square grid. It belongs to $`\mathsf{VNP}`$ and requires arithmetic circuits of size $`n^{\Omega((\log n)^{1/12})}`$. On binary trees and paths, the same construction separates arithmetic circuits from algebraic branching programs and branching programs from formulas, respectively. All three lower bounds hold in degree-component border complexity. We also characterize the graph families whose state sums have polynomial size in each model.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[Circuit lower bounds for Hamiltonian cycle and the permanent](preprints/Circuit-lower-bounds-for-Hamiltonian-cycle-and-the-permanent-November-24-2026/paper.pdf)
+
+We prove that over every field, arithmetic circuits for the directed Hamiltonian cycle polynomial of order $`N`$ require at least $`\exp\!\bigl(c(\log N)^2/(\log\log N)^2\bigr)`$ gates for all sufficiently large $`N`$. The constant $`c>0`$ is absolute, and the threshold depends only on the characteristic. The same lower bound holds for the permanent outside characteristic two. Both bounds hold even when a circuit need only approximate the coefficients of degree $`N`$.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[The logarithmic exponent of finite Fourier transforms](preprints/The-logarithmic-exponent-of-finite-Fourier-transforms-November-24-2026/paper.pdf)
+
+The minimum number of binary linear gates for a finite abelian Fourier transform of order $`N`$ is $`N(\log N)^{1/2+o(1)}`$. This holds over every field in which $`N`$ is invertible and which contains the required roots of unity. The same cost per transform holds for any number of independent inputs, even when gates can mix them. Formal polynomial multiplication has the same logarithmic exponent over every field, including for batches of independent products.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[The logarithmic exponent of integer multiplication on tapes](preprints/The-logarithmic-exponent-of-integer-multiplication-on-tapes-November-24-2026/paper.pdf)
+
+A single deterministic multitape Turing machine multiplies two $`n`$-bit integers exactly in $`n(1+\log n)^{1/2+o(1)}`$ time and visits $`O(n)`$ tape cells. Under the variable-count Weak Exponential Time Hypothesis for 3-SAT, every deterministic multitape multiplier requires $`\Omega(n\sqrt{\log n})`$ steps in the worst case at each sufficiently large length. Under this hypothesis the optimal logarithmic exponent is therefore $`1/2`$. Exact integer division and integer square root have the same upper and conditional lower bounds.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[The matrix multiplication exponent is nine fourths](preprints/The-matrix-multiplication-exponent-is-nine-fourths-November-24-2026/paper.pdf)
+
+We prove that the exponent of square matrix multiplication is $`9/4`$ over every field. The upper bound was known. For each $`n\ge2`$, a formal arithmetic circuit multiplying two $`n\times n`$ matrices needs at least $`n^{9/4}/2`$ multiplication or division gates. The proof shows that a smaller exponent would compress tensor networks enough to violate a lower bound for testing whether the entries in each of several independent lists are distinct.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[An exponential bound for sunflowers](preprints/An-exponential-bound-for-sunflowers-November-24-2026/paper.pdf)
+
+We prove the fixed-petal sunflower conjecture of Erdős and Rado. For every $`r\ge3`$, a family of more than $`B_r^k`$ distinct sets of size at most $`k`$ contains $`r`$ sets whose pairwise intersections are all the same. The base depends only on $`r`$ and satisfies $`\log B_r=O((\log r)^4(\log\log(2r))^{5/2})`$.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+<a name="family-380"></a>**380. Strongly polynomial-time linear programming.** A deterministic algorithm solves linear programs with arbitrary real coefficients in a number of steps polynomial in the numbers of variables and constraints, answering Smale’s ninth problem. Bounded simple rational polytopes can have graph diameter superpolynomial in their facet count, refuting the polynomial Hirsch conjecture. For any prescribed subpolynomial bound on face dimension, the examples can be chosen so that even moves across such faces require superpolynomially many steps. ([Lean](lean/docs/380.md))
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[Strongly polynomial linear programming](preprints/Strongly-polynomial-linear-programming-November-24-2026/paper.pdf)
+
+We give a deterministic strongly polynomial algorithm for linear programming, answering Smale’s ninth problem. For arbitrary real coefficients, the number of steps is bounded by a polynomial in the numbers of variables and constraints. For rational data, every intermediate number has bit length polynomial in the binary input length. The method also gives a strongly polynomial algorithm for convex quadratic programming. For finite turn-based mean-payoff games with perfect information, it gives strongly polynomial time for deterministic games and polynomial bit time for stochastic games with binary rational data.
+
+</td>
+</tr></tbody>
+<tbody><tr>
+<td>
+
+&emsp;[Superpolynomial graph diameter of simple polytopes](preprints/Superpolynomial-graph-diameter-of-simple-polytopes-November-24-2026/paper.pdf)
+
+We disprove the polynomial Hirsch conjecture. For every sufficiently large $`n`$, we construct a bounded simple rational polytope with exactly $`n`$ facets whose graph diameter grows faster than every fixed power of $`n`$. Its dimension grows more slowly than every positive power of $`n`$. For any prescribed subpolynomial $`s(n)`$, two vertices can remain superpolynomially far apart even when a single step may cross any face of dimension at most $`s(n)`$.
 
 </td>
 </tr></tbody>

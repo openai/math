@@ -1,0 +1,107 @@
+\section{Introduction}\label{sec:introduction}
+
+How much work does it take to optimize a linear function subject to linear
+inequalities? For rational coefficients, the ellipsoid method of
+Khachiyan~\cite{Khach,Khach2} gave an answer polynomial in the length of the
+input. Two linear programs with the same numbers of variables and constraints
+can have very different input lengths. Megiddo~\cite{MegEnc,Meg} asked
+whether those two dimensions alone could bound the number of arithmetic
+operations. Tarjan raised the question for real data~\cite[pp.~1620--1621]{Tari},
+and Smale made it his ninth problem~\cite{Smale}. We give an affirmative answer.
+
+We maximize \(c^\top x\) subject to \(Ax\le b\), given
+\(A\in\RR^{m\times n}\), \(b\in\RR^m\) and \(c\in\RR^n\) explicitly.
+A \emph{strongly polynomial} algorithm takes polynomially many steps
+in \(m,n\), counting exact scalar arithmetic, comparisons and control work.
+On rational input every intermediate number has bit length polynomial in
+the full binary input length.
+
+\begin{theorem}[Strongly polynomial linear programming]\label{thm:lp}
+For arbitrary real \(A,b,c\), a deterministic strongly polynomial algorithm
+returns one of the following certificates for \(\max\{c^\top x:Ax\le b\}\).
+\begin{enumerate}
+ \item \emph{Finite optimum.} A strictly complementary primal--dual pair \(x,y\) with
+ \[
+    s=b-Ax\ge0,\qquad y\ge0,\qquad A^\top y=c,\qquad
+    s^\top y=0,\qquad s+y>0 .
+ \]
+ \item \emph{Unbounded objective.} A feasible point \(x\) and an improving ray
+ \(r\) with \(Ar\le0\) and \(c^\top r>0\).
+ \item \emph{Infeasibility.} A vector \(y\ge0\) with \(A^\top y=0\),
+ \(b^\top y<0\), and \(\lvert\supp y\rvert\le 1+\rank A\).
+\end{enumerate}
+\end{theorem}
+
+We use a uniform sequential model~\cite{BSS}. The scalar operations are
+addition, subtraction, multiplication, division by a nonzero scalar,
+comparison and copying, with constants \(0,1\). Control operations on
+indices and explicit bit strings are charged at bit cost. The algorithm accesses scalar inputs only through the scalar operations.
+All vector inequalities are componentwise. On rational data we measure a
+number by its reduced fraction.
+
+The arithmetic result extends to every ordered field. In particular, on
+rational input the certificates are exact rationals. If the input is supplied
+as integer numerator--denominator pairs, an implementation also keeps the
+integers in its unreduced pairs of polynomial bit length throughout the
+computation (Section~\ref{sec:arithmetic}).
+
+\paragraph{How the algorithm finds a certificate.}
+Consider first the feasibility of \(Ax\le b\). A feasible point has
+nonnegative slacks \(b-Ax\). A certificate of infeasibility instead gives
+nonnegative weights for a combination of the inequalities that yields a
+contradiction. Homogenizing the slack vectors puts these alternatives in
+two orthogonal subspaces. To decide feasibility it suffices to determine
+which subspace contains a nonnegative vector positive at one designated
+coordinate.
+
+A positive entry of such a vector can be arbitrarily small compared with its
+largest entry. Changing the unit of a coordinate changes which entries can be
+seen at a fixed precision. The algorithm uses these changes of unit as
+queries. At each query it obtains reliable signs where the rescaled entries
+are largest. A search combining the signs from different queries identifies
+the subspace containing a witness, even though the algorithm does not know
+in advance which signs it can trust. It then sets coordinates to zero, one
+at a time whenever a witness survives, until linear algebra recovers the
+witness exactly.
+
+The difficulty is making each query affordable. For a witness of minimal support,
+the ratios of its nonzero entries are ratios of subdeterminant magnitudes
+of a basis matrix for the two subspaces. Even in a fixed dimension, the
+logarithms of these magnitudes can be arbitrarily far apart.
+The algorithm gives short substitutes for the logarithms as they are
+needed, preserving the comparisons that determine which entries are large.
+This lets it compute each set of signs using ordinary polynomial-time LP
+on rational data whose bit lengths are bounded in the dimensions alone.
+Section~\ref{sec:overview} explains how the search, the changes of unit and
+the compression fit together.
+
+\subsection{Consequences}
+
+The same search applies to a convex quadratic objective under linear
+constraints. For arbitrary real coefficients we find an exact minimizer
+and its multipliers, or certify infeasibility or unboundedness, in
+deterministic strongly polynomial time (Corollary~\ref{cor:qp}).
+The underlying result solves the monotone linear complementarity problem.
+Given \(M,q\) with \(M+M^\top\) positive semidefinite, it finds \(z\ge0\)
+such that \(Mz+q\ge0\) and \(z^\top(Mz+q)=0\), or certifies that no
+such \(z\) exists (Theorem~\ref{thm:lcp}).
+
+There is a second use for the signs returned by a query. If a point differs
+from the fixed point of a contraction in max norm, the map moves it toward
+that fixed point in every coordinate of greatest error. For a self-map of
+\([-1,1]^n\) with Lipschitz constant at most \(1-2^{-b}\), this gives a
+deterministic algorithm that locates the fixed point to within \(2^{-k}\)
+in time polynomial in \(n,b,k\), counting all bits exchanged with the
+evaluation oracle (Theorem~\ref{thm:contraction}).
+
+In a finite turn-based mean-payoff game, two players with perfect information
+choose moves on a graph. One maximizes and the other minimizes the long-run
+average reward. The fixed-point algorithm and policy evaluation by LP give the exact values
+from every starting vertex and optimal strategies for both players. The running time
+is strongly polynomial when each move has a deterministic outcome and
+polynomial in the binary input length when outcomes are stochastic and the
+data rational. This includes polynomial time for simple stochastic reachability
+games. Theorem~\ref{thm:games} gives the bounds for arbitrary real rewards
+and for discounted play.
+
+\input{history}

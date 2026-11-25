@@ -1,0 +1,61 @@
+\section{Port graphs from cube exclusion}\label{sec:ports}
+
+Network compression can bring many wires to a single vertex. To restore
+bounded degree, Section~\ref{subsec:refresh} replaces all-pairs demands
+among that vertex's ports by wires on a sparse graph. The metric estimate
+this replacement requires is a Poincar\'e inequality, uniform over all
+spectral placements of the ports. We show that the cube exclusion of
+Section~\ref{sec:prices} gives graphs with precisely this property.
+
+Let $G$ be a symmetric stochastic matrix on a finite vertex set $V$
+and assign a point $x_i$ of a spectral space to each vertex $i$. The
+mean squared length of a step of $G$ and the mean squared distance
+between two independent uniform vertices are, respectively,
+\[
+ \mathcal E_G(x)=\frac1{|V|}\sum_{i,j\in V}G_{ij}d(x_i,x_j)^2,
+ \qquad
+ \mathcal V(x)=\frac1{|V|^2}\sum_{i,j\in V}d(x_i,x_j)^2.
+\]
+
+\begin{definition}\label{def:ports}
+A field \emph{has ports} if it admits a family of regular, symmetric
+multigraphs of unbounded order and bounded degree, and a constant
+$\gamma$ such that
+\[
+ \mathcal V(x)\le\gamma\mathcal E_G(x)
+\]
+for every graph in the family and every assignment into a spectral space
+over the field. Here $G$ denotes normalized adjacency. A diagonal arc
+keeps the walk at its current vertex.
+\end{definition}
+This property depends only on the characteristic, since it concerns
+only joint prices of binary wires (Lemma~\ref{lem:comparison}).
+By Theorem~\ref{thm:geometry} one may test either finite spectral
+points or complete $\operatorname{CAT}(0)$ spectral spaces. Testing
+an assignment that is constant on each of two components and takes two
+distinct values shows that every port graph is connected.
+
+For use in Section~\ref{subsec:refresh}, we may take the graphs to be
+loopless, of arbitrarily large power-of-two order and of one fixed
+power-of-two degree. Given a graph of order $M$, duplicate enough
+vertices to reach the next power of two. Keep the old edges between
+the original representatives, join each duplicate to its representative,
+and pad with holding arcs to a fixed power-of-two degree. To compare any
+pair, follow the path through its two representatives. A uniform endpoint
+chooses any particular representative with probability at most $2/M$.
+The mean squared distance from a vertex to its representative is controlled
+by a constant times the new edge energy, since each such pair is an edge
+and the degree is bounded. The triangle inequality therefore gives a
+uniform Poincar\'e bound after duplication. To remove loops, take two
+copies of this graph. Replace each holding arc by a crossing to the
+corresponding vertex in the other copy, and join every such pair of vertices
+by as many additional parallel edges as the previous degree. The degree
+doubles. The same comparison through representatives again gives a
+uniform bound.
+
+\begin{proposition}\label{lem:refresh-graph}\label{lem:ports}
+If a finite field $F$ has a largest spectral flat dimension $k$, then
+$F$ has ports.
+\end{proposition}
+
+\input{ports-appendix}

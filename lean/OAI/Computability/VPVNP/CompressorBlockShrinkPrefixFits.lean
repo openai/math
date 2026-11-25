@@ -112,6 +112,30 @@ set_option maxHeartbeats 1200000 in
 /-- One input threshold works for every level, every split of the lane bits
 and every allowed shrinking choice. The current position and width bounds
 are exactly the bounds supplied by the selected cursor execution. -/
+theorem eventually_prefixFits_at (b : ℕ) (hb : 1 ≤ b) : ∀ᶠ n : ℕ in atTop,
+    ∀ (capacity : ℕ) (i : Fin S.steps) {g : ℕ}
+      (X : State (S.degreeExponent i.castSucc) (packingLaneBits (S.degreeExponent i.castSucc) g)),
+      X.positions ≤ capacity → X.maxWireWidth ≤ n →
+      ∀ (base blocks : ℕ) (level : Fin (BlockProgram.layout B base capacity blocks).levels),
+      let w := wordBits b n
+      let L := BlockProgram.layout B base capacity blocks
+      let T := packedIncidence L w level.val (DemandRAM.oldCount X)
+      let start := tableBase L level.val (0 : Fin 6)
+      endAddress L < 2^w → ∀ cap, prefixClock B b n ≤ cap → PrefixFits B X T start (Fin.ofNat _ 10) cap := by
+  let Q := Finset.univ.sup fun i : Fin S.steps => ShrinkRankSpace.cap (S.degreeExponent i.castSucc)
+  filter_upwards [CursorRAM.eventual_word_room b hb ((PolynomiallyBounded.const Q).mul PolynomiallyBounded.id),
+    CursorRAM.eventual_word_room b hb (PolynomiallyBounded.const 10),
+    DemandPreparation.eventually_live_word_fits b hb (ShrinkTermSelection.fitConstant B.shrink) 4 1 1]
+    with n product ten words
+  intro capacity i g X positions width base blocks level w L T start room cap enough
+  have layout := prefix_layout B i rfl X base capacity blocks level positions room
+  have clocks := prefix_clock B (b := b) width
+  have wordFit := words X.maxWireWidth (by simpa using width)
+  have q : ShrinkRankSpace.cap (S.degreeExponent i.castSucc) ≤ Q := Finset.le_sup (f := fun j : Fin S.steps => ShrinkRankSpace.cap (S.degreeExponent j.castSucc)) (Finset.mem_univ i)
+  exact prefix_numeric B X T start cap layout.1 layout.2 ten ((Nat.mul_le_mul q width).trans_lt product)
+    wordFit (clocks.1.trans_le enough) (clocks.2.trans enough)
+
+/-- Specialization to the cursor's initial position capacity. -/
 theorem eventually_prefixFits (b : ℕ) (hb : 1 ≤ b) : ∀ᶠ n : ℕ in atTop,
     ∀ (i : Fin S.steps) {g : ℕ}
       (X : State (S.degreeExponent i.castSucc) (packingLaneBits (S.degreeExponent i.castSucc) g)),
@@ -122,18 +146,8 @@ theorem eventually_prefixFits (b : ℕ) (hb : 1 ≤ b) : ∀ᶠ n : ℕ in atTop
       let T := packedIncidence L w level.val (DemandRAM.oldCount X)
       let start := tableBase L level.val (0 : Fin 6)
       endAddress L < 2^w → ∀ cap, prefixClock B b n ≤ cap → PrefixFits B X T start (Fin.ofNat _ 10) cap := by
-  let Q := Finset.univ.sup fun i : Fin S.steps => ShrinkRankSpace.cap (S.degreeExponent i.castSucc)
-  filter_upwards [CursorRAM.eventual_word_room b hb ((PolynomiallyBounded.const Q).mul PolynomiallyBounded.id),
-    CursorRAM.eventual_word_room b hb (PolynomiallyBounded.const 10),
-    DemandPreparation.eventually_live_word_fits b hb (ShrinkTermSelection.fitConstant B.shrink) 4 1 1]
-    with n product ten words
-  intro i g X positions width base blocks level w L T start room cap enough
-  have layout := prefix_layout B i rfl X base (initialPositions b n) blocks level positions room
-  have clocks := prefix_clock B (b := b) width
-  have wordFit := words X.maxWireWidth (by simpa using width)
-  have q : ShrinkRankSpace.cap (S.degreeExponent i.castSucc) ≤ Q := Finset.le_sup (f := fun j : Fin S.steps => ShrinkRankSpace.cap (S.degreeExponent j.castSucc)) (Finset.mem_univ i)
-  exact prefix_numeric B X T start cap layout.1 layout.2 ten ((Nat.mul_le_mul q width).trans_lt product)
-    wordFit (clocks.1.trans_le enough) (clocks.2.trans enough)
+  filter_upwards [eventually_prefixFits_at B b hb] with n run
+  exact run (initialPositions b n)
 
 /-- The chosen selector-bit constant and all four integerized relative masses
 fit at one common threshold independent of the current shrinking state. -/

@@ -1,0 +1,319 @@
+\section{Two public clocks for counting computations}\label{sec:gap}
+
+A batch and its description can both be exponential in a power of $n$.
+The enumeration bound of Theorem~\ref{thm:closed} measures work in
+terms of the whole network. The diagonal argument needs a different
+bound. A public computation must specify the bits shared between
+processors, while each processor can spend polynomial time in $n$
+checking its own bits. We will distribute a long public computation
+among private jobs whose inputs fit on individual processors.
+We adapt the distribution of random access traces in
+\cite[Section~\ext{G}{app:trace}]{oaG}.
+
+The public machine is a universal random access machine (RAM) on
+$w$-bit words. A tick acts on a bounded number of words, can address
+memory indirectly, and can request one binary guess. Its fixed finite
+instruction set includes Boolean operations, comparison, shifts and
+addition. Multiplication, division, parsing and indexing take
+$\operatorname{poly}(w)$ ticks on word-sized data. The machine starts
+with a description of at most $R$ words, including its program, input
+and any advice. Pad its reserved $R$ words with zeros and initialize
+all other cells to zero. Instructions can equivalently
+be fetched from read-only memory. We count paths that halt with output
+one within the prescribed cap.
+
+For small positive rational constants $b,\rho$, let
+\[
+    n^\rho\le \log R\le 3n^\rho,\qquad
+    w=\lceil 20\log(nR)\rceil,\qquad
+    T_-=\lfloor R n^{1-b}\rfloor,\quad
+    T_+=\lceil R n^{1+b}\rceil .
+\]
+Our arrays have size $R n^{O(1)}$ with small absolute exponents, or
+length $o(R)$. Counters of $O(w)$ bits use a bounded number of words.
+Given $(n,R)$ explicitly, the programs compute the clocks and other
+rounded powers with fixed rational exponents by integer comparisons or
+bit lengths in $\operatorname{poly}(w)$ time.
+
+At the smaller public cap $T_-$, the RAM may issue \emph{private jobs}.
+Each job supplies at most $\lfloor n^{1/2}\rfloor$ bits to a fixed
+multitape machine that can make binary guesses and has $n^{20}$ steps
+per path. Its only input is the job string. The public cost includes one
+tick per job and one per bit issued. A \emph{completed path} consists
+of a public path and one private path for each job it issues. It
+succeeds when the public path and all those private paths accept.
+To use a quantity computed in private, the public machine guesses
+its value and includes the claim in the job for verification.
+
+\begin{theorem}[Clock gap]\label{thm:gap}
+Fix the compressor identities of Section~\ref{sec:compr}. Choose
+$0<b<1/20$ sufficiently small for these identities, then $0<\rho<b$
+sufficiently small. The following statements hold for all sufficiently
+large $n$, with the private machine fixed in (1).
+\begin{enumerate}
+\item \emph{Realizing the smaller clock.} For any fixed private machine,
+$R$ copies of $U_n^*$ realize the number of completed successes at cap
+$T_-$. Pin some slots to bits, pair the rest, and sum over the common
+bit in each pair. The equality holds over $\mathbb Z$. From the size
+parameters and the public description, a uniform RAM generates all
+pairs and literal pins in $Rn\operatorname{poly}(w)$ ticks, with
+polynomial exponent independent of $b,\rho$. The same pairing works
+for every description of at most $R$ words at the given $(n,R)$,
+with its literal pins set from the padded description.
+
+\item \emph{Simulating the larger clock.} For a RAM computation at cap
+$T_+$ without private jobs, a uniform procedure with a fixed private
+machine uses $o(T_-)$ public ticks with jobs. Each completed success
+has a monomial weight in the compressor scalars. Its public path
+records the exponents, in $O(w)$ bits each. Over any commutative
+unital ring satisfying the compressor identities, the sum of these
+weights equals the simulated acceptance count in the ring. The
+procedure takes any simulated description of at most $R$ words,
+including one already in public memory. Its fixed compressor templates
+use only the names of the scalars.
+\end{enumerate}
+\end{theorem}
+
+The first construction uses only Boolean predicates and does not
+require port admission. In the second, compression leaves enough
+public time for additional $\operatorname{poly}(w)$ work per original
+processor. Both diagonal arguments will call the first construction on
+a supplied description that includes the actual program and advice.
+For this reason its generator must reproduce the literal pins as well
+as the pairings.
+
+\subsection{Encoding a random access trace}
+
+Both constructions use the same encoding of a RAM trace as a trivalent
+Boolean network.
+For a tick cap $U$ between $T_-$ and $T_+\operatorname{poly}(w)$,
+it has one satisfying assignment per accepting path. Specified final
+memory reads may be tested against supplied bits or exposed as outputs.
+We use the guess-and-check representation of nondeterministic
+computations \cite{Cook} and a sorting-based memory check
+\cite{TinyRAM}.
+
+Record initialization writes of the description. Split each tick into
+a bounded number of microsteps making at most one memory access apiece,
+including instruction fetches. Guess read values and any requested
+nondeterministic bit, check the register transition, and record every
+probe. Sort the initialization, probe and final-read records by address
+and time, breaking any ties in a fixed order. Within each address,
+adjacent records propagate the current value starting at zero. A write
+replaces that value and a read must return it. Pin input literals and
+acceptance, force unused guesses to zero, and pad a halted computation
+uniquely. All auxiliary values, including the outputs of comparisons
+and the current-value fields, are forced on a given path. Replacing
+gates by their Boolean relations and distributing repeated bits by
+binary or ternary equality gives the asserted multiplicity.
+
+Use $O(U)$ rows, rounded up to a power of two, allowing $O(U)$ final
+reads. Put one initialization, probe or output record in each occupied
+row, with successive microsteps in consecutive rows. The contacts of a
+row with other rows have a useful regularity. In each layer of
+Batcher's bitonic sorting network \cite{Batcher}, a comparator's partner
+row is obtained by XOR with a fixed mask. Consecutive rows have XOR
+masks consisting of a suffix of ones. All transitions, memory checks
+and comparisons therefore use only $\operatorname{poly}(w)$ types
+of links per row. The comparisons, transition circuits and equality
+gates within each row also have size $\operatorname{poly}(w)$.
+
+Index a gate and each of its slots by row, phase (including comparator
+layer), local operation and bit number. The bitonic recursion gives
+the partner rows and comparator directions. Thus a row's size
+parameters, index and incident literal bits suffice to generate all
+its gates, pins, links and designated outputs in $\operatorname{poly}(w)$
+time. The whole network costs $O(U\operatorname{poly}(w))$ to generate.
+Its links are determined before any memory addresses are guessed.
+All word-cost exponents here are independent of the program, $b$ and
+$\rho$.
+
+\subsection{Wiring the smaller clock}
+\begin{proof}[Proof of Theorem~\ref{thm:gap}(1)]
+The wiring has two tasks. It checks a public trace and sends each
+private job in that trace to one processor. To supply the jobs in
+fixed positions, augment the public computation with a stream in a
+separate address space inaccessible to the simulated program. Write the stream in consecutive chunks of
+$J=\lfloor n/8\rfloor$ bits. Each job record has a start bit, a
+fixed-width length and the data bits. Before starting a job, open a
+new chunk if the largest allowed record would not fit. Zero-pad the
+unused part of each chunk. For large $n$ a maximum record uses less
+than half a chunk, so each closed chunk, apart from the last one, is
+at least half full. No job crosses a chunk boundary.
+
+Reserve space for the worst case, allowing $O(w)$ record expansion
+per charged job bit or job, a factor of two for padding, and rounding
+to a whole chunk. The begin, append-bit and end instructions implement
+the stream and reject malformed jobs. Checking the public cost cap
+and record lengths, writing the stream, and reading every reserved bit
+in address order on halt take $T_-\operatorname{poly}(w)$ ticks.
+This control is fixed for all public descriptions. Use the trivalent
+trace network at this enlarged cap, with the final stream reads as
+outputs.
+
+Wire each chunk's $J$ outputs to one $U_n^*$ whose remaining slots
+specify a fixed program, $n$ if needed, and padding. The program
+executes its jobs in order, accepting exactly when all accept. A
+successful path selects one accepting private path for each job.
+A chunk contains at most $n$ jobs of at most $n^{20}$ private steps
+each. Even scanning the used tape at every simulated private step
+keeps the joint computation within the processor's $n^{100}$ steps.
+
+Pack the trivalent vertices into further processors. A fixed checking
+program reads, for each assigned vertex, its truth table and at most
+three incident bits. A padded list with its length specified costs a
+constant number of bits per vertex apart from its header. Add trivalent
+vertices as needed to connect literal pins and chunk bits. Wire the
+two slots of each link, including when both belong to checks on a
+single processor. Its program thus needs only the
+individual checks.
+
+The chunks and the packed vertices together use
+\[
+           O\bigl(1+T_-\operatorname{poly}(w)/n\bigr)
+\]
+processors. For fixed $b$, take $\rho$ small enough that this is less
+than $R$ and pin the remaining processors to return one. Generating
+the trace, packing it in order and listing its pins and pairs costs
+$Rn\operatorname{poly}(w)$ ticks. On contraction, a valid trace has
+one extension to the public checking bits. The chunk processors count
+all independent choices of accepting private paths. Their product
+gives precisely the number of completions of that public path.
+\end{proof}
+
+\subsection{Compressing the larger clock}
+\begin{proof}[Proof of Theorem~\ref{thm:gap}(2)]
+Set $U=T_+$. We put its verification trace on the cyclic butterfly
+of Theorem~\ref{thm:closed}, using the fixed XOR links to generate the
+wiring within the smaller public budget \cite[Section~\ext{G}{app:trace}]{oaG}.
+
+\emph{Routing the rows.}
+Fix $a=1/20$, and group consecutive rows into buckets of
+$S=2^{\lfloor a\log n\rfloor}$ rows. The low row bits give the offset
+in the bucket and the high bits give its lane. Put one bucket at
+cursor zero on each lane. The two arcs to the next cursor position
+either stay on the lane or flip its active coordinate. Add empty
+parallel slots to reach the compressor's fixed degree. To route a
+link with a prescribed inter-bucket XOR mask, traverse the cursor
+cycle, flipping each coordinate
+specified by the mask when its turn comes. At every cursor step
+this induces a bijection of lanes. The coordinates already flipped
+recover the source lane from a relay's lane.
+
+Reserve slots on each arc by mask, exchange type, low source row
+bits and bit number. A relay equates successive bits on an occupied
+route and pins surplus slots to zero. Thus every satisfying trace
+has a unique extension to the routed network. Its number of positions
+$P$ and maximum arc width $D$ satisfy
+\[
+              P=O((U/S)w^{O(1)}),\qquad D=O(Sw^{O(1)}).
+\]
+The slot ranges give all capacities, arc identifiers, lane displacements
+and bucket ranges in $P\operatorname{poly}(w)$ public work. They
+require no scan of the $S$ low row indices of each bucket.
+Description words enter only as literals of initialization rows. On
+given arguments a bucket or relay factor counts locally guessed
+assignments that pass the row predicates, wire equalities and padding
+checks. Generating row descriptions and making these checks costs
+$O(S\operatorname{poly}(w))$ per local random access path. At a relay
+the source lane and type schedule identify occupied slots independently
+of the description words. The same mask, type and row identifiers
+identify the slots at their destinations.
+
+\emph{Choosing the shared bits.}
+Apply $t=\lceil z\log n\rceil$ blocks from Section~\ref{sec:compr}.
+Choose $z>0$ rational and small enough that $C^t\le S^{1/4}$ for all
+large $n$. The available $\log(U/S)+O(1)$ lane coordinates suffice.
+The public machine generates the initial descriptors and reads the
+guesses for a history in their canonical encoding. It checks admission
+and constructs the recursive descriptors. Position and capacity
+indices have $O(w)$ bits, so this costs $P\operatorname{poly}(w)$ ticks
+per path. Guess the surviving bits once per arc, a total of at most
+\[
+              2^{-t}O(P(D+1))\le U n^{-z}\operatorname{poly}(w).
+\]
+
+\emph{Issuing the jobs.}
+For each final position, issue its final arguments and the recursive
+layout of its local contraction. Follow the recorded preimages to
+generate slices, ties and internal field identifiers, using local
+indices for each job. For example, write a new local index into an
+array at the original identifier upon visiting it. Each occurrence
+takes $\operatorname{poly}(w)$ public work. The layout gives each
+initial bucket or relay by its identifier and size parameters. Supply
+also the literal description words in the intersection of its bucket
+range with the initialization segment. The public machine visits
+actual literals and skips padding. The hidden field bits will be
+guessed in private.
+
+For each compressor scalar, guess a fixed-length exponent for each
+position and supply it to that job as a claim. Sum these exponents in
+public counters. Each path uses only polynomially many map entries
+and polynomial monomial degrees in $C^t,D,w$ per position, and there
+are at most $P$ positions. Canonical encodings of $O(w)$ bits
+therefore suffice for every local exponent and its global total.
+Each job has length at most
+\[
+                 (C^t)^2(D+S+1)\operatorname{poly}(w)<n^{1/4}
+\]
+once $\rho$ is small enough. Allowing for all steps, including issuing
+each job, the public cost is
+\begin{equation}\label{eq:dump}
+                 (C^t P+R+U n^{-z})\operatorname{poly}(w).
+\end{equation}
+The first term pays for $O(C^t)$ layout records per final position
+and the exponent claims. The second pays for the description words,
+since each initial bucket moves intact to exactly one final position.
+The third pays for the final arc bits supplied at their two endpoints.
+The polynomial overhead covers addressing, guesses and admission checks,
+including rejected paths.
+
+\emph{Checking the private counts.}
+Each private machine guesses the hidden fields, checks local map
+patterns, and runs the path tests for its moved initial factors. It
+accepts only if the map entries are allowed and their monomial
+exponents sum to the supplied claims. There are at most $C^t$
+occurrences and $(C^t)^2 O(D+1)$ field bits in one job. Slices and
+ties can be checked bit by bit. For a map, let $m$ be the largest field length in its
+motif. The selector scans in
+\cite[proof of Theorem~\ext{G}{thm:conversion}]{oaG} test the entry
+and determine its monomial exponents in $(1+m)^2\operatorname{poly}(w)$
+steps.
+
+For a fixed $q$, the bound $B=(C^t)^2(D+S+1)w^q$ covers both the
+combined length of a job's expanded records and fields and the
+largest field length in any of its motifs. A private RAM can store
+the local records in arrays indexed within the job. Charge each occurrence
+$B^2$ steps for scans and $O(S)$ for any original row group it holds,
+with fixed polynomial factors in $w$. Since $S\le n^a$ and
+$C^t\le S^{1/4}$, the resulting bound is
+$C^t(B^2+S)w^{O(1)}\le n^{13a/4}w^{O(1)}<n^2$ for small $\rho$. Scanning lists
+on tapes incurs at most quadratic simulation overhead, leaving room
+for universal interpretation within $n^{20}$ private steps. A fixed
+private program implements these tests. The public machine discards
+nonadmitted histories before issuing jobs, and the checks can reject
+malformed data within the caps.
+
+Fix a history and all final arc bits. Write $\boldsymbol\alpha$ for
+the list of compressor scalars and $N_j(e)$ for the number of accepting
+private paths at position $j$ when its exponent claim is $e$. The
+local contraction at $j$ is $\sum_e N_j(e)\boldsymbol\alpha^e$.
+For publicly claimed exponents $(e_j)_j$ there are
+$\prod_j N_j(e_j)$ completed successes, each with public weight
+$\boldsymbol\alpha^{\sum_j e_j}$. Summing these contributions gives
+the product of the local contractions. Summing over arc bits and
+admitted histories now gives the original acceptance count by the
+compressor identity.
+
+It remains to fit the public cost into the smaller clock.
+Since $C^t\le S^{1/4}$ and $U=T_+$, Equation~\eqref{eq:dump} is
+\[
+             O\bigl(U(n^{-3a/4}+n^{-z}+n^{-1-b})w^{O(1)}\bigr).
+\]
+Choose $b>0$ sufficiently small after $a,z$, for example
+$2b<\min\{a/2,z\}/2$. The required saving is
+$T_-/U=\Theta(n^{-2b})$. Since $w=\Theta(n^\rho)$, decreasing $\rho$
+makes the displayed cost $o(T_-)$ and meets the wiring, job-length
+and private-time bounds above. The finitely many exponents on $w$
+in these estimates are fixed before $b,\rho$ are chosen.
+\end{proof}

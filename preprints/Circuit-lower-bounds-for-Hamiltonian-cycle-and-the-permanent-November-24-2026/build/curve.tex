@@ -1,0 +1,259 @@
+\section{A curve through the prescribed coefficients}\label{sec:descent}
+
+An exact circuit gives a single choice of parse-table entries that realizes
+all the coefficients of $P_n^*$. A border circuit gives a point in the
+closure of the coefficient image. We realize that point as the value of the
+whole table along one branch of an algebraic curve. At the chosen place,
+the table entries may have poles, but every output coefficient is regular.
+For example, the map $(x,y)\mapsto(x,xy)$ takes $(t,t^{-1})$ to
+$(t,1)$. The value $(0,1)$ at $t=0$ has no finite preimage.
+For the parse table, the processors in Section~\ref{sec:cartier} will
+need equations for the curve and a short procedure for evaluating them.
+
+Fix the compressor identities of Section~\ref{sec:compr} in the given
+characteristic. Suppose that $\bsz_F^{[n]}(P_n^*)\le m_0$, with $m_0,M,R$
+as in Section~\ref{sec:parse}. In this and the next two sections,
+\emph{polynomial} means $M^{O(1)}$ and \emph{single exponential} means
+$2^{M^{O(1)}}$. The exponents may depend on the fixed identities and are
+uniform in $n$. Recall that $M^C=o(R)$ for every constant $C$.
+
+Let $c=(c_\nu)_{|\nu|=n}$ be the integer coefficient vector of $P_n^*$
+and write the table of Lemma~\ref{lem:parse-tables} at size $m_0$ as
+\[
+ T_X(Z)=\sum_{|\nu|=n}Y_\nu(X)Z^\nu,\qquad X=(X_1,\ldots,X_h).
+\]
+Here $Z$ lists all $2n$ paired input variables and $\nu$ ranges over
+\emph{every} monomial of degree $n$. The closure of the coefficient
+image contains $c$, interpreted over the algebraic closure of the prime
+field as in Section~\ref{sec:parse}. The number $h\ge1$ is polynomial,
+and each $Y_\nu$ has degree at most $d=2n-1$ and, when nonzero,
+coefficient $\ell^1$-norm of polynomial bit length. The clock defining
+$U_n^*$ gives the same bit bound for the entries of $c$.
+
+\subsection{Specialization in characteristic zero}
+
+To read a boundary value by residues we will work in positive
+characteristic. In characteristic zero we can choose a prime separately
+for each $n$. The prime must preserve the closure membership and have
+bit length small enough for the processors.
+
+\begin{lemma}\label{lem:descent-prime}
+If $c\in\overline{Y(\mathbb A^h)}$ over $\overline{\mathbb Q}$, there is a
+prime $p$ of polynomial bit length for which the same inclusion holds over
+$\overline{\mathbb F}_p$. The fixed tensor identities can be specialized
+at the same prime, with coefficients of bounded extension degree.
+\end{lemma}
+
+We use the following degree estimates over algebraically closed fields
+(see \cite[Ch.~I, \S7]{Hartshorne} and
+\cite[Lemma~2 and Proposition~3]{Heintz}).
+For an affine variety we take the degree of its projective closure.
+A linear image of an irreducible variety has closure of degree at most
+the degree of the variety. For a rational map on an open subset of
+$\mathbb A^h$ whose numerators and common denominator have degree at most
+$e\ge1$, the degree of the image closure is at most $e^h$. Indeed, a
+general linear section of complementary dimension meets the image closure
+in $D'$ distinct points of the image, where $D'$ is the degree of the
+closure. In the domain its pullback has at least one component over
+each point. B\'ezout bounds the number
+of components by $e^h$, even in mixed dimensions. At each cut of degree
+at most $e$, the sum of $(\deg V)e^{\dim V}$ over the components $V$
+cannot increase. In particular, linear sections never increase the sum
+of component degrees.
+
+We will also use that a closed irreducible set of degree $D$ can be
+separated from any point outside it by an equation of degree at most $D$.
+For a set of dimension $b$ and codimension at least two, project its
+projective closure to $\mathbb P^{b+1}$ from a linear center disjoint from
+its join with the point. The image misses the projected point and has
+dimension $b$, since a positive-dimensional projective fiber would meet the
+center. Its hypersurface equation pulls back to the required separator.
+In codimension one the defining equation suffices. For a reducible set,
+multiply the separators for its components.
+
+\begin{proof}[Proof of Lemma~\ref{lem:descent-prime}]
+The image closure has degree at most $D=d^h$ in every characteristic.
+It therefore suffices to preserve the vanishing at $c$ of all relations
+of degree at most $D$. Record substitution $y\mapsto Y(X)$ on these
+polynomials by an integer matrix $A$. Its column for $y^\eta$ is the
+coefficient vector of $Y(X)^\eta$ in $X$-monomials of degree at most
+$dD$. The row $u=(c^\eta)_{|\eta|\le D}$ records evaluation at $c$.
+The rational kernel of $A$ consists of the relations, so the closure
+hypothesis puts $u$ in the rational row span.
+
+There are only $\binom{h+dD}{h}$ rows, a single exponential, regardless
+of the number of columns. Submultiplicativity of the coefficient norm
+bounds the bit length of each matrix entry by a single exponential.
+Choose a row basis and a square minor on those rows with nonzero
+determinant $\Delta$. Cramer's rule expresses $u$ in the basis with
+denominators dividing $\Delta$. The expression obtained on the minor's
+columns holds on all columns because $u$ is in the row span. Hadamard's
+inequality gives a singly exponential bound on the bit length of $\Delta$.
+
+The constants of the fixed identities lie in a fixed number field and
+are integral after inverting a fixed integer. Outside a finite list of
+primes we may reduce at any prime ideal over $p$, preserving both the
+identities and any required nonvanishings. The residue degree is at most
+the number-field degree. Some prime $p$ of polynomial bit length lies
+outside this list and does not divide $\Delta$, since the logarithm of
+the product of all primes up to $x$ is asymptotic to $x$. Reducing the row
+expression now puts $u\bmod p$ in the row span of $A\bmod p$. It therefore
+annihilates every relation of degree at most $D$ even over
+$\overline{\mathbb F}_p$. The separator bound proves the inclusion.
+\end{proof}
+
+In the diagonal argument the compressor identities were chosen over the
+prime field in Section~\ref{sec:compr}. Their characteristic-zero
+constants are rational, so the specialization above places them in
+$\mathbb F_p$. The original layouts therefore give the same contraction
+identities over $\mathbb F_p$, whether or not this new characteristic
+admits ports. In fixed positive characteristic we keep the original
+prime and constants. In both cases write $\mathcal K=\overline{\mathbb F}_p$
+and let $E_0$ be a finite field containing the constants, of degree over
+$\mathbb F_p$ bounded independently of $n$. For the prime-field choices
+we can take $E_0=\mathbb F_p$.
+
+\subsection{Equations for the branch}
+
+Lehmkuhl and Lickteig for tensors, and B\"urgisser for circuits, used
+the degree of the graph of a parameter map to bound the order of
+approximation \cite{LehmkuhlLickteig,BurgisserCorrection}. Guo, Saxena and
+Sinhababu give the corresponding classical bounded-degree approximation
+for approximate polynomial satisfiability over arbitrary fields
+\cite[Theorem~4.2]{GSS}. Here we need a separable curve parameter $t$
+and equations that the processors can evaluate in polynomial time.
+
+\begin{proposition}\label{prop:descent-curve}
+There are a finite extension $E$ of $E_0$, with $\log_2|E|$ polynomial, and
+$h$ polynomials $g_i(X,t)\in E[X,t]$ of polynomial degree with the following
+properties. Their common zero set over $\mathcal K$ has an irreducible curve
+component of singly exponential degree, dominant over the $t$-line, on which
+$J=\det(\partial g_i/\partial X_j)$ is generically nonzero. The function
+field of this curve has a place above $t=0$ at which all $Y_\nu$ are regular
+with residue $c_\nu$. With polynomial advice, each $g_i$ can be evaluated
+in polynomial bit time over $E$ or a specified extension of polynomial bit
+length, given its field representation and the embedding of $E$.
+\end{proposition}
+
+\begin{proof}
+Close the graph of $Y$ in $\mathbb P^h\times\mathbb A^{\{\nu:|\nu|=n\}}$
+using homogeneous parameter coordinates $(1:X)$. The projection to output
+space is closed, so the fiber above $c$ is a nonempty projective set,
+possibly entirely at parameter infinity. On each standard parameter
+chart the graph closure has degree at most $(d+1)^h$. Indeed, its dense
+finite-parameter part is parametrized by $X$ with chart coordinates
+given by ratios of affine linear forms and output coordinates $Y(X)$.
+With the chart denominator common to all coordinates, the numerators
+have degree at most $d+1$. The fiber above $c$ is a linear section on
+each chart. Counting each projective component in a chart meeting it
+bounds the sum of the fiber component degrees by $(h+1)(d+1)^h$.
+
+Cut the projective fiber by parameter hyperplanes until it is finite.
+At each cut avoid the hyperplanes containing a positive-dimensional
+component. Every such component meets the chosen hyperplane by
+projectivity, so the last intersection is still nonempty. Each component
+excludes at most a proper linear subspace of coefficients, and the
+number of exclusions at a cut is bounded by the degree sum above.
+Fix a point $P$ of the finite intersection and a standard chart containing
+it. Denote the graph closure in this chart by $G$, write $(z,y)$ for the
+chart and output coordinates, and let $\ell_1(z),\ldots,\ell_b(z)$ be
+the hyperplanes used in the cuts. On $G$, the common zeros of the forms
+$y_\nu-c_\nu$ and $\ell_j$ now make up a finite set containing $P$.
+
+We need $h$ equations for a finite intersection, with short descriptions
+even when the table has many output coordinates. Encode each $\nu$ by
+its base-$(n+1)$ digits. With $B=(n+1)^{2n}$, put
+\[
+ e(\nu)=\sum_{j=1}^{2n}\nu_j(n+1)^{j-1},\qquad
+ D_a(z,y)=\sum_\nu a^{e(\nu)}(y_\nu-c_\nu)
+             +\sum_{j=1}^b a^{B+j}\ell_j(z).
+\]
+On any surviving positive-dimensional component, at least one original
+form is nonzero at some point. At that point $D_a$ is a nonzero
+polynomial in $a$ of degree at most $B+b$, because all the exponents
+are distinct. Avoiding its roots for each such component cuts every
+positive dimension by one. These are linear cuts on $G$, so at each
+step there are at most $\deg G$ components. After $h$ choices
+$a_1,\ldots,a_h$, the common zeros of $D_i=D_{a_i}$ form a finite
+set containing $P$.
+
+We now deform this intersection. For a vector $v$ to be chosen, impose
+\begin{equation}\label{eq:descent-deform}
+                    D_i(z,y)+t(z_i-v_i)=0\qquad(1\le i\le h).
+\end{equation}
+At $t=0$ these equations retain $P$. Over $\overline{\mathcal K(t)}$,
+they cut out the fiber over $v$ of the affine linear map
+$\psi_t(z,y)=z+t^{-1}D(z,y)$, where $D=(D_1,\ldots,D_h)$.
+Let $U\subset G$ be the finite-parameter part of this chart. It is an
+open subset of $z$-space, with $y=Y(X(z))$. Write
+$\widetilde D(z)=D(z,Y(X(z)))$. The determinant
+$\det(tI+\partial\widetilde D/\partial z)$ is monic in $t$ over
+$\mathcal K(G)$. Thus its vanishing on $U$ cuts out a set of dimension
+less than $h$ over the generic $t$, even if the derivatives of all
+outputs vanish in characteristic $p$.
+
+Choose $v$ outside the closures of the images under $\psi_t$ of this
+critical locus and of $G\setminus U$. They lie in a hypersurface of
+singly exponential degree. Indeed, $G\setminus U$ is empty or cut out
+by one chart coordinate. Each $\widetilde D_i$ has numerator of degree
+at most $d+1$ and denominator a common linear form to power $d$.
+Clearing the denominators in the determinant gives a polynomial of
+degree $O(h(d+1))$ in $z$. By B\'ezout the sum of the degrees of the
+two exceptional loci, after closure, is $O(h(d+1))\deg G$. Taking
+linear images and multiplying their component separators gives a
+hypersurface of at most this degree. Consequently every point
+of the generic fiber has finite parameters and invertible $z$-Jacobian.
+
+All hyperplane coefficients, the $a_i$ and $v$ can be chosen in one
+extension $E$ of $E_0$ whose elements have polynomial bit length.
+At every stage the product of the equations to be avoided has singly
+exponential degree, uniformly in the earlier choices. A grid in a field
+of size larger than that degree contains a point where the product is
+nonzero, including for the exceptional hypersurface over
+$\overline{\mathcal K(t)}$. Since $\log_2|E_0|$ is polynomial, we
+can take a finite extension of this size with $\log_2|E|$ polynomial.
+
+In $G\times\mathbb A^1$ the $h$ equations in
+\eqref{eq:descent-deform} have local dimension at least one at $(P,0)$
+by Krull's dimension theorem. Every component through that point of positive
+dimension dominates the $t$-line, since the special fiber is finite.
+The generic fiber has dimension at most zero by the invertible Jacobian,
+so each such component is a curve. Choose one and take a point above
+$(P,0)$ on its normalization. The functions $y_\nu$ are regular at
+this place, with values $c_\nu$. On the dense finite-parameter part
+they equal $Y_\nu(X)$, which therefore have the same values even if
+some $X_j$ have poles.
+
+It remains to give the equations in the original table entries $X$.
+Write the chart coordinates as $z_i=u_i(X)/\delta(X)$ with $u_i$ and
+$\delta$ affine linear. Clearing the denominator gives
+\[
+ g_i(X,t)=\delta(X) D_i\bigl(z,Y(X)\bigr)
+                  +t\bigl(u_i(X)-v_i\delta(X)\bigr).
+\]
+This is polynomial because $D_i$ is affine linear in $z,y$. On the
+finite-parameter chart the change of coordinates from $z$ to $X$ has
+invertible Jacobian. At a common zero multiplying the equations by
+$\delta$ scales each Jacobian row by a unit. Hence the affine closure
+of the chosen curve in $X,t$ is a component with $J\ne0$ generically.
+Its degree is at most $(d+2)^h$ by B\'ezout, since the equations have
+degree at most $d+2$. The relations $dg_i=0$ express every $dX_j$ as
+a multiple of $dt$. The curve has one-dimensional function-field
+differentials over the perfect field $\mathcal K$, so $dt$ spans them.
+
+For the evaluator, the large sum of output coordinates in each $D_i$
+is just one table evaluation. For $a=a_i$,
+\[
+ \sum_\nu a^{e(\nu)}Y_\nu(X)
+     =T_X\bigl(a^{(n+1)^0},\ldots,a^{(n+1)^{2n-1}}\bigr).
+\]
+Store the corresponding offset $\sum_\nu a^{e(\nu)}c_\nu$ as one
+element of $E$. The $a_i$, hyperplane coefficients, $v$, offsets and
+field arithmetic data take polynomially many advice bits. The exponents
+have polynomial bit length, and Lemma~\ref{lem:parse-tables} supplies
+the polynomial-size table recursion with weights $X$. Binary powering,
+that recursion and the affine forms $u_i,\delta$ thus evaluate $g_i$
+in polynomial bit time, using the cleared expression even at
+$\delta(X)=0$. This evaluator uses only field data for the equations.
+The geometric point $P$ and its branch may be defined over larger fields.
+\end{proof}

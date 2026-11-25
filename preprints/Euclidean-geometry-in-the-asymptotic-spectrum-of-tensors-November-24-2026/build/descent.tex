@@ -1,0 +1,246 @@
+\section{From tagged permutations to amortized simulation}
+\label{sec:descent}
+
+Fix a finite field $F$ with largest spectral flat dimension $k$. A
+\emph{tick} is a trivalent bit network and its \emph{pins} are its open
+data bits. For a tick of size at most $V$, we can reduce the size per
+copy to $V/(\log_2 V)^A$ for any fixed $A$, provided the tick has
+sufficiently few pins. Each copy retains its own pins. The approximation
+must work for every joint choice of their values.
+
+\begin{theorem}[Amortized simulation]
+\label{thm:collapse}
+For every sufficiently large fixed integer $A$ there is a constant
+integer $A'>A$ with the following property. Let $V=2^w$. For all
+sufficiently large integers $w$, let a tick have size at most $V$ and
+at most $V/w^{A'}$ pins. For some positive integer $q\le V^{o(1)}$,
+there is a trivalent network of size at most $qV/w^A$ approximating
+the product of $q$ copies of the tick, with gap at least $V^{1-o(1)}$
+pointwise in their separate pins. Both asymptotic envelopes are
+uniform in the tick.
+\end{theorem}
+
+Two costs determine whether the saving can be iterated.
+Proposition~\ref{prop:oracle-descent} reduces the size per tick by a
+power of the address length, using exact tagged-permutation gates.
+Theorem~\ref{thm:cheaptag} replaces those gates at a smaller overhead,
+but each replacement exposes new catalyst bits. At the next descent
+step every exposed bit counts toward the compiler's boundary cost. We
+control that cost by placing copies on a grid and passing each
+catalyst wire successively through the cells of a coordinate line.
+Only the two ends of the line remain exposed. The price estimate below
+quantifies how much of the original gap this operation preserves.
+
+\subsection{Pricing error on a grid}
+
+Consider the grid $\{3,6,\ldots,3g\}^k$. For direction $j$, place
+two \emph{foci} at $\pm Re_j$, with $R\ge8g$. There are $E$ external
+pairs of bits, each assigned a direction and having one end at each
+focus of that direction. In a fixed wiring, choose a grid line in the
+assigned direction for each pair. Its \emph{rail} runs from the
+negative focus to the first cell on the line, visits its cells in order
+and ends at the positive focus.
+
+At each cell the exact wiring uses one factor $f\otimes I_X$. Attach
+each of its catalyst pairs to a distinct rail passage in the prescribed
+direction. The minus and plus catalyst ports form the incoming and
+outgoing ends of that passage. All other passages and the data ports
+may participate in an arbitrary local contraction. The rails supply all
+intercell connections, and their endpoints at the foci are the only
+outputs. The approximate wiring replaces the factor at every cell by
+$X$ with gap at least $D>0$. Its data are exposed except for pointwise
+pins, whose values must be fixed. We allow both constructions to be
+summed over the same collection of at most $2^\ell$ choices of wiring,
+local factors and settings.
+
+\begin{lemma}[Lens estimate]\label{lem:lens}
+The difference of the two sums has price at most
+\[
+  2RE-D+O_k(Eg^2/R)+2kR(\ell+g^k).
+\]
+More precisely, putting $L=g^k$ and taking $c$ to be the binary diagonal
+price on the set of all $2k$ foci, it has price at most
+\begin{equation}\label{eq:lens-binomial}
+  2RE+C_k Eg^2/R+c\ell+
+       c\log_2\big((1+2^{-D/c})^L-1\big)
+\end{equation}
+for a constant $C_k$ depending only on $k$.
+\end{lemma}
+
+\begin{proof}
+Expand the difference for one wiring by multilinearity. Each term has
+a nonempty set of cells at which it uses $X-f\otimes I_X$. At cell $x$,
+place the incoming and outgoing ends of a direction-$j$ passage at
+$x-e_j$ and $x+e_j$, and the data operations at $x$. Allow two units of
+price per passage. This pays for the through identity on a catalyst pair
+or, on another passage, for moving both ends to $x$. A cell error saves $D$ from the total allowance at that
+cell by \eqref{eq:catalyst-gap} in the translated frame. An interior link
+along a rail has length $3-2=1$. Each of its two end links has a longitudinal
+component $a\ge R/2$ and perpendicular displacement $u$ with
+$\|u\|^2\le 9(k-1)g^2$. Its excess length is
+\[
+   \sqrt{a^2+\|u\|^2}-a
+      =\frac{\|u\|^2}{\sqrt{a^2+\|u\|^2}+a}
+      \le \frac{\|u\|^2}{2a}.
+\]
+The longitudinal parts telescope, including the passage allowances, to $2R$
+per rail (Figure~\ref{fig:spectral-lens}). A summand with $i$ erroneous
+cells therefore has price at most $2RE+C_kEg^2/R-iD$.
+
+There are at most $2^\ell\binom{L}{i}$ terms of this kind.
+Equation~\eqref{eq:price-ordinary-sum} gives \eqref{eq:lens-binomial} by
+summing these spectral values. Simply bounding the number of terms by
+$2^{\ell+L}$ and using $i\ge1$, with $c\le2kR$, gives the first assertion.
+The same output frame is used for every wiring, even when each selector sends
+the external pairs to different grid lines.
+\end{proof}
+
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[scale=.9,line cap=round,line join=round,font=\small]
+  \definecolor{lensfirst}{RGB}{27,91,130}
+  \definecolor{lenssecond}{RGB}{165,72,32}
+  \draw[gray!38,dashed] (-3.55,0)--(3.55,0);
+  \draw[gray!38,dashed] (0,-3.55)--(0,3.55);
+  \foreach \v in {.44,.88,1.32}{
+     \draw[gray!40] (.44,\v)--(1.32,\v);
+     \draw[gray!40] (\v,.44)--(\v,1.32);
+  }
+  \draw[lensfirst!55,densely dotted] (1.32,.88)--(1.32,0)
+       node[midway,right,font=\scriptsize,text=black] {$\|u\|$};
+  \node[below,font=\scriptsize] at (2.43,0) {$a$};
+  \draw[lensfirst,thick] (-3.55,0)--(.44,.88)--(1.32,.88)--(3.55,0);
+  \draw[lenssecond,thick,dashed] (0,-3.55)--(.88,.44)--(.88,1.32)--(0,3.55);
+  \foreach \x in {.44,.88,1.32}{
+    \foreach \y in {.44,.88,1.32}{
+      \fill[black] (\x,\y) circle (1.45pt);
+    }
+  }
+  \draw[black,fill=white] (.88,.88) circle (2.5pt);
+  \fill[lensfirst] (-3.55,0) circle (2pt) node[left] {$-Re_1$};
+  \fill[lensfirst] (3.55,0) circle (2pt) node[right] {$Re_1$};
+  \fill[lenssecond] (0,-3.55) circle (2pt) node[right] {$-Re_2$};
+  \fill[lenssecond] (0,3.55) circle (2pt) node[right] {$Re_2$};
+  \begin{scope}[shift={(7.65,.3)}]
+    \draw[black!45,rounded corners] (-2.78,-2.12) rectangle (2.78,2.02);
+    \draw[lensfirst,thick] (-1.18,0)--(1.18,0);
+    \draw[lenssecond,thick,dashed] (0,-1.18)--(0,1.18);
+    \fill[lensfirst] (-1.18,0) circle (2pt) node[left] {$x-e_1$};
+    \fill[lensfirst] (1.18,0) circle (2pt) node[right] {$x+e_1$};
+    \fill[lenssecond] (0,1.18) circle (2pt) node[above] {$x+e_2$};
+    \fill[lenssecond] (0,-1.18) circle (2pt) node[below] {$x-e_2$};
+    \draw[fill=white] (0,0) circle (2.5pt) node[above right] {$x$};
+    \node at (0,-2.56) {$H(X-f\otimes I_X)\le 2(b_1+b_2)-D$};
+  \end{scope}
+\end{tikzpicture}
+\caption{Two rails on a planar grid. At the circled cell each rail uses
+the ordered pair of sites shown at right. Its projection from focus to focus
+has length $2R$. Only the sloping end links add excess length. The marked
+link has length $\sqrt{a^2+\|u\|^2}$ and contributes at most
+$\|u\|^2/(2a)$ beyond its projection.}
+\label{fig:spectral-lens}
+\end{figure}
+
+Splicing a line of $g$ copies reduces its number of external catalyst
+pairs by a factor $g$. To transfer this construction back to unit frames,
+choose the foci far enough away that the total excess rail length is
+small compared with the gap.
+
+\begin{lemma}[Grid reuse]\label{lem:reuse}
+Suppose a scalar network at fixed pins has gap at least $D=V^{1-o(1)}$ and
+uses $B\le V^{1+o(1)}$ catalyst pairs. Put $g=V^{o(1)}$, a positive
+integer. Take $g^k$ copies with separate pins and splice consecutive
+catalyst ports on each line in their common direction. The resulting
+network approximates the product pointwise with gap $V^{1-o(1)}$ and has
+$g^{k-1}B$ external catalyst pairs.
+\end{lemma}
+\begin{proof}
+In each direction there are $g^{k-1}$ grid lines. After fixing the pins
+the target is the product of the scalar values times the identity on the
+$E=g^{k-1}B$ remaining pairs. Take $D\le V$ by decreasing the claimed
+gap if necessary. With $\ell=0$, choose $R=V^{o(1)}$, $R\ge8g$, so that
+$Eg^2/R=o(D)$. This is possible since $Eg^2/D\le V^{o(1)}$, and such
+an $R$ still gives $Rg^k=o(D)$. For any prescribed unit output frame with
+placement $i:\mathbb R^k\to\mathcal X$, use the spectral space with prices
+and distances multiplied by $R$ and the isometry $u\mapsto i(u/R)$ into
+that rescaled space. The lens foci are now exactly $i(\pm e_j)$.
+Lemma~\ref{lem:lens} gives an error price at most $2RE-D/2$ there.
+Dividing by $R$ returns to the prescribed frame with gap at least
+$D/(2R)=V^{1-o(1)}$. Bounds uniform in the original networks can use a
+common choice of $R$.
+\end{proof}
+
+\subsection{Iteration of the descent step}
+
+\begin{proof}[Proof of Theorem~\ref{thm:collapse}]
+Take $a\in(0,1)$ from Proposition~\ref{prop:oracle-descent}. Apply
+Theorem~\ref{thm:cheaptag} with $r=a/4$, so its network for
+$\operatorname{Tag}(h,h)$ has size $O(2^h h^{1+r})$ and exposed gap
+at least $2^{h-C\sqrt h}$ for a fixed $C$. Choose
+\[
+ b=a/2,\qquad L=\lceil A/b\rceil,\qquad
+ A'=\lceil bL+4\rceil,\qquad
+ h=w-\lceil A'\log_2 w\rceil,\qquad N=2^h .
+\]
+Thus $h\sim w$ and $V/(2w^{A'})\le N\le V/w^{A'}$.
+
+After $i$ steps we shall have a network $G_i$ representing $q_i$ ticks
+pointwise with gap $V^{1-o(1)}$ or better. Its size per tick is at most
+$V/w^{bi}$, and its total number of open bits per tick, including the
+two ends of every catalyst pair, is at most $2V/w^{A'}$.
+We also require $q_i\le V^{o(1)}$. The tick itself satisfies these
+conditions at $i=0$ with $q_0=1$ and zero error.
+
+Suppose $i<L$. First compile the product using exact tagged gates.
+Normalize $G_i$, write $e$ for its open bit count, and
+let $m$ be the larger of its normalized size and $N$. Then
+$m\le N^2$ for large $w$, since $q_i V=V^{1+o(1)}$ and
+$N=V^{1-o(1)}$. Proposition~\ref{prop:oracle-descent} gives an exact
+network for $G_i^{\otimes d}$ with
+$d=2^{O((\log h)^2)}$. Its size is $V^{1+o(1)}$. The number of tag
+calls is $V^{o(1)}$, since each has $3Nh$ bit incidences and each
+wire contributes at most two incidences to this count. Replace every
+call by the approximation above, retaining all of its catalyst ports.
+
+First apply Lemma~\ref{lem:substitution} to $d$ copies of $G_i$ in
+the product of $dq_i$ ticks, with the original pins fixed.
+The resulting error bound depends only on the tensor, hence applies
+to the exact oracle realization. Apply the lemma a second time to its
+tag calls, with their data exposed so that the internal indices may be
+contracted. The two applications each lose at most $V^{o(1)}$ in
+absolute gap to summation over error terms. The tag gaps
+$N2^{-C\sqrt h}$ and the inherited gap are at least $V^{1-o(1)}$.
+Thus the result still has gap at least $V^{1-o(1)}$ pointwise in all
+$dq_i$ copies' pins.
+
+The compiler charges every bit incident to a tag call. Replacing the
+calls therefore increases size by a factor of at most $O(h^r)$.
+The compiler's interior cost and boundary cost give, respectively, the
+two terms in the following bound on size per tick.
+\[
+ O\left(\frac{V}{w^{bi+a-r}}+
+         \frac{V\operatorname{polylog} w}{w^{A'-r}}\right)
+              \le \frac{V}{w^{b(i+1)}}
+\]
+for sufficiently large $w$. Indeed normalization costs a constant
+factor, the floor $m\ge N$ contributes at most the second term, and
+$e/q_i\le 2V/w^{A'}$. The two exponents have slack because
+$a-r>b$ and $A'-r>bL$.
+
+The new catalyst ports can outnumber the original pins. Apply
+Lemma~\ref{lem:reuse} to a grid of side $g=\lceil w^{A'}\rceil$.
+Replication by $g^k$ and splicing along the lines in each catalyst
+direction preserves the pointwise gap $V^{1-o(1)}$. Indeed the number
+of pairs before reuse is at most the total network size
+$V^{1+o(1)}$, and $g=V^{o(1)}$. Each line has $g$ copies and keeps
+one pair of ends in place of $g$ such pairs. Hence the number of open
+catalyst bits per tick falls by a factor $g$, and is now at most
+$V/g$. The number of pins per tick is still at most $V/w^{A'}$.
+Splicing does not increase the size per tick. This proves the inductive
+bounds with $q_{i+1}=g^k d q_i\le V^{o(1)}$.
+
+After the fixed number $L$ of steps, $bL\ge A$ gives the asserted size.
+Normalization, the compiler, the tag estimates, and grid reuse allow
+uniform bounds at each step. Taking their composition a fixed number
+of times gives the stated envelopes.
+\end{proof}

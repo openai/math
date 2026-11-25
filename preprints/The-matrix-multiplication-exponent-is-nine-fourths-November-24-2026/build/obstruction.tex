@@ -1,0 +1,186 @@
+\section{The obstruction from list distinctness}\label{sec:obstruction}
+Fix a finite field \(k\). Consider the test that accepts a list precisely when
+its records are pairwise distinct. Sorting gives one way to perform the
+test. Our lower bound applies to every tensor network computing it, even
+when a single network tests many lists at once. The contradiction will
+come from estimating the cost per input bit. A matrix multiplication
+exponent below \(9/4\) would drive that cost below the lower bound after
+a fixed number of compressions.
+
+\subsection{Two estimates for networks on bits}
+A \emph{bit tensor} of arity \(u\) is a function \(\{0,1\}^u\to k\).
+In a tensor network each vertex carries such a table. A wire pairs two
+argument positions, and each unpaired position is a named exterior bit.
+For a fixed setting of the exterior bits, multiply the vertex entries
+and sum over all settings of the internal wires. This gives the tensor
+represented by the network. A network is \emph{trivalent} if each
+vertex has arity at most three. Its \emph{size} counts the vertices and
+exterior bits. Its \emph{volume} counts the vertices and all wires,
+including the exterior wires. These counts agree up to an absolute
+factor by trivalency. For networks of unrestricted arity we count
+vertices plus their total arity.
+
+The first estimate starts with an arbitrary trivalent network. Its
+conclusion gives a network for a tensor power, with separate exterior
+bits for each copy. On these bits it must compute the product of the
+original answers.
+
+\begin{theorem}[Compression of tensor powers]\label{thm:shaving}
+Suppose \(\omega_k<9/4\). For every \(\eta>0\) there is a \(\gamma>0\)
+such that the following holds for all sufficiently large \(n\).
+Write \(h=\lceil\log_2 n\rceil\). If a trivalent \(k\)-network of size
+\(m\le n^{1.05}\) with \(e\ge n\) exterior bits represents \(V\), then
+for some integer \(d\ge1\) its power \(V^{\otimes d}\) has a trivalent
+\(k\)-network with \(de\) distinct exterior bits and size at most
+\begin{equation}\label{eq:shave}
+                   d\big(mh^{-\gamma}+eh^\eta\big).
+\end{equation}
+Here \(d\le n^{o(1)}\) uniformly in the input network for fixed \(k,\eta\).
+\end{theorem}
+
+Section~\ref{sec:shaving} proves Theorem~\ref{thm:shaving}. Per copy,
+the first term saves a power of \(h\) on the original size. The second
+charges \(h^\eta\) for each exterior bit. The choice of \(\eta\) lets
+us compare this charge with the cost of list distinctness.
+
+For \(w\ge1\), let \(D_w\) be the zero-one tensor for a list of \(2^w\)
+words of \(2w\) bits each. Its value is one exactly when the words
+are pairwise distinct. It has \(n_w=2w\,2^w\) exterior bits. The tensor
+\(D_w^{\otimes t}\) tests distinctness separately within each of \(t\)
+independently specified lists. The network may connect vertices across
+lists. Let \(\operatorname{vol}_k\) denote minimum trivalent volume over \(k\).
+
+\begin{theorem}[Volume of list distinctness]\label{thm:many}
+There is a constant \(\sigma>0\), depending only on \(k\), such that for
+all sufficiently large \(w\) and every integer \(1\le t\le 2^w\),
+\begin{equation}\label{eq:many}
+                  \operatorname{vol}_k(D_w^{\otimes t})
+                          >t n_w w^\sigma .
+\end{equation}
+\end{theorem}
+
+Section~\ref{sec:list} proves Theorem~\ref{thm:many}. Its uniformity
+in \(t\) is essential because the replication factor in
+Theorem~\ref{thm:shaving} is chosen by the compression.
+
+\subsection{Comparison at a fixed input length}
+\begin{proposition}\label{prop:finitefield}
+Over every finite field \(k\), \(\omega_k\ge 9/4\).
+\end{proposition}
+\begin{proof}
+A sorting network on \(2^w\) records uses \(O(2^w w^2)\) comparisons
+\citep{batcher}. Comparing and conditionally exchanging two \(2w\)-bit
+words takes \(O(w)\) Boolean gates. After sorting, the conjunction of
+the inequalities between adjacent words computes \(D_w\). To realize
+this circuit as a tensor network, use the zero-one table of each gate,
+copy bits at fan-outs with equality tables, and pin the output to one.
+For each accepted input there is exactly one consistent assignment of
+the internal wires. This gives a trivalent network over \(k\) of size
+\(m_0=O(n_w w^2)\).
+
+Suppose \(\omega_k<9/4\). Choose \(0<\eta<\sigma\), take \(\gamma\)
+from Theorem~\ref{thm:shaving}, and fix an integer \(J>2/\gamma\).
+Set \(n=n_w\) and \(h=\lceil\log_2 n\rceil=w+O(\log w)\). These
+parameters stay fixed through all \(J\) applications of the theorem.
+At step \(j\) write \(t_j\) for the number of lists, \(m_j\) for the
+network size and \(x_j=m_j/(t_jn)\) for the size per exterior bit.
+Initially \(t_0=1\) and \(x_0=O(w^2)\). With replication factor \(d_j\),
+\eqref{eq:shave} gives
+\[
+         t_{j+1}=d_jt_j,\qquad
+         x_{j+1}\le h^{-\gamma}x_j+h^\eta .
+\]
+Inductively, at each of the first \(J\) steps the network has at least
+\(n\) exterior bits and \(t_j=n^{o(1)}\), since the bound on \(d_j\)
+is uniform and \(J\) is fixed. The recurrence gives
+\(x_j=O(w^2+h^\eta)\), so \(m_j=t_j n x_j\le n^{1.05}\) for large \(w\).
+This verifies the size hypothesis at each step. Summing the recurrence gives
+\[
+       x_J \le h^{-J\gamma}x_0+
+                     h^\eta\sum_{r=0}^{J-1}h^{-r\gamma}
+               = O(w^\eta).
+\]
+Since \(\log_2 t_J=o(w)\), Theorem~\ref{thm:many} applies to these
+\(t_J\) lists. Their network has volume \(O(t_J n w^\eta)\) by
+trivalency, which violates \eqref{eq:many} for sufficiently large \(w\).
+\end{proof}
+
+\subsection{Passing from finite fields to arbitrary fields}
+The step that permits specialization is to extract a single bilinear
+identity with a strict rank saving. Its coefficients generate a
+finitely generated ring, and its equations survive reduction to a finite field.
+
+\begin{lemma}[Bilinearization of a formal circuit]\label{lem:bilinearize}
+If a formal circuit for multiplying two \(s\)-by-\(s\) matrices over
+\(F\) uses \(q\) nonscalar multiplication or division gates, then
+\begin{equation}\label{eq:gate-rank}
+                     \operatorname{rank}_{\overline F}(T_s)\le 2q .
+\end{equation}
+Here \(q\) counts a multiplication when both inputs are nonconstant and
+a division when its divisor is nonconstant.
+\end{lemma}
+\begin{proof}
+Over the infinite field \(\overline F\), choose matrices \(A,B\) at
+which all intermediate rational functions are regular and every divisor
+is nonzero. Evaluate the circuit on \(A+uX,B+vY\) with \(u^2=v^2=0\).
+Each gate has a unique expansion
+\[
+       f=f_{00}+u f_{10}+v f_{01}+uv f_{11}.
+\]
+Here \(f_{00}\) is a scalar, \(f_{10}\) is linear in \(X\), and
+\(f_{01}\) is linear in \(Y\). At a product gate \(f=ab\), the mixed
+coefficient satisfies
+\[
+        f_{11}=a_{00}b_{11}+a_{11}b_{00}
+                         +a_{10}b_{01}+a_{01}b_{10}.
+\]
+Only the last two terms require new products of linear forms.
+At a quotient gate \(f=a/b\), use \(bf=a\) and \(b_{00}\ne0\) to obtain
+\[
+        b_{00} f_{11}=a_{11}-b_{11}f_{00}-b_{10}f_{01}-b_{01}f_{10}.
+\]
+This again requires at most two new products. Linear operations,
+including multiplication or division by a field scalar, contribute none.
+The mixed coefficients of the outputs are the entries of \(XY\).
+They all belong to the span of at most \(2q\) products of an
+\(X\)-linear form and a \(Y\)-linear form, giving \eqref{eq:gate-rank}.
+\end{proof}
+
+\begin{lemma}[Finite specialization]\label{lem:specialize}
+If \(\omega_F<9/4\) over a field \(F\), then \(\omega_k<9/4\)
+over some finite field \(k\).
+\end{lemma}
+\begin{proof}
+The circuit bound has the form \(O(s^{9/4-\epsilon})\) for some fixed
+\(\epsilon>0\). By Lemma~\ref{lem:bilinearize}, at a sufficiently large
+side \(s\ge2\) we have a rank decomposition of \(T_s\) over \(\overline F\)
+with \(r<s^{9/4}\) terms. Let
+\(R\subseteq\overline F\) be the unital ring generated over \(\mathbb Z\)
+by all of its coefficients. The decomposition identities are polynomial
+equations over \(R\) with target coefficients zero and one.
+
+Choose a maximal ideal of \(R\). Its residue field \(k\) is finitely
+generated as a \(\mathbb Z\)-algebra. In positive characteristic Zariski's
+lemma makes \(k\) a finite extension of its prime field. In characteristic
+zero the same lemma over \(\mathbb Q\) would make \(k\) a number field.
+Multiplying its algebra generators by a common positive integer \(M\)
+would then make them algebraic integers. Consequently the generated
+ring would lie in the ring of integers of \(k\) with \(M\) inverted.
+This ring omits \(1/\ell\) for every prime \(\ell\nmid M\), whereas
+the field \(k\) contains all of \(\mathbb Q\). Thus \(k\) is finite.
+Reducing the identities gives \(\operatorname{rank}_k(T_s)\le r\).
+
+Finally, take the \(j\)-th power of this fixed bilinear algorithm.
+Each of the three linear maps can be applied one tensor coordinate at
+a time. Since \(s^2\le r\) by flattening rank, every intermediate
+array has at most \(r^j\) entries. The linear work and the \(r^j\)
+scalar products together cost \(O_{r,s}(j r^j)\) operations at side
+\(s^j\). Padding to the next power of \(s\) gives
+\(\omega_k\le\log_s r<9/4\).
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:square}]
+Proposition~\ref{prop:finitefield} and Lemma~\ref{lem:specialize} give
+the lower bound over every field. The upper bound over every field is
+due to Amanov, van den Berg and Zuiddam \citep{abvz}.
+\end{proof}

@@ -1,0 +1,282 @@
+\section{Coupling the clocks to the scheduler}\label{sec:coupling}
+
+An episode has two time coordinates. The physical time \(x\) locates the
+anchors and probes of the scheduler. Within one bucket the difference
+\(w\) of two clock readings will serve as time for an inner crossing.
+We build a single blocking system, the \emph{driver}, in which that
+inner crossing can be read from either clock vector or from the red-row
+slacks. The readings themselves will be determined by the clock vectors.
+Eliminating the readings preserves the rows tight on a path, the data
+needed to transfer a crossing in Section~\ref{sec:transfer}.
+
+\subsection{Physical time and reading time}
+
+Fix a signature \(T\) and the signature \(T^+\) of
+Theorem~\ref{thm:scheduler}. The two inputs are blocking systems
+\(Q_{\mathrm{clock}}\) on a program on \(T\), and \(Q_{\mathrm{res}}\)
+on a program \(\pi\) on \(T^+\) with \(m\) requests. In each input,
+every viable set has more than \(J\) usable coordinates and every
+admissible crossing of \([0,1]\) has at least \(D_*\) segments.
+Choose a positive integer \(q_*\). Use Theorem~\ref{thm:scheduler}
+to schedule \(\pi\) in \(N\) episodes in \([0,1]\) with \(B>4Vm\)
+buckets. In the scheduler's bank of signature \(T\), place two fresh
+copies of the clock program for each bucket. Write \(A,C\) for their
+coordinate vectors in one bucket. Their coordinates are distinct
+across buckets and from those of the scheduler.
+
+For this bucket we give \(A\) and \(C\) lower bounds \(a(x)\) and
+\(c(x)\). Their difference prescribes the reading when the clocks attain
+these bounds. To construct it, shrink the closed probe bands within
+their episodes, keeping each probe in the interior. In each episode
+choose two distinct times in the interior of the bucket's probe band.
+Prescribe a continuous piecewise affine function that is zero up to
+the first time, increases linearly to one at the second time, and
+remains one until the end of the episode. Call the closed intervals
+where it is zero and one the \emph{early} and \emph{late} phases,
+respectively. Mark an interval of positive length strictly inside the
+intersection of the probe band with each of the phases. These two
+\emph{overlaps} will host further crossings. Between episodes return
+the prescribed function linearly to zero.
+
+Write this piecewise affine function as \(a-c\), with both functions
+convex. Give \(a\) the positive slope jumps of the function and \(c\)
+the absolute values of its negative slope jumps, choosing initial
+affine pieces with the prescribed difference. Each function has
+\(O(N)\) pieces. Extend the end pieces affinely and add a common constant
+so that \(a,c>1\) throughout \([0,1]\). Impose the coordinate bounds
+\begin{equation}\label{eq:driver-floors}
+                    A\ge a(x)\mathbf1,\qquad C\ge c(x)\mathbf1 .
+\end{equation}
+Choose a cap \(T_*\) strictly above all the floors of all buckets on
+this interval.
+
+On the reading axis \(w\) choose \(q_*\) successive triples of
+disjoint, positive-length closed intervals in \((1/4,3/4)\). In each
+triple name the intervals \(A,C,R\) in order. Call them \emph{work
+windows}. Give each an open \emph{interval of influence} containing
+it, with all closures pairwise disjoint. We build three blocking
+systems on this common reading axis. The \emph{overlays} \(Q_A(w)\)
+and \(Q_C(w)\) reproduce the clock input on their respective windows,
+while \(Q_R(w)\) reproduces the resource input on the \(R\) windows.
+Their coordinates will be supplied by the vectors in
+\eqref{eq:driver-memberships} below.
+
+\begin{lemma}[Copies on disjoint windows]\label{lem:overlay}
+Each overlay uses $q_*$ affinely reparametrized and translated copies of
+its input row list and $O(q_*)$ additional individual lower bounds per
+coordinate, with the original coordinate set. On each window of its type
+it coincides with the corresponding input after the increasing affine
+change from the window to $[0,1]$ and translation by an affine function
+of $w$ times $\mathbf1$. Every other row is strict there. For
+$|w|\le 2T_*$, an input-copy row can be tight at a feasible point only
+inside its own interval of influence.
+\end{lemma}
+
+\begin{proof}
+Normalize the rows of the input as \(b\cdot y\ge\ell(w)\) with
+\(b\ge0\) and \(b\cdot\mathbf1=1\). For the selected type of window,
+order the windows and the intervening and exterior gaps along the line.
+Assign an affine function to each window and gap as follows. Take their
+slopes strictly increasing in this order. Choose successive intersection
+times just outside the ends of the windows, inside the corresponding
+intervals of influence, and determine the intercepts successively.
+Their upper envelope visits the lines in the prescribed order. In
+particular the line of a window is strictly above all the others
+throughout that window, and strictly below the envelope outside its
+interval of influence.
+
+For a window with line \(p\) and affine change of time \(\phi\) onto
+\([0,1]\), insert the entire input list with right sides
+\(\ell(\phi(w))+p(w)\). For a gap with line \(p\), insert the individual
+bounds \(y_i\ge p(w)\). We call these rows \emph{blanks}. On
+\([-2T_*,2T_*]\) take \(M\ge1\) bounding all
+\(\lvert\ell(\phi(w))\rvert\). Multiply the lines, but not the input
+right sides \(\ell(\phi(w))\), by a common positive factor. By
+compactness the strict gaps identified above can all be made larger
+than \(2M\). On each piece of the envelope, individual rows of its own
+copy or gap give \(y_i\ge p(w)-M\) for every \(i\). Since \(b\) is
+a convex weight vector, all rows whose lines are lower by more than
+\(2M\) are strict. On a work window the translated input alone
+therefore implies every other row. Outside a copy's interval of
+influence all its rows are strict at every feasible point.
+\end{proof}
+
+\subsection{Eliminating the clock readings}
+
+The \(R\) overlay has one coordinate for each of the \(m\) requests in
+\(\pi\). To supply that coordinate we use the smallest slack in its red
+group. Keep the non-red scheduler rows. For every red row its slack is
+the affine function left side minus right side, defined even when the
+row is violated. For the current bucket \(P\) put
+\[
+       \mu_i=\min\{\text{slack of }h:h\text{ is a red row
+       in the group }(P,i)\},\qquad 1\le i\le m.
+\]
+We replace the red rows by constraints joining these minima to the
+two clock vectors. Choose \(\rho>0\) after fixing the overlays, and
+then choose \(\tau>0\) after fixing \(\rho\). The smallness conditions
+on these parameters are given in the proofs below.
+The intended condition is the existence of $s,u\le T_*$ such that, for
+$w=s-u$,
+\begin{equation}\label{eq:driver-memberships}
+\begin{aligned}
+ z_A&=(A-s\mathbf1)/\rho                       &&\in Q_A(w),\\
+ z_C&=(C-u\mathbf1)/\rho                       &&\in Q_C(w),\\
+ z_R&=\bigl(\mu/\tau+(s+u)\mathbf1\bigr)/\rho    &&\in Q_R(w).
+\end{aligned}
+\end{equation}
+Neither reading becomes a coordinate of the driver. To eliminate them,
+write the $A$ and $C$ inequalities, respectively, as
+\[
+     s+\rho\ell_A(w)\le b_A\cdot A,\qquad
+     u+\rho\ell_C(w)\le b_C\cdot C
+\]
+and count $s\le T_*$ and $u\le T_*$ as further upper inequalities of
+their respective types. Each resource inequality has the form
+\[
+       b_R\cdot\mu/\tau+s+u\ge\rho\ell_R(w).
+\]
+The resource slack increases with the sum of the readings, while the
+two upper slacks bound one reading each. This permits elimination with
+positive multipliers, so tightness in the resulting row will record
+tightness of all three constituents.
+
+For a triple consisting of an upper inequality of each type and a
+resource inequality, take their slacks with the feasible sign positive.
+Add the three slacks, multiplying the two upper slacks by the unique
+multipliers that cancel the coefficients of $s,u$ and leaving the
+resource multiplier equal to one. At $\rho=0$ the two upper normals in
+$(s,u)$ are $(-1,0),(0,-1)$ and the resource normal is $(1,1)$.
+Thus both multipliers exist and are positive for sufficiently small
+$\rho$, uniformly over the finite list of triples. For each
+$i\in\operatorname{supp} b_R$ replace $\mu_i$ independently by the
+slack of one row in its group and impose that the resulting sum be
+nonnegative. This is one \emph{coupling row}. Its coordinate normal is
+nonnegative and nonzero because it includes a positive multiple of at
+least one red-row normal. Its right-hand side is affine in physical time.
+The choices use at most $(2V)^{|\operatorname{supp} b_R|}$ rows for this
+triple.
+
+\begin{lemma}[Canonical readings and tight triples]\label{lem:coupling}
+At every point satisfying the clock floors with $0\le x\le1$ there is a
+canonical continuous choice of $(s,u)\in[0,T_*]^2$, determined by $A,C$,
+satisfying all upper inequalities with at least one of each type tight.
+It obeys
+\begin{equation}\label{eq:canonical-estimate}
+ \begin{aligned}
+ |s-\min(T_*,\min_i A_i)|&\le C_*\rho,\\
+ |u-\min(T_*,\min_i C_i)|&\le C_*\rho,
+ \end{aligned}
+ \qquad C_*\rho<1/32 .
+\end{equation}
+The coupling rows of the bucket are equivalent to
+\eqref{eq:driver-memberships} at the canonical readings. They are also
+equivalent to the existence of readings \(s,u\le T_*\) satisfying
+\eqref{eq:driver-memberships}. At a point satisfying these equivalent
+conditions, a coupling row is tight precisely when all three constituents
+are tight there and every slack chosen in its expansion attains the
+corresponding minimum. Deleting all coupling rows containing input-copy
+rows from two or three different overlays preserves every slice with
+$x\in[0,1]$ and the tight rows at every feasible point.
+\end{lemma}
+
+\begin{proof}
+For a proposed pair $(s,u)$, evaluate $w=s-u$ and form the pair of bounds
+whose first entry is
+\[
+      \min\bigl(T_*,\min_{(b,\ell)\text{ in }Q_A}
+                              (b\cdot A-\rho\ell(w))\bigr)
+\]
+and whose second entry is given by $C,Q_C$ in place of $A,Q_A$. This map
+is Lipschitz in the maximum norm with constant at most $2\rho$ times the
+largest absolute slope of an upper row. On the square $[0,T_*]^2$ the
+clock floors give $b\cdot A,b\cdot C>1$, and $\rho|\ell(w)|<1$ there for
+small $\rho$. Hence the square maps to itself. The contraction has a unique fixed point. Its dependence on \(A,C\)
+is continuous. Changing the clock vectors by at most \(\Delta\) in
+maximum norm changes the map by at most \(\Delta\), hence changes the
+fixed point by at most \(\Delta/(1-\kappa)\), where \(\kappa<1\)
+is the Lipschitz bound. Each component of the fixed point attains its
+minimum, giving one tight upper inequality of each type. Suppressing the terms $\rho\ell(w)$ changes the two
+minima by at most $C_*\rho$, where $C_*$ bounds $|\ell|$ for
+$|w|\le 2T_*$. The unperturbed minimum over $b\cdot A$ is $\min_i A_i$
+because the normals are convex weight vectors and include all individual
+coordinate normals. This proves \eqref{eq:canonical-estimate} after a
+further decrease of $\rho$.
+
+For any pair of readings, let $U_A,U_C,V_R$ be the three slacks of a
+triple, with $V_R$ evaluated on the minima $\mu$. If its expansion
+chooses red slacks $h_i$, the resulting physical row has slack
+\begin{equation}\label{eq:coupling-slack}
+  \lambda_A U_A+\lambda_C U_C+V_R+
+    \frac{1}{\tau}\sum_{i\in\operatorname{supp} b_R}(b_R)_i(h_i-\mu_i),
+\end{equation}
+where $\lambda_A,\lambda_C>0$ are the elimination multipliers. The displayed
+expression is independent of the readings. Any witness
+to~\eqref{eq:driver-memberships} makes every summand nonnegative and so
+gives all the expanded rows. Conversely, fix a resource row and use two
+tight upper inequalities at the canonical readings. Choosing minimizing
+red slacks in the expansion leaves only $V_R$ in~\eqref{eq:coupling-slack}.
+Thus the expanded rows give every resource inequality at these readings.
+At a feasible point all summands are nonnegative there, proving the
+tightness criterion.
+
+By Lemma~\ref{lem:overlay}, at the canonical $w\in[-T_*,T_*]$ two
+different overlays cannot have tight input-copy rows simultaneously. Thus
+each coupling row to be deleted is strict throughout the original slice.
+For the deletion argument fix $x\in[0,1]$. Every row has a
+nonzero nonnegative coordinate normal, so making all coordinates sufficiently
+large gives a point strict in every original inequality. If a point
+satisfied the retained rows and violated an original one, the segment
+from the strict point would first meet a deleted equality at an original
+feasible point, contradicting strictness there. The argument applies to
+all buckets simultaneously. All tight expanded rows, in particular, have
+been retained.
+\end{proof}
+
+\paragraph{Row count and activity.}
+The driver consists of the non-red scheduler rows, the floors
+\eqref{eq:driver-floors}, and the retained coupling rows for every bucket.
+These inequalities define a blocking system on the whole real line,
+with an individual bound on each coordinate. When this driver becomes an
+input to a later overlay, each copy samples exactly $[0,1]$ on its work
+window. Outside that window, the dominance proof applies directly to the
+retained rows, whose affine right-hand sides are bounded on the compact
+reading range. By Lemma~\ref{lem:coupling}, each surviving triple contains at most one
+row from an input copy. With the numbers of blanks, caps and repetitions fixed, the number
+of retained triples before expanding the minima is linear in the total
+input row count. For each such triple the expansion costs at most
+\((2V)^{|\operatorname{supp}b_R|}\) rows. Section~\ref{sec:recursion}
+bounds this factor using the span of the resource row.
+
+For a feasible driver point with $x\in[0,1]$, call a bucket
+\emph{active} if one of its coupling rows is tight. By Lemma~\ref{lem:coupling} this is equivalent to a resource
+inequality being tight at the canonical point. In that case every tight
+upper or resource inequality occurs in a tight coupling row. Indeed, it
+can be combined with tight rows of the other two types and minimizing slacks.
+On the zero set of any coupling row in this feasible slab, its two upper
+equalities determine $s,u$ as affine functions of
+$A,C$ by the same nonsingular two-by-two system used in the elimination.
+
+\begin{lemma}[Red slacks and active buckets]\label{lem:active}
+Uniformly over feasible driver points with $0\le x\le1$, every red slack
+is at least $-O(\tau)$, and every red slack occurring in a tight coupling
+row is $O(\tau)$ in absolute value. For sufficiently small $\tau$, at
+either anchor of any episode at most $2Vm$ buckets are active.
+\end{lemma}
+
+\begin{proof}
+On the compact reading range, every coordinate of $z_R$ has a uniform
+lower bound from its individual rows. In a tight resource inequality,
+each coordinate with positive coefficient also has a uniform upper bound
+because the right-hand side is bounded and all other terms are bounded below.
+The lists of rows and coefficients are finite. Solving
+\eqref{eq:driver-memberships} for $\mu$ gives $\mu_i\ge-O(\tau)$ for
+every $i$ and $|\mu_i|=O(\tau)$ on each tight resource support. A red
+slack used by a tight coupling row attains $\mu_i$. The constants can
+depend on all the choices before $\tau$. Thus the scheduler coordinates
+satisfy all its rows within its anchor tolerance, and every active
+bucket has a red row within that tolerance of equality. The anchor
+bound of Theorem~\ref{thm:scheduler} applies. Finitely many anchors and
+red rows are involved, so a single choice of \(\tau\) works for all
+of them.
+\end{proof}

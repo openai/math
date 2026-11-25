@@ -1,0 +1,279 @@
+\section{Reading a boundary value with residues}\label{sec:cartier}
+
+Proposition~\ref{prop:descent-curve} gives a curve on which the output
+coefficients $Y(X)$ have the required value $c$ at a place above $t=0$.
+Individual parameter monomials can have poles there. For instance,
+if $u=t^{-1}$ and $v=t^{-1}-t$, then $u^2$ and $uv$ both have poles
+at $t=0$, yet $u^2-uv=1$. A counting path in
+Lemma~\ref{lem:substitution} produces one monomial at a time. We need
+a rule for combining its contributions that respects cancellation at
+the chosen place.
+
+We assign each weighted monomial $aX^\mu$ a matrix. For every regular
+sum with a value in the prime field, the sum of its matrices acts by
+that value on a single nonzero vector. In the example, the difference
+of the two matrices acts as the identity on the vector. We use the size
+parameter $M$ of Section~\ref{sec:descent} throughout.
+
+\begin{lemma}[Matrices for the boundary value]\label{lem:pins}
+Fix a singly exponential degree bound $L$. There are a nonzero vector
+$\Omega\in\mathbb F_p^d$ and matrices $W_{a,\mu}\in\mathbb F_p^{d\times d}$
+for $a\in E$ and $\mu\in\mathbb Z_{\ge0}^{h}$ with $|\mu|\le L$.
+If $A=\sum_\mu a_\mu X^\mu\in E[X]$ has degree at most $L$, is
+regular at the chosen place and has value $z\in\mathbb F_p$ there, then
+\begin{equation}\label{eq:cartier-pin}
+                 \biggl(\sum_\mu W_{a_\mu,\mu}\biggr)\Omega=z\Omega .
+\end{equation}
+In particular, this holds for $A=F(Y(X))$ of degree at most $L$,
+with $F$ over $\mathbb F_p$ and $z=F(c)$. For fixed $\mu$ the matrix
+is $\mathbb F_p$-linear in $a$, and $d$ is singly exponential. With
+one polynomial-length advice string for all $a,\mu$ and all pairs of
+indices, any specified entry is the number modulo $p$ of accepting
+paths of a polynomial-time binary-guess computation.
+\end{lemma}
+
+The entries of $\Omega$ will be residues of test differentials on
+the curve, followed by a field trace. If $A$ has boundary value
+$z\in\mathbb F_p$, then $A^q-z=(A-z)^q$ vanishes to order at least
+$q$ for every $p$-power $q$. For a test differential $\eta$ with pole
+order less than $q$, it follows that $A^q\eta$ and $z\eta$ have the same
+residue. The Cartier operator converts this observation into a rule
+linear in $A$, through the identity $C_q(A^q\eta)=A C_q(\eta)$.
+Speyer represented transitions of finite automata by related operators
+on curve differentials. Bridy used this interpretation to bound the
+number of states~\cite[Proposition~3.8 and Theorem~1.2]{Bridy}.
+Here the tests must admit matrix entries that a counting path can
+evaluate in the coordinates of the given curve equations.
+
+\subsection{From the local coordinate to the curve equations}
+
+Write $x=(x_1,\ldots,x_h)$ for the coordinate functions on the
+geometric curve and $K=E(t,x)$ for the field they generate over $E$.
+It is finite over $E(t)$. Indeed, each $x_i$ is algebraic over
+$\overline{\mathbb F}_p(t)$, and only finitely many algebraic constants
+occur in a defining equation for it. Restrict the chosen valuation to
+$K$ and normalize its value group to $\mathbb Z$. Its residue field
+$\kappa$ is finite, since the place lies over $t=0$ in a finite
+function field extension. The residues of $Y(x)$ are still $c$.
+
+Choose a uniformizer $s\in K$ at this place. The completion is
+$\kappa((s))$, with the coefficient field obtained by lifting the
+roots of $T^{|\kappa|}-T$. Put
+\[
+   J=\det\left(\frac{\partial g_i}{\partial X_j}\right),\qquad
+   \eta_0=\frac{dt}{J(x,t)} .
+\]
+The Jacobian is nonzero at the generic point by
+Proposition~\ref{prop:descent-curve}. Differentiating $g_i(x,t)=0$
+expresses every $dx_j$ as a multiple of $dt$. In particular, $ds$
+is a multiple of $dt$ because $s\in E(t,x)$. As $ds\ne0$ in
+$\kappa((s))$, the differential $\eta_0$ is nonzero even when
+$t$ is ramified at the branch.
+
+Write $\operatorname{Res}\eta$ for the coefficient of $s^{-1}ds$ in
+$\eta$. For $q=p^u$, $u\ge1$, Cartier acts in the local coordinate by
+\[
+ C_q\!\left(\sum_j v_j s^j\,ds\right)
+       =\sum_i v_{q i+q-1}^{1/q}s^i\,ds .
+\]
+Grouping exponents modulo $q$ gives $C_q(D^q\eta)=D C_q(\eta)$,
+and the coefficient at $i=-1$ gives
+$\operatorname{Res}(C_q\eta)=(\operatorname{Res}\eta)^{1/q}$.
+In the ambient coordinates $Z=(X_1,\ldots,X_h,t)$ put
+\[
+   \Lambda_q\!\left(\sum_j v_j Z^j\right)
+        =\sum_i v_{q i+(q-1)\mathbf1}^{1/q} Z^i .
+\]
+This operator retains exponents congruent to $q-1$ in every
+coordinate. The next formula computes the local action using only
+this coefficient extraction and the defining equations of the curve.
+
+\begin{lemma}\label{lem:cartier-formula}
+For $f\in E[X_1,\ldots,X_h,t,t^{-1}]$ one has
+\begin{equation}\label{eq:cartier-adjunction}
+ C_q\bigl(f(x,t)\eta_0\bigr)
+       =\Lambda_q\!\left(f\prod_{i=1}^h g_i^{q-1}\right)(x,t)\,\eta_0 .
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+For a plane curve this is the formula of St\"ohr and
+Voloch~\cite[Theorem~1.1]{StoehrVoloch}. The coordinate change in
+higher codimension uses the naturality of Cartier on top
+differentials~\cite{Cartier,Katz}. Recall its coefficient description.
+In coordinates $z_1,\ldots,z_b$ forming a $p$-basis, each element
+has a unique expansion in $z^j$, $0\le j_i<p$, over the subfield
+of $p$-th powers. In a top form all terms with some $j_i<p-1$ have
+an antiderivative in that coordinate. An exact form has zero
+coefficient at $j=(p-1)\mathbf1$. Thus precisely this coefficient
+survives modulo exact top forms. The intrinsic inverse Cartier map
+from top forms to this quotient sends
+\[
+ a\,dv_1\wedge\cdots\wedge dv_b\longmapsto
+ \left[a^p\bigwedge_{i=1}^b v_i^{p-1}dv_i\right].
+\]
+Indeed, $v^{p-1}dv$ is closed, obeys the product rule with scalars
+raised to the $p$-th power, and is additive modulo exact forms.
+The correction for additivity is the differential of the reduction
+of the integral polynomial $((U+V)^p-U^p-V^p)/p$. This construction
+commutes with the field embedding below, and inversion gives the
+coefficient rule for Cartier. Iteration gives the rule for $q$.
+In an iterated Laurent series field over a perfect field, grouping
+exponents modulo $p$ shows that the series variables form a $p$-basis.
+
+Introduce independent variables $y_1,\ldots,y_h$ over $\kappa((s))$.
+Since $J(x,t)$ is invertible there, the formal implicit function
+theorem gives $\widetilde x\in\kappa((s))[[y_1,\ldots,y_h]]^h$
+with $\widetilde x(0)=x$ and $g_i(\widetilde x,t)=y_i$.
+Hence $X\mapsto\widetilde x$, $t\mapsto t(s)$ embeds the ambient
+rational function field in the iterated Laurent series field. Indeed,
+the image contains the algebraically independent elements
+$t(s),y_1,\ldots,y_h$. In the new variables the volume form is
+\[
+ dX_1\wedge\cdots\wedge dX_h\wedge dt
+    = J(\widetilde x,t)^{-1}dy_1\wedge\cdots\wedge dy_h\wedge dt .
+\]
+Multiply by $f\prod_i g_i^{q-1}$ and apply Cartier. In the ambient
+coordinates its coefficient becomes $\Lambda_q(f\prod_i g_i^{q-1})$.
+In the series coordinates the factor $\prod_i y_i^{q-1}$ shifts
+the constant term of $f(\widetilde x,t)/J(\widetilde x,t)$ to
+$y^{(q-1)\mathbf1}$. This term alone contributes to the constant
+$y$-coefficient after Cartier. Since $dt=t'(s)ds$, that coefficient
+times $ds$ is $C_q(f(x,t)\eta_0)$. In the ambient calculation it is
+$\Lambda_q(f\prod_i g_i^{q-1})(x,t)\eta_0$. This yields
+\eqref{eq:cartier-adjunction}.
+\end{proof}
+
+\subsection{A finite family of test differentials}
+
+We need a family large enough to detect a nonzero residue, whose span
+is stable under each combined operation $\eta\mapsto a x^\mu C_q(\eta)$
+with $|\mu|\le L$. Set $S=\sum_i\deg g_i$, $H=4(L+S+2)$, and take
+the box of monomials
+\[
+  \mathcal B=\{X^\alpha t^j\mid 0\le\alpha_i\le H,\ -H\le j\le H\}.
+\]
+For $f\in\mathcal B$, $a,b\in E$ and $|\mu|\le L$, the Laurent polynomial
+\begin{equation}\label{eq:cartier-row}
+       aX^\mu\Lambda_q\!\left(bf\prod_i g_i^{q-1}\right)
+\end{equation}
+is supported in $\mathcal B$. In fact, the product with
+$\prod_i g_i^{q-1}$ increases each upper exponent by at most
+$(q-1)S$. After extraction and multiplication by $X^\mu$, the upper
+bound in each coordinate is at most $H/q+S+L\le H$. The extracted
+$X$ exponents are nonnegative, and the lower $t$ exponent is at least
+$-H/q-1\ge-H$.
+
+To bound pole orders of the tests, let $D$ be the degree of the
+geometric curve. B\'ezout gives $D\le\prod_i\deg g_i$, which is
+singly exponential by Proposition~\ref{prop:descent-curve}. On the
+normalized projective model, a quotient of polynomials of degrees at
+most $e$ has poles of order at most $eD$, provided its denominator
+does not vanish identically on the curve. Homogenizing to a common
+degree bounds the pole divisor by the intersection with the
+denominator hypersurface. For $f/J$ one can take $e=(h+2)H+S$
+after clearing negative powers of $t$. Restricting the valuation
+to $K$ and normalizing only decreases this bound on pole orders.
+Also $dt$ is regular since $t$ has positive valuation. Take $q$
+to be the first positive power of $|E|$ exceeding $e\prod_i\deg g_i$.
+This singly exponential $q$ works simultaneously for all the differentials
+$f(x,t)\eta_0$ and fixes the scalars in $E$ under $q$-th powering.
+
+Fix an $\mathbb F_p$-basis of $E$. Use pairs $(b,f)$ of a basis
+element and a box monomial as our indices, and put
+\[
+ \ell(\eta)=\operatorname{Tr}_{\kappa/\mathbb F_p}(\operatorname{Res}\eta),
+ \qquad \Omega(b,f)=\ell\bigl(bf(x,t)\eta_0\bigr).
+\]
+These entries are in $\mathbb F_p$, and $\ell(C_q\eta)=\ell(\eta)$
+because the absolute trace is invariant under inverse Frobenius.
+
+We show that the box contains a test with nonzero traced residue.
+Choose a trace-one element of the finite separable extension
+$\kappa/\mathbb F_p$ and lift it to an element $w$ of the valuation
+ring of $K$. Then $\ell(w\,ds/s)=1$. The quotient
+$(w\,ds/s)/\eta_0$ is in $K$. Express it as a finite linear combination
+of monomials in $x$ with coefficients in $E(t)$, using the finiteness
+of $E(t,x)/E(t)$. Approximate each rational coefficient by a Laurent
+polynomial in $t$ over $E$. Since $t$ has positive valuation, sufficiently
+long approximations preserve the residue after multiplication by the
+finitely many test factors $x^\alpha\eta_0$. This gives a Laurent
+polynomial $f_0\in E[X,t,t^{-1}]$ with $\ell(f_0(x,t)\eta_0)=1$.
+
+The exponents of $f_0$ need not yet lie in $\mathcal B$. Apply
+Lemma~\ref{lem:cartier-formula} with a $p$-power $Q$ larger than
+the absolute values of all these exponents. The polynomial
+$\Lambda_Q(f_0\prod_i g_i^{Q-1})$ is supported in $\mathcal B$ by the
+same exponent bound, and its traced residue against $\eta_0$ is still
+one. Expand its coefficients in the chosen basis of $E$. At least
+one of the resulting entries $\Omega(b,f)$ is nonzero. The power $Q$
+and the local functions $w,s$ serve only to prove this existence.
+The matrix entries below use the uniform power $q$ and the curve equations.
+
+\subsection{The matrix action and its entry counts}
+
+\begin{proof}[Proof of Lemma~\ref{lem:pins}]
+In row $(b,f)$ of $W_{a,\mu}$, enter the coefficients of
+\eqref{eq:cartier-row} in the basis $b'f'$, with columns indexed
+by $(b',f')$. The support bound makes this a square matrix over
+$\mathbb F_p$. Multiplication by $a$ after extraction makes the
+row $\mathbb F_p$-linear in $a$. By
+Lemma~\ref{lem:cartier-formula}, the $(b,f)$ entry on the left of
+\eqref{eq:cartier-pin}, with evaluations on the curve understood, is
+\[
+   \ell\!\left(A\,C_q(bf\eta_0)\right)
+    =\ell\!\left(C_q(A^q bf\eta_0)\right)
+    =\ell(A^q bf\eta_0)=z\,\ell(bf\eta_0).
+\]
+The last equality uses regularity of the whole sum $A$. The zero
+of $A^q-z$ has order at least $q$, so $(A^q-z)bf\eta_0$ has zero
+residue. This proves \eqref{eq:cartier-pin}. More generally, if
+the boundary value is $z\in E$, then $z^q=z$ and the right side
+becomes $R_z\Omega$, where row $(b,f)$ of $R_z$ expands $zb$ in
+the fixed basis while keeping $f$ fixed.
+
+There are $d=[E:\mathbb F_p](H+1)^h(2H+1)$ indices, each of
+polynomial bit length. To compute an entry in row $(b,f)$ and
+column $(b',f')$, subtract $(\mu,0)$ from the exponent vector of
+$f'$ and call the difference $i$. With
+\[
+       j=qi+(q-1)\mathbf1,\qquad V=bf\prod_i g_i^{q-1},
+\]
+the requested entry is the $b'$-coordinate of $a[Z^j]V$. The
+inverse Frobenius in $\Lambda_q$ fixes $E$ since $q$ is a power
+of $|E|$. If $j$ lies outside the exponent vector of $f$ plus
+the box $[0,(q-1)S]^{h+1}$, the entry is zero.
+
+Otherwise take the finite extension $E'/E$ of least positive degree
+such that $N=|E'|-1>(q-1)S$. Its elements have polynomial bit length,
+since $|E'|\le |E|((q-1)S+2)$. Orthogonality in $(E')^\times$
+gives
+\[
+       [Z^j]V=N^{-(h+1)}
+           \sum_{z\in((E')^\times)^{h+1}} V(z)z^{-j}.
+\]
+Every coordinate interval of the support has width less than $N$.
+Thus the only exponent of the support that can be congruent to $j$
+modulo $N$ in all coordinates is $j$ itself. The argument applies
+also to the negative powers of $t$.
+
+Give the counting procedure the curve evaluators from
+Proposition~\ref{prop:descent-curve}, the exponent defining $q$, field
+presentations, embeddings, and basis data as polynomial-length advice. A path guesses one tuple
+of nonzero elements of $E'$ in canonical encodings, rejecting invalid
+guesses. It evaluates $V(z)z^{-j}$ and the normalization factor by
+the curve evaluators and binary powering. Multiply by $a$ and apply
+the coordinate projection for $b'$, extended $\mathbb F_p$-linearly
+from $E$ to $E'$. Both operations take polynomial time and commute
+with the sum over tuples. If the resulting prime-field element has
+integer representative $v\in[0,p-1]$, a final guess of
+$\lceil\log_2 p\rceil$ bits accepts exactly when its value is less
+than $v$. Each summand therefore contributes the required number
+of accepting paths modulo $p$.
+
+We may pad $d$ to the next power of two by adding zero rows and
+columns to the matrices and zero coordinates to $\Omega$. The
+entry procedure then takes binary indices of one fixed length.
+Section~\ref{sec:border} uses one such index at which $\Omega$ is
+nonzero and the entry procedure common to all the monomials.
+\end{proof}

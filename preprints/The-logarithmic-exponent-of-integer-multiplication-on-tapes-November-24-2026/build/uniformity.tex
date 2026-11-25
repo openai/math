@@ -1,0 +1,352 @@
+\section{One machine for all exponents}\label{sec:single-machine}
+
+Theorem~\ref{thm:integer} gives a multiplier for each exponent above
+$1/2$. Choosing a better exponent may change its program, the number
+of tapes and the constant in its space bound. To prove
+Theorem~\ref{thm:uniform-main} we construct one machine with a fixed
+number of heads and a fixed linear bound on the cells they visit.
+It runs a sequence of correct multiplication programs under time
+limits. Alongside each program it tries several operand lengths,
+so that even a program with a large space constant can succeed
+within the common space bound.
+
+\subsection{Constructing the candidate programs}
+
+For $j\ge1$ take the target exponent
+$\theta_j=1/2+1/(j+2)$ in Theorem~\ref{thm:integer}.
+Choose rational intermediate exponents with strict slack.
+We need a generator that, given $j$, constructs the corresponding
+finite templates and determines how much precision to use at any
+input length.
+
+\paragraph{Finding the templates.}
+The repair, Fourier and binary templates of
+\cite[Sections~\ext{F}{sec:repair} and~\ext{F}{sec:prime-kernel},
+including Section~\ext{F}{sec:binary}]{oaF}, and the interchange
+template of Section~\ref{sec:interchange}, are built from finite
+sets, integer polynomials and linear algebra over explicitly
+presented rings or fields. Failing offsets can be enumerated,
+rational bases computed by elimination, and radix primes tested
+against the finite lists of numerators and denominators. Thus each
+completed construction supplies a definite list of instructions,
+widths and recursive calls. Enumerate the integer template
+parameters, interleaving the searches if necessary. Accept a
+construction when its call counts meet the strict inequalities in
+the two recursions. Raising to integer powers decides a comparison
+between a positive rational and a rational power of a positive
+integer. The existence proofs guarantee termination for every $j$.
+
+For a given input length the generated program tries the trial
+divisions and checks the volume, coprimality and padding conditions
+of Equation~\eqref{eq:integer-box}. It verifies the space for
+borrowed coordinates and for row padding in a Walsh layer, and the
+digit-width bound $b\le4k$ used in the precision estimates. Here
+$N=2^k$ is the padded number of numerical records. The direct splits
+of Section~\ref{sec:permutations} apply at small address widths.
+Use schoolbook multiplication at degenerate lengths or if any
+required shape test fails. For a fixed $j$ the asymptotic estimates
+prove that the fast construction applies at every sufficiently large
+length. The program can therefore handle short inputs without
+having to compute a cutoff from a prime-gap estimate.
+
+\paragraph{Certifying enough precision.}
+We describe how the program obtains its working widths from the
+finite description and the accepted data shape. At a pointwise
+instruction in the Walsh template, the sum of the absolute matrix
+entries bounds the operator norm on its live row registers. Include
+the identities on retained registers and take the maximum over the
+finite coefficient table. Copies and merges have bounds from their
+finite multiplicities. A permutation or a completed normalized child
+transform has norm one. Choose an integer $C_j\ge2$ that bounds the
+product of all the one-level instruction bounds, each enlarged to
+at least one, including the base case and the direct butterfly.
+
+For template arity $M\ge2$ the recursion depth is at most
+$d=1+\lceil\log_M(1+k)\rceil$. To propagate an error between two
+internal instructions, follow their paths to their common ancestor.
+Each path costs at most $C_j^d$ in gain, and the instructions at the
+ancestor cost at most $C_j$. The same $C_j^{2d+1}$ bound works
+across consecutive pieces since each completed piece is unitary.
+The number of array instructions is polynomial in $1+k$ with
+computable exponent, by fixed branching and logarithmic depth.
+Enumerating these instructions takes $\operatorname{poly}_j(1+k)$
+setup time. It gives explicit polynomial bounds on both individual
+gains and the sum of gains for propagated faults.
+
+At the boundaries of the transforms use a norm cap at least two
+above the ideal Euclidean norms obtained from the digit bound,
+unitarity, the final scale $\sqrt S$ and
+$\|v\odot w\|_2\le\|v\|_2\|w\|_2$. The cap is $2^{O(k+1)}$ on the
+accepted shapes. For a fractional grid $2^{-P}$, an error in a
+coefficient costs its absolute size times the operand norm.
+Coordinate rounding costs at most $2\sqrt{N'}\,2^{-P}$ in a stream
+of $N'=O_j(N)$ padded records. Within a layer use the boundary cap
+times the computed gain, allowing one extra unit of internal
+Euclidean error. The roots and square roots in Section~\ref{sec:integers}
+give certified local tables. In a product of at most $k$ phases,
+each with coefficient and rounding errors at most $2^{-P}$, the
+total coefficient error is bounded by
+$2k(1+2^{-P})^k2^{-P}$. Taking $2^P\ge2k$ makes the parenthesized
+power at most two.
+
+Multiply each local error bound by the corresponding propagation
+gain and sum. At the boundary of a completed linear layer the
+incoming discrepancy carries through with unit gain. At the one
+coordinatewise product, twice the norm cap bounds the gain from
+the larger of the two input discrepancies. Include the final
+scaling by $\sqrt S$. These operations give an integer majorant
+$H_j(k)=2^{O_j(k+1)}$ for the coefficient of $2^{-P}$ in every
+error bound, including the internal errors of a layer executed on
+its represented input. Take
+\[
+                     2^P>8H_j(k)+2k
+\]
+and allow enough fractional bits to encode the fixed dyadic
+coefficients exactly. Take the integer width from the computed
+magnitude bounds, including the extra unit. Induction through
+the instructions now preserves the caps. Each internal discrepancy
+from the exact layer on its represented input is less than one,
+and the discrepancies at completed boundaries are less than $1/4$.
+Rounding the final coefficients gives the exact product. The
+working widths are $O_j(1+k)$, with the polynomial setup and
+time orders of Section~\ref{sec:integers}. The calculation uses
+actual instruction counts, so it also certifies short accepted
+shapes.
+
+\subsection{Using a common number of tapes}
+
+At a template node the live streams are aligned arrays. Encode the
+finitely many roles of a fixed candidate as tracks of one sequence
+of records. To replace a track, scan its data to scratch, compute
+its new entries and merge them back by a scan. Several tracks can
+be accumulated successively. To split into finitely many residue
+classes, scan out one class at a time and mark its positions for
+the return merge. This serializes the fixed fanout in the radix
+streams. Elementary scalings and earlier-field controlled
+translations in an ordered affine map use the bounded number of
+fields, counters and rotation streams of a single elementary
+operation. Any fixed split or merge inside it can be serialized
+in the same way. The comparisons for the spectral table in
+Section~\ref{subsec:swap-spectrum} produce a binary mask on the
+role tape, one comparison at a time.
+
+The resulting scans at a node cost $O_j(V)$ for its local bit
+volume $V$. For a columnwise Walsh address selector, extract the
+finitely many address slots in separate passes. Merge each slot
+with the successive column tuples to append its bit to each
+tuple. A sequential pass then computes the selector. This
+takes $O_j(k)$ per address, within the record-processing budget.
+
+Before a recursive call, extract its single input stream. Park
+the other live tracks and the return descriptor at the end of a
+stack tape. A full-volume reserve descent of interchange parks
+only the descriptor. Restore the frame from that same end on
+return and merge the child's output. All the extra scans belong
+to the parent and occur only a fixed number of times there. In
+particular the child receives its original volume, so the
+coefficients of the recursive costs in the interchange and Walsh
+bounds are preserved. A symbol of a fixed candidate alphabet can
+be carried as a fixed-length binary block during interchange.
+
+Sorting, table iteration, arithmetic in a record, reversal and
+output use a bounded number of streams. The candidates share the
+fixed short-integer multiplier. Together with the track processors
+and end-access stacks these routines use a common number $K$ of
+physical tapes over one fixed alphabet. The preceding construction
+therefore generates correct $K$-tape programs $A_j$ with
+\[
+          T_j(u)=O_j\bigl(u(1+\log u)^{\theta_j}\bigr)
+\]
+time on two $u$-bit operands. A fixed interpreter can simulate
+each candidate with one coded work tape per head and one tape for
+the transition list. For fixed $j$, scanning that list and updating
+the tapes take constant time per step. Generating the program is a
+constant setup cost for that $j$.
+
+Let $c_j(u+1)$ bound the physical cells visited by a complete
+interpreted run, including generation. Such a constant $c_j$ exists
+by the fixed-template space bounds. The serialization uses a
+constant number of copies of each stream for fixed $j$, stores the
+same parent frames, and adds a finite program description. The
+schedule below never needs the value of $c_j$.
+
+\subsection{Scheduling within linear space}
+
+Mark a distance $n+O(1)$ on either side of the origin of each
+candidate work tape, once in $O(n)$ time. Abort a run if it reaches
+beyond its marked region, even during program generation. Maintain
+the original inputs, the tentative answer and the scheduling data
+on separate tapes of fixed linear capacity.
+
+An attempt chooses a program index $j\ge1$ and a chunk count
+$r=2^k$, $k\ge0$, with $r\le n$. Skip larger counts. With
+$u=\lceil n/r\rceil$, left-pad each input to $r$ digits in
+base $2^u$. Generate $A_j$ and use it for the $r^2$ digit
+products, one at a time. Accumulate the shifted products in
+$2ru\le4n$ bits and discard the leading padding on output.
+Only an attempt that completes all these operations returns a
+result. Clear and reuse the visited candidate work area between
+calls. For fixed $r$, gathering the operands by sequential
+scans, positioning the additions and propagating carries cost
+$O_r(n)$ in total. The loop counts and shifts use $O(1+\log n)$
+bits. Unary position marks or amortized binary counters suffice
+during the scans.
+
+For each $j$, some fixed power of two $r>2c_j$ makes a digit
+multiplication fit within the marked tapes at every sufficiently
+large $n$, including its setup. That attempt runs to completion
+in time
+\[
+ O_{j,r}\bigl(n+r^2u(1+\log(2u))^{\theta_j}\bigr)
+              =O_{j,r}\bigl(n(1+\log n)^{\theta_j}\bigr).
+\]
+All attempts, including ones that time out or cross a mark, share
+the same absolute $O(n)$ bound on visited cells.
+
+Use a weighted schedule as in universal search \cite{Levin}.
+Number the pairs $(j,k)$ in computable diagonal order, reserving
+index $1$ for a schoolbook multiplier with its own fixed linear
+space allowance. In round $s=1,2,\ldots$, restart the first $s$
+attempts in turn. Give index $i$ at most $2^{s-i}$ actual steps
+and stop at the first completed output. Decoding the pair, generating
+its candidate, copying operands and accumulating the tentative
+result all count against the budget. A clock for $2^a$ steps is a
+binary counter with its head at the low end. Marking the highest
+nonzero bit detects exhaustion. Over $v$ ticks the decrements and
+head returns cost $O(a+v+1)$ in total by summing the borrow
+lengths, including the initial decrement. At an abort or timeout,
+erase the visited scratch and tentative output and rewind the
+heads. Frontier marks track the visited intervals, so cleanup
+costs time proportional to the work of the attempt and its clock
+setup. The outer space marks stay in place across rounds.
+
+The whole of round $s$ costs $O(2^s)$, including the polynomial
+overhead in $s$ for its clocks and control. Schoolbook multiplication
+terminates in $O(n^2)$ steps, so the last round has $s=O(1+\log n)$.
+All clocks and scheduling data fit within the claimed space bound.
+For a fixed successful attempt of index $i$ taking $t$ steps,
+round $i+\lceil\log_2(t+1)\rceil$ allows it to finish. The sum of
+all round costs up to that point is $O(2^i(t+1))$, in addition
+to the one initial $O(n)$ scan. For every $j$ a fixed index has
+time $O_j(n(1+\log n)^{\theta_j})$ at sufficiently large $n$.
+Since $\theta_j\downarrow1/2$, this one machine has the time bound
+$n(1+\log n)^{1/2+o(1)}$ and visits $O(n)$ cells, proving
+Theorem~\ref{thm:uniform-main}.
+
+\subsection{Quotients and square roots}
+\label{sec:exact-arithmetic-applications}
+
+\begin{corollary}[Exact division and integer square root]\label{cor:near-root-applications}
+On the finite-alphabet multitape model of Theorem~\ref{thm:uniform-main},
+each of the following tasks has a single deterministic machine running
+in worst-case time $m(1+\log m)^{1/2+o(1)}$ with $O(m)$ visited cells.
+For two $m$-bit integers $a,b$ with $b>0$, division returns
+$\lfloor a/b\rfloor$ and $a\bmod b$, each in $m$ bits. For an
+$m$-bit integer $a$, square root returns $\lfloor\sqrt a\rfloor$
+in $m$ bits. Leading zeros are allowed.
+\end{corollary}
+
+\begin{proof}
+Use Newton's classical reductions \cite{Brent1976}, as for the
+earlier tape multiplier \cite[Section~10 and Corollary~2]{Tape}.
+At each stage the number of accurate bits doubles. The same
+machine from Theorem~\ref{thm:uniform-main} performs all the
+multiplications. For each fixed $\eta>0$, its cost on $u$-bit
+inputs is $O_\eta(B_\eta(u))$, where
+$B_\eta(u)=u(1+\log u)^{1/2+\eta}$. Neither Newton routine
+takes $\eta$ as input.
+
+\emph{Reciprocal.} Normalize the divisor as $b=2^h c$ with
+$1\le c<2$. The update $x\gets x(2-cx)$ squares the residual
+$1-cx$ in exact arithmetic. Truncate $c$ to $t$ fractional bits
+and round down each of the two products to this precision. When
+$|1-cx|\le1/2$, the new absolute residual is at most
+\[
+                       (1-cx)^2+6\cdot2^{-t}.
+\]
+The truncation contributes at most $cx^2\,2^{-t}$ and the product
+roundings at most $(cx+c)2^{-t}$. Here $cx^2\le9/4$ and
+$cx+c\le7/2$. The seed $x=5/8$ has residual at most $3/8$,
+so one step at $t=6$ gives residual below $1/4$. Given residual
+at most $2^{-j-1}$, take $j'=\min(2j,P)$ and $t=j'+5$ for target
+precision $P$. The new residual is at most
+$2^{-2j-2}+6\cdot2^{-j'-5}<2^{-j'-1}$.
+
+\emph{Square root.} For a positive radicand write $a=2^{2e}c$,
+$1\le c<4$. Start with $x=3/2$ and update $x\gets(x+c/x)/2$.
+Its exact error is $(x-\sqrt c)^2/(2x)$. In the range
+$1/2\le x\le5/2$ the reciprocal routine, after a binary shift
+to normalize $x$, gives $1/x$ to absolute error at most $2^{-t}$
+at target $t$. Indeed the residual is at most $2^{-t-1}$ and
+$1/x\le2$. Truncating $c$, multiplying by the approximate
+reciprocal and rounding the average change the update by at most
+$(9/2)2^{-t}$. The quotient error is at most $(1+4+2)2^{-t}$
+before averaging. At $t=6$ the first step has error at most
+$1/12+(9/2)2^{-6}<1/4$. The same capped doubling schedule now
+preserves $|x-\sqrt c|\le2^{-j-1}$ and keeps $x$ in $[3/4,9/4]$.
+
+Use $P=2m+4$ in each routine, handling a zero dividend or
+radicand by a scan. Multiplying the normalized reciprocal by $a$
+and applying the binary scale gives an approximation to $a/b$
+with error less than $1/4$. The rescaled root also has error
+less than $1/4$. Take the floor and correct by at most one,
+testing the candidate against the input by exact multiplication
+and comparison. For division this also supplies the remainder.
+
+Make a copy of the normalized input in one scan so that a stage
+of precision $t$ reads only its own prefix. A reciprocal stage
+uses two $O(t)$-bit products, and a root stage uses one reciprocal
+computation and one additional product of that size. The sum of
+the precisions is $O(P)$. Since $B_\eta(t)/t$ is nondecreasing,
+summing the reciprocal stages gives $O_\eta(B_\eta(P))$ time.
+Applying this bound to the internal reciprocal calls and summing
+the root stages gives the same time. The initial scans, final
+products, corrections and linear output padding fit this budget.
+The fixed scratch tapes are reused at bounded call depth, and the
+total precision allocated along a call is $O(m)$. Rewinding and
+clearing each scratch area cost at most the time spent visiting
+it. The two routines accordingly visit $O(m)$ cells.
+\end{proof}
+
+\begin{corollary}[Lower bounds for division and integer square root]\label{cor:division-root-lower}
+Assume variable-count Weak ETH. Every fixed deterministic multitape
+machine computing either the quotient of two $m$-bit integers with
+positive divisor or the floor square root of an $m$-bit integer takes
+worst-case time $\Omega(m\sqrt{\log m})$ at every sufficiently large
+$m$. The constant and threshold may depend on the machine.
+\end{corollary}
+
+\begin{proof}
+Brent proved linear equivalences among the corresponding operations
+at multiple floating-point precision \cite[Theorem~3.1]{BrentMultiplePrecision}.
+Here shifts and additions give reductions to exact integer operations
+at a prescribed length. Fix $0\le r<20$. On $k$-bit inputs $x,y$ set
+$m=20k+r$ and $B=2^{3k+7}$, padding every argument of a division or
+square-root call to exactly $m$ bits.
+
+For division, one call yields
+\[
+ \left\lfloor\frac{xB^2}{B-y}\right\rfloor=xB+xy,
+ \qquad 0\le\frac{xy^2}{B-y}<1 .
+\]
+Subtracting the shift $xB$ gives the product. For square root, let
+$t$ be one of $x,y,x+y$. A call on $B^4+4tB^3$ returns
+$W=B^2+2Bt-2t^2$. Indeed $0\le t<2^{k+1}$ gives $B>8t^3$ and
+$W\ge B^2$, so
+\[
+ 0\le B^4+4tB^3-W^2=8Bt^3-4t^4<2W+1 .
+\]
+Subtracting $W$ from $B^2+2Bt$ and shifting recovers $t^2$.
+The three squares yield $2xy=(x+y)^2-x^2-y^2$.
+
+For $k\ge4$ the largest square-root argument is less than
+$2B^4=2^{12k+29}\le2^m$, and both division arguments also fit.
+Constructing these arguments and extracting the result uses
+$O(m)$ tape steps. If $D(m)$ denotes the worst-case time of the
+given machine, each fixed $r$ thus gives a multiplier with time
+$O(D(20k+r)+k)$, using schoolbook multiplication for $k<4$.
+Theorem~\ref{thm:lower} applied to these twenty fixed multipliers
+gives the assertion on every residue class. Taking the smallest
+constant and the largest threshold gives the bound at every
+sufficiently large $m$.
+\end{proof}

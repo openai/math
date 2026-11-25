@@ -29,13 +29,12 @@ variable {k : Type*} [_root_.Field k] {S : BlockSchedule k} (B : S.Templates)
 
 set_option maxHeartbeats 1400000 in
 -- The port-motif choice and the scheduled pass share a dependent finite index.
-theorem eventually_emitAt (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in atTop,
-    ∀ {R : Type*} [CommRing R] (f : B.Entry → R) (hf : B.IsSolution f)
+theorem eventually_emitAt_capacity (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in atTop,
+    ∀ positions ≤ initialPositions factor n, ∀ {R : Type*} [CommRing R] (f : B.Entry → R) (hf : B.IsSolution f)
       {g : ℕ} (X : State S.portExponent (S.portExponent + g))
       (pub : Fin 11 → Word (wordBits factor n)) (blocks round cap : ℕ)
       (shrinking : Fin S.steps → ℕ) (initial : TaggedLayer)
       (initialFrame : Fin 8 → Word (wordBits factor n)),
-      let positions := initialPositions factor n
       let A := BlockProgram.script B
       let L := BlockProgram.layout B (pub 2).val positions blocks
       let small := BlockClock.small B factor n
@@ -52,7 +51,7 @@ theorem eventually_emitAt (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in
     ((PolynomiallyBounded.const (2 ^ S.portExponent)).mul PolynomiallyBounded.id)
   filter_upwards [sizes,degrees,widths,CanonicalWorker.eventually_fit B factor hb,
     PrefixLevelScale.eventually_refresh B factor hb] with n hpos hdeg hport hterm hnat
-  intro R _ f hf g X pub blocks round cap shrinking initial initialFrame positions A L small rate
+  intro positions available R _ f hf g X pub blocks round cap shrinking initial initialFrame A L small rate
     resident room clock little encode past m live index size width outputs ready
   let w := wordBits factor n
   let o := PassOrigin.refresh (B := B) (f := f) (hf := hf) X
@@ -70,10 +69,31 @@ theorem eventually_emitAt (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in
   have fixed := BlockClock.fixed B factor n
   exact realize B f hf pub positions blocks round n X initial initialFrame termCap cap small
     shrinking encode past m live depth size room clock big little ready fixed.2.2.1
-    (BlockClock.dynamic B factor n).2 (size.trans_lt hpos) hdeg
+    (BlockClock.dynamic B factor n).2 ((size.trans available).trans_lt hpos) hdeg
     ((Nat.mul_le_mul_left (2 ^ S.portExponent) width).trans_lt hport)
-    (hterm o size width).2.1 nativeFit.1 nativeFit.2.1 positive
+    (hterm o (size.trans available) width).2.1 nativeFit.1 nativeFit.2.1 positive
     (fun c ↦ (hnat R f hf X c width (outputs c).2).2.2)
+
+/-- The cursor uses its full initial position count. -/
+theorem eventually_emitAt (factor : ℕ) (hb : 1 ≤ factor) : ∀ᶠ n : ℕ in atTop,
+    ∀ {R : Type*} [CommRing R] (f : B.Entry → R) (hf : B.IsSolution f)
+      {g : ℕ} (X : State S.portExponent (S.portExponent + g))
+      (pub : Fin 11 → Word (wordBits factor n)) (blocks round cap : ℕ)
+      (shrinking : Fin S.steps → ℕ) (initial : TaggedLayer)
+      (initialFrame : Fin 8 → Word (wordBits factor n)),
+      let positions := initialPositions factor n
+      let A := BlockProgram.script B
+      let L := BlockProgram.layout B (pub 2).val positions blocks
+      let small := BlockClock.small B factor n
+      let rate := nativePassRate A (commonRawRate shrinking (RefreshEmit.rawRate B)) * positions
+      let resident :=
+        CompiledResident.resident B f hf (pub 2) positions blocks n initial initialFrame
+      endAddress L < 2 ^ (wordBits factor n) → small ≤ cap →
+      Online.Run.ControlBounds A.plan small (w := wordBits factor n) →
+      EmitAt resident pub (levelWords L : Word (wordBits factor n)) (directoryRows L)
+        cap small rate blocks positions n (PassOrigin.refresh X) ⟨round,.refresh⟩ := by
+  filter_upwards [eventually_emitAt_capacity B factor hb] with n run
+  exact run (initialPositions factor n) le_rfl
 
 end CompressorRecords.RefreshPass
 

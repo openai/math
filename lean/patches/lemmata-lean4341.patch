@@ -1,3 +1,36 @@
+diff --git a/lean/Lemmata/FockCircuits/CrossingCircuit.lean b/lean/Lemmata/FockCircuits/CrossingCircuit.lean
+index c59e84d..f4c3271 100644
+--- a/lean/Lemmata/FockCircuits/CrossingCircuit.lean
++++ b/lean/Lemmata/FockCircuits/CrossingCircuit.lean
+@@ -84,6 +84,7 @@ def coefficientC {L W : ℕ} (a : I → State R L) (action : J → Index L) (mid
+ def coefficientD {L W : ℕ} (b : I → State R L) (action : J → Index L) (middle : ρ ↪ Index L)
+     (s : Fin W × ρ) (i : I) (j : J) : R := oppositeMode R L W s.1 (b i) (middle s.2) (action j)
+ 
++omit [Fintype I] [Fintype J] in
+ /-- The energy filters insert the intermediate cutoff into both products of the finite signed identity. -/
+ theorem coefficient_identity_of_signed [DecidableEq I] [DecidableEq J] {L E W : ℕ}
+     (a b : I → State R L) (action : J → Index L) (middle : ρ ↪ Index L)
+@@ -153,10 +154,12 @@ def scaleSecond (s : R) (bank : CircuitFamily R X (Bool × P)) :
+     if p.1 then CircuitBuilders.input p else
+       CircuitBuilders.mul (CircuitBuilders.scalar s) (CircuitBuilders.input p))
+ 
++omit [CommRing R] in
+ theorem size_scaleSecond (s : R) (bank : CircuitFamily R X (Bool × P)) :
+     (scaleSecond s bank).size = bank.size + Fintype.card P := by
+   simp [scaleSecond, Fintype.sum_prod_type]
+ 
++omit [CommRing R] in
+ theorem eval_scaleSecond {A : Type*} [Add A] [Mul A]
+     (s : R) (bank : CircuitFamily R X (Bool × P)) (r : R → A) (x : X → A)
+     (b : Bool) (p : P) :
+@@ -217,6 +220,7 @@ theorem polynomial_compile (s : R) (bank : CircuitFamily R X O)
+     simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply, hy,
+       Algebra.smul_def, Finset.mul_sum, mul_assoc]
+ 
++omit [Fintype J] [Fintype ρ] in
+ theorem coefficientRows_scale {A : Type*} [Semiring A] [Algebra R A]
+     (s : R) (a : ρ → I → J → R) (x : I → A) (r : ρ) (j : J) :
+     coefficientRows (fun r i j => s * a r i j) x r j = s • coefficientRows a x r j := by
 diff --git a/lean/Lemmata/FockCircuits/Duality.lean b/lean/Lemmata/FockCircuits/Duality.lean
 index 7ee82e8..92e9f35 100644
 --- a/lean/Lemmata/FockCircuits/Duality.lean
@@ -247,6 +280,54 @@ index f51fe5c..bb0b7fd 100644
      Equiv.natSumNatEquivNat_apply, TwoColour.right, Fock.generator]
  
  theorem sourceBound_left_monomial (k : ℕ) (a : ℤ) (c : R) (e : ℤ)
+diff --git a/lean/Lemmata/FockCircuits/MarkedIdentity.lean b/lean/Lemmata/FockCircuits/MarkedIdentity.lean
+index 9f023a8..ec146eb 100644
+--- a/lean/Lemmata/FockCircuits/MarkedIdentity.lean
++++ b/lean/Lemmata/FockCircuits/MarkedIdentity.lean
+@@ -45,9 +45,9 @@ theorem forward_weighted_matrix_constantTerm (L W : ℕ) (A B I J : Index L)
+   intro K hK
+   by_cases he : (doubledEnergy I.val : ℤ) - doubledEnergy K.val = shift W k
+   · have he' : (doubledEnergy K.val : ℤ) - doubledEnergy J.val = -shift W k := by omega
+-    simp only [he, ite_true, diagonal, he', mul_assoc]
++    simp only [he, ite_true, diagonal, he']
+   · have he' : (doubledEnergy K.val : ℤ) - doubledEnergy J.val ≠ -shift W k := by omega
+-    simp only [he, ite_false, diagonal, he', zero_mul, mul_zero]
++    simp only [he, ite_false, diagonal, he', mul_zero]
+ 
+ theorem reverse_weighted_matrix_constantTerm (L W : ℕ) (A B I J : Index L)
+     (hW : 0 < W) (hw : doubledEnergy A.val ≤ W)
+@@ -88,9 +88,9 @@ theorem reverse_weighted_matrix_constantTerm (L W : ℕ) (A B I J : Index L)
+   intro K hK
+   by_cases he : (doubledEnergy K.val : ℤ) - doubledEnergy J.val = shift W k
+   · have he' : (doubledEnergy I.val : ℤ) - doubledEnergy K.val = -shift W k := by omega
+-    simp only [he, ite_true, diagonal, he', mul_assoc]
++    simp only [he, ite_true, diagonal, he']
+   · have he' : (doubledEnergy I.val : ℤ) - doubledEnergy K.val ≠ -shift W k := by omega
+-    simp only [he, ite_false, diagonal, he', zero_mul, mul_zero]
++    simp only [he, ite_false, diagonal, he', mul_zero]
+ 
+ theorem marked_supercommutator_cast (W w : ℕ) (k : Fin W) (x y : R) :
+     (markCoefficient W w k : R) * (y - (sigma W : R) * x) =
+@@ -115,8 +115,8 @@ theorem mark_single (L W : ℕ) (k : Fin W) (A : Index L) :
+   ext B
+   by_cases h : B = A
+   · subst B
+-    simp [mark_apply, Pi.single_apply, Pi.smul_apply, smul_eq_mul]
+-  · simp [mark_apply, Pi.single_apply, Pi.smul_apply, smul_eq_mul, h, Ne.symm h]
++    simp [mark_apply, Pi.smul_apply, smul_eq_mul]
++  · simp [mark_apply, Pi.smul_apply, smul_eq_mul, h]
+ 
+ theorem diagonal_mark_single (L W : ℕ) (k : Fin W) (r : ℤ) (A : Index L) :
+     diagonal R L r (mark R L W k (Pi.single A 1)) =
+@@ -219,7 +219,7 @@ theorem singleton_signed_identity (L W : ℕ) (A B I J : Index L)
+       intro he
+       subst J
+       exact hIJ rfl
+-    rw [if_neg hne, zero_mul]
++    rw [ite_eq_right hne, zero_mul]
+     apply Finset.sum_eq_zero
+     intro k hk
+     have h₁ := opposite_diagonal_product_zero R L (-shift W k) (Pi.single B 1)
 diff --git a/lean/Lemmata/FockCircuits/MatchingResidue.lean b/lean/Lemmata/FockCircuits/MatchingResidue.lean
 index 6801873..4c3dd87 100644
 --- a/lean/Lemmata/FockCircuits/MatchingResidue.lean
@@ -334,6 +415,19 @@ index 6801873..4c3dd87 100644
      TensorProduct.smul_tmul', smul_eq_mul, mul_one, TensorProduct.map_tmul,
      sourceNormalMap_word]
    rfl
+diff --git a/lean/Lemmata/FockCircuits/Matrix/CircuitBuilders.lean b/lean/Lemmata/FockCircuits/Matrix/CircuitBuilders.lean
+index 2eec959..e1ea342 100644
+--- a/lean/Lemmata/FockCircuits/Matrix/CircuitBuilders.lean
++++ b/lean/Lemmata/FockCircuits/Matrix/CircuitBuilders.lean
+@@ -77,7 +77,7 @@ def parallelFin : (n : ℕ) → (Fin n → CircuitFamily R X O) →
+ @[simp] theorem size_parallelFin (n : ℕ) (f : Fin n → CircuitFamily R X O) :
+     (parallelFin n f).size = ∑ i, (f i).size := by
+   induction n with
+-  | zero => simp [parallelFin, CircuitFamily.size, Circuit.size]
++  | zero => simp [parallelFin, CircuitFamily.size]
+   | succ n ih =>
+       simp only [parallelFin, CircuitFamily.size_reindexOutputs, CircuitFamily.size_combine,
+         ih, Fin.sum_univ_succ]
 diff --git a/lean/Lemmata/FockCircuits/NormalSymbol.lean b/lean/Lemmata/FockCircuits/NormalSymbol.lean
 index b063fbb..b1414f6 100644
 --- a/lean/Lemmata/FockCircuits/NormalSymbol.lean
@@ -528,6 +622,19 @@ index 8117294..cb87737 100644
        · simp only [ite_eq_right hji, ite_eq_right hit, map_zero, mul_zero, add_zero]
    simp_rw [ht]
    rw [Finset.sum_add_distrib, eval_scatter]
+diff --git a/lean/Lemmata/FockCircuits/StateIdentity.lean b/lean/Lemmata/FockCircuits/StateIdentity.lean
+index cfc1df9..3af53dd 100644
+--- a/lean/Lemmata/FockCircuits/StateIdentity.lean
++++ b/lean/Lemmata/FockCircuits/StateIdentity.lean
+@@ -56,7 +56,7 @@ theorem state_signed_identity (L W : ℕ) (v : State R L) (B I J : Index L)
+   change signedEntry R L W B I J v = rhsEntry v
+   conv_lhs => rw [state_eq_sum_single R L v]
+   conv_rhs => rw [state_eq_sum_single R L v]
+-  simp only [map_sum, map_smul, RingHom.id_apply, smul_eq_mul]
++  simp only [map_sum, map_smul, smul_eq_mul]
+   apply Finset.sum_congr rfl
+   intro A hA
+   by_cases hzero : v A = 0
 diff --git a/lean/Lemmata/FockCircuits/Wick.lean b/lean/Lemmata/FockCircuits/Wick.lean
 index f68d1ab..45087f8 100644
 --- a/lean/Lemmata/FockCircuits/Wick.lean

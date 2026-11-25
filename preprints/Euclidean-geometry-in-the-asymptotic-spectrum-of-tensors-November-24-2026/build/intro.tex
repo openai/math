@@ -1,0 +1,314 @@
+\section{Introduction}
+
+Place the two indices of the tensor
+\(e_0\otimes e_0+e_1\otimes e_1\) at sites \(x\) and \(y\).
+The indices carry the same binary label. This tensor acts as a
+\emph{wire} because contracting its first index with a two-dimensional index of
+another tensor moves that index from \(x\) to \(y\). Can an invariant
+of placed tensors assign the wire itself its Euclidean length? We ask
+for one assignment that works simultaneously for all pairs of sites
+and respects local linear maps on all tensors.
+
+Strassen's asymptotic spectrum supplies the algebraic rules for such an
+invariant~\cite{Strassen1988}. A \emph{spectral point} on a fixed finite
+set of two or more sites assigns a nonnegative number \(F(T)\) to each tensor.
+Applying a linear map at each site is a \emph{restriction} and cannot
+increase \(F\). Tensor products multiply its values, and direct sums
+add them. Here a direct sum places the two tensors in separate blocks at
+every site. The normalization is \(F(0)=0\) and \(F(1)=1\).
+Taking a logarithm turns multiplication into addition. We call a
+positive multiple of \(\log_2 F(T)\) a \emph{price}, with
+\(\log_2 0=-\infty\). Independent wires
+then have additive prices, and contracting wires produces a tensor whose price is at most the sum of
+their prices.
+
+For a finite nonempty set \(S\) of sites, write
+\(\Delta_S(q)=\sum_{j=1}^q\bigotimes_{s\in S}e_j\) for the tensor
+that shares one \(q\)-valued label among those sites. Let \(W(S)\)
+denote the \emph{mean width} of their convex hull. It is the average
+length of a one-dimensional projection over uniformly distributed
+directions in the affine span, multiplied by a constant that gives
+a segment its length. A singleton has width zero. Equivalently, for a standard Gaussian vector \(g\)
+in the finite-dimensional span of \(S\),
+\[
+                   W(S)=\sqrt{2\pi}\,\mathbb E\max_{s\in S}\langle g,s\rangle .
+\]
+Translating all the sites adds a centered Gaussian to the maximum and
+hence leaves its expectation unchanged.
+
+\begin{theorem}[Euclidean prices]\label{thm:main}
+Let \(k\) be any field and \(K\) any real Hilbert space. There is a
+compatible assignment \(H(T;x)\) to every tensor over \(k\) and every
+placement \(x=(x_1,\ldots,x_r)\) of its indices in \(K\) with the
+following properties.
+\begin{enumerate}[leftmargin=*,itemsep=.35ex]
+\item A binary wire between \(u\) and \(v\) costs \(\|u-v\|\).
+More generally, \(H(\Delta_S(q))=W(S)\log_2 q\) for every nonempty
+finite \(S\subset K\) and every integer \(q\ge1\).
+\item For each finite set \(S\subset K\) of positive diameter there is
+a spectral point \(F_S\) such that \(H(T;x)=W(S)\log_2 F_S(T)\) for
+every tensor placed in \(S\). In evaluating \(F_S\), group the
+indices at each site and adjoin a one-dimensional factor at each unused
+site. Compatibility means that enlarging \(S\) leaves \(H(T;x)\)
+unchanged.
+\item For each nonzero \(T\), the price depends on \(x\) only through
+the labeled distances \(\|x_i-x_j\|\), and \(H(T;tx)=tH(T;x)\) for
+\(t\ge0\).
+\end{enumerate}
+\end{theorem}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\small, site/.style={circle,inner sep=2pt,
+        fill=white,draw=ink,thick}, edge/.style={draw=sea,very thick}]
+\begin{scope}
+\coordinate (a) at (0,0); \coordinate (b) at (3.2,0); \coordinate (c) at (1.15,1.6);
+\filldraw[fill=ink!6,draw=ink!55,dashed] (a)--(b)--(c)--cycle;
+\foreach \v in {a,b,c} \node[site] at (\v) {\(i\)};
+\node[below=7pt] at (1.6,0) {One common bit};
+\end{scope}
+\begin{scope}[xshift=6.0cm]
+\coordinate (a) at (0,0); \coordinate (b) at (3.2,0); \coordinate (c) at (1.15,1.6);
+\draw[edge] (a)--node[midway,above]{\(i\)}(b)--node[midway,above right]{\(j\)}(c)--node[midway,above left]{\(k\)}cycle;
+\foreach \v in {a,b,c} \fill[ink] (\v) circle (2pt);
+\node[below=7pt] at (1.6,0) {Three independent bits};
+\end{scope}
+\end{tikzpicture}
+\caption{Two tensors on the same triangle of perimeter \(P\). On the
+left, the tensor is supported on triples \((i,i,i)\) and costs \(P/2\).
+On the right, each edge carries its own binary index. The tensor product
+of the three wires costs \(P\).}
+\label{fig:triangle}
+\end{figure}
+
+The shared-label formula is forced. Every compatible spectral system
+realizing the wire distances on a whole Euclidean flat gives the same
+value for \(\Delta_S(q)\) (Theorem~\ref{thm:flatlaw}). For planar sites
+whose convex hull is a polygon this value per bit is half the hull's
+perimeter. Figure~\ref{fig:triangle} illustrates why it matters which
+labels are shared. The formula also controls tensors carrying a common
+label alongside other data. If a tensor already carries that label on
+\(S\), appending a copy at \(z\) increases its price by at most
+\((W(S\cup\{z\})-W(S))\log_2 q\) (Proposition~\ref{lem:submod}).
+In particular, a copy can be inserted anywhere on the segment joining
+two existing copies at zero additional price. For arbitrary nonzero
+\(T\), the chosen price is a seminorm on placements modulo common
+translation. Applying a linear contraction to every site can only
+decrease this price (Section~\ref{sec:hilbert}).
+
+\subsection{Why a spectral point is needed}
+
+Across a cut of the sites, a tensor can be viewed as a matrix, and its
+matrix rank is a spectral point. A binary wire has rank two across a
+cut separating its endpoints and rank one across every other cut.
+Thus an average of log ranks measures how frequently the endpoints are
+separated. Integrating over hyperplane cuts in Euclidean space recovers
+the length of a wire. For each direction, the thresholds that split \(S\) form an interval
+whose length is the width of the projection. Integrating these
+lengths recovers the mean width for the shared label.
+
+The difficulty is extending these evaluations to a spectral point on
+\emph{all} tensors at the sites. For a small example, divide the four
+corners of a square by its vertical and horizontal midlines. Let \(U\)
+be a horizontal wire and \(V\) a vertical wire. Their matrix ranks
+across the two cuts are \((2,1)\) and \((1,2)\), respectively. The
+geometric mean of the ranks is \(\sqrt2\) for each tensor, but on their
+direct sum it is \(\sqrt{3\cdot3}=3\). Additivity would give
+\(2\sqrt2\). Even on wires, the metric obtained by averaging these two
+cuts is a rescaled Hamming square and violates the four-point inequality
+\eqref{eq:cur-quad} for spectral prices.
+
+Direct sums matter for network constructions. If two tensors have the
+same output spaces, their ordinary sum is a restriction of their direct
+sum. The price of a sum of \(m\) alternatives on sites \(S\) is
+therefore at most their largest price plus \(W(S)\log_2 m\).
+Compatibility lets us use this bound even when the alternatives use
+different auxiliary sites. For a single graph tensor, the tensor
+product of its edge wires~\cite{cvzgraph}, each edge of dimension \(q\)
+contributes its length times \(\log_2 q\). The wire formula gives the exact price of the graph tensor, and the
+sum bound controls the price of alternative wirings.
+
+\subsection{Relation to earlier work}
+
+Strassen introduced the asymptotic spectrum to study transformations of
+large tensor powers, motivated in particular by matrix multiplication
+\cite{Strassen87,Strassen1988}. Comparison at all spectral points
+characterizes asymptotic restriction. The difficult part in concrete
+applications is to understand which evaluations can occur together.
+Strassen developed support functionals~\cite{Strassen91}.
+
+Christandl, Vrana and Zuiddam constructed quantum functionals yielding
+spectral points over the complex field~\cite{CVZ}. The relation between
+these constructions has since been clarified by Hirai and by Sakabe,
+Do\u{g}an and Walter~\cite{hirai,sdw}. For three-party tensors, Alman,
+Li and Pratt study edge support functionals over arbitrary
+fields~\cite{almanlipratt}. For higher-order tensors, Botero and
+coauthors study obstructions to universality and the possibility of
+prescribing selected evaluations~\cite{botero}. Wigderson and Zuiddam
+survey the duality theory and the interpolation of graph-tensor
+evaluations towards a single-mode flattening rank~\cite{WZ}.
+
+A triangle of independent wires represents matrix multiplication.
+Bounds for its asymptotic rank constrain the three wire prices, and a
+shared-leg copying argument in~\cite{nine} is related to our
+incremental bound. Closure of price bounds under tensor degeneration
+follows from the polynomial sublevel method
+of~\cite{SpectralSublevels}.
+
+The other papers in this collection use different aspects of this
+framework. Shared labels occur in the sunflower argument~\cite{oaS},
+and high-dimensional placements distinguish cuts of arithmetic
+computations~\cite{oaH}. Spectral comparison and network compression
+enter the circuit lower bounds~\cite{oaP}. Further applications concern
+Fourier transforms, integer multiplication on tapes, and matrix
+multiplication~\cite{oaF,oaT,oaM}.
+
+\subsection{Proof strategy}
+
+There are two questions. If a spectral space contains a Euclidean
+flat, which tensor prices does its geometry force? And why must there
+be such flats in arbitrarily large dimensions? A \emph{spectral flat}
+of dimension \(d\) is a copy of \(\mathbb R^d\) with compatible
+spectral prices whose binary wires cost their Euclidean lengths. The
+existence statement that drives the proof is the following.
+\begin{theorem}[Existence of spectral flats]\label{thm:flats}
+Over every field there is a spectral flat of every positive finite
+dimension.
+\end{theorem}
+
+Part~I derives the geometry from the algebra. The wire prices of any
+spectral point satisfy the triangle inequality because two wires joined
+at a common end supply a wire between their other ends. One can insert
+a new site at any prescribed position along an interval
+(Theorem~\ref{thm:extension}). Exterior algebra shows that when several indices move along their
+intervals together, a tensor's price is convex in their common
+parameter.
+A shifted crossing identity then bounds the wire prices in a
+quadrilateral and gives nonpositive curvature in the sense of
+Alexandrov (Theorem~\ref{thm:geometry}, following the terminology of~\cite{BH}). Its two
+flattenings build on crossing decompositions in
+\cite{Anthropic,Khoruzhii}. For the underlying Clifford algebra
+see~\cite{meinrenken}.
+
+On a Euclidean flat, interpolation implies that adding a site inside
+the convex hull of the others leaves the price of their shared bit
+unchanged. A copying inequality and tensor restrictions determine the
+price on segments and triangles. Approximating the support function of a polytope by
+linear combinations of triangle support functions determines it on
+every finite set (Section~\ref{sec:flatprice}). Finally, given flats
+of unbounded dimension, concentration on high-dimensional frames makes
+the prices of congruent placements agree in the limit. This yields one
+system on the prescribed Hilbert space, including when its dimension
+is uncountable (Section~\ref{sec:hilbert}).
+
+\paragraph{Assume there is a largest flat.}
+The proof of Theorem~\ref{thm:flats} occupies Parts~II and~III. Field
+transfer reduces its failure to a finite field with a largest flat
+dimension \(k\ge1\). A configuration approaching the corners of a
+Euclidean \((k+1)\)-cube could be filled in, rescaled, and passed to a
+limit to give a larger flat. The bound on dimension thus excludes
+those corners uniformly. The rest of the argument uses this geometric
+obstruction twice (Figure~\ref{fig:map}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=Stealth,font=\small,
+  box/.style={draw=ink,line width=.65pt,rounded corners=2pt,align=center,
+              text width=4.8cm,inner sep=5pt},
+  both/.style={box,text width=8.2cm},
+  leftbox/.style={box,fill=ink!4},rightbox/.style={box,fill=sea!5,draw=sea},
+  flowarrow/.style={->,line width=.65pt}]
+\node[both] (cube) {A largest flat dimension excludes a larger cube\\
+                     (Section~\ref{sec:prices})};
+\node[leftbox] (port) at (-2.85,-1.65) {Bounded-degree port graphs\\
+                     (Section~\ref{sec:ports})};
+\node[rightbox] (probe) at (2.85,-1.65) {Local tests guide wire routing\\
+                     (Section~\ref{sec:protocol})};
+\node[leftbox] (comp) at (-2.85,-3.35) {Compress exact networks using tagged permutations\\
+                     (Sections~\ref{sec:motifs}--\ref{sec:exact})};
+\node[rightbox] (tag) at (2.85,-3.35) {Approximate the tagged gates\\with borrowed wires\\
+                     (Section~\ref{sec:width})};
+\node[both] (sim) at (0,-5.15) {Simulate many copies at smaller size per copy\\
+                     (Section~\ref{sec:descent})};
+\node[both] (diag) at (0,-6.75) {Distribute the compressed simulation's trace on the original grid
+                     and derive a contradiction (Section~\ref{sec:diagonal})};
+\draw[flowarrow] (cube.south -| port.north)--(port.north);
+\draw[flowarrow,sea] (cube.south -| probe.north)--(probe.north);
+\draw[flowarrow] (port)--(comp);
+\draw[flowarrow,sea] (probe)--(tag);
+\draw[flowarrow] (comp.south)--(sim.north -| comp.south);
+\draw[flowarrow,sea] (tag.south)--(sim.north -| tag.south);
+\draw[flowarrow] (sim)--(diag);
+\end{tikzpicture}
+\caption{The proof by contradiction. The left branch reduces network
+size exactly if it may use gates for tagged permutations. The right
+branch implements those gates with a controlled error. Compression
+also reduces communication when the final argument distributes the
+trace of the simulation.}
+\label{fig:map}
+\end{figure}
+
+\paragraph{Compress exact networks.}
+Under cube exclusion, bounded-degree graphs control the mean squared
+distance between all pairs of vertices by the mean squared distance
+along their edges, for every placement in a spectral space
+(Section~\ref{sec:ports}). The construction uses nonlinear spectral
+calculus~\cite{MendelNaor,MendelNaorBarycentric,MendelNaorHadamard}.
+These \emph{port graphs} restore bounded degree during compression.
+A second, fixed wire configuration lets us replace a network by a sum
+of networks with fewer bits crossing between groups of vertices.
+To assemble that sum into one exact computation, we must keep track of
+which tagged records have been routed to which vertices. A
+tagged-permutation gate tests that the addresses form a permutation
+and that their payloads match. With these gates, the wire replacement
+gives an exact reduction in size per copy
+(Proposition~\ref{prop:oracle-descent}). Related methods of compressing
+wire assignments occur in algorithms for satisfiability
+\cite[Appendix~D]{falseeth} and in crossing decompositions~\cite{Anthropic}.
+
+\paragraph{Implement the permutation gates.}
+The second use of cube exclusion is local. Place \(k\) pairs of distant
+wire endpoints along perpendicular axes at each tested location. If
+nearby locations retain the prescribed prices for these wires, their
+motion can be read from the changes in distances to the far ends.
+A transverse segment in the limit would produce the excluded cube.
+These tests range over possible local spectral prices. A failed test
+allows a local wire replacement, while
+successful tests identify a new link whose effect on subsequent prices
+pays for its use. This gives an exact routing identity
+(Theorem~\ref{thm:protocol}). Terms that spend too little on links between the layers have low
+enough price to discard. Routing the surviving shorter lists recursively gives an approximation for
+\(2^h\) records with \(h\)-bit payloads using
+\(O(2^h h^{1+\varepsilon})\) trivalent vertices for every fixed
+\(\varepsilon>0\) (Theorem~\ref{thm:cheaptag}).
+
+The approximation has an algebraic meaning. Let \(I\) be the tensor
+product of wires borrowed in the \(k\) coordinate directions. A
+network intended to compute \(f\) while returning those wires produces
+a tensor \(X\) in the same spaces as \(f\otimes I\). Its error is the
+ordinary difference \(X-f\otimes I\). After fixing the data indices,
+it suffices for the simulation that the error have price less than
+\(H(I)\) by a specified margin in each prescribed flat placement of
+the borrowed wires. The tagged-permutation approximation has this
+bound even with its data indices exposed, as required for substitution. The
+margin pays for subsequent sums. Once the margin exceeds the premium for adding two errors, a tensor
+cannot approximate two distinct scalar multiples of \(I\), since their
+difference has the full price \(H(I)\). Inserting these approximate gates into the exact
+reduction and reusing borrowed wires along grid lines gives
+Theorem~\ref{thm:collapse}. A bounded-degree computation of size \(V\)
+with sufficiently few external bits then has an approximation of amortized
+size at most \(V/(\log V)^A\) for arbitrarily large fixed \(A\).
+
+\paragraph{Program the contradiction.}
+Run many steps of a universal weighted computation on a grid. Let \(Z\)
+be its exact tensor and \(\widehat Z\) the tensor obtained by substituting
+the smaller simulations. The error estimate gives
+\(H(Z-\widehat Z)<H(I)\). At this size, the original grid has enough
+capacity to evaluate the accelerated contraction itself, once its trace
+has been compressed. Each pair of external wire ends can be routed to
+the step that needs its input while the other steps still have their
+borrowed wires. We can consequently program the exact contraction to
+return \(\widehat Z+I\). Its error is then \(I\), contradicting the
+strict price bound. Section~\ref{sec:diagonal} carries out this
+diagonal argument, which has a precedent in the use of faster
+algorithms to prove circuit lower bounds~\cite{williams}.

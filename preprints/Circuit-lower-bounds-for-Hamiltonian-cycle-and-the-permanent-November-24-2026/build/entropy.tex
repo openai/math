@@ -1,0 +1,465 @@
+\section{A logarithmic lower bound for the Poincaré constant}\label{sec:poincare}
+
+The price comparison in Section~\ref{sec:comparison} requires a
+single placement of the row sites that works for every balanced cut.
+To construct it, we shall look for placements that make two random
+changes of state have very different mean squared lengths. The
+simplest comparison is on a regular graph. One step follows an edge,
+and the other goes to an independent uniform vertex. If a class of
+Hadamard spaces has no ports, the constant that bounds the second
+energy by the first is at least of order \(\log n\) on \emph{every}
+\(n\)-vertex graph of bounded degree. This bound will allow us to
+distinguish two walks by the information they generate.
+
+For a finite Markov kernel \(P\) with stationary law \(\pi\) and a
+placement \(x=(x_i)\) of its states, put
+\[
+ \mathcal E_P(x)=\sum_{i,j}\pi_iP_{ij}d(x_i,x_j)^2,\qquad
+ \mathcal V_\pi(x)=\sum_{i,j}\pi_i\pi_j d(x_i,x_j)^2 .
+\]
+For a pair law \(D\), the weights in \(\mathcal E_D(x)\) are its joint
+probabilities. Write \(\mathcal V\) when \(\pi\) is uniform. States
+of zero stationary mass may be discarded. A \(d\)-regular multigraph
+has a symmetric matrix of nonnegative integral arc counts with every
+row sum \(d\). A holding arc counts once. Dividing the counts by
+\(d\) gives the walk kernel with uniform stationary law.
+
+Suppose one large graph had too small a Poincar\'e constant. Placing
+a copy of it at each vertex of a preceding graph would multiply the
+order at every iteration. To keep the Poincar\'e constants bounded,
+we average the walk on the preceding graph before inserting the
+copies. The estimate for this averaging is a form of nonlinear
+spectral calculus \cite{MendelNaor,MendelNaorBarycentric}. We give
+the barycentric argument for Hadamard spaces
+\cite{BH,Sturm}.
+
+\begin{lemma}[Smoothing a walk]\label{lem:power}
+Let \(P\) be a finite Markov kernel with stationary law \(\pi\), and let
+\(t\ge2\) be even. Put
+\[
+ A=\tfrac12(I+P),\qquad S=\tfrac1t\sum_{h=1}^t A^h .
+\]
+For each placement \(x\) in a Hadamard space \(X\) there is a placement
+\(y\) in \(X\) such that
+\begin{equation}\label{eq:hadamard-smoothing}
+ \sum_i\pi_i d(x_i,y_i)^2+t\mathcal E_P(y)
+ \le 16\mathcal E_S(x).
+\end{equation}
+If \(D\) has both marginals \(\pi\) and
+\(\mathcal E_D\le\beta\mathcal E_P\) for all placements in \(X\), then
+\(\mathcal E_D\le C(1+\beta/t)\mathcal E_S\) for all placements in \(X\),
+with an absolute constant \(C\).
+\end{lemma}
+
+\begin{theorem}[Logarithmic Poincaré obstruction]\label{thm:loggraph}
+Let \(P\) be the walk on a \(d\)-regular multigraph with \(n\ge2\)
+vertices, \(d\ge1\), and uniform stationary law \(\pi\). Suppose
+that \(\mathcal V_\pi(x)\le\beta\mathcal E_P(x)\) for every
+placement \(x\) in every member of a class of Hadamard spaces
+without ports. Then
+\[
+                 \beta\ \ge\ c\,\frac{\log n}{\log(d+1)}
+\]
+for an absolute constant \(c>0\).
+\end{theorem}
+
+\begin{proof}[Proof of Lemma~\ref{lem:power}]
+The barycenter \(b\) of a finite probability measure \(\mu\) in \(X\)
+satisfies the variance inequality
+\(\int d(z,w)^2\,d\mu(w)\ge d(z,b)^2+\int d(b,w)^2\,d\mu(w)\).
+Indeed the midpoint inequality makes any minimizing sequence Cauchy,
+and squared-distance convexity along the segment from the minimizer
+to \(z\) gives the displayed inequality.
+Starting with \(x^0=x\), take \(x_i^{g+1}\) to be the barycenter of the
+\(x_j^g\) with weights \(A_{ij}\). Put
+\[
+ q_g=\sum_{i,j}\pi_iA_{ij}d(x_i^{g+1},x_j^g)^2,\qquad
+ u_g=\sum_i\pi_i d(x_i,x_i^g)^2 .
+\]
+Run the stationary \(A\)-walk for \(h\) steps. Conditional on the first
+\(h-1\) steps, apply the variance inequality to the last point with
+the starting point as \(z\). Replace the last point by its conditional
+barycenter and repeat. At the \(g\)-th replacement, starting at
+\(g=0\), stationarity makes the mean variance term equal to \(q_g\).
+Consequently
+\[
+ \mathcal E_{A^h}(x)\ge u_h+\sum_{g=0}^{h-1}q_g .
+\]
+On averaging over \(1\le h\le t\), each \(q_g\) with \(g<t/2\)
+occurs in at least \(t/2\) summands. Since \(u_0=0\),
+\[
+ \sum_{0\le g<t/2}\bigl(u_g+(t/2)q_g\bigr)\le t\mathcal E_S(x).
+\]
+Choose a summand of size at most \(2\mathcal E_S(x)\).
+Comparison along \(x_i^g,x_i^{g+1},x_j^g\) gives
+\(\mathcal E_P(x^g)\le4q_g\), because \(A\) averages a holding step
+and a \(P\)-step. Taking \(y=x^g\) proves \eqref{eq:hadamard-smoothing}.
+Finally
+\(\mathcal E_D(x)\le3(2u_g+\mathcal E_D(y))\) by the two marginal
+identities. Apply the assumed comparison at \(y\).
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:loggraph}]
+A class without ports contains a space with two distinct
+points. Choose one of the points independently and uniformly at
+each vertex, and average the asserted inequality. The expected pair
+energy is \((1-1/n)\) times half their squared distance, and the edge
+energy is at most half their squared distance. Thus \(\beta\ge1/2\).
+Write \(b=\max(1,\beta)\) and call the given multigraph \(H\).
+
+Fix an even \(t\ge2\) with \((2d+1)^t\le n/2\). Given a previous
+graph of degree \(2d\) with walk \(K\) and Poincaré constant at most
+\(\gamma\), form the averaged kernel \(S\) of Lemma~\ref{lem:power}
+from \(K\). The new pair comparison for \(S\) has constant at most
+\(C(1+\gamma/t)\) throughout the class.
+We need a symmetric approximation to \(S\) whose probabilities have
+denominator \(n\). In each row set \(m_{uv}=\lceil n S_{uv}/2\rceil\).
+A row of \(S\) has support at most \((2d+1)^t\), since holds pad shorter
+walks to length \(t\). Hence its integer row sum is at most
+\(n/2+(2d+1)^t\le n\). Pad each diagonal entry to reach \(n\).
+The counts remain symmetric and \(R_{uv}=m_{uv}/n\ge S_{uv}/2\).
+It follows that the Poincaré constant of \(R\) is at most
+\(\rho=2C(1+\gamma/t)\).
+
+Replace each old vertex \(u\) by a copy of \(H\). Partition its \(n\)
+vertices into sets of sizes \(m_{uv}\), and match the set indexed by
+\(v\ne u\) bijectively to the set indexed by \(u\) in the copy at \(v\).
+Fix the vertices in the set indexed by \(u\) itself. This gives an
+involution whose projected step from a uniform vertex of the copy
+has distribution \(R_{u\bullet}\).
+The new graph has the \(d\) internal arcs of \(H\) at each vertex and
+\(d\) copies of its involution arc. Its mean edge energy is
+\((E_{\rm in}+E_{\rm match})/2\), with the two terms the corresponding
+mean energies.
+
+For a placement \(x\) in any one of the test spaces, let \(z_u\)
+be the barycenter of the points in the copy at \(u\). Let \(v_0\) be
+the mean squared distance to one's own barycenter. Minimization against
+a uniformly chosen point in each copy and the comparison on \(H\)
+give \(v_0\le b E_{\rm in}\). Apply the triangle inequality first from
+one barycenter to the next via a matched pair, then between independent
+vertices via their two barycenters. Uniformity of both endpoints of an
+involution step gives
+\[
+ \mathcal E_R(z)\le3(2v_0+E_{\rm match}),\qquad
+ \mathcal V(x)\le3(2v_0+\mathcal V(z)).
+\]
+Here each pair energy uses the uniform law on the indicated graph.
+Since \(\mathcal V(z)\le\rho\mathcal E_R(z)\), the new graph has a
+Poincaré bound \(B b(1+\gamma/t)\) for an absolute \(B\ge1\).
+
+If \(Bb/t\le1/2\), iteration starting from one vertex with \(2d\)
+loops gives graphs on \(n^k\) vertices of fixed degree \(2d\) with
+bounds at most \(2Bb\). These graphs would be ports for the class.
+Hence every admissible even \(t\) satisfies \(t<2Bb\). If
+\(\log(n/2)/\log(2d+1)\ge4\), the largest admissible even \(t\)
+is at least half this ratio. In the remaining range
+\(\log n/\log(d+1)\) is bounded absolutely and \(\beta\ge1/2\)
+suffices. Since \(b\le2\beta\), this proves the assertion.
+\end{proof}
+
+We shall apply the bound to walks with unequal transition
+probabilities. Only the number of possible destinations matters.
+
+\begin{corollary}[Symmetric kernels with sparse rows]\label{cor:support}
+Suppose \(P\) is a symmetric stochastic matrix on \(n\ge2\) states
+with at most \(d\) positive entries per row, where \(d\ge1\) is
+an integer, and let \(\pi\) be uniform. If
+\(\mathcal V_\pi(x)\le\beta\mathcal E_P(x)\) for every placement \(x\)
+in every member of a class of Hadamard spaces without ports, then
+\(\log n\le C\beta\log(d+1)\) for an absolute constant \(C\).
+\end{corollary}
+\begin{proof}
+Take \(\lceil dP_{ij}\rceil\) arcs in each position and add holding
+arcs to make every row sum \(2d\). The walk on the resulting symmetric
+regular multigraph dominates \(P/2\) entrywise, so its Poincaré
+constant is at most \(2\beta\). Apply Theorem~\ref{thm:loggraph}.
+\end{proof}
+\section{Observable entropy}\label{sec:entropy}
+
+A graph of small degree gives a walker few choices at each step.
+A walk with many possible destinations can also transmit little
+information if a few choices carry most of the probability, or if
+many destinations share the same observable label. We compare
+two walks on the same state space. One, the \emph{demand} walk,
+specifies the pairs of states we want far apart in a placement.
+The other, the \emph{physical} walk, specifies the moves we want
+short. A uniform comparison of their squared lengths bounds the
+amount of information one demand step can generate about the
+destination label, given the full starting state. The bound measures
+the physical walk by the number of bits per observed label along a
+long stationary trajectory.
+
+Given a labeling $L$ of a finite set $V$ and a stationary $P$-walk
+$(X_t)_{t\ge0}$ on $V$, put
+\[
+ H_j=H\big(L(X_0),\ldots,L(X_{j-1})\big),\qquad
+ a=\lim_{j\to\infty}\frac{H_j}{j}=\inf_{j\ge1}\frac{H_j}{j}.
+\]
+Here \(H\) denotes Shannon entropy in bits, and all logarithms in this
+section are in base two \cite{ct}. The equality follows from
+stationarity and subadditivity of block entropy.
+
+\begin{theorem}[Observable entropy]\label{thm:entropy}
+Let $P,D$ be Markov kernels on a finite set with common stationary
+law $\pi$. Suppose that $\beta\ge1$ and that
+$\mathcal E_D(f)\le\beta\mathcal E_P(f)$ for every placement $f$ in
+a class of Hadamard spaces without ports. For any labeling $L$, let $a$ be its entropy rate
+for the stationary $P$-walk and draw $(X,Y)$ from the stationary
+$D$-step. Then
+\[
+ H(L(Y)\mid X)\le C\beta(1+a)
+\]
+for an absolute constant $C$.
+\end{theorem}
+
+In particular, if the demand information exceeds \(C\beta(1+a)\)
+for some \(\beta\ge1\), one of the target spaces admits a placement with
+\(\mathcal E_D(f)>\beta\mathcal E_P(f)\). Section~\ref{sec:product}
+uses the identity labeling on a walk of words modulo cyclic rotation.
+The full state is then observable and the entropy rate is its
+one-step conditional entropy. In Section~\ref{sec:lamps} the label
+records only an array of lamps. The physical walk also keeps auxiliary
+records, so the cost in Theorem~\ref{thm:entropy} is the entropy rate
+of the observed arrays over time.
+
+The additive constant accounts even for deterministic motion. If \(P\)
+alternates between two states and \(D\) draws a uniform state
+independently, the identity labeling gives \(H_j=1\) for every \(j\).
+Here \(a=0\), yet \(H(Y\mid X)=1\) and
+\(\mathcal E_D=\mathcal E_P/2\).
+
+\begin{proof}
+We may assume that the stationary $D$-step is exchangeable. Indeed,
+replace its pair law by the average of that law and its transpose.
+The squared energies are unchanged, and concavity of conditional
+entropy in the joint law shows that the new $H(L(Y)\mid X)$ is at
+least half the original value. The stationary $P$-walk is unchanged.
+
+Write $h=H(L(Y)\mid X)$ for this symmetrized step and assume $h>0$.
+We use \(r\) copies of the original state, called the reservoir, to
+write entries in an array of \(m\) lamps. At each writing step the
+value added to one lamp is a function of the reservoir labels.
+From a set of starts of mass at least one half, a demand move in all
+\(r\) cells yields an increment whose law dominates a fixed fraction
+of the uniform law on \(\lfloor rh/4\rfloor\)-bit words. We shall use the assumed
+comparison to charge a refresh of all the lamps to \(O(mr\beta)\)
+physical steps. Corollary~\ref{cor:support} will then require the net
+change over those steps to carry order \(mrh\) bits. A description
+of the same change using only the observed reservoir labels and the
+writing schedule gives the upper bound in terms of \(a\).
+
+\smallskip\noindent
+\emph{Extracting lamp values.}
+Fix \(m\ge1\). Take \(r\) sufficiently large that \(r\ge2\) and
+\(k=\lfloor rh/4\rfloor\ge1\).
+Set $A=\mathbb F_2^k$ and $q=|A|$. Write $L^r$ for the coordinatewise
+labeling. There is a function $b$ from $r$-tuples of labels to $A$
+and a set $B\subseteq V^r$ of $\pi^r$-mass at least $1/2$ such that
+for $U'\sim D^{\otimes r}(u,\cdot)$ one has
+\begin{equation}\label{eq:lamp-hash}
+ \Pr\{b(L^r(U'))=z\mid U=u\}\ge \frac1{4q}
+ \qquad(u\in B,\ z\in A).
+\end{equation}
+To see this, draw $r$ independent stationary $D$-steps. The negative
+logarithm of the conditional probability of their destination label
+tuple, given the starting reservoir $U$, is the sum of $r$ independent
+random variables of mean $h$. The law of large numbers implies that,
+for a set of starts of mass $1-o(1)$, atoms of conditional probability
+at most $2^{-3rh/4}$ carry at least half the conditional mass. Assign
+each label tuple a uniformly random color in $A$, independently. At
+any such start, the mass of these small atoms assigned to a given
+color has mean at least $1/(2q)$ and variance at most $2^{-3rh/4}/q$.
+Chebyshev's inequality and a union bound give failure probability at
+most $16q^2 2^{-3rh/4}=o(1)$ for the lower bound $1/(4q)$ in all
+colors. Averaging over the coloring gives~\eqref{eq:lamp-hash}.
+
+\smallskip\noindent
+\emph{Comparing two walks on lamps and reservoirs.}
+The physical kernel $G$ has stationary law $\pi^r$ times the uniform
+law on $A^m$. With probability $1-1/r$ it advances a uniformly chosen
+reservoir cell by $P$. With the remaining probability it chooses a
+uniform lamp $J$ and adds $b(L^r(U))$ to that lamp. The first operation
+preserves $\pi^r$ by stationarity of \(P\), and the second permutes the
+uniform array for every fixed reservoir.
+The demand kernel $D_*$ keeps the reservoir fixed. It replaces all
+lamps by independent uniform values if $U\in B$ and holds otherwise.
+For every placement \(F\) of this enlarged state space in a member of
+the class, we claim that
+\begin{equation}\label{eq:lamp-compare}
+ \mathcal E_{D_*}(F)\le Cmr\beta\,\mathcal E_G(F).
+\end{equation}
+
+We first compare a refresh of just one lamp with the three moves in
+Figure~\ref{fig:lamp}. Write \(s\in A^m\) for the lamp array and
+\(e_Jz\) for the array equal to \(z\) in position \(J\) and zero
+elsewhere. At a good starting reservoir \(u\in B\), draw
+\(u'\sim D^{\otimes r}(u,\cdot)\). Add \(z=b(L^r(u'))\) to lamp \(J\) and return the reservoir to \(u\).
+The endpoint is \((u,s+e_Jz)\). By \eqref{eq:lamp-hash}, every
+increment has probability at least \(1/(4q)\). Thus the endpoint
+law dominates one quarter of the uniform replacement law.
+
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+    state/.style={rectangle,rounded corners=2pt,draw=ink,
+                  fill=ink!3,inner xsep=5pt,minimum width=2.55cm,
+                  minimum height=7.5mm},
+    move/.style={-{Stealth[length=2mm]},semithick,draw=ink}]
+  \node[state] (ul) at (0,1.7) {\((u,s)\)};
+  \node[state] (ur) at (7.6,1.7) {\((u,s+e_Jz)\)};
+  \node[state] (ll) at (0,0) {\((u',s)\)};
+  \node[state] (lr) at (7.6,0) {\((u',s+e_Jz)\)};
+  \draw[move,dashed] (ul.east) -- node[above] {refresh lamp \(J\)} (ur.west);
+  \draw[move] (ul.south) -- node[right] {draw \(u'\) by \(D^{\otimes r}\)} (ll.north);
+  \draw[move,draw=sea] (ll.east) -- node[below] {add \(z=b(L^r(u'))\) to lamp \(J\)} (lr.west);
+  \draw[move] (lr.north) -- node[left] {restore \(u\)} (ur.south);
+\end{tikzpicture}
+\caption{Refreshing lamp \(J\) while restoring the reservoir to its
+initial state \(u\). The dashed step adds a uniform increment. On the
+solid path the vertical moves are charged to the demand walk on the
+reservoir cells, and the horizontal move is a single physical lamp
+addition. For \(u\in B\), each endpoint of the dashed step occurs
+along the solid path with at least one quarter of its probability.}
+\label{fig:lamp}
+\end{figure}
+
+To pay for the outward reservoir move, we need the squared cost of
+changing independent cells to be bounded by the sum of their
+individual costs. If $(S_i,S'_i)$ are independent exchangeable
+pairs and $S^{(i)}$ denotes $S$ with $S_i$ replaced by $S'_i$, then
+\begin{equation}\label{eq:product-exchange}
+ \mathbb E\,d(F(S),F(S'))^2
+ \le\sum_i\mathbb E\,d(F(S),F(S^{(i)}))^2.
+\end{equation}
+For two blocks of coordinates form the quadrilateral obtained by
+choosing the original or changed value in each block. The CAT$(0)$
+quadrilateral inequality bounds the sum of squared diagonals by the
+sum of squared sides. Exchanging one block preserves the joint law,
+so the diagonals have equal expected squares, and each opposite pair
+of sides does too. Dividing by two and iterating over the blocks
+proves~\eqref{eq:product-exchange}.
+
+Make independent $D$-moves in all $r$ reservoir cells, keeping the
+lamps fixed. Under stationarity the squared cost of this change is at
+most $2r\beta\,\mathcal E_G(F)$ by~\eqref{eq:product-exchange} and
+the assumed comparison on each cell, since $1-1/r\ge1/2$. The squared
+cost of a single random lamp addition is at most $r\mathcal E_G(F)$.
+It remains to charge the return move. Integrate the path bound over
+\(u\in B\), a uniform lamp array \(s\), and a uniform address \(J\).
+The squared endpoint distance is at most three times the sum of the
+squared lengths of the three legs. We bound this sum by integrating
+over all starts. The first and last legs then have equal average cost,
+since $s+e_Jz$ is uniform even conditional on $u,u',J$. The middle leg
+has the stationary lamp-addition cost because \(u'\) has law \(\pi^r\).
+Thus replacing one random lamp at good starts, with holding elsewhere,
+costs at most $Cr\beta\,\mathcal E_G(F)$. Applying
+\eqref{eq:product-exchange} to the $m$ independent pairs of old and
+new lamp values at each good start gives~\eqref{eq:lamp-compare}.
+
+\smallskip\noindent
+\emph{Entropy forced by spreading the lamps.}
+Take $T=2\lceil mr\beta\rceil$ and apply Lemma~\ref{lem:power}
+to~\eqref{eq:lamp-compare}, using the Ces\`aro average of the lazy
+$G$-walk up to time $T$. For placements depending only on the lamps,
+the demand energy is $\pi^r(B)\mathcal V(f)$, where $\mathcal V(f)$
+is the mean squared distance between images of two independent
+uniform elements of $A^m$. The physical displacement of the lamps is
+a random translation by some $Z\in A^m$, independent of their uniform
+starting value $s$. All reservoir moves and choices of lamps are
+independent of $s$. We obtain, with an absolute $K\ge1$,
+\begin{equation}\label{eq:lamp-translation}
+ \mathcal V(f)\le K\,\mathbb E\, d(f(s),f(s+Z))^2
+ \qquad\text{for all placements } f \text{ in the class} .
+\end{equation}
+
+Each fixed translation has squared energy at most $4\mathcal V(f)$,
+by the triangle inequality through an independent uniform point.
+Put $\eta=1/(8K)$. Replace by zero every value of $Z$ whose probability
+is less than $2^{-H(Z)/\eta}$. The replaced mass is at most $\eta$
+by Markov's inequality for the information of the sampled atom (if
+$H(Z)=0$ the support is a singleton). The discarded translations
+contributed at most
+\(4\eta\mathcal V(f)\) to the expectation in
+\eqref{eq:lamp-translation}. Since \(4K\eta=1/2\), the resulting
+translation kernel satisfies the same comparison with constant \(2K\).
+It is symmetric because $A^m$ has exponent two, and each of its rows
+has at most $1+2^{H(Z)/\eta}$ atoms. Corollary~\ref{cor:support}
+therefore gives
+\begin{equation}\label{eq:lamp-bits}
+ mk=\log |A^m|\le C(1+H(Z)).
+\end{equation}
+
+\smallskip\noindent
+\emph{Coding the physical displacement.}
+In a trajectory of the lazy Ces\`aro walk, ignore lazy holds. There
+are at most $T$ steps left. Let $S$ be the number of lamp additions,
+so $\mathbb E S\le T/r$. Record $S$ in unary and the $S$ lamp
+addresses in $\lceil\log m\rceil$ bits each. Within each of the $S+1$
+intervals before, between and after additions, record in unary the
+number of $P$-steps taken by each reservoir cell. The lengths of
+these $r(S+1)$ unary words sum to at most $T+r(S+1)$ bits.
+This prefix code for the schedule data has expected length at most
+\[
+ C\big(T+r+(T/r)\log(2m)\big).
+\]
+The order of moves in different cells inside an interval is
+immaterial, since no lamp is read or written there.
+
+Given the recorded data, the successive labels in a cell have the law
+of a stationary $P$-block of the indicated length $j$, including its
+initial label. This follows by constructing independent stationary
+$P$-trajectories for the cells before sampling the schedule. Since
+$H_j/j\to a$, there is $M_0<\infty$, depending only on $P,\pi,L$,
+such that $H_j\le (1+a)j+M_0$ for every $j$. The $r$ lengths sum to
+at most $T+r$. The schedule and these label blocks determine the
+reservoir labels at every lamp addition and hence determine $Z$.
+The chain rule for entropy now gives
+\begin{equation}\label{eq:lamp-code}
+ H(Z)\le C\big((T+r)(1+a)+rM_0+(T/r)\log(2m)\big).
+\end{equation}
+Combine~\eqref{eq:lamp-bits} and~\eqref{eq:lamp-code} and divide by
+$mr$. Let $r\to\infty$ with $m$ fixed. The lamp-address contribution
+tends to zero, and $k/r\to h/4$. Next let $m\to\infty$ to remove
+$M_0/m$. As $T/(mr)\to 2\beta$ in the first limit, this proves the
+theorem.
+\end{proof}
+
+\subsection{Conditional entropy of weighted edge laws}\label{sec:cursor-entropy}
+
+For a graph with weighted edges, the demanded pairs and the
+physical edges can have different vertex marginals. Symmetrize each
+pair law and add suitable holding steps. The resulting walks have a
+common stationary law and both squared energies are halved. Applying Theorem~\ref{thm:entropy} with the
+identity labeling then bounds the one-step demand entropy.
+
+\begin{corollary}[Pair laws on a graph]\label{cor:graph-entropy}
+Let $\mu$ and $\alpha$ be laws on ordered pairs from a finite set, and
+suppose that $\mathcal E_\mu(f)\le\beta\mathcal E_\alpha(f)$
+for every placement \(f\) in every member of a class of Hadamard
+spaces without ports, with \(\beta\ge0\). Put
+$\alpha_s=(\alpha+\alpha^\top)/2$. Then
+\[
+ H_\mu(Y\mid X)\le C(1+\beta)\big(1+H_{\alpha_s}(Y\mid X)\big).
+\]
+In particular, if the undirected support of $\alpha$ has at most
+$d$ neighbors at each vertex, $d\ge2$, then
+$H_\mu(Y\mid X)\le C'(1+\beta)\log d$.
+\end{corollary}
+\begin{proof}
+Put $\mu_s=(\mu+\mu^\top)/2$, and write $\rho,\sigma$ for the
+marginals of $\mu_s,\alpha_s$, respectively. Write $\Delta_\rho$ for the
+law of $(X,X)$ with $X\sim\rho$. The stationary pair laws
+$(\mu_s+\Delta_\sigma)/2$ and $(\alpha_s+\Delta_\rho)/2$ define
+kernels $D,P$ with common stationary law $(\rho+\sigma)/2$ on its
+support. Their energies are half the original energies. Concavity of
+conditional entropy gives $H_D(Y\mid X)\ge H_\mu(Y\mid X)/4$.
+For the physical step, record a bit indicating which component of the
+mixture was used. Conditional on the diagonal component the destination
+is known, so $H_P(Y\mid X)\le 1+H_{\alpha_s}(Y\mid X)/2$.
+This conditional entropy is the entropy rate for the identity labeling
+of the stationary $P$-chain. The first assertion follows by applying
+Theorem~\ref{thm:entropy} with $\max(1,\beta)$. In the bounded-degree
+case at most $d$ neighbors and a possible holding move give
+$H_{\alpha_s}(Y\mid X)\le\log(d+1)\le2\log d$.
+\end{proof}

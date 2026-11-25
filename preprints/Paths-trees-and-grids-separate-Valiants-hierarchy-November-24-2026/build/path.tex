@@ -1,0 +1,275 @@
+\section{Paths and formula depth}\label{sec:formula}
+
+The state sum on a path is iterated matrix multiplication. With $d\ge2$
+vertices and $q$ states per edge, it is the $(1,1)$ entry of a product
+of $d$ generic $q\times q$ matrices, using only the first row and last
+column at the endpoints. An ABP realizes this product with one source,
+$d-1$ layers of $q$ states, and one sink. In particular, taking $d=q=n$
+gives a family in $\VBP$. To obtain a formula, bisect the path and sum
+over the $q$ possible labels on the middle edge. Each summand computes
+two shorter entries, so recursive bisection gives size
+$q^{O(\log d)}$ for $q\ge2$. On short paths this exponent is optimal,
+even for degree-component border formulas. For the monotone and
+set-multilinear versions of iterated matrix multiplication, see
+Snir~\cite{Snir} and Tavenas, Limaye and Srinivasan~\cite{LST}.
+
+\begin{theorem}[Short trees]\label{thm:full-flat-graph}
+Let $G$ be any tree on $d$ vertices and let $w=\log q$.
+For $2\le d\le w^{1/3}$ and all sufficiently large $q$, the
+degree-component border formula size of $Z_{G,q}$ is at least
+$q^{c\log d}$ over every field. Moreover, if $Z_{G,q}$ lies in the
+Zariski closure of the degree-$d$ components of outputs of depth-$h$
+binary arithmetic circuits over the algebraic closure, then
+$h\ge c' w\log d$. The constants $c,c'>0$ are absolute.
+\end{theorem}
+
+A cut between two consecutive path vertices crosses just one edge.
+To recover a factor of $\log d$ in the lower bound we use cuts at
+several scales in a single placement. The cuts depend on how a
+formula splits the vertex groups among its products. That splitting
+defines a binary tree on the groups, whatever the shape of the original
+graph $G$. We first describe the information shared among descendants
+of a split, then choose sites where the price of this information is
+controlled by the formula depth.
+
+\subsection{The coefficient tensor of a formula}
+
+Work with the $d$ slots of Section~\ref{sec:cuts}, keeping each
+vertex table at a single site for now. For a set $B$ of slots, write
+$\Delta_B(2^\ell)$ for the diagonal tensor supplying one $\ell$-bit
+label to every slot in $B$. When $\ell=0$ this is the tensor of all
+local units. In a rooted tree whose leaves are the slots, let $B_s$
+be the set of leaves below a node $s$.
+
+\begin{lemma}[Coefficient extraction at the product gates]\label{lem:formula-splits}
+For a binary formula of depth $h$ with output $f$, the tensor $A(f)$
+of coefficients using one variable from each slot is an ordinary sum
+of at most $4^d d!(h+1)^{d-1}$ tensors. Each summand is a local linear
+image, with one map at each slot, of
+\[
+                \bigotimes_{s\ \mathrm{internal}}\Delta_{B_s}(2^{\ell_s})
+\]
+for some ordered full binary tree on the slots and nonnegative integers
+$\ell_s$ satisfying
+\[
+                \sum_{s:\,v\in B_s}\ell_s\le h
+                \qquad\text{at every leaf }v .
+\]
+\end{lemma}
+
+\begin{proof}
+For a subformula rooted at an occurrence $u$, extract the coefficient
+table on a nonempty set $B$ of slots. Its entries are the coefficients
+of monomials containing one chosen variable from each slot of $B$
+and no other variables. For a singleton $B$ this is the vector of
+linear coefficients of that slot. For $|B|\ge2$, expand down the
+formula to the first product occurrence $p$ at which both children
+supply at least one variable. Such a $p$ can be $u$ itself.
+At each intervening product all variables come from just one child,
+so the unused child contributes its constant term. At a subtraction
+the right child contributes a minus sign. Denote the product of these
+path scalars by $c(u,p)$.
+
+Consequently the table on $B$ is the sum over $p$ and over ordered
+partitions $B=B_1\sqcup B_2$ with $B_1,B_2$ nonempty. Each term is
+$c(u,p)$ times the tensor product of the extracted tables on $B_1$
+and $B_2$ at the respective children of $p$, with slots returned to
+their original order. This is the coefficient rule at the gates.
+An affine leaf contributes zero to a table with $|B|\ge2$.
+
+Apply the rule recursively from the output. Group the resulting terms
+by the ordered binary tree $\tau$ of nontrivial splits, the bijection
+from its leaves to the $d$ slots, and, at each split $s$, the distance
+$\ell_s$ from the root of its subformula to the chosen product occurrence.
+There are fewer than $4^d$ possible shapes, $d!$ labelings and at most
+$(h+1)^{d-1}$ lists of distances. Along any one leaf's chain of
+calls, the traversed paths occupy disjoint portions of a path in the
+formula. Their lengths therefore sum to at most $h$.
+
+Fix such a group. At split $s$, take an independent $\ell_s$-bit
+address, one bit for each downward choice of child on the way to $p$.
+Supply this address to all leaves in $B_s$. A leaf decodes its
+ancestor addresses in order. At each decoded product it knows from
+$\tau$ which child starts the next call. It can thus return the
+linear coefficient vector at its final call, or zero if an address
+fails to reach a product at a prescribed split.
+For each internal node designate one descendant leaf to multiply its
+vector by the scalar $c(u,p)$ for that node. Each leaf's rule on
+basis labels defines a linear map. Summing over the independent
+addresses in the product of diagonals now sums over exactly the
+consistent choices of products, each with its scalar appearing once.
+The resulting local image is the required group of terms.
+\end{proof}
+
+The price of a shared address depends on where its descendant leaves
+are placed. The next estimate chooses those sites separately for each
+tree $\tau$. The terminal positions of Section~\ref{sec:cuts} stay
+fixed, so bounds obtained for different $\tau$ can eventually be added
+using Equation~\eqref{eq:ordinary}.
+
+\subsection{Placing the slots at several scales}
+
+Recall that $a_v$ is the sum of the unit terminal vectors at vertex
+$v$, and $a_C=\sum_{v\in C}a_v$. Connectivity of $G$ gives
+$\|a_C\|\ge1$ for every nonempty proper vertex set $C$, by
+Equation~\eqref{eq:cut}. A displacement parallel to $a_C$ at the
+vertices of $C$ shortens the total distance to their terminals to
+first order. We choose one displacement per scale so that the
+shortenings add while each descendant set remains narrow.
+
+\begin{lemma}[Placement of the leaves]\label{lem:formula-placement}
+For any ordered full binary tree $\tau$ on the $d$ slots of a connected
+graph $G$ with $d\ge2$, there are vectors $z_v$ in the terminal space
+with $\|z_v\|\le1$ such that
+\[
+       \sum_v\langle a_v,z_v\rangle\ge c_0\log d,
+       \qquad
+       \delta(\{z_v:v\in B_s\})\le C_0\,\frac{|B_s|}{d}
+       \quad\text{for every node }s .
+\]
+Here $\delta$ is the normalized Gaussian mean width of
+Theorem~\ref{thm:width}, and $c_0,C_0>0$ are absolute constants.
+\end{lemma}
+
+\begin{proof}
+Read the leaves in the order of $\tau$. For each power of two $k\le d/2$,
+the maximal subtrees having at most $k$ leaves partition that order into
+consecutive blocks. Collect blocks from left to right, closing a cluster
+as soon as it has at least $k$ leaves. Every cluster has fewer than
+$2k$ leaves, and only the last can have fewer than $k$. Thus each is a
+proper subset of the $d$ slots and there are at least $d/(2k)$ clusters.
+Figure~\ref{fig:cluster} shows how the same split is seen at two scales.
+
+\input{clusters}
+
+Write $C_k(v)$ for the cluster of $v$. Displace every member of a
+cluster in the same unit direction $a_C/\|a_C\|$ with weight $k/d$.
+The combined displacement is
+\[
+            z_v=\sum_k\frac{k}{d}\frac{a_{C_k(v)}}{\|a_{C_k(v)}\|}.
+\]
+The weights sum to at most one. At a given scale, the inner products
+within a cluster sum to $(k/d)\|a_C\|$. Thus
+\[
+       \sum_v\langle a_v,z_v\rangle
+         =\sum_k\frac{k}{d}\sum_{C\text{ at scale }k}\|a_C\|
+         \ge \tfrac12\lfloor\log d\rfloor .
+\]
+
+For the width bound, fix a node $s$ with $b=|B_s|$. At each scale
+$k\ge b$ its entire subtree belongs to a single maximal block. Its
+displacement at that scale is a common translation, which leaves its
+width unchanged. At a scale $k<b$, the interval $B_s$ meets at most
+$2+b/k$ clusters. All except possibly the two end clusters lie wholly
+in the interval and have at least $k$ leaves. There are therefore at
+most $2+b/k$ unit displacement directions on $B_s$ at this scale.
+
+The set of combined displacements on $B_s$ is contained, up to
+translation, in the Minkowski sum of these sets of directions scaled
+by $k/d$. In the Gaussian formula, taking a maximum of a linear
+functional gives monotonicity under inclusion and additivity on
+Minkowski sums. Applying Equation~\eqref{eq:width-ball} to each set
+of unit directions gives
+\[
+       \delta(\{z_v:v\in B_s\})
+          \le C\sum_{k<b}\frac{k}{d}\sqrt{\log(2+b/k)}
+          \le C_0\,\frac{b}{d}.
+\]
+At the $j$th dyadic scale below $b$, the summand is at most a
+constant times $(b/d)2^{-j}\sqrt{j+2}$, whose sum converges.
+\end{proof}
+
+\subsection{From depth to size}
+
+\begin{proof}[Proof of Theorem~\ref{thm:full-flat-graph}]
+Let $e=d-1$ be the number of edges of $G$. Its split coefficient
+tensor has terminal price $2ew$. Take a formula of depth $h$, and one
+summand in Lemma~\ref{lem:formula-splits}. For this summand choose
+the vectors $z_v$ of Lemma~\ref{lem:formula-placement} and perform the
+map at slot $v$ at the site $\lambda z_v$, with $\lambda\ge0$.
+Share each address among its descendants at those sites, then send the
+$\deg(v)$ output indices of each slot to their terminals by $q$-state
+wires. The resulting upper bound on the terminal price is
+\begin{equation}\label{eq:full-flat-profile}
+ \begin{aligned}
+   2ew
+     &-w\lambda\sum_v\langle a_v,z_v\rangle
+      +\tfrac12 w\lambda^2\sum_v\deg(v)\|z_v\|^2\\
+     &+\lambda\sum_s\ell_s\,\delta(\{z_v:v\in B_s\}).
+ \end{aligned}
+\end{equation}
+The first line uses Equation~\eqref{eq:move} for the output wires.
+The second is the exact price of the independent address labels.
+Its coefficient of $\lambda$ is at most $C_0h$, since
+\[
+        \sum_s\ell_s\frac{|B_s|}{d}
+            =\frac1d\sum_v\sum_{s:\,v\in B_s}\ell_s\le h .
+\]
+The first-order shortening in the first line is at least
+$c_0w\lambda\log d$, and the quadratic term is at most $ew\lambda^2$.
+If $h\le c_1w\log d$ for sufficiently small $c_1$, choosing
+$\lambda=c_2(\log d)/d$ with $c_2>0$ sufficiently small bounds
+the price of each summand by
+\[
+                  2ew-c_3\,\frac{w(\log d)^2}{d}
+\]
+for an absolute $c_3>0$.
+
+All summands now have the same $2e$ terminal sites. By
+Equations~\eqref{eq:ordinary} and~\eqref{eq:width-ball}, adding the
+summands of Lemma~\ref{lem:formula-splits} costs a premium of at most
+\[
+                O\bigl(d\sqrt{\log(2d)}\,\log(d(h+2))\bigr).
+\]
+The ratio of this premium to the saving is $O(w^{-1/3}\log w)$,
+uniformly for $2\le d\le w^{1/3}$ and $h\le c_1w\log d$. Thus the
+coefficient tensors of all such formulas lie in a fixed price
+sublevel strictly below $2ew$ for all sufficiently large $w$.
+The sublevel is Zariski closed, and extraction of one variable per
+slot is a linear map on degree-$d$ components. The graph polynomial
+is therefore excluded even from the degree-component border of the
+depth-$h$ formulas. Unfolding a binary circuit into a formula
+preserves its depth and its output, giving the claimed circuit depth
+bound as well.
+
+Finally, a formula of size $m$ can be balanced to depth
+$O(\log(m+2))$ over every field~\cite{Brent}. For the division-free
+construction, push subtraction signs to the affine leaves and select
+a subformula $g$ containing between a third and two thirds of the
+leaves. The output equals $ag+b$, where $a$ is the product of the
+siblings at the multiplication gates on the path from $g$ to the
+root, and $b$ is the original expression evaluated with $g=0$.
+Each of $a,b,g$ uses at most two thirds of the original leaves plus
+one. Recursion down to constant size gives the desired depth.
+Balancing preserves the polynomial before closure, so the depth
+bound yields the degree-component border formula size in the theorem.
+\end{proof}
+
+For a path, Theorem~\ref{thm:full-flat-graph} and the bisection formula
+give matching exponents. The estimate extends to
+$2\le d\le(\log q)^B$ for any fixed $B>1/3$, with lower bound
+$q^{\Omega_B(\log d)}$ on every tree in this range. When
+$d>(\log q)^{1/3}$, project to a subtree on
+$\lfloor(\log q)^{1/3}\rfloor$ vertices. The logarithm of this
+subtree size is $\Omega_B(\log d)$, and the quadratic cost of the
+border formula projection in Lemma~\ref{lem:projection} only changes
+the implied constant in the exponent.
+
+Taking $q=n$ and projecting the $n$-vertex path to its first
+$\lfloor(\log n)^{1/3}\rfloor$ vertices gives degree-component
+border formula size $n^{\Omega(\log\log n)}$. Its layered ABP has
+polynomial size, so this proves the path separation in
+Theorem~\ref{thm:main}.
+
+The same lower bound transfers to the order-$n$ determinant. Take
+$q=\lfloor\sqrt n\rfloor$ and $d=\lfloor(\log q)^{1/3}\rfloor$.
+Let $A$ be the weighted adjacency matrix of the layered ABP in
+topological order. It is strictly upper triangular, so
+$\det(I-A)=1$. The source--sink entry of
+$(I-A)^{-1}=\sum_{j\ge0}A^j$ is the path polynomial. By the
+cofactor formula it is also a signed minor of $I-A$ of order
+$(d-1)q+1\le n$~\cite{Valiant,MalodPortier}. Absorb the sign into
+one row and pad with an identity block to obtain an affine projection
+of the order-$n$ determinant. Lemma~\ref{lem:projection} transfers
+the short-path lower bound and completes the proof of
+Theorem~\ref{thm:main}.

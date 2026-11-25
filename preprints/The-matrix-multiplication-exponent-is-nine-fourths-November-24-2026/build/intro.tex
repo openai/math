@@ -1,0 +1,266 @@
+\section{The exponent of matrix multiplication}\label{sec:intro}
+
+The product of two square matrices of side \(n\) has \(n^2\) entries.
+Computing the dot product for each entry separately takes order \(n^3\)
+arithmetic operations. Strassen's seven-product identity showed that
+sharing work among the entries can save a power of \(n\). How far can
+those savings go? The conjecture \(\omega=2\) asks whether, for every
+\(\varepsilon>0\), the product can be computed in \(O(n^{2+\varepsilon})\)
+operations. We show that the arithmetic exponent exceeds the exponent of the output
+size by exactly one quarter.
+
+\begin{theorem}\label{thm:square}
+Over every field \(F\), the exponent of square matrix multiplication is
+\(\omega_F=9/4\).
+\end{theorem}
+
+Here \(\omega_F\) is the infimum of the real numbers \(s\) for which two \(n\times n\)
+matrices can be multiplied in \(O_{F,s}(n^s)\) scalar operations. We use
+formal arithmetic circuits. Their inputs are independent variables,
+their constants lie in \(F\), and their gates can add, subtract,
+multiply or divide by a nonzero rational function. Each output must
+agree with the corresponding entry of the product as an identity of
+rational functions. This convention applies also over finite fields.
+
+The \(9/4\) upper bound was established over \(\mathbb C\) by OpenAI
+\cite{nine} and over every field by Amanov, van den Berg and Zuiddam
+\cite{abvz}, following L\"u's extension to arbitrary characteristic
+\cite{lu}. We prove the matching lower bound. In fact, for every
+\(n\ge2\) a circuit for two \(n\times n\) matrices requires at least
+\(\lceil n^{9/4}/2\rceil\) multiplication or division gates, even if
+linear operations are free. The upper bound gives circuits of size
+\(O_{F,\varepsilon}(n^{9/4+\varepsilon})\) for each \(\varepsilon>0\).
+
+\par\Needspace{8\baselineskip}
+\subsection{Rank at each matrix size}
+
+A bilinear algorithm forms products of linear combinations of entries
+from the first matrix with linear combinations from the second. It
+then combines these products linearly to give all the output entries.
+The least number of products is the rank of the matrix multiplication
+tensor
+\[
+             T_n=\sum_{i,j,k=1}^{n}
+                    e_{ij}\otimes e_{jk}\otimes e_{ki}.
+\]
+The third factor pairs the output at position \((i,k)\) with \(e_{ki}\).
+Grouping corresponding factors gives \(T_n^{\otimes j}\simeq T_{n^j}\).
+Consequently an improvement at one fixed matrix size can be reused at
+arbitrarily large sizes.
+
+Geometric border rank allows the tensor to belong to the Zariski closure,
+over \(\overline F\), of tensors computed with a given number of products.
+Asymptotic rank over \(F\) is the limit of the \(j\)-th roots of the
+ranks over \(F\) of the \(j\)-th tensor powers.
+
+\begin{corollary}\label{cor:tight}
+For every \(n\ge2\) and every field \(F\), the geometric border rank of
+\(T_n\) is at least \(n^{9/4}\), and the asymptotic rank of \(T_n\) over
+\(F\) equals \(n^{9/4}\). Every formal arithmetic circuit over \(F\)
+for this product has at least \(\lceil n^{9/4}/2\rceil\) nonscalar
+multiplication or division gates.
+\end{corollary}
+
+In particular, an exact bilinear algorithm at side \(n\) uses at least
+\(\lceil n^{9/4}\rceil\) products. The factor of two for general circuits
+comes from extracting the bilinear part of a gate. A multiplication
+or division introduces at most two new products of linear forms
+(Lemma~\ref{lem:bilinearize}).
+
+The square bound also restricts how wide a rectangular product can be
+while its cost still has exponent two. Write \(T_{a,b,c}\) for the
+multiplication tensor of an \(a\times b\) matrix and a \(b\times c\)
+matrix. Let \(\alpha_F\) be the supremum of the \(\beta\ge0\) for which
+multiplying an \(n\times\lfloor n^\beta\rfloor\) matrix by a
+\(\lfloor n^\beta\rfloor\times n\) matrix has exponent two in \(n\).
+
+\begin{corollary}\label{cor:rectangular}
+For all positive integers \(a,b,c\), the geometric border rank of
+\(T_{a,b,c}\) and its asymptotic rank over \(F\) are at least
+\[
+              \max\{ab,bc,ca,(abc)^{3/4}\}.
+\]
+Over every field, \(1/2\le\alpha_F\le2/3\).
+\end{corollary}
+
+Three copies of the rectangular tensor, with the roles of the factors
+cycled, multiply to the square tensor \(T_{abc}\). This explains the
+power \(3/4\) in Corollary~\ref{cor:rectangular}. The lower endpoint for
+\(\alpha_F\) comes from the known algorithm for inner dimension
+\(\lfloor\sqrt n\rfloor\)~\cite{uznanski,abvz}. Section~\ref{sec:finite-ranks}
+proves the two corollaries and explains the consequence for Strassen's
+conjecture on tight tensors.
+
+\subsection{Why a faster matrix product would test lists too cheaply}
+
+Suppose one could save a fixed power of \(n\) below \(9/4\). A single
+bilinear algorithm witnessing a strict saving could then be specialized
+to a finite field. Over that field we compare two estimates for a
+different computation. Given a list of \(2^w\) words of length \(2w\)
+bits, return one if all the words are distinct and zero if any word repeats. Sorting the words and
+checking adjacent pairs already gives a small network for this test.
+The question is how much of its cost can be shared among several lists
+whose inputs vary independently.
+
+We measure cost by counting the vertices and wires in a tensor network
+with at most three bits incident at each vertex. The network sums over
+its internal bits and, for each setting of its exterior bits, must give
+the exact zero-one answer. With \(t\) lists it must give the product of
+their \(t\) answers. Its internal wiring may connect different lists.
+Even with that freedom, its volume per input bit exceeds \(w^\sigma\)
+for some fixed \(\sigma>0\), uniformly for \(1\le t\le2^w\) and all
+large \(w\) (Theorem~\ref{thm:many}). The proof reduces the problem to
+routing tagged records. The companion results on tensor geometry and
+network complexity control this routing or turn cheap routing into a
+violation of a counting lower bound~\cite{oaG,oaP}.
+
+The hypothetical matrix multiplication algorithm gives an estimate in
+the opposite direction. Consider a trivalent network on \(e\) exterior bits with size at most
+\(e^{1.05}\), where \(e\) is large. We can represent a tensor power of
+its table in one new network. Per copy, the new network saves a power of the logarithm on
+the old size and charges an arbitrarily small power of the logarithm
+per exterior bit (Theorem~\ref{thm:shaving}). The replicated bits remain
+individually accessible, so we can apply the construction again. Starting
+with the sorting test and compressing a fixed number of times gives
+volume \(O(w^\eta)\) per input bit for any chosen \(0<\eta<\sigma\).
+The batch still has at most \(2^w\) lists. Section~\ref{sec:obstruction}
+gives the short contradiction and the passage back to arbitrary fields.
+Most of the proof is devoted to deriving this compression from a strict
+saving in matrix multiplication.
+
+\subsection{Three wires and a shared label}
+
+To see how the exponent governs network identities, consider a number
+assigned to each tensor which is multiplicative under tensor products,
+additive under direct sums and monotone under linear maps on the
+factors. With the usual normalization this is a spectral point in
+Strassen's sense~\cite{spectrum}. Its logarithm is a \emph{price}.
+A wire shares an index between two factors. Its price per bit defines
+a distance between their sites. The companion paper~\cite{oaG}
+extends these distances to spaces of nonpositive curvature.
+Section~\ref{sec:prices-background} recalls the properties used here.
+
+Figure~\ref{fig:three-wires} gives two descriptions of \(T_n\). Each of \(i,j,k\) occurs at exactly two factors. The
+price of the tensor is therefore the sum of three wire lengths
+times \(\log_2 n\). A rank decomposition with \(r\) terms supplies
+the same tensor from a single shared label, the choice of term, with
+\(r\) possible values. If the price per bit of this three-way label
+is \(D\), monotonicity gives
+\[
+      (\text{sum of the three wire lengths})\,\log_2 n
+                                     \ \le\ D\,\log_2 r .
+\]
+Thus the ratio of a triangle's perimeter to its shared-label rate is a
+lower bound on the exponent. Prices coming from Euclidean flats give
+ratio two~\cite{oaG}. A different geometry is needed to reach \(9/4\).
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+   site/.style={circle,draw=ink,fill=white,minimum size=6mm,inner sep=1.5pt},
+   conn/.style={thick,draw=sea}]
+  \begin{scope}[xshift=-2.75cm]
+   \coordinate (A) at (-1.48,0); \coordinate (B) at (1.48,0);
+   \coordinate (C) at (0,1.48);
+   \draw[conn] (A)--node[below] {\(j\)} (B)
+                --node[above right] {\(k\)} (C)
+                --node[above left] {\(i\)} (A);
+   \node[site] at (A) {\(A\)}; \node[site] at (B) {\(B\)};
+   \node[site] at (C) {\(C\)};
+   \node at (0,-.85) {Three indices of \(T_n\)};
+  \end{scope}
+  \begin{scope}[xshift=2.75cm]
+   \coordinate (A) at (-1.48,0); \coordinate (B) at (1.48,0);
+   \coordinate (C) at (0,1.48); \coordinate (O) at (0,.52);
+   \draw[conn] (O)--(A) (O)--(B) (O)--(C);
+   \node[site] at (A) {\(A\)}; \node[site] at (B) {\(B\)};
+   \node[site] at (C) {\(C\)};
+   \node[fill=white,text=rust,inner sep=2pt] at (O) {\(\ell\)};
+   \node at (0,-.85) {One label for a rank term};
+  \end{scope}
+\end{tikzpicture}
+\caption{The three tensor factors correspond to the two inputs and the
+output paired against a third matrix. On the left, \(A,B,C\) see
+\((i,j),(j,k),(k,i)\). On the right, all three see the same label
+\(\ell\in[r]\) and apply their own linear maps.}\label{fig:three-wires}
+\end{figure}
+
+The critical ratio occurs at three tips of a tripod with unit arms.
+The distances between tips are all two. If the shared-label rate is
+\(8/3\), the ratio is \(6/(8/3)=9/4\). Under the strict-saving
+hypothesis such a tripod cannot occur. Part~\ref{part:spheres} exploits
+this exclusion. If varying the parameters of a tensor were to move
+its preferred site in a certain family of prices, the motion would
+produce a homogeneous tripod. A rectangular multiplication decoder
+first determines the limiting rate when one arm is long. The rigidity
+of polynomial multiplication then carries this equality to the tripod
+with three equal arms (Proposition~\ref{prop:tripod}). Ruling out that
+motion lets us price an entire family of tensors in a single extension
+of the sites. This synchronization is the geometric input to compression. Once
+the lower bound is proved, we can also identify the three wire lengths
+at every price maximizing the value of \(T_n\)
+(Corollary~\ref{cor:extremal-price}).
+
+\subsection{From prices to a smaller network}
+
+The family we use consists of sphere tensors. Their entries are
+determined by marked points. When these points collide, a tensor
+expands into contractions through legs of controlled dimension. Under
+the strict-saving hypothesis we can also determine the largest prices
+these tensors attain. For prescribed leg widths (logarithms of
+dimensions), they attain asymptotically the cost of preparing a
+tensor at the cheapest common site and transporting each leg to its
+destination (Section~\ref{sec:sphere}). The marked points that specify
+the entries and the sites that determine prices play different roles.
+Figure~\ref{fig:org} shows how this calculation enters the two parts of
+the network construction.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+ box/.style={draw=ink,align=center,rounded corners=1.5pt,inner sep=5pt},
+ arr/.style={draw=sea,thick,-{Latex[length=4pt]}}]
+ \node[box] (price) at (0,0) {A strict square saving forces sphere prices\\
+                                  {\footnotesize Part~\ref{part:spheres}}};
+ \node[box,text width=4.0cm] (sort) at (-2.65,-1.65)
+     {Stable sorting and\\batched table lookup\\{\footnotesize Part~\ref{part:sorting}}};
+ \node[box,text width=4.0cm] (conc) at (2.65,-1.65)
+     {Concentration of\\the incident bits\\{\footnotesize Part~\ref{part:local}}};
+ \node[box] (vol) at (0,-3.5) {Compression of tensor powers\\
+                                  {\footnotesize Part~\ref{part:volume}}};
+ \draw[arr] (price.south west)--(sort.north);
+ \draw[arr] (price.south east)--(conc.north);
+ \draw[arr] (sort.south)--(vol.north west);
+ \draw[arr] (conc.south)--(vol.north east);
+\end{tikzpicture}
+\caption{The implication needed for the lower bound. Sorting and
+concentration give complementary estimates on the same network.
+Repeated compression would violate the independent-list lower bound
+of Theorem~\ref{thm:many}.}\label{fig:org}
+\end{figure}
+
+The compression must pay for each table of a network and for the
+records that say how tables are connected. Direct lookup in a table
+of \(u\) incident bits can cost \(2^u\). In a large batch, sorting
+queries together with table entries amortizes that cost. Part~\ref{part:sorting}
+uses incidence inequalities from sphere tensors to route records.
+For \(2^u\) records of width \(O(u)\) the resulting stable sort costs
+\(O(u^p)\) per record for some \(p<2\). Wider records admit a separate
+estimate that keeps the cost close to linear in their width.
+
+The strict inequality \(p<2\) matters because the quantity controlled
+by collisions is proportional to the \emph{square} of a leg width.
+Part~\ref{part:local} realizes the wiring with sphere tensors, moves
+insertions across their seams and merges them. The use of fermionic contractions to reduce wiring is
+related to the crossing construction of~\cite{Khoruzhii,oaG} and to
+compression in subexponential satisfiability algorithms~\cite{falseeth,Anthropic}.
+Merging concentrates the
+incident bits at fewer stations while controlling the sum of squared
+widths. Part~\ref{part:volume} applies these identities in rounds.
+The expansion has many summands with different wirings. A single
+network must describe the possible wirings, route the records, look
+up the entries and sum the contributions. Counting all four operations
+gives the logarithmic saving in Theorem~\ref{thm:shaving} and completes
+the contradiction.
+
+\input{history}

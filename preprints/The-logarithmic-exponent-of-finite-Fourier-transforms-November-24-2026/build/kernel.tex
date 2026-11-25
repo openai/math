@@ -1,0 +1,341 @@
+\section{Fourier transforms on prime tensor powers}
+\label{sec:prime-kernel}
+
+On \(k\) digits of radix \(\ell\), the Fourier matrix is the tensor
+product of \(k\) copies of a single \(\ell\times\ell\) matrix. Applying
+the factors in succession takes \(O_\ell(k\ell^k)\) operations. We
+reduce the power of \(k\) by applying the prediction and repair of
+Theorem~\ref{thm:repair} to a batch of independent transforms.
+
+For a prime \(\ell\), let \(\zeta=\exp(2\pi i/\ell)\), put
+\(R_\ell=\mathbb Z[1/\ell,\zeta]\), and write
+\(D_\ell=(\zeta^{xy})_{x,y\in\mathbb F_\ell}\). The rows and columns
+of \(D_\ell^{\otimes k}\) are indexed by \(\mathbb F_\ell^k\).
+
+\begin{theorem}[Fourier transforms in a fixed prime radix]\label{thm:kernel}
+For each prime \(\ell\) and every \(\alpha>1/2\), there are effectively
+constructible \(R_\ell\)-linear circuits for \(D_\ell^{\otimes k}\)
+of size \(O_{\ell,\alpha}(\ell^k(1+k)^\alpha)\).
+The same bound counts exact ring operations, including scalar
+multiplications, and indexing on \(O(1+k)\)-bit address words.
+Integer arithmetic, comparisons, lookup and digit extraction on a
+word have unit cost. For fixed \(\ell,\alpha\) the control depends only
+on \(k\), and the coefficient identities specialize under every
+homomorphism from \(R_\ell\).
+\end{theorem}
+
+Group the digits into \(A\) axes of \(f\) digits each. A \emph{call}
+applies \(D_\ell^{\otimes f}\) along one axis of an array of
+\(\ell^{Af}\) entries, at every choice of the other digits. The
+usual tensor product algorithm uses \(A\) calls per array. Fix
+\(1/2<\theta\le\alpha\). Our goal at one recursion level is to
+transform \(W\) independent arrays in \(\sigma\) calls with
+\(\sigma/W<A^\theta\). The integers \(A,W,\sigma\) will depend on
+\(\ell,\theta\) and work for every \(f\). The strict inequality leaves
+room to pad incomplete batches during recursion.
+
+The large transform will be a product of \(m\) commuting queries
+up to a permutation and diagonal scalings (together called a
+\emph{monomial map}). The number of axes \(A\) will be of order \(m\).
+Theorem~\ref{thm:repair} replaces the product by
+\(O_\ell(\sqrt{m\log m})\) pencil stages and full Fourier
+conversions on a small fraction of the rows. A pencil still contains all \(m\) queries. The construction
+below makes their Fourier calls shareable across queries and across the
+independent arrays in the batch.
+
+\subsection{The product of queries}
+
+Choose a large \(m\equiv1\pmod\ell\). In each half of an address use
+\(m\) distinguished axes, one per query, and \(D-1\) auxiliary axes
+shared by all the queries. The routing will determine \(D\). Put
+\(d=m+D-1\) and \(A=2d\). Read the address by columns. Its column
+\(c\) contains the \(c\)-th digit of each axis, hence a pair of
+\(d\)-vectors. Write \(X_c,Z_c\) for the frequency coordinates
+in column \(c\). The \(j\)-th query, \(1\le j\le m\), has multiplier
+\[
+ Q_j(X,Z)=\zeta^{\sum_{c=1}^{f}
+ (X_{c,j}Z_{c,j}+\sum_{i=m+1}^dX_{c,i}Z_{c,i})}.
+\]
+More precisely, \(Q_j(X,Z)\) is the diagonal entry of
+\(\mathcal S Q_j\mathcal S^{-1}\), where
+\(\mathcal S=D_\ell^{\otimes Af}\).
+Each distinguished coordinate occurs once in the product
+\(F=\prod_j Q_j\), and each auxiliary coordinate occurs \(m\equiv1
+\pmod\ell\) times. Thus its exponent is \(\sum_c X_c\cdot Z_c\).
+Fourier inversion for one digit pair gives the ordinary kernel
+from \((x,y)\) to \((s,t')\),
+\[
+ \ell^{-2}\sum_{X,Z}\zeta^{(x-s)X+(y-t')Z+XZ}
+ =\ell^{-1}\zeta^{(x-s)(t'-y)}
+ =\ell^{-1}\zeta^{-xy-st'}\zeta^{xt'+ys}.
+\]
+Consequently \(F\) gives \(\ell^{-df}D_\ell^{\otimes Af}\) up to
+diagonal phases and exchange of the two halves. The scalar
+\(\ell^{df}\) recovers the unnormalized transform.
+
+Apply Theorem~\ref{thm:repair} on \(R\) independent rows. A pencil
+has terms \(B_{ja}\otimes Q_j^a\), \(1\le a<\ell\), and a pointwise
+term. The matrix \(B_{ja}\) acts on the \(R\) rows. Across all stages
+there are \(O_\ell(m^{-3}R)\) full-row spectral conversions. The
+coefficients, row count and spectral tables are finite once \(m\) is fixed.
+
+\subsection{Sharing the queries of a pencil}
+
+Run the \(R\)-row program in parallel at each label \(v\) of a finite
+set \(\mathcal V\). The desired transfer on labels is the identity,
+so a source must contribute its query to its own destination only.
+To realize the identity, we route data through weighted rectangles of
+labels. A rectangle \(I\times J\) sums the arrays from sources in \(I\)
+and sends the result to destinations in \(J\).
+
+Fix a query \(j\) and a power \(a\). At each label \(v\), choose
+input and output permutations \(S_{v,j}\) and \(T_{v,j}\) into a
+common coordinate system. We shall construct a kernel \(\mathcal K_a\)
+in these coordinates with
+\(T_{v,j}^{-1}\mathcal K_a S_{v,j}=Q_j^a\).
+Routing with the label matrix \(M\) gives the operator block
+\begin{equation}\label{eq:kernel-routing-block}
+  M_{wv}\,T_{w,j}^{-1}\mathcal K_a S_{v,j}
+  \qquad\text{from source \(v\) to destination \(w\)} .
+\end{equation}
+Thus summing rectangle matrices to the identity cancels all
+off-diagonal transfers, even though labels use different permutations.
+The rectangles have two different costs. Some require a common
+Fourier computation for each query. On the others, the distinguished
+directions of every source and destination are orthogonal. This lets
+us reuse the same endpoint Fourier computations for all \(j\).
+
+Following the intersection representations of
+\cite{Alon1998,Tape}, we use one matrix over \(\mathbb F_\ell\) to
+choose directions and a second matrix over \(\mathbb Z[1/\ell]\) to
+choose rectangle weights. The rank of the first determines the number
+of auxiliary axes. The second bounds the number of rectangles charged
+separately for every query.
+
+Fix an integer \(L\ge\ell\) and a power of two \(q\). The label set
+\(\mathcal V=\{0,\ldots,q-1\}^L\) has cardinality \(q^L\). Write
+\(\Delta(v,w)\) for Hamming distance and define the symmetric matrix
+\[
+ \Gamma(v,w)=1-\Delta(v,w)^{\ell-1}\quad\hbox{in }\mathbb F_\ell .
+\]
+Its rank \(D\) is \(O_{\ell,L}(q^{\ell-1})\). Indeed, expand in the
+indicators of matches in the \(L\) positions. A product of match
+indicators on a set of \(j\le\ell-1\) positions has rank at most
+\(q^j\), by summing the indicator outer products for the common
+subwords. Give \(\mathbb F_\ell^{\mathcal V}\) the form with Gram
+matrix \(\Gamma\) and take its quotient by the radical. This gives a
+\(D\)-dimensional space \(\mathcal D\) with a nondegenerate symmetric
+pairing and vectors \(d_v\) such that
+\(\langle d_v,d_w\rangle=\Gamma(v,w)\). In particular
+\(\langle d_v,d_v\rangle=1\).
+
+We now decompose the identity on \(\mathcal V\) into rectangles over
+\(\mathbb Z[1/\ell]\). All but a small number will satisfy
+\(\langle d_v,d_w\rangle=0\) throughout the rectangle.
+Put \(t=\lfloor L/\ell\rfloor\) and
+\[
+ p(k)=\prod_{h=1}^{t}\left(1-\frac{k}{\ell h}\right).
+\]
+For an integer \(k\), \(p(k)\) belongs to \(\mathbb Z[1/\ell]\).
+For every prime \(b\ne\ell\) and \(e\ge1\), at least
+\(\lfloor t/b^e\rfloor\) of the factors \(\ell h-k\) are divisible
+by \(b^e\), since \(h\) runs through consecutive residues and \(\ell\)
+is invertible modulo \(b^e\). This accounts for the \(b\)-part of
+\(t!\). Expand \(p(k)\) in the basis \(\binom{L-k}{j}\), \(0\le j\le t\).
+Evaluation at \(k=L,L-1,\ldots,L-t\) gives a unit triangular system,
+so its coefficients belong to the same ring. At \(k=\Delta(v,w)\)
+the \(j\)-th binomial counts \(j\)-subsets of equal positions. Fixing
+both the subset and its common letters gives in all
+\(O_L(q^t)\) rectangles. We charge these rectangles separately for
+each query.
+
+The difference between the identity and \(p(\Delta)\) is supported
+at distances nonzero modulo \(\ell\), since \(p(0)=1\) and
+\(p(\ell h)=0\) for \(1\le h\le t\). At each such distance fix the
+set of unequal positions. Fix the common letters at the other
+positions. At each unequal position partition the ordered pairs of
+letters by their first differing bit, their common preceding prefix,
+and the order of the two differing bits. Each part is a rectangle.
+These products of rectangles, weighted by \(-p(\Delta)\), complete
+the identity. On each of them \(\Gamma|_{I\times J}=0\). We call them
+free rectangles because their Fourier operations can be shared over
+all the queries. For each label, the number of incidences on either
+side, including the charged rectangles, is
+\(O_L((1+\log q)^L)\). Indeed, at a fixed source or destination letter there is one equality
+choice and at most one choice for each possible first differing bit.
+
+\subsection{The endpoint Fourier transforms}
+
+For fixed \(j\), use in each half the distinguished coordinate \(j\)
+and the \(D-1\) auxiliary coordinates \(m+1,\ldots,d\). In the
+ordinary array coordinates of label \(v\), identify both resulting
+\(D\)-vectors with \(\mathcal D\). Use \(d_v\) in the distinguished
+direction, and a basis and its paired dual in \(d_v^\perp\) for the
+two lists of auxiliary coordinates. At each label, both bases are fixed independently of \(j\).
+They exist because \(\langle d_v,d_v\rangle=1\). Use these
+identifications on each of the \(f\) columns on input and output, and
+keep every spectator axis in its original order. The auxiliary digits
+belong to the address of the input array and carry data throughout.
+This defines \(S_{v,j}\) and \(T_{v,j}\) in
+Equation~\eqref{eq:kernel-routing-block}.
+
+Since the two chosen bases are dual,
+the original dot product between the first and second halves becomes
+the pairing on \(\mathcal D\). In common coordinates \(Q_j^a\) has
+one-column kernel
+\[
+ K_a(s,t';x,y)=\ell^{-D}\,
+              \zeta^{\langle x-s,t'-y\rangle/a},
+ \qquad x,y,s,t'\in\mathcal D,
+\]
+by the same summation with \(aXZ\) in the exponent. The full
+\(\mathcal K_a\) is its product over the columns, tensored with the
+identity on the unused axes. The local spectator digits depend on \(j\).
+
+For a charged rectangle the common-coordinate sum has \(R\) rows.
+Apply \(\mathcal K_a\) to each row, distribute it to the destinations
+with the rectangle weight, and apply \(B_{ja}\) across row indices.
+This costs at most \(2DR\) calls at the specified \(j,a\). The
+cross terms use \(D\) one-axis calls on each half, and the remaining
+factors are monomial maps.
+
+For a free rectangle \(I\times J\), factor the common kernel into
+two partial transforms as in Figure~\ref{fig:route}. Set
+\(H=\operatorname{span}\{d_w:w\in J\}\) in common coordinates,
+and choose a vector space complement \(C\) to \(H\) in
+\(\mathcal D\). For the ordinary input
+coordinates write \(x=(x_H,x_C)\), \(y=(y_H,y_C)\) in a basis
+adapted to \(H,C\). Write \(s=(s_1,s_2)\), \(t'=(t'_1,t'_2)\) in
+the paired dual basis. After extracting the initial and final
+diagonals \(\zeta^{-\langle x,y\rangle/a}\) and
+\(\zeta^{-\langle s,t'\rangle/a}\), the cross term is
+\[
+ \zeta^{(x_H\cdot t'_1+y_H\cdot s_1)/a}\,
+ \zeta^{(x_C\cdot t'_2+y_C\cdot s_2)/a}.
+\]
+The first partial transform sums along \(H\) in each input at
+fixed \(x_C,y_C\) (and fixed values on spectator axes). Its intermediate coordinates are
+\((x_C,y_C,s_1,t'_1)\). The second partial transform produces
+\((s_2,t'_2)\) at fixed \(s_1,t'_1\). In the transposed kernel this
+second transform sums along \(H^\perp\) in the output, since the
+vectors dual to the \(C\) part span \(H^\perp\). This argument uses a
+basis and its dual for the full nondegenerate pairing, and also
+applies when the restricted form on \(H\) is degenerate.
+
+To share the first transform over \(j\), express it in the coordinates
+of a source \(v\in I\). Since \(H\subseteq d_v^\perp\), a coset of
+\(H\) can be represented using the distinguished coordinate and a
+complement to \(H\) inside \(d_v^\perp\). Summation along \(H\)
+then uses only auxiliary axes. Switching to the common representative
+from \(C\) permutes the cosets and scales the Fourier coefficients.
+For example, replacing a representative of \(x+H\) by that
+representative plus \(h\in H\) scales the coefficient at \(t'_1\)
+by \(\zeta^{-h\cdot t'_1/a}\). This remains true with the initial
+diagonal phase included in the input. That phase factors into an
+auxiliary phase and a distinguished phase, since the two directions
+are orthogonal. The distinguished phase is constant on each coset and
+can be applied after the transform. What remains at the source is
+one auxiliary transform independent of \(j\).
+
+At a destination \(w\in J\) the analogous statement follows from
+\(H^\perp\subseteq d_w^\perp\). In the transposed kernel the final
+transform runs along \(H^\perp\), hence also on auxiliary axes only.
+Between these two endpoint computations, each \(j\) uses just
+monomial changes of coordinates and pointwise mixing. The row matrix
+\(B_{ja}\) commutes with the final transform, so the destination can
+sum over \(j\) before taking that transform. All partial transforms
+and monomial changes act column by column. Mixing by \(B_{ja}\) acts
+across rows at each address. These operations therefore implement
+Equation~\eqref{eq:kernel-routing-block} on the full \(Af\)-digit arrays.
+
+\input{route}
+
+\subsection{The finite saving and recursion}
+
+Each endpoint uses at most \(2D\) calls per row incident to the
+rectangle and per \(a\). For charged rectangles there are
+\(O_L(q^t)\) common transforms per \(j,a\) across all \(q^L\) labels.
+The number of calls in a pencil divided by the total \(Rq^L\) row
+count is therefore at most
+\begin{equation}
+ \label{eq:kernel-pencil-cost}
+ C_{\ell,L}D\bigl((1+\log q)^L + m q^{-(L-t)}\bigr).
+\end{equation}
+One full-row spectral conversion uses \(2d\) calls, also for the
+inverse by frequency negation and scalar normalization. The repair
+conversions therefore contribute \(O_\ell(dm^{-3})\) calls per row.
+Choose \(q\) to be a power of two within a factor two of
+\(m^{1/(L-t)}\). Then \(m q^{-(L-t)}=O_L(1)\).
+The dimension estimate gives
+\(D=O_{\ell,L}(m^{(\ell-1)/(L-t)})\). Given
+\(0<\eta<\min(1,\theta-1/2)\), choose \(L\) large enough to make
+\((\ell-1)/(L-t)<\eta\). The factor \((1+\log q)^L\) is then
+absorbed by the remaining power of \(m\), so
+Equation~\eqref{eq:kernel-pencil-cost} is \(O_{\ell,L}(m^\eta)\)
+and \(D=o(m)\). Over all stages, the call count per row is at most
+\[
+ O_{\ell,L}\bigl(\sqrt{m\log m}\,m^\eta+dm^{-3}\bigr)
+       =o(A^\theta).
+\]
+Here \(A=2(m+D-1)\). We may now fix \(m\equiv 1\pmod\ell\) large
+enough to obtain the required strict saving at one recursion level.
+
+The coefficients of the finite repair may lie in a fixed finite
+free extension of \(R_\ell\). Expand each row in a basis of the
+extension. A pointwise multiplication becomes a fixed matrix over
+\(R_\ell\). Every axis call acts separately on basis components.
+The target transform has base coefficients and the program accepts
+arbitrary extension-valued input. Hence each basis component carries
+an independent array over \(R_\ell\) and receives its own transform.
+Expanding the scalars multiplies both the call count and the number
+of input arrays by the extension rank. If \(W\) is the expanded number of rows and
+\(\sigma\) the expanded number of calls, we have proved
+\begin{equation}
+ \label{eq:kernel-template-saving}
+                          \sigma/W < A^\theta .
+\end{equation}
+For every \(f\ge1\), a batch contains \(W\) input and \(W\) output
+rows of \(\ell^{Af}\) entries each. Each call acts on a single work
+row of \(\ell^{Af}\) entries, applying \(D_\ell^{\otimes f}\) along
+one axis for all \(\ell^{(A-1)f}\) fibers. An arbitrary common set of
+spectator coordinates multiplies all these volumes equally. Outside
+calls there are a fixed number of work rows and of linear passes.
+
+Fix \(r\) so large that
+\(b=(\sigma/W)(1+W/\ell^r)<A^\theta\). For a single \(k\)-digit array
+take \(f=\lfloor(k-r)/A\rfloor\) when positive. The \(k-Af\) inactive
+digits provide independent rows for the finite template. Batch these
+rows with padding at the last batch. Handle the bounded number
+\(k-Af<r+A\) of remaining digit transforms directly. The total work
+divided by \(\ell^k\) satisfies
+\[
+                         T(k)\le C+bT(f).
+\]
+Indeed, each call runs the single-array algorithm independently on
+its fibers and covers one full work row. The padding factor satisfies
+\(\lceil\ell^{k-Af}/W\rceil W/\ell^{k-Af}\le 1+W/\ell^r\).
+For bounded \(k\) use direct transforms. The ratio
+\(b(1+f)^\theta/(1+k)^\theta\) has limit \(b/A^\theta<1\), so
+induction gives \(T(k)=O((1+k)^\theta)\).
+
+For uniformity, store the \(f\) columns in positional layout.
+All index changes in the common-coordinate and representative
+conversions apply a fixed linear change to each column. Interchanging
+axes and changing strides in packing fibers also have known positional
+weights. Enumerate column prefixes, extending each partial address
+and its image by the next digit tuple times these weights. There are
+a constant number of extensions per prefix and \(O(\ell^{Af})\)
+prefixes. Along the same enumeration accumulate the phase exponents
+and the \(m\) query exponents modulo \(\ell\). The query exponents
+specify the repair table. All fixed ring constants have fixed expressions in
+\(\zeta,1/\ell\) with integer coefficients. Normalization powers
+depending on \(f\) take \(O(1+\log f)\) ring operations. These
+procedures give linear work in local volume plus polynomial setup
+in the local exponent, absorbed in that volume. Packing and
+unpacking each batch requires a constant number of such traversals.
+Address words of \(O(k+1)\) bits suffice, since the total number of
+gates and temporary addresses is polynomial in \(\ell^k\). This
+proves Theorem~\ref{thm:kernel}.
+
+
+\input{binary}

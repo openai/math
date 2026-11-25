@@ -1,0 +1,209 @@
+\section{Introduction}\label{sec:introduction}
+
+An exponentially long sum can have a short arithmetic computation.
+Choose one variable from each of the \(n\) pairs \((x_i,y_i)\) and
+multiply the chosen variables. There are \(2^n\) choices. Their
+products sum to \(\prod_{i=1}^n(x_i+y_i)\).
+Now suppose a polynomial-size arithmetic circuit takes a string of
+polynomially many bits as an additional input and computes the term
+indexed by that string. Can the sum over all strings always be
+computed by a polynomial-size circuit? Valiant's class
+\(\mathsf{VNP}\) allows this summation~\cite{Valiant}. Membership in
+\(\mathsf{VP}\) requires a polynomial-size circuit for the resulting
+polynomial itself. We prove that \(\mathsf{VP}\ne\mathsf{VNP}\) over
+every field.
+
+Our witness is a polynomial on a square grid. Give each edge a label
+and place a table of independent variables at each vertex. A labeling
+of the grid selects one entry at each vertex according to the labels
+on the edges meeting there. The product of those entries is the
+weight of the labeling. On an \(n\times n\) grid with \(n\) possible
+labels per edge, a polynomial-size circuit can compute this weight
+from the labels. Summing the weights over all labelings gives the
+grid's \emph{state sum}. We show that its circuit size grows
+superpolynomially with \(n\), even allowing cancellations and
+unrestricted reuse of intermediate values.
+
+The same construction on two simpler graphs separates the models
+within \(\mathsf{VP}\). On a complete binary tree, a polynomial-size
+circuit can compute and reuse the contributions from its subtrees.
+Algebraic branching programs (ABPs) require superpolynomial size for
+this family. On a path, the state sum is an entry of a product of
+matrices. A branching program can evaluate it by remembering the
+state of the current edge, and here the superpolynomial lower bound
+is for arithmetic formulas. Over a field \(F\), we write \(\VF\)
+and \(\VBP\) for the polynomial-size formula and branching-program
+classes. In all four classes the number of variables and the output
+degree are polynomially bounded in the family index.
+
+\needspace{15\baselineskip}
+\begin{theorem}[Three separations]\label{thm:main}
+Over every field \(F\),
+\[
+             \VF\subsetneq\VBP\subsetneq\VP\subsetneq\VNP .
+\]
+With \(n\) states per edge, the following graph families witness the
+three strict inclusions. The lower bounds hold in degree-component
+border complexity, with absolute constants for all sufficiently large \(n\).
+\begin{center}
+\small\normalfont
+\begin{tabular}{@{}ll@{\hspace{1.15em}}l@{}}
+\toprule
+Graph & Upper class & Lower bound \\
+\midrule
+\(n\times n\) square grid & \(\VNP\) & Circuit size \(n^{\Omega((\log n)^{1/12})}\)\\
+Complete binary tree, \(\lfloor\log_2(2n)\rfloor\) levels &
+\(\VP\) & ABP size \(n^{\Omega(\sqrt{\log\log n})}\)\\
+Path on \(n\) vertices & \(\VBP\) & Formula size \(n^{\Omega(\log\log n)}\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+The determinant of an \(n\times n\) matrix of independent variables also
+has degree-component border formula size at least \(n^{\Omega(\log\log n)}\).
+\end{theorem}
+
+To write the state sum explicitly, let \(G=(V,E)\) be a finite loopless multigraph
+and let \(E(v)\) be the list of edges at \(v\). For each assignment
+\(\alpha\in[q]^{E(v)}\), where \([q]=\{1,\ldots,q\}\), let
+\(X_{v,\alpha}\) be the corresponding table entry. With \(q\) states
+per edge, the polynomial is
+\begin{equation}\label{eq:graph}
+       Z_{G,q}(X)=\sum_{a\in[q]^E}\prod_{v\in V}X_{v,a|_{E(v)}} .
+\end{equation}
+For the grid, the \(\VNP\) description works in every characteristic.
+A binary string encodes the labels. Boolean indicators pick out the
+corresponding table entry at each vertex, and unused encodings
+contribute zero. Since at most four edges meet at a vertex, there are
+at most \(n^4\) entries to choose from in each table. The circuit lower
+bound allows arbitrary constants, affine inputs, and limits over the
+algebraic closure of \(F\) after taking the component of the required
+degree (Section~\ref{sec:notation}).
+
+For the three-vertex path, Equation~\eqref{eq:graph} is
+\(\sum_{i,j=1}^q x_iY_{ij}z_j\), the product of a row, a matrix and a
+column. The formula bound is sharp in a regime that already suffices to
+separate \(\VF\) from \(\VBP\). For a path on \(d\) vertices with \(q\)
+states on each edge, bisection gives a formula of size \(q^{O(\log d)}\).
+Theorem~\ref{thm:full-flat-graph} gives the matching
+\(q^{\Omega(\log d)}\) bound for \(2\le d\le(\log q)^{1/3}\), and its
+lower bound holds for every tree of that order. A short path already
+suffices for the determinant bound in Theorem~\ref{thm:main}, because
+its polynomial is a signed cofactor of a polynomial-size matrix of
+affine forms.
+
+For arbitrary graph families, these witnesses give a classification.
+Consider a single polynomial bound on the size of \(Z_{G,q}\) in
+\(|V(G)|+q\), uniformly over the family and all \(q\ge2\).
+Formulas admit such a bound exactly when both the maximum degree and
+the order of the largest connected component are bounded. For ABPs the
+criterion is bounded cutwidth. For circuits it is bounded treewidth
+and bounded maximum degree. Large graphs violating these conditions
+either have a large table at one vertex or contain the corresponding
+witnesses as minors (Theorem~\ref{thm:graph-classification}).
+
+\needspace{7\baselineskip}
+\subsection*{How the three lower bounds fit together}
+
+The coefficients of \(Z_{G,q}\) record one constraint per edge. A
+monomial selects one table entry at every vertex, and its coefficient
+is one precisely when the entries agree on the state at both ends of
+every edge. Thus the coefficient tensor consists of independent
+equality constraints. The Euclidean price theorem of the first
+paper~\cite{oaG}, based on Strassen's asymptotic spectrum~\cite{Strassen},
+assigns a cost to sharing a label at chosen sites in Euclidean space.
+We place the two ends of each edge at opposite unit vectors on an axis
+of its own. The cost of
+the graph tensor at these terminals is then the sum of the individual
+edge costs.
+
+A small computation expresses the coefficient tensor as a sum of terms
+with simpler dependencies. Suppose a term has matrix rank \(R\) across
+a cut separating the vertex tables into two groups. Its rank
+factorization can be supplied by sharing a single \(R\)-valued label
+between two auxiliary sites. For each term we may choose those sites
+to suit its cut while delivering each edge-end index to its assigned
+terminal. That terminal stays fixed across all summands. Moving one
+supply site to shorten the total length of its output wires yields a
+saving governed by the number of crossing edges. If \(R\)
+is small and sufficiently many edges cross, the term costs less than
+the graph tensor. A single Euclidean price bounds the sum, including
+when the low-rank cut differs from term to term
+(Section~\ref{sec:cuts}).
+
+\input{witness-cuts}
+
+Figure~\ref{fig:witness-cuts} illustrates why the proofs proceed from
+grids to trees to paths. Each model controls a different set of cuts.
+\begin{itemize}[leftmargin=*,itemsep=.35ex]
+\item \emph{Grids.} In a small circuit, decomposing at gates of
+intermediate degree gives one low-rank cut per summand. Both sides
+contain at least a third of the vertices. Every such cut of an
+\(r\times r\) grid crosses \(\Omega(r)\) edges
+(Section~\ref{sec:grid}).
+\item \emph{Binary trees.} A tree can have a balanced cut consisting of
+a single edge. An ABP gives more information. In each contributing term of the ABP path expansion, the variables
+appear in some order. We can stop after any prescribed number \(k\) of
+groups. There is a \(k\) for which
+every \(k\)-vertex subset of the complete binary tree has many
+boundary edges (Section~\ref{sec:bt}).
+\item \emph{Paths.} For every nontrivial cardinality a path has a
+prefix of that size with just one boundary edge. A formula, however,
+splits the variable groups recursively. We choose the auxiliary
+sites to charge its nested splits at several scales at once. The
+mean-width formula bounds the cost of each label shared by the
+leaves below a split (Section~\ref{sec:formula}).
+\end{itemize}
+
+The quantitative estimates first apply to small graphs with many states
+per edge. In this regime the saving in each term exceeds the cost of
+summing over terms. Projection transfers the bounds to the larger
+witnesses in Theorem~\ref{thm:main}. The same transfer, now through
+graph minors, gives the classification in
+Section~\ref{sec:graph-classification}.
+
+\subsection*{Relation to earlier work}
+
+Valiant introduced $\VP$ and $\VNP$ to study efficient arithmetic
+computation under polynomial projections~\cite{Valiant,Burgisser}.
+The determinant is complete for $\VBP$ under such projections
+\cite{Toda,MalodPortier,MahajanVinay}. Its formula complexity therefore
+measures the cost of simulating branching programs by formulas.
+The depth reduction of Valiant, Skyum, Berkowitz and Rackoff
+\cite{VSBR} gives every family in $\VP$ formulas of
+quasipolynomial size. A classical lower bound of Kalorkoti
+\cite{Kalorkoti} gives $\Omega(n^3)$ for the order-$n$ determinant over
+any field, counting variable and constant occurrences even in formulas
+with division.
+
+Many earlier separations use restrictions on the computation. Nisan's
+coefficient matrices give exponential branching-program lower bounds
+for explicit noncommutative polynomials~\cite{Nisan}. Raz proved
+superpolynomial multilinear formula bounds for the determinant and
+permanent, separated multilinear formulas from circuits, and related
+formula size to tensor rank~\cite{RazMultilinear,RazFormula,RazRank}.
+Dvir, Malod, Perifel and Yehudayoff separated multilinear formulas
+from multilinear branching programs~\cite{DMPY}. For iterated matrix
+multiplication itself, lower bounds are known for monotone formulas
+\cite{Snir}, set-multilinear formulas~\cite{LST}, and constant-depth
+circuits~\cite{LstDepth,Forbes,BDS}. The formulas and circuits of
+Theorem~\ref{thm:main} may use arbitrary field constants and have
+unbounded depth and nonmultilinear intermediate gates.
+
+Graph structure also governs several related models. Hrube\v{s} and
+Yehudayoff used the edge boundary of vertex sets of a prescribed size
+in a binary tree to separate monotone branching programs from monotone
+circuits~\cite{HrubesYehudayoff}. For graph homomorphism polynomials,
+Komarath, Pandey and Rahul characterized monotone formula,
+branching-program and circuit complexity by the treedepth, pathwidth
+and treewidth of the pattern graph~\cite{KPR}. Homomorphism polynomials
+also yield complete families for $\VP$~\cite{Durand} and separations
+between symmetric models of arithmetic computation~\cite{dw,DPS}.
+The classification in Theorem~\ref{thm:graph-classification} concerns
+the state sum with an independent table of variables at each vertex.
+
+For general circuits, an earlier bound for the order-$n$ permanent over
+$\mathbb C$ was $\Omega(n^2\log\log n)$ with binary gates and individual
+variable or scalar inputs~\cite[Chapter~5]{TenAdvances}. A companion paper~\cite{oaP} gives stronger circuit
+bounds for the Hamiltonian cycle polynomial and, outside characteristic
+two, the permanent. For the geometric study of determinantal
+representations and their closures, see~\cite{MS}.

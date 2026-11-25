@@ -1,0 +1,210 @@
+\section{Introduction}\label{sec:intro}
+
+A directed cycle cover assigns each vertex a successor and visits every
+vertex exactly once, possibly in several disjoint cycles. Give each
+directed edge a variable. The weight of a cover is the product of the
+variables on its edges. The permanent sums the weights of all covers. The Hamiltonian
+cycle polynomial sums those that visit all vertices in a single tour.
+Can an arithmetic circuit evaluate either sum with polynomially many
+operations? Counting the terms gives little indication of the answer.
+The determinant assigns a sign to each cover and has a polynomial-size
+circuit. A circuit can reuse intermediate results and cancel terms in
+ways that the expansion never reveals.
+
+We prove a superpolynomial circuit lower bound for Hamiltonian cycle
+over every field and for the permanent over every field of
+characteristic different from two. The exception for the permanent is
+necessary. In characteristic two all permutation signs equal one,
+so the permanent coincides with the determinant \cite{Berkowitz}.
+The bound holds even for circuits of arbitrary depth that approximate
+the desired coefficients and whose other output degrees are unrestricted.
+
+\begin{theorem}[Unrestricted arithmetic circuits]\label{thm:main}
+There is an absolute constant $c>0$ such that, for each characteristic
+$\chi$ (including zero), there is an $N_0(\chi)$ with the following
+property. Over every field $F$ of characteristic $\chi$ and at every
+order $N\ge N_0(\chi)$, the degree-component border size satisfies
+\[
+  \bsz_F^{[N]}(\HC_N)\ \ge\
+       \exp\!\left(c\,\frac{(\log N)^2}{(\log\log N)^2}\right).
+\]
+The same bound holds for $\Per_N$ if $\chi\ne2$.
+\end{theorem}
+
+\needspace{4\baselineskip}
+Here $\HC_N$ and $\Per_N$ are forms of degree $N$ in the entries of
+an $N\times N$ matrix $X$. A permutation $\pi$ contributes the
+monomial $\prod_{i=1}^N X_{i,\pi(i)}$ to the permanent, including when
+$\pi$ has fixed points. It contributes to $\HC_N$ exactly when $\pi$ has
+a single cycle. Thus a tour is counted once, independently of its
+starting vertex.
+
+For a form $f$ of degree $D$, its \emph{degree-component border size}
+$\bsz_F^{[D]}(f)$ is the least $s$ such that $f$ belongs to the Zariski
+closure, over $\overline F$, of the degree-$D$ components of outputs
+of circuits with at most $s$ gates. Each gate performs one binary
+addition, subtraction or multiplication. Variables and scalar inputs
+are free, and intermediate polynomials may have arbitrary degree.
+We work with formal polynomials, including over finite fields. Since
+this model permits limits as well as arbitrary output components in
+other degrees, Theorem~\ref{thm:main} applies in particular to exact
+circuits and to ordinary border complexity.
+
+\subsection{Valiant's complete polynomials}
+
+Valiant's class $\VP$ consists of polynomial families of polynomially
+bounded degree and variable count computed by polynomial-size arithmetic
+circuits. The class $\VNP$ allows, in addition, a sum over all assignments
+to polynomially many auxiliary bits. Efficient verification of a cover,
+followed by multiplication of its edge weights, puts both families in
+$\VNP$. Hamiltonian cycle is complete for $\VNP$ over every field, and
+the permanent is complete outside characteristic two. Every family in
+$\VNP$ can therefore be obtained by substituting variables and constants
+in the respective complete polynomial of polynomially larger order
+\cite{Valiant,ValiantProjections,Burgisser}. This algebraic use of
+projections is distinct from the counting complexity of evaluating a
+permanent on a matrix of zeros and ones \cite{ValiantPermanent}.
+
+In particular, $\VNP$ is not contained in border $\VP$ over any field
+(see \cite[Conjecture~7.5]{BurgisserBorderConjecture}).
+The companion paper on Valiant's hierarchy separates $\VP$ from $\VNP$
+with a polynomial attached to a square grid \cite{oaH}. The bound in
+Theorem~\ref{thm:main} gives a larger exponent for two classical
+complete families and holds at every sufficiently large order. It is
+already attained on sparse graphs. For Hamiltonian cycle one can retain
+at most three incoming and three outgoing edges per vertex, and for the
+permanent one can retain at most three entries per row and per column
+(Corollary~\ref{cor:sparse-support}).
+
+\subsection{Earlier lower bounds}\label{sec:earlier-bounds}
+For exact computation of $\Per_N$ over $\mathbb C$, an earlier lower
+bound of $\Omega(N^2\log\log N)$ counts binary arithmetic gates and
+allows arbitrary depth and reuse of intermediate results
+\cite[Chapter~5, Theorem~1.1]{TenAdvances}.
+Under restrictions on the circuit, much larger bounds were known.
+Jerrum and Snir proved exponential monotone circuit lower bounds for
+both Hamiltonian cycle and the permanent
+\cite[Sections~4.3 and~4.4]{jerrumsnir}.
+Raz proved superpolynomial multilinear formula lower bounds for the
+permanent and the determinant \cite{Raz}. Raz and Yehudayoff obtained
+bounds exponential in a positive power of $N$ for both polynomials
+at fixed depth in multilinear circuits \cite{RazYehudayoff}.
+Depth alone can also force superpolynomial size, even for iterated
+matrix multiplication \cite{LST,Forbes,BDS}.
+
+A related question in geometric complexity theory \cite{MS} asks how
+large an affine-linear matrix must be for its determinant to equal a
+given polynomial, or to approach it coefficientwise. For the permanent,
+Mignon and Ressayre proved a quadratic lower bound on the matrix order
+in characteristic zero \cite{MignonRessayre}, and Cai, Chen and Li
+obtained a quadratic bound in odd characteristic \cite{CaiChenLi}.
+Landsberg, Manivel and Ressayre proved a quadratic bound allowing
+limits over $\mathbb C$ \cite{LandsbergManivelRessayre}.
+The corresponding cubic bound over $\mathbb C$ \cite{cubic-bdc} has
+since been extended to each fixed odd characteristic \cite{Sheshadri}.
+A determinant of order $m$ with affine-linear entries in $N^2$
+variables has a division-free circuit of size polynomial in $m$ and
+$N$ \cite{Berkowitz}. Consequently Theorem~\ref{thm:main} gives the
+same superpolynomial lower bound on matrix order, up to the absolute
+constant in the exponent, for Hamiltonian cycle in every characteristic
+and for the permanent outside characteristic two.
+
+\subsection{How the lower bound is proved}
+
+Both proofs construct a hard polynomial as a weighted sum over
+assignments accepted by a small Boolean verifier. Completeness
+then transfers the bound to Hamiltonian cycle and the permanent. The
+choice of witness turns on a property of the field characteristic that
+comes from the geometry of tensors \cite{oaG}.
+
+To see the geometry, imagine supplying a tensor by placing its indices
+at sites and joining the sites by wires. A shared index with $q$
+possible values has a cost proportional to $\log q$. Strassen's
+asymptotic spectrum gives numerical lower bounds on the cost of
+supplying a tensor in this way \cite{Strassen}. We call such a bound a
+\emph{price}. For example, the logarithm of matrix rank across a fixed
+cut charges the full $\log q$ for a wire across the cut and zero for a
+wire on either side. In general the cost of the wire is its length
+times $\log q$. The resulting distances give a class of metric spaces
+for each characteristic (Section~\ref{sec:prices}).
+
+A characteristic \emph{admits ports} when there are regular graphs of
+bounded degree and arbitrarily large order with the following expansion
+property. Place the vertices in any of its wire metric spaces. The
+mean squared distance between two independent uniform vertices must be
+at most a fixed multiple of the mean squared distance along a uniform
+edge. The same constant must work for all the graphs and placements.
+This is a nonlinear Poincar\'e inequality
+\cite{MendelNaor,MendelNaorHadamard,EMN}. Either outcome gives a
+circuit lower bound (Figure~\ref{fig:plan}). The proof requires no
+classification of the characteristics.
+
+\input{plan}
+
+\paragraph{When expansion fails.}
+Consider a polynomial that uses one variable from each of $d$ rows in
+every monomial. Its coefficients form a tensor with one index per row.
+A small circuit expresses this tensor as a sum of terms, each of low
+matrix rank across some balanced partition of the rows. The cut may
+change from term to term. On four rows, take the product of wires on
+$12$ and $34$, then add a second product on $13$ and $24$, using
+disjoint local supports. Each term has rank one across its own cut.
+Every balanced cut severs both wires of at least one term, so their
+sum can have large rank across every cut.
+
+Part~\ref{part:no} chooses \emph{one placement of the rows} at which
+every low-rank term is cheap to supply. Start with all suppliers at the
+center and the rows at unit distance. For each balanced cut, move two
+suppliers towards their respective rows. A rank-$R$ term pays for one
+wire of dimension $R$ between the suppliers, but saves on transport to
+the rows. Every balanced cut saves order
+$d/\sqrt{\log d}$ in transport per unit separation, to first order.
+In Euclidean space some bisection of any centered set of unit vectors
+gains only $O(\sqrt d)$, by averaging over random bisections. Failure of
+expansion yields directions with the larger gain through an entropy
+inequality for random walks. A product construction combines these
+directions for all cuts (Sections~\ref{sec:poincare}--\ref{sec:lamps}).
+
+At those same sites we need a tensor that costs nearly as much as
+sending all its indices from the center. Exterior multiplication gives
+tensors of minors whose prices can be estimated through dimensions of
+intersections of subspaces. We construct one explicit tensor
+with coefficients in $\{0,1\}$ from which a suitable tensor of minors
+can be obtained at every such placement
+(Sections~\ref{sec:exterior}--\ref{sec:packing}). Its price exceeds
+the price of a sum of cheap supplies, even after accounting for the wire
+that tells every row which summand to use. The comparison also works on
+every grouped tensor power, keeping the degree at $d$ while the row
+length grows. For fixed sufficiently large even $d$, this yields circuit size
+$n^{\Omega(d/\sqrt{\log d})}$ in a variable budget $n$
+(Corollary~\ref{cor:variable-budget}).
+Letting $d$ grow gives the exponent of Theorem~\ref{thm:main}.
+
+\paragraph{When expansion holds.}
+In Part~\ref{part:port} the same geometry yields identities that
+compress a tensor network while preserving its value \cite{oaG}.
+Here a coefficient of the witness is the signed number of computation
+paths of a program on a specified input. A sufficiently small network
+for its coefficient table would let a program use compression to
+simulate its own count within its allotted time and add one. The
+contradiction depends on which work the program must do itself and which
+it can delegate to the branches it counts. Sections~\ref{sec:compr}--%
+\ref{sec:batches} establish this distinction and give a lower bound
+even for networks computing batches of independent copies of the table
+over a finite field (Theorem~\ref{thm:batches}). This use of an
+algorithm to prove hardness has precedents in circuit complexity
+\cite{ki,williams} and in tensor-network algorithms for satisfiability
+\cite{falseeth,Anthropic}.
+
+A border circuit poses a further problem. A coefficient that has a
+finite boundary value can be a sum of terms with poles. On an algebraic
+curve through the boundary point we use residues and the Cartier
+operator to recover the coefficient as an eigenvalue of an explicitly
+accessible matrix. The program can now perform its counting
+contradiction one matrix entry at a time. For characteristic zero,
+specialization to a suitable prime preserves the finite data needed by
+the simulation (Sections~\ref{sec:parse}--\ref{sec:border}).
+In every characteristic $\chi$ admitting ports, this argument gives
+the stronger bound $2^{N^{\varepsilon_\chi}}$, for some
+$\varepsilon_\chi>0$, on $\HC_N$ and, when $\chi\ne2$, on $\Per_N$
+(Theorem~\ref{thm:stretch}).

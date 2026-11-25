@@ -1,0 +1,176 @@
+\section{Compression from ports}\label{sec:compr}
+
+Assume throughout this section that the characteristic admits ports.
+To enumerate a contraction directly, one assigns a bit to every wire
+and multiplies the entries of all tensors. The compressor replaces
+this enumeration by a sum in which fewer bits are shared between
+positions. Once those bits are fixed, each position can sum over its
+own indices independently. We describe the expansion from
+\cite[Theorems~\ext{G}{thm:compressor} and~\ext{G}{thm:conversion},
+Lemma~\ext{G}{lem:descriptors}]{oaG} and use it to evaluate a closed
+network in subexponential time. Section~\ref{sec:gap} will use the
+separate bounds on shared and private work.
+
+\subsection{An exact expansion with fewer shared bits}
+The compressor applies to a network indexed by base vertices and lanes.
+The base is a directed loop-free multigraph of fixed in- and out-degree
+$d$, a power of two with $d\ge4$. Each pair $(u,x)$ of a base vertex
+and a lane $x\in\{0,1\}^h$ is a \emph{position}. A base arc
+$e:u\to v$ with mask $\tau_e$ induces an actual arc from $(u,x)$ to
+$(v,x+\tau_e)$ in each lane, with addition bitwise modulo two. Each
+actual arc carries a string of bits shared by its two endpoints. The
+width may vary from lane to lane and may be zero. Write $P$ for the
+number of positions, $D$ for the maximum width and $A$ for the
+contraction of the factors at the positions. A factor may also
+depend on parameters, including advice bits.
+
+One compression block applies a fixed sequence of local tensor
+identities. Each identity is a sum, and a \emph{history} records one
+admissible summand at every application. Given $t\ge1$ blocks with
+$b_0t\le h$, where $b_0$ is fixed, the final network in a history
+$\lambda$ has bounded degree and at most $P$ positions. Let $z$ assign
+bits to its arcs. At a final position $v$, let $y_v$ assign the bits
+private to that position and let $K_{\lambda,v}$ be the product of its
+local entries and equality tests. The compressor gives the identity
+\[
+ A=\sum_{\lambda}\sum_z
+          \prod_v\left(\sum_{y_v}
+             K_{\lambda,v}(z|_v,y_v)\right),
+\]
+where $z|_v$ denotes the strings on arcs incident to $v$. Each original
+factor moves intact to one final position, with all of its arguments.
+Three estimates determine the cost of implementing this identity.
+
+\begin{enumerate}
+\item The shared string $z$ has length $O(2^{-t}P(D+1))$ in every
+history. The construction controls a quadratic energy of the wire
+widths. Local tensor identities derived from a comparison of
+Dirichlet energies reduce the leading coefficient in the energy bound
+while raising the degree. The ports restore bounded degree at a fixed
+cost. Grouping enough shrinking steps into each block gives the factor
+$2^{-t}$ in the bound on total width.
+
+\item The local contraction at any one $v$ uses at most $C^t$
+occurrences of bit strings, map entries and original factors across
+all its recursive levels, for a fixed $C>1$. Each string has length
+at most $C^t(D+1)$. Here an original factor counts as one occurrence.
+The maps use a fixed finite list of scalars satisfying fixed integer
+polynomial equations. Applying the companion theorems over the prime
+field gives a solution there, and the identities hold over any
+commutative unital ring containing a solution. For given bit strings
+a map entry is zero if a forbidden pattern occurs. Otherwise it is a
+monomial in these scalars, of degree at most $C^t(D+1)$. The tests
+and exponents take binary work polynomial in the string widths, with
+an absolute exponent.
+
+\item A history specifies the layout before any private bits are
+read. Suppose $P,D\le V$ and $t=O(\log V)$. Given the initial arc
+widths, indexed endpoint slots and masks, a nondeterministic
+random-access procedure uses $O(P\operatorname{polylog}(2V))$ bit
+operations and guessed bits per path. Its successful paths are in
+bijection with admissible histories. At each level the procedure
+records the fields, slices and ties needed for the local sums, and a
+description of each map test of length $\operatorname{polylog}(2V)$.
+These records can be accessed by address.
+\end{enumerate}
+
+\subsection{Evaluating closed networks}
+
+The application to integer multiplication in \cite{oaT} uses both the cost
+of evaluating the contraction and the cost of constructing its formula.
+
+\begin{theorem}[Enumerable contraction]\label{thm:closed}
+Fix a characteristic admitting ports. There is an $\eta>0$ such that
+every closed bit network of volume at most $s$ and maximum degree at
+most $s^{1/20}$, over any field of this characteristic, has a formula
+for its contraction using $2^{O(s^{1-\eta})}$ arithmetic operations
+and local entry queries. The topology determines the formula, which
+can be generated deterministically in $2^{O(s^{1-\eta})}$ bit
+operations and uses fixed prime-field constants. In characteristic
+zero, for integer entries of polynomial bit length, evaluation takes
+the same number of bit operations plus the time for the queries.
+\end{theorem}
+
+\begin{proof}
+\emph{Routing the input network.}
+For large $s$ choose the least $h$ with $P=h2^h\ge s^{9/10}$.
+Then $P=\Theta(s^{9/10})$ and $h=\Theta(\log s)$. Use the positions
+$(j,x)$ with $j\in\mathbb Z/h\mathbb Z$ and $x\in\{0,1\}^h$. From
+$(j,x)$ put arcs to $(j+1,x)$ and $(j+1,x+e_j)$, where $e_j$ is the $j$th unit
+vector. Add parallel slots of width zero to reach base degree $d$.
+
+Place the input tensors in the $2^h$ lanes at $j=0$. Give each
+tensor weight one plus its degree and always place the next tensor
+in a lane of least current load. The total weight is at most $2s$.
+The largest final load $q$ is at most the average load plus the
+largest weight, so
+\[
+       q\le 2s/2^h+1+s^{1/20}=O(s^{1/10}\log s).
+\]
+Orient the original wires arbitrarily, and form a bipartite graph on
+two copies of the lanes by joining the source lane of each wire to
+its destination lane. Both sides have maximum degree at most $q$.
+Pair their unused slots to complete a $q$-regular bipartite
+multigraph. Successive perfect matchings split its edges into $q$
+permutations.
+
+Each permutation can be routed in one forward and one reverse trip
+around the cursor $j$, by the Bene\v s construction~\cite{Benes}.
+To see this, pair lanes differing in the first bit at both source
+and destination. The permutation induces a degree-two bipartite
+multigraph on the pairs. Color each cycle alternately. The switches
+at the first and last stages can now send one color to each half, and
+within either half the colored edges specify a permutation on one
+fewer bit. Induction routes each permutation with at most one item
+per lane on each pass. The reverse trip traverses the same arcs in
+the opposite direction, which is allowed for bit equalities. Give
+the two passes distinct bit slots and discard the padding wires.
+Each original bit assignment has a unique extension satisfying the
+equalities along these routes.
+The maximum actual arc width $D$ and the local load, including the
+tensors placed at $j=0$ and the routing ties, are both $O(q)$.
+
+\emph{Enumerating the compressed expansion.}
+Take $T=\lfloor a\log_2 s\rfloor$ blocks for a sufficiently small
+fixed $a>0$ so that $b_0T\le h$. For each history the shared arc
+bits have total length
+\[
+        O(2^{-T}P(D+1))=O(s^{1-a}\log s).
+\]
+The choices of local summands themselves use $O(PT\log s)$ bits.
+There are $O(P)$ applications per substep and boundedly many substeps
+per block. Each choice is a fixed number of integers of polynomial
+magnitude. To enumerate histories deterministically, enumerate
+the guess tapes for the layout procedure, checking choices in order
+and requiring unused bits to be zero. This counts each successful
+path once and costs $O(P\operatorname{polylog}s)$ bits per tape.
+
+At each final position there are at most $C^T$ private fields of
+length at most $C^T(D+1)$. Expanding the initial position factors
+adds at most $O(C^T q)$ original tensors and routing ties. By taking
+$a$ small enough, the number of private bits and the local load are
+each at most $s^{1/2}$ for large $s$. For each pair $(\lambda,z)$
+form the sum over $y_v$ at each position, then multiply the local
+sums. For fixed $(\lambda,z)$ the work is the sum of the local enumeration
+costs, because each private assignment occurs in a single local sum.
+Thus the logarithm of the total work is at most
+\[
+ O\bigl(P\operatorname{polylog}s+s^{1-a}\log s+s^{1/2}\bigr)
+       =O(s^{1-\eta})
+\]
+for some $\eta>0$. The layout records generate all indices, tests
+and scalar monomials in polynomial work per assignment. This gives
+both the arithmetic formula and the claimed bound for listing it.
+
+In characteristic zero choose the fixed map scalars in $\mathbb Q$
+and let $m$ clear their denominators. Each term of a local sum is
+a product of polynomially many input entries and scalars with
+polynomial total degree. Its denominator divides $m^{\mathrm{poly}(s)}$.
+A local sum has at most $2^{\mathrm{poly}(s)}$ terms. Multiplying
+polynomially many such sums and then adding over the outer enumeration
+still gives polynomial bit length, since a common denominator at each
+stage is a polynomial power of $m$. This argument also works for
+inputs in a fixed ring of cyclotomic integers by using a fixed
+integral basis. The polynomial cost per operation is absorbed into
+the displayed bound.
+\end{proof}

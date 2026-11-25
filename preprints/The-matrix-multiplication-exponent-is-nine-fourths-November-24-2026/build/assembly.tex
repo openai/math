@@ -1,0 +1,337 @@
+\section{Realizing the expansion on a fixed network}\label{sec:assembly}
+
+Different summands in Section~\ref{sec:full} can finish with different
+wires and different tables. To represent their sum on one network, we
+encode a choice of summand, together with an assignment to its final
+wires, as a transcript. A local check determines which transcripts
+contribute, and a dictionary supplies their tensor entries. The size
+bound depends on how the host is shared. All blocks at one host
+position use the same address. The bits carried on a wire vary
+independently across blocks.
+
+\subsection{From a transcript to a tensor}
+
+Let $K$ be the working extension of $k$, and put
+$h=\lceil\log_2 n\rceil$. Fix $P\le n^{O(1)}$ numbered processors.
+Each has binary advice of at most $h^c$ bits and a fixed ordered list
+of exterior ports. Its local record includes guesses and at most
+$h^c$ incoming and outgoing messages. A message consists of an
+$O(h)$-bit key identifying source, destination and port, together with
+a bit string. Communication is valid if every used key occurs exactly
+once at each end with the same string.
+
+One fixed finite bit-RAM program checks the local record against the
+advice and exterior bits. It may emit strings of length at most $U$ as
+arguments to a common dictionary $W$ with values in $K$. Its
+decisions depend only on the strings. For fixed exterior bits, the
+transcript tensor is the sum over accepted transcripts of the product
+of all values returned by $W$. The record format, including length
+fields and padding, is fixed. All size-dependent program data enter
+through the advice.
+
+The charge at a processor includes its deterministic running time,
+advice, exterior bits, guesses, messages with headers, and emitted
+strings. Count at least one unit per record or item. This charge is
+determined by the record. A local address or time uses
+$(\log h)^{O(1)}$ bits. Bit arithmetic on words of that length adds at
+most a factor $(\log h)^{O(1)}$ to the bounds below.
+
+\begin{lemma}[Realizing a transcript]\label{lem:fixed-transcript}
+Suppose the charge of each local record is at most
+$V_{\max}=2^{(\log h)^{O(1)}}$. Let $V\le n^{O(1)}$ bound the total
+charge of every accepted transcript and the volume of the fixed
+advice and exterior interface, including one unit per processor. If
+$U\le h$ and the wide-record bound of Theorem~\ref{thm:sort} holds,
+then for every fixed $\tau>0$ the transcript tensor has a fixed
+network of size at most
+\[
+                          h^\tau V+P h^{C_0}.
+\]
+The gates are trivalent or are dictionary tables of arity
+$O(1+U+\log h)$. Their labels use $(\log h)^{O(1)}$ bits. The
+constant $C_0$ depends only on $\tau,c$, the polynomial bounds in $n$
+and the wide-record estimate. The exponent in $V_{\max}$ occurs only
+in factors $(\log h)^{O(1)}$ before absorption.
+\end{lemma}
+
+\begin{proof}
+\emph{Allocate space by record length.}
+For each dyadic capacity $t$, from $1$ to the least power of two
+at least $\min(V,V_{\max})$, reserve
+$N_t=\min(P,\lfloor 2V/t\rfloor)$ slots. A processor with charge $s$
+uses the least $t\ge s$. Every record of this class has charge
+greater than $t/2$, so $N_t$ slots suffice. Guess their processor
+identifiers and records. Check the identifier range and the charge,
+require occupied slots to form an increasing prefix in identifier
+order, and pin all unused entries and padding. The two relevant
+capacity bounds are
+\begin{equation}\label{eq:asm-seats}
+ \sum_t tN_t=O\bigl(V(1+\log V_{\max})\bigr),\qquad
+ \sum_t N_t=O\bigl(P(1+\log V_{\max})\bigr).
+\end{equation}
+
+\emph{Check the computation and its dictionary arguments.}
+In a slot of capacity $t$, guess the deterministic execution for at
+most $t$ steps. Time-ordered checks verify its instructions, registers,
+counter, addresses and halt flag, with fixed padding after halt. To
+check the memory trace, sort the reads, writes and initial contents by
+address and execution order. Scan each address to verify that a read gives the
+most recent value, starting at zero for unused cells. This is the
+trace construction of \citet[Section~\ext{G}{app:trace}]{oaG}.
+A comparison network on $O(t)$ accesses uses $O(t\log^2(2t))$
+comparisons of $(\log h)^{O(1)}$-bit words. Long inputs, advice,
+messages and emitted strings occupy addressed arrays and are
+processed in pieces. The local cost is $t(\log h)^{O(1)}$ plus
+$h^{O(1)}$ per slot for long identifiers and framing.
+
+Within the slot, group the emitted strings by least dyadic padded
+length $u$, counting an empty string as length one. Reserve
+$\lfloor2t/u\rfloor$ calls in that class and take them in issuance
+order. The checker writes each emitted bit at the address given by
+its length class, ordinal and bit offset. The same memory-trace test
+checks these arrays against the inputs of the installed calls,
+including their active flags, actual lengths and zero padding. Each
+address has $O(1+\log t+\log h)$ bits. Accounting for all the padded
+seats adds $t(\log h)^{O(1)}$ to the checking cost. A seat returns
+the value of $W$ on its indicated active string and returns $1$ when
+inactive. Its table is named by the padded length. The arity is
+$O(1+U+\log h)$ and the total table size per slot is
+$O(t\log(2+U)\log(2+h))$.
+
+\emph{Match the messages.}
+Fix $w=\lceil h^{C_1}\rceil$, where $C_1>1$ will be chosen for
+the wide-record sort. Split each message into $w$-bit chunks, padding
+the last one and reserving one for an empty message. Its chunk record
+contains an active flag, key, direction, total length, chunk number
+and payload. Add a fixed sender for each processor. Its key belongs
+to a reserved namespace and supplies that processor's advice and exterior bits with their
+component lengths. An occupied slot must receive the whole supply
+for its claimed identifier even when the supply is empty.
+
+Check each outgoing source and incoming destination against the slot
+identifier, and check the splitting, piece order, lengths and padding. Sort the
+records by active flag, key, chunk number and direction. In the active
+part, require every key and chunk to occur as one send and one receive
+of equal length and payload. A duplicate message on one side collides
+at chunk zero. In particular each private supply is matched to exactly
+one slot, so every processor occurs once. For a given input the
+stable-sort relation has just one output, which can be summed out after
+these checks. Its zero-one tensor over $k$ extends to the same relation
+over $K$.
+
+A slot reserves $O(t/w+h^c+1)$ chunk records. The $O(h)$-bit header
+is copied once per chunk, so constructing them costs
+$(t+h^{O(1)})(\log h)^{O(1)}$. Charge a fixed sender for its actual
+supply and one partial chunk. By Equation~\eqref{eq:asm-seats} the
+reserved bit volume, including padding at message boundaries, is
+\[
+                     V(\log h)^{O(1)}+P h^{O(1)} .
+\]
+Pad the list to a power of two. Its length is polynomial in $n$, so
+its logarithm is $O(h)$. Theorem~\ref{thm:sort} with tolerance
+$\tau/3$ permits a fixed $C_1$ large enough that sorting costs at
+most $O(h^{\tau/3})$ times this volume. The subsequent scan has
+linear size. Equation~\eqref{eq:asm-seats} gives the same volume
+bound for the local computations and the dictionary tables. Absorb
+the powers of $\log h$ into $h^\tau$ and the per-processor costs
+into $P h^{C_0}$.
+
+The checking and sorting gates are trivalent over $k$, and each
+dictionary gate is named by its length class. These names have the
+stated length. For each accepted transcript the slot capacities,
+identifiers, order, traces, calls and chunks are uniquely specified.
+Conversely the local and communication checks recover an accepted
+transcript. Contracting the installed relations therefore gives its
+weighted sum exactly over $K$.
+\end{proof}
+
+\subsection{The transcript of the rounds}
+
+We now apply Lemma~\ref{lem:fixed-transcript} to the expansion in
+Section~\ref{sec:full}. Initially there are $S$ blocks of $T_0$
+copies, so $d=T_0S$. At every stage of the $j$ rounds there are
+$N_b\ge R$ blocks on a host with $H$ allocated positions. Give each
+position one processor, including at the terminal stage, and give
+each step $O(H)$ more processors for balanced aggregation trees. An
+occurrence consists of one position in one block.
+
+\paragraph{One address for all blocks.}
+A position holds the ordered list of its host neighbors and an array
+of occurrence records in block order. Its advice specifies the
+parent and child naming conventions, integer parameters, field
+presentation, and the initial convention for ordering exterior ports. At an
+initial position it also gives the input table label. Exterior bits
+enter through fixed ports in stack order.
+
+In one step every host degree is bounded in terms of the fixed round
+design. A ball of radius $O_D(1+\log r)$ thus contains $r^{O_D(1)}$
+positions. Exchange neighbor lists to that radius, remove repetitions
+by identifier and order the resulting names. This locates each
+possible child and contact by an index in a local list, at a cost of
+$h^{O(1)}$ common operations per position. A message to a contact
+can now carry an entire array of occurrence records under one
+$O(h)$-bit header. Within that array only local indices are needed.
+There are $h^{O(1)}$ phases and declarations per position. By
+Equation~\eqref{iter:labels}, handling the arrays costs
+$N_b r^{O_D(1)}(\log h)^{O(1)}h^{O_D(a)}
+=N_b h^{O_D(a)+o(1)}$ per position. The coefficients in $O_D(a)$
+are independent of $a,b,\beta$.
+
+For decisions shared by the host, each position computes its local
+contributions to the candidate scores. Sum the integer arrays along
+a balanced tree and broadcast the first minimizing candidate. At
+height $i$ the width of a sum of initially $z$-bit entries is at
+most $z+i$, while the number of positions falls by a factor of order
+$2^i$. Since
+$\sum_{i\ge0}2^{-i}(z+i)^{O(1)}=O((1+z)^{O(1)})$, aggregation
+preserves the preceding bit-cost bound. At the root allow an
+additional $2^{(\log h)^{O(1)}}$ operations to choose the
+minimizer. A greedy coloring of a given host can be checked locally
+as well. In fixed identifier order, require each color to be the
+least one absent from its lower neighbors. Induction on identifiers
+makes the checked assignment unique.
+
+\paragraph{Checking the changes of host.}
+Each of the operations in a round supplies its contacts from these
+neighbor lists and its common parameters from additive scores.
+\begin{enumerate}
+\item For colony packing, try the multipliers of the $r$ slots,
+propagate the overloaded marks to ancestors and neighbors, and sum
+the candidate colony counts. A propagation moves upward by at least
+one dyadic level, so the radius is $O_D(1+\log r)$. Relative
+interval endpoints, loads and dyadically scaled charges all have
+short encodings. Summing the local scores also chooses the affine
+coloring for whole-item pairing.
+\item At a local concentration step, the colony interval and its
+old contacts give the possible neighbors of each sphere. In the
+checked color order, the movement and interpolation choices of
+Lemma~\ref{lem:local} specify the new tables, withdrawn scalars
+and ordered bundles. Its description bounds pay for the choices and
+labels. The port orders identify the exposed sublists.
+\item In a wire-saving subround the source colony and bin determine
+the seats of its matched units. Record one summand choice for each
+actual gadget. Sum the surviving replacement widths under each of
+the two contractions and take the same minimizer for all blocks.
+The widths before identifying coincident endpoints suffice for this
+decision. Bounded neighborhoods of the colonies then determine the
+new contacts, port orders and table labels.
+\item For a reset, compute each position's mean load over the blocks.
+The smoothed mean has floor $FB/r$ and a propagated contribution
+decays by at least a factor of two per edge. The starting load is at
+most $B$, so a neighborhood of radius $O(1+\log r)$ determines the
+bases and their capacities.
+
+For the common mixer, let $x_i$ be the normalized load at a position
+or the normalized width at an edge in block
+$i\in\mathbb F_2^{\log_2 N_b}$. At prefix length $s$ the part of
+the collision estimator of Section~\ref{subsec:reset} that depends
+on a candidate matrix $A$ is a multiple of
+\[
+ \sum_{z\ne0}\boldsymbol{1}_{(Az)_{1:s}=0}
+                     \sum_i x_i x_{i+z}.
+\]
+Two indices have the same output prefix exactly when their
+difference $z$ satisfies the displayed condition. The diagonal and
+centering terms are constant in $A$, so they can be omitted in
+choosing a minimizer. The denominators of the remaining $x_i$ are
+cleared by $FB$ times the fixed dyadic load denominator. The level
+and overflow weights are integers after fixed scaling. In
+particular the choice uses integer arithmetic in every
+characteristic.
+
+Compute the autocorrelations $\sum_i x_i x_{i+z}$ simultaneously by
+squaring the Walsh coefficients and inverting the transform. This
+takes $O(N_b\log N_b)$ operations on $(\log h)^{O(1)}$-bit local
+integers. Aggregate the coefficients by difference and prefix
+length. At the root one can enumerate all invertible matrices in
+dimension $\log_2 N_b=O((\log h)^2)$ within
+$2^{(\log h)^{O(1)}}$ bit operations. The first minimizer satisfies
+the bound proved by averaging. Positions permute their block arrays
+accordingly. The bounded length ratios of intersecting leaves and
+the bounded number of units per leaf then allow the terminal
+assignments, rotor settings and new labels to be determined from
+neighboring records.
+\item The final splitting trees for tethers have bounded size,
+depending on $D$, per possible station and contact. Adjacent
+positions determine the active sublists. An edge between new
+children is supported by a bounded path between their parents. In
+the next phase the children use their own host adjacency, so every
+neighborhood collected is local to its current step.
+\end{enumerate}
+
+Declare messages in a fixed order of phases, ports and blocks.
+Enforce each successive array and common host from the preceding
+data and the local summand choices. Each term of a local identity,
+including a term of weight zero, has one prescribed encoding. The
+intermediate arrays therefore introduce no further multiplicities.
+
+\paragraph{Independent bits and tensor entries.}
+Transfer the exterior bits in the order specified by the splits and
+concatenations. The source and destination share a processor header
+for all pieces sent along one contact. Their array positions and bit
+offsets have length $(\log h)^{O(1)}$. When a sphere collects bits
+at its exterior station, the station is frozen during the ensuing
+steps. When the blocks are reordered, permute its lists with them.
+Neighborhood collection transports descriptions. Each of the $ed$
+exterior bits travels only along its specified route, at most once
+per transfer. The $O(\log h)$ steps therefore use
+$ed(\log h)^{O(1)}$ payload work.
+
+At the terminal stage, guess one bit per internal wire at its
+designated endpoint and send it to the other endpoint in contact
+and bundle order. A table call consists of the station description
+and its ordered port bits. The terminal payload costs
+$L_j(\log h)^{O(1)}$ by Equation~\eqref{eq:round-terminal}.
+A scalar withdrawn earlier issues its call at withdrawal, with just
+the short description. The input scalars are fixed. If their product
+is $c$, one nullary table of value $c^d$ supplies their contribution
+to the entire expansion. Naming this element of $K$ costs $O(\log h)$
+bits. For fixed summand choices, the free
+payload guesses now range exactly over the terminal wire
+assignments. The product of call values is their contraction
+weight. Summing over these assignments and then over summands gives
+the input tensor power on its ordered $ed$ exterior bits.
+
+\paragraph{Size of the fixed network.}
+At each stage Equation~\eqref{eq:round-terminal} gives
+$HN_b\le mS h^{O_D(a)+o(1)}$. There are $O(\log h)$ steps, and
+$N_b\ge R$. The bounds for processors and for their total charge are
+therefore
+\begin{align}
+ P&\le mS h^{O_D(a)+o(1)}/R,\nonumber\\
+ V&\le P h^{C_2}+mS h^{O_D(a)+o(1)}
+     +(L_j+ed)h^{o(1)}+2^{(\log h)^{O(1)}}.\label{eq:asm-volume}
+\end{align}
+The first two terms pay for the common work per position and the
+short records per occurrence. The third term pays for independent
+wire bits, and the last for the root computations. Every local
+record has charge at most $2^{(\log h)^{O(1)}}$, since $N_b\le S$,
+$\log S=O((\log h)^2)$ and an occurrence has only polynomially many
+bits in $h$. The exponent $C_2$ and the exponent bounding the
+declaration count can be fixed independently of $M$ in
+$R=h^{M+o(1)}$. Common work uses $O(h)$-bit addresses and
+$r^{O_D(1)}$ candidate contacts. The dependence on $M$ is confined
+to factors polynomial in $\log S$ and the additive root cost.
+
+The longest dictionary call uses $O_D(T_j)+h^{O_D(a)+o(1)}$ bits.
+Choose $a$ small enough that $Ca+2a<\beta$ for each coefficient $C$
+in the short-work and label bounds, and $b+(1+\delta)a<1$ for all
+allowed $b$. Equation~\eqref{eq:round-terminal} gives
+$T_j=O(h^{b+(1+\delta/3)a})$, so the calls have length below $h$.
+Use Lemma~\ref{lem:fixed-transcript} with $\tau=a\delta/3$, then
+take $M$ sufficiently large to absorb both $P h^{C_0}$ and
+$P h^{C_2+\tau}$. For the three other charges in
+Equation~\eqref{eq:asm-volume}, the costs per $md$ before the
+factor $h^\tau$ are
+\[
+ \frac{mS h^{Ca+o(1)}}{md}=h^{-b+Ca+o(1)},\qquad
+ \frac{ed}{md}\le h^{-2a},\qquad
+ \frac{L_j}{md}=O(h^{-a}\log h).
+\]
+Here $d=T_0S$ and $T_0=\Theta(h^b)$. The additive root cost is
+$n^{o(1)}$ while $m\ge n$. Consequently the fixed network has size
+at most $md\,h^{-a+\tau+o(1)}\le md\,h^{-(1-\delta)a}$ for
+large $n$. Its maximum table arity, including the activity and
+length fields, is at most $h^{b+(1+\delta)a}$. A dictionary table
+retains its short length-class label, ready for another application
+of Lemma~\ref{lem:macro}. This completes the proof of that lemma.

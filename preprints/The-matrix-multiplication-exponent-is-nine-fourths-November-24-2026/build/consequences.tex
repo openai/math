@@ -1,0 +1,81 @@
+\subsection{Rank bounds from the exponent}\label{sec:finite-ranks}
+We use the passage from an algorithm at one fixed size to an algorithm
+on tensor powers, together with the closure argument for border rank
+\cite{bini,bcs,spectrum}.
+
+\begin{proof}[Proof of Corollary~\ref{cor:tight}]
+Fix \(n\ge2\). A rank-\(r\) decomposition of \(T_{n^j}\) over any field
+\(K\) gives \(\omega_K\le\log_{n^j} r\) by the recursion and padding in
+Lemma~\ref{lem:specialize}. Theorem~\ref{thm:square} therefore gives
+\(\operatorname{rank}_K(T_{n^j})\ge n^{9j/4}\) at each \(j\). Taking
+roots gives the asymptotic-rank lower bound. At \(K=\overline F\) and
+\(j=1\), Lemma~\ref{lem:bilinearize} now gives the claimed lower bound
+of \(\lceil n^{9/4}/2\rceil\) on the number of nonlinear gates.
+
+For the geometric border bound, work in the fixed tensor space \(V\)
+over \(\overline F\) containing \(T_n\). Suppose \(T_n\) is in the
+Zariski closure of the rank-at-most-\(r\) tensors. For each \(j\),
+their \(j\)-th powers span a space containing \(T_n^{\otimes j}\),
+since membership of a tensor power in this span is a closed condition.
+The number of coefficients of a homogeneous polynomial of degree \(j\)
+in \(\dim V\) variables bounds the dimension of the span. We can thus
+express \(T_n^{\otimes j}\) using \(O_n(j^{\dim V-1})\) such powers,
+each of rank at most \(r^j\). Comparison with the lower bound at
+\(n^j\) and passage to \(j\)-th roots give \(r\ge n^{9/4}\).
+
+For the asymptotic-rank upper bound fix \(\varepsilon>0\). At side \(n^j\)
+the known circuit upper bound and Lemma~\ref{lem:bilinearize} give a
+decomposition of rank \(r_j=O_{F,\varepsilon}(n^{j(9/4+\varepsilon)})\)
+over \(\overline F\). Its coefficients belong to a finite extension
+\(E_j/F\), of degree \(d_j\). For each \(t\), power this decomposition
+\(t\) times. Expand each of the three vectors in each simple tensor
+in an \(F\)-basis of \(E_j\) containing \(1\), then project the
+products of basis coefficients onto the coordinate of \(1\).
+The tensor being represented is defined over \(F\), so this gives
+\[
+        \operatorname{rank}_F(T_n^{\otimes jt})\le d_j^3 r_j^t .
+\]
+The limit defining asymptotic rank exists by submultiplicativity.
+First take \(jt\)-th roots and let \(t\to\infty\) with \(j\) fixed.
+Then let \(j\to\infty\) and \(\varepsilon\downarrow0\). The resulting
+upper bound is \(n^{9/4}\) over the original field.
+\end{proof}
+
+At finite sizes, Corollary~\ref{cor:tight} also conflicts with the dyadic
+border-rank estimate proposed in the first version of Sun's
+preprint~\cite{Sun}. At $n=2^8$ the proposed upper bound is $2^{17}$
+and our lower bound is $2^{18}$.
+
+The square tensor also decides a prediction about tight three-tensors.
+A support is tight when each local basis admits distinct integer
+weights whose sum is zero on every support triple. In \(T_n\), take
+\(B>n\) and assign weights \(i-Bj\), \(Bj-B^2k\) and \(B^2k-i\)
+to \(e_{ij},e_{jk},e_{ki}\), respectively. Each assignment is
+injective on its factor and the three weights sum to zero. Each
+one-factor flattening has rank \(n^2\). Strassen's conjecture for
+tight tensors predicts asymptotic rank \(n^2\) in this case
+\cite[Conjecture~5.3]{Strassen1994}. Corollary~\ref{cor:tight}
+gives \(n^{9/4}\).
+
+\begin{proof}[Proof of Corollary~\ref{cor:rectangular}]
+The three one-factor flattenings have ranks \(ab,bc,ca\).
+These are lower bounds for geometric border rank by the closedness
+of matrix-rank conditions, and for asymptotic rank by multiplicativity
+of flattening ranks. Grouping corresponding factors in
+\[
+            T_{a,b,c}\otimes T_{b,c,a}\otimes T_{c,a,b}
+                                \simeq T_{abc}
+\]
+turns each of the three indices into a tuple with \(abc\) possibilities.
+Both ranks are invariant under cyclic relabeling of the factors and
+submultiplicative under tensor product. Hence each of their values
+on \(T_{a,b,c}\), cubed, is at least \((abc)^{9/4}\) by
+Corollary~\ref{cor:tight}. The case \(abc=1\) is immediate.
+
+For \(a=c=n\) and \(b=\lfloor n^\beta\rfloor\), the geometric border
+bound is \(\Omega(n^{3(2+\beta)/4})\). The bilinearization in
+Lemma~\ref{lem:bilinearize} applies entrywise to rectangular products
+as well. A quadratic exponent therefore requires \(3(2+\beta)/4\le2\).
+This gives \(\alpha_F\le2/3\), and the upper bound for multiplication
+at \(\beta=1/2\) gives \(\alpha_F\ge1/2\)~\cite{abvz}.
+\end{proof}

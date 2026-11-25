@@ -1,0 +1,270 @@
+\section{Fermionic sphere tensors}\label{sec:fermions}
+
+We need a tensor whose legs can be combined when their positions
+coincide. Start with marked points $z_1,\ldots,z_k$ in an affine
+coordinate on the projective line. At each point the input space has a
+half-integral \emph{energy} $h_i$. The energies fix the dimensions of
+the legs, while the marked points determine the entries of the
+tensor. The metric sites at which we will price these legs can be
+chosen independently of the $z_i$.
+
+Two features of this construction enter the proof. When a cluster of
+marked points collides, the Laurent coefficient of a given order
+passes through a single leg, whose energy the order determines when the other sites stay fixed
+(Proposition~\ref{prop:fusion}).
+Conversely, at a two-point collision, varying the first input across
+a bounded range of energies realizes every linear map from the second
+input to the fused leg. Lemma~\ref{lem:width} gives that energy bound.
+Together these facts let Section~\ref{sec:sphere} compare the price
+of a sphere tensor with the price of moving an independent wire.
+
+The half-integral grading comes from the free fermion
+\cite[Section~4]{kacwang}. Khoruzhii used its modes to decompose a
+crossing of two wires \cite{Khoruzhii}. The crossing argument
+of \cite[Theorem~\ext{G}{thm:crossing}]{oaG} uses the same calculus
+in arbitrary characteristic.
+
+\subsection{The kernel and its coefficients}
+Let $F$ be a field and take the exterior algebra on generators $\psi_m$,
+$m=0,1,\ldots$. Give $\psi_m$ energy $m+\tfrac12$, and denote by $V_h$
+the subspace of energy $h\in\frac12\mathbb Z_{\ge0}$. Its basis consists of
+the products $\psi_A=\bigwedge_{m\in A}\psi_m$, in increasing order, with
+$\sum_{m\in A}(m+\tfrac12)=h$. In particular $V_0=F$. Every such product
+has exterior degree congruent to $2h$ modulo two.
+
+For distinct $z_1,\ldots,z_k$ in $F$ we define a multilinear form
+$C(\mathbf h;\mathbf z)$ on $\prod_i V_{h_i}$. For basis inputs, list all generators in site order.
+The value
+is a signed sum over perfect matchings of this list (Wick's
+rule~\cite{wick}). Its factors are as follows. Two generators at one
+site have contraction zero. At different sites, the contraction of
+$\psi_m$ at $z_i$ with $\psi_n$ at $z_j$, in that order, is
+\begin{equation}\label{eq:fermions-kernel}
+ [x^m y^n]\,\frac{1}{z_j+y-z_i-x}
+ =\frac{(-1)^n\binom{m+n}{m}}{(z_j-z_i)^{m+n+1}} .
+\end{equation}
+Pair the entries of each oriented matching consecutively, multiply
+their contractions, and insert the sign of the permutation from
+the original list to this paired list. Reversing a pair reverses both
+the contraction and the permutation sign. Changing the order of pairs
+preserves the sign. This sum is the Pfaffian of the alternating
+matrix of contractions. The empty list has value one and an odd
+list has value zero.
+
+For example, put one generator $\psi_0$ at each of four sites
+and write $K_{ij}=(z_j-z_i)^{-1}$. The value on these four inputs is
+\[
+ K_{12}K_{34}-K_{13}K_{24}+K_{14}K_{23}.
+\]
+At a collision of $z_1$ with $z_2$ the first matching has an internal
+pair and a pole, while the other two matchings connect the cluster to
+the outside. This distinction governs the general fusion expansion.
+
+These formulas use integer coefficients and commute with change of field.
+Two repeated generators at a site give canceling pairs of matchings, by
+exchanging their partners. Thus the forms descend to exterior powers in
+characteristic two as well. Interchanging sites $i,j$ in adjacent positions
+contributes the sign $(-1)^{(2h_i)(2h_j)}$. Each coefficient, viewed as a rational function,
+is homogeneous of degree $-\sum_i h_i$ in the positions, since a contraction
+has degree minus the sum of its two energies. Its only possible poles are
+site collisions. As a function of $z_i$ it is bounded at infinity, and
+vanishes there when $h_i>0$.
+
+\subsection{Fusing a cluster at a marked point}
+Partition the sites into consecutive clusters $J_1,\ldots,J_s$, reordering
+the sites first if necessary. In cluster $J_j$ write $z_i=p_j+u a_i$, where
+the centers $p_j$ are distinct and the offsets within each cluster are
+distinct. A singleton with offset zero stays fixed. Its fusion map is the
+identity at its original energy and zero at every other energy.
+
+\begin{proposition}[Fusion]\label{prop:fusion}
+For each cluster $J$ there are maps
+\[
+ I_e^J:\bigotimes_{i\in J}V_{h_i}\longrightarrow V_e
+ \qquad(e\in\tfrac12\mathbb Z_{\ge0})
+\]
+depending only on its offsets and input energies. Put
+$H_J=\sum_{i\in J}h_i$. The maps vanish unless $e-H_J\in\mathbb Z$.
+The Laurent expansion at $u=0$ is
+\begin{equation}\label{eq:fermions-fusion}
+ C(\mathbf h;\mathbf z)
+ =\sum_{\mathbf e}u^{\,\sum_j e_j-\sum_i h_i}\,
+ C(\mathbf e;\mathbf p)\circ
+       (I^{J_1}_{e_1},\ldots,I^{J_s}_{e_s}).
+\end{equation}
+Only finitely many terms contribute to each coefficient.
+\end{proposition}
+
+\begin{proof}
+Group the perfect matchings by the pairs they use inside each cluster.
+Fix one cluster $J$ and one such partial matching. Contract its pairs
+using \eqref{eq:fermions-kernel} at positions $a_i$. Move the matched pairs to the front, with their permutation sign,
+keeping all unmatched generators in order. Replace each unmatched generator
+at offset $a_i$ by
+\begin{equation}\label{eq:fermions-translation}
+ \psi_m\longmapsto
+          \sum_{\ell\ge m}\binom{\ell}{m}a_i^{\ell-m}\psi_\ell .
+\end{equation}
+Wedge the resulting vectors in their original order and keep only energy
+$e$. Each translation may be truncated to the modes of energy at most
+$e$, so this is an operation on finite-dimensional spaces. Sum over
+all internal matchings with their signed factors to obtain $I_e^J$.
+If a generator is repeated in one input and either copy is contracted,
+interchanging the copies pairs terms of opposite signs. If both are
+unmatched, their translated wedge vanishes. This cancellation
+works over every field. Removing pairs
+and raising mode indices preserve energy modulo $\mathbb Z$.
+
+Decompose each full matching into its internal edges and its edges between
+clusters. An internal contraction at the original positions contributes the
+stated contraction at the offsets times $u$ raised to minus the energy of
+the pair. On an edge between clusters the kernel is regular at $u=0$.
+Taylor expansion in the two offsets uses
+$[x^m](u a_i+x)^\ell=\binom{\ell}{m}(u a_i)^{\ell-m}$, which gives
+\eqref{eq:fermions-translation} and one factor of $u$ per index increase.
+For a given output energy $e$, the total power from the cluster is therefore
+$e-H_J$. Moving the internal pairs of all clusters to the front contributes
+only the signs already included in $I_e^J$, since an ordered pair can
+cross any earlier cluster without changing sign. What remains is the
+sign of the matching between the output wedges. This proves
+\eqref{eq:fermions-fusion}. At fixed total power the sum of the nonnegative
+$e_j$ is fixed, so the coefficient is finite.
+\end{proof}
+
+For example, fuse two generators $\psi_0,\psi_0$ at offsets $0,1$.
+Their total energy is $1$. The internal contraction produces the vacuum
+at energy $0$ with coefficient $u^{-1}$. If the two generators remain
+unmatched, their first nonzero translated wedge is
+$\psi_0\wedge\psi_1$, of energy $2$ and order $u^1$. This second term
+can pair with generators at other centers.
+
+\subsection{Energy and dimension}
+A leg of dimension $d_h=\dim V_h$ carries width $\log d_h$ when
+$d_h>0$. A basis wedge chooses a subset of distinct modes, and its
+energy is the sum of their half-integer weights. Counting these
+subsets gives width asymptotic to $c\sqrt h$, where $c=\pi/\sqrt3$
+and the logarithm is natural.
+
+\begin{lemma}[Dimension of a level]\label{lem:dimension}\label{lem:fermions-dimension}
+For every $h\in\frac12\mathbb Z_{\ge0}$ one has $d_h\le e^{c\sqrt h}$.
+As $h\to\infty$ through all half-integral levels,
+\[
+   d_h\sim
+   \frac{\exp(c\sqrt h)}{2^{5/2}3^{1/4}h^{3/4}} .
+\]
+\end{lemma}
+
+\begin{proof}
+For $t>0$ the generating function is
+\[
+ Z(t)=\sum_h d_h e^{-th}
+     =\prod_{m\ge0}\bigl(1+e^{-t(m+1/2)}\bigr).
+\]
+The function $f(x)=\log(1+e^{-x})$ is convex on $[0,\infty)$.
+The midpoint estimate on each interval $[mt,(m+1)t]$ gives
+$\log Z(t)\le b/t$, with
+$b=\int_0^\infty f(x)\,dx=\sum_{j\ge1}(-1)^{j+1}/j^2=\pi^2/12$.
+Thus $d_h\le \exp(th+b/t)$. Minimization in $t$ gives the bound for $h>0$,
+and $d_0=1$.
+
+Doubling the generator energies identifies basis wedges at energy $h$ with
+partitions of $2h$ into distinct odd parts. These are in bijection with the
+self-conjugate Young diagrams of size $2h$. Each diagonal hook has length
+$2m+1$, where $m$ is its arm length, and the strictly decreasing sequence of
+arm lengths reconstructs the diagram. The asymptotic formula for the number
+of self-conjugate partitions of $n$ is
+$\exp(\pi\sqrt{n/6})/(2^{7/4}3^{1/4}n^{3/4})$ to leading
+order~\cite[Section~5.1]{Wildon}. Set $n=2h$.
+\end{proof}
+
+\subsection{The width needed to transmit a leg}
+Consider a two-site cluster at offsets $0,1$ with incoming energies
+$h,g$. Write $I_e$ for its fusion map to energy $e$. Fixing the first
+input turns this map into an operator on the second input. To recover
+a wire in Section~\ref{sec:sphere}, we need every matrix unit from
+$V_g$ to $V_e$. The next lemma constructs them with first-input width
+at most $c(\sqrt e+\sqrt g)+O(1)$ per level.
+
+\begin{lemma}[Fusion width]\label{lem:width}
+For $e,g\in\frac12\mathbb Z_{\ge0}$ put
+\[
+ H(e,g)=(\sqrt e+\sqrt g)^2+(\sqrt e+\sqrt g)/\sqrt2.
+\]
+The map
+\[
+ \bigoplus_{h\le H(e,g)} V_h \longrightarrow
+       \operatorname{Hom}(V_g,V_e),\qquad
+ (v_h)_h\longmapsto\sum_h I_e(v_h,-)
+\]
+is surjective. In the wedge bases, each matrix unit has an integral preimage.
+\end{lemma}
+
+\begin{proof}
+Fix mode sets $A,B$ of energies $e,g$, respectively. We construct
+an input at the first point that sends $\psi_B$ to $\psi_A$ and
+annihilates every other basis vector of $V_g$. If $e=g=0$, the first
+input is the vacuum. Otherwise write $w=\sqrt e$ and $v=\sqrt g$.
+An input at offset zero will be a wedge of test vectors. Represent a test
+$\sum_m t_m\psi_m$ by its Laurent polynomial $f(X)=\sum_m t_m X^{-m-1}$.
+In a matrix coefficient of $I_e$, the test has two possibilities.
+It can contract with input index $b$ at offset one, with coefficient
+$[y^b]f(1+y)$ by \eqref{eq:fermions-kernel}. Or it can occupy output index
+$\ell$, with coefficient $t_\ell$, because translation at offset zero is
+the identity. This follows by expanding the output wedge. Each test must
+occupy one slot of one of these two kinds, and different tests use different
+slots.
+
+We choose tests that can use their designated slots or slots of strictly
+larger weight. The target slots will account for the entire available
+weight, forcing every test into place. Give output index $\ell$ the
+weight $\tau=(\ell+\tfrac12)/w$ and input index $b$ the weight
+$\tau=(b+\tfrac12)/v$. A side of energy zero contains
+no indices and requires no division. The test for each target slot is given
+in the table.
+\[
+\begin{array}{c|c|c}
+\text{target}& f(X)& r\\ \hline
+\ell\in A&X^{-\ell-1}(1-X^{-1})^r&
+   \lfloor v\tau-\tfrac12\rfloor+1\\
+b\in B&X^{-r-1}(1-X^{-1})^b&
+   \lfloor w\tau-\tfrac12\rfloor+1 .
+\end{array}
+\]
+For an output target the coefficient $t_\ell$ is one, and the zero of order
+$r$ at $X=1$ forces every input slot it can occupy to have larger weight.
+Its other possible output indices exceed $\ell$. For an input target,
+$f(1+y)=y^b(1+y)^{-r-b-1}$, so its leading input coefficient is one.
+All other possible input slots have larger indices, and the choice of $r$
+forces all possible output slots to have larger weight. These conclusions
+hold over the integers.
+
+Form the wedge of all the tests in a fixed order. In every matrix
+coefficient of the indicated energies the sum of the weights of all
+available slots is $w+v$, which is also the sum of the target weights.
+The construction gives each test a slot of at least its target weight.
+Since the slots have positive weights, every nonzero term must use
+every slot and attain equality for each test. The table admits only
+the designated slot at that weight, even if an opposite-side slot
+has equal weight. In particular every generator of the second input
+has contracted with a test. The input and output sets are therefore
+$B$ and $A$, and the pairing and wedge assignment are unique. Thus
+the desired coefficient is $1$ up to sign, which can be absorbed into the chosen input wedge.
+
+The largest generator energy in each test of weight $\tau$ is at most
+$(w+v)\tau+\tfrac12$, by the displayed choice of $r$. A wedge of $s$
+generators has energy at least
+$\sum_{m=0}^{s-1}(m+\tfrac12)=s^2/2$, so there are at most
+$\sqrt2(w+v)$ tests. Adding their individual bounds shows that every
+homogeneous component of the input wedge has energy at most $H(e,g)$.
+Taking these components gives the claimed preimage.
+\end{proof}
+
+The sum of square roots in this cutoff also follows from a dimension count.
+If the map in Lemma~\ref{lem:width} is surjective with cutoff $H$, then
+$d_e d_g\le \sum_{h\le H}d_h\le (2H+1)e^{c\sqrt H}$.
+If $H\le(\sqrt e+\sqrt g)^2$, taking logarithms and
+using Lemma~\ref{lem:dimension} gives
+$\sqrt H\ge\sqrt e+\sqrt g-O(\log(e+g+2))$ along nonzero levels
+with $e+g\to\infty$. The same lower bound holds immediately for larger $H$.
+Lemma~\ref{lem:width} attains this leading width in
+every characteristic.

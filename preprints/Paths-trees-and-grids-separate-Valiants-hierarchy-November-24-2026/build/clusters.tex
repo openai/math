@@ -1,0 +1,52 @@
+\begin{figure}[!hbp]
+\centering
+\begin{tikzpicture}[x=11mm,y=9mm,font=\small,
+  branch/.style={draw=ink!80,line width=.65pt},
+  marked/.style={draw=sea,line width=1pt},
+  cluster/.style={draw=ink!55,rounded corners=2pt,fill=white},
+  meets/.style={draw=sea,rounded corners=2pt,fill=sea!12},
+  block/.style={|-|,draw=ink,line width=.7pt}]
+\foreach \i in {1,...,8}
+  \coordinate (leaf\i) at (\i,0);
+\coordinate (root) at (4.1,3.2);
+\coordinate (left) at (2,2.05);
+\coordinate (right) at (5.7,2.3);
+\coordinate (leftpair) at (2.5,.85);
+\coordinate (s) at (6.5,1.65);
+\coordinate (pairfive) at (5.5,.75);
+\coordinate (pairseven) at (7.5,.75);
+\draw[branch] (left)--(root)--(right)
+              (leaf1)--(left)--(leftpair)
+              (leaf2)--(leftpair)--(leaf3)
+              (leaf4)--(right)--(s);
+\draw[marked] (pairfive)--(s)--(pairseven)
+              (leaf5)--(pairfive)--(leaf6)
+              (leaf7)--(pairseven)--(leaf8);
+\foreach \n in {root,left,right,leftpair} \fill[ink] (\n) circle (1.4pt);
+\foreach \n in {s,pairfive,pairseven} \fill[sea] (\n) circle (1.6pt);
+\node[right=3pt,text=sea] at (s) {$s$};
+\foreach \i in {1,...,8} {
+  \fill[ink] (leaf\i) circle (1.4pt);
+  \node[below=1pt] at (leaf\i) {\(\i\)};
+  \draw[densely dotted,ink!45] (\i,-.52)--(\i,-1.92);
+}
+\foreach \k/\y in {2/-.9,4/-1.72}
+  \node[anchor=east] at (.25,\y) {\(k=\k\)};
+\draw[cluster] (.55,-.65) rectangle (3.45,-1.15);
+\foreach \l/\r in {4/6,7/8}
+  \draw[meets] (\l-.45,-.65) rectangle (\r+.45,-1.15);
+\draw[cluster] (.55,-1.47) rectangle (4.45,-1.97);
+\draw[meets] (4.55,-1.47) rectangle (8.45,-1.97);
+\foreach \l/\r in {1/1,2/3,4/4,5/6,7/8}
+  \draw[block] (\l-.30,-.9)--(\r+.30,-.9);
+\foreach \l/\r in {1/3,4/4,5/8}
+  \draw[block] (\l-.30,-1.72)--(\r+.30,-1.72);
+\end{tikzpicture}
+\caption{An ordered tree of formula splits, with slots numbered in leaf
+order. The bars show the maximal subtrees of at most \(k\) leaves, and
+the boxes group consecutive bars into clusters. The highlighted subtree
+has \(B_s=\{5,6,7,8\}\). It meets two clusters when \(k=2\) and lies in
+one when \(k=4\), as the shaded boxes show. All four leaves therefore
+receive the same displacement at the larger scale.}
+\label{fig:cluster}
+\end{figure}

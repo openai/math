@@ -1,0 +1,47 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  x=1cm,y=1cm,font=\small,
+  box/.style={draw=black!48,fill=white,rounded corners=2pt,align=center,
+              inner xsep=6pt,inner ysep=5pt},
+  cash/.style={draw=ember,line width=.88pt,rounded corners=3pt,
+               -{Stealth[length=4.8pt]}},
+  data/.style={draw=lagoon,dashed,line width=.72pt,-{Stealth[length=4.8pt]}},
+  note/.style={font=\footnotesize,inner sep=2pt}]
+ \coordinate (split) at (1.1,0);
+ \node[box] (market) at (4.3,1.56) {Local market\\[-1pt]minimize \(\Phi\)};
+ \node[box] (child) at (4.3,-1.56) {Child call};
+ \node[box] (feedback) at (8.25,0) {Query labels at \(x\)\\[-1pt]form feedback by \eqref{eq:feedback}};
+ \node[box] (gain) at (11.25,1.56) {Apply market gain\\[-1pt]\(\times\,(1+\eta g_e)\)};
+ \node[circle,draw=ember,text=ember,line width=.65pt,inner sep=1.6pt]
+       (sum) at (13.5,0) {\(+\)};
+
+ \draw[cash] (0,0) -- (split) node[midway,above,note] {\(w_e\)};
+ \fill[ember] (split) circle[radius=1.5pt];
+ \draw[cash] (split) -- (1.1,1.56) -- (market.west);
+ \node[above,note] at (2.05,1.56) {\((1-c)w_e\)};
+ \draw[cash] (split) -- (1.1,-1.56) -- (child.west);
+ \node[below,note] at (2.23,-1.56) {\(c w_e\)};
+ \draw[cash] (market.east) -- (gain.west);
+ \draw[cash] (gain.east) -- (13.5,1.56) -- (sum.north);
+ \draw[cash] (child.east) -- (13.5,-1.56)
+             node[midway,below,note] {Returned wealth \(w'_e\)} -- (sum.south);
+ \draw[cash] (sum.east) -- (14.95,0)
+             node[midway,above,note] {\(w_e^{\rm new}\)};
+
+ \draw[data] (market.south) -- (child.north)
+             node[midway,left=2pt,note] {\(y\)};
+ \draw[data] (market.south east) -- (feedback.north west)
+             node[midway,above right=0pt,note] {\(y\)};
+ \draw[data] (child.north east) -- (feedback.south west)
+             node[midway,below right=0pt,note] {\(x\)};
+ \draw[data] (feedback.east) -- (gain.south)
+             node[midway,below right=1pt,note] {\(v\)};
+\end{tikzpicture}
+\caption{Wealth and prices in one probe. Solid arrows track the two shares of
+expert \(e\)'s wealth. Dashed arrows show how the proposal \(y\) and the
+child's price vector \(x\) determine the feedback \(v\) for the local market.
+The sum \(w_e^{\rm new}=(1-c)w_e(1+\eta g_e)+w'_e\) funds the next probe
+or, after the last probe, returns to the parent.}
+\label{fig:invest}
+\end{figure}

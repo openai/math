@@ -1,0 +1,169 @@
+\section{Eliminating anchor repetitions and large majorities}\label{sec:guard}
+
+The recursion will look for a repeated letter among the satellites and
+call a smaller test on the satellites that carry its head. Two cases
+need separate treatment. A repeat can involve an anchor, and a letter
+can occupy so many satellite sites that such a call would scarcely
+reduce their number. We construct a gate, called the \emph{guard}, that
+kills either kind of column whenever its entries do not all agree.
+
+Fix either pair \(A,B\) of anchor groups in Lemma~\ref{lem:layout}, with
+surplus \(s\in\{\rho,2\rho\}\). An anchor holds one \(b\)-bit letter,
+replicated at every site of the group. Each satellite holds a \(b\)-bit
+letter and an activity flag. Exactly \(n\ge2\) satellites are active.
+\emph{Agreement} means that the two anchor letters and all \(n\)
+active letters coincide.
+
+\subsection{Choosing the two voting classes}
+
+Order the at most \(dq\) coordinate--symbol classes of the satellite
+code. Choose the first class \(C_1\) for which both \(C_1\) and its
+complement \(C_2\) contain at least \(4p_0n\) active satellites, where
+\(p_0=1/(128q)\). Lemma~\ref{lem:layout} ensures that a choice exists.
+The index of this split and the two active counts are its \emph{split
+data}. The data specify the voting classes, their destinations \(U,V\),
+and the number of voters for each application of Lemma~\ref{lem:vote}.
+
+\begin{lemma}[Computing the split]\label{lem:splitdata}
+On the domain with \(n\) active satellites, a gate of price
+\(G=O(dqH)\) appends the split data as basis controls at every site.
+\end{lemma}
+\begin{proof}
+Sum over proposed vectors of active counts for all the code classes,
+discarding vectors with no qualifying split. For each proposal
+multiply the count tests of Equation~\eqref{eq:count-test}, one for
+the activity flags in each class. This costs at most \(dq\log(r+1)\).
+From the proposed vector and the public integer \(n\), each site
+can write the same split data locally. There are at most
+\((n+1)^{dq}\) proposals, so summing their gates adds at most
+\(dq\log(n+1)\) to the price. Exactly one proposal passes on each
+basis input, with coefficient one.
+\end{proof}
+
+\subsection{The guard}
+
+\begin{lemma}[Guard]\label{lem:guard}
+Suppose every site has the correct split data for the \(n\) active
+satellites. For either anchor pair there is a gate of net cost at most
+\[
+       g_0=O\bigl(H+\log(2|S|)+\ell/\rho\bigr)
+\]
+uniformly in \(n,b\). It returns a fixed nonzero tensor on agreement.
+On any other column it vanishes if either anchor letter occurs twice
+or more among the two anchors and active satellites, or if a letter
+occurs on more than \((1-p_0)n\) active satellites.
+\end{lemma}
+
+\begin{proof}
+At \(b=0\) every column agrees, so use the unit gate. Assume \(b\ge1\)
+and denote the anchor letters by \(a_A,a_B\). The guard combines three
+tests on the original controls. A zero from any one of them kills the
+whole column.
+
+\emph{Equal anchors.}
+Apply the promise broadcast of Lemma~\ref{lem:broadcast}(iii) from
+\(A\cup B\) to all other sites. Its net cost is \(O(\log(2|S|))\)
+because \(w(A\cup B)=1\). At every active satellite compare its letter
+with the received label. Whenever \(a_A=a_B\), this comparison passes
+exactly on agreement. Keep the broadcast registers. On agreement they
+hold the common letter also at inactive sites, a fact we will use to
+make the last test's output independent of that letter.
+
+\emph{An anchor letter among the satellites.}
+Suppose some active satellite holds \(a_A\). We will compare the two
+anchor letters by projecting them onto the groups \(A\cup\{O\}\)
+and \(B\), where \(O\) is the central site. Let \(\pi\) be any public
+projection to \(u\) bits, put \(x=\pi(a_A)\), and let \(z_i\) be the
+projection of satellite \(i\)'s letter. The anchors produce their own
+projected labels locally. To produce \(x\) at \(O\), we select one
+representative for each distinct \(z_i\) among active satellites and
+weight those representatives by a polynomial in \(x\).
+
+Fix an order on the satellites. Sum over \(i\), checking its activity.
+Supply a partial diagonal of size \(2^u\) on \(O\) and all satellites,
+and select its label \(z_i\) at \(i\). This costs at most \(10^{-3}u\)
+by Lemma~\ref{lem:layout}. Each earlier active satellite can now
+compare its projection with \(z_i\). Kill the branch if any matches.
+Embed the projected alphabet in the working field and put
+\[
+        P_i(X)=
+        \prod_{\substack{j\ \mathrm{active}\\z_j\ne z_i}}
+                         \frac{X-z_j}{z_i-z_j}.
+\]
+For a surviving representative, \(P_i\) is one at its own label and
+zero at every other active projected label. To apply the multiplier
+\(P_i(x)\), choose \(r+1\) distinct field elements and interpolate in
+\(X\). At each evaluation point, satellite \(j\) contributes its own
+factor, since it holds both \(z_j\) and \(z_i\). A designated site in
+\(A\) supplies the Lagrange coefficient at \(x\). The working field
+is infinite and \(\deg P_i\le r\), so this calculation is exact in
+every characteristic. Erase the temporary labels except for the copy
+at \(O\). On the promise, \(x\) occurs, and exactly one representative
+contributes, with coefficient one. This holds even if the projection
+identifies several distinct input letters.
+
+The sum over representatives and interpolation points adds \(O(H)\)
+to the price. The projected-label gate therefore costs
+\(10^{-3}u+O(H)\) and has unit auxiliary tensor. The two output
+groups have union of width one. Their individual widths sum to at
+least \(1-s+0.06\), since adjoining \(O\) increases the width of \(A\)
+by at least \(0.06\). As \(s\le2\rho<0.002\), Lemma~\ref{lem:oracle}
+applies with \(\lambda=10^{-3}\) and \(\sigma=0.05\). At net cost
+\(O(H+\log(2|S|))\), it enforces \(a_A=a_B\) whenever an active
+satellite holds \(a_A\). Repeat the construction with \(A,B\)
+interchanged. If an anchor letter occurs twice, these tests and the
+equal-anchor test leave only full agreement.
+
+\emph{A large satellite majority.}
+Sum over the split index and the active count in \(C_1\). Check these
+against the stored split data before running the branch. The \(n\)
+active votes are then divided between two specified classes with
+known positive counts. Suppose \(y\) occurs at more than
+\((1-p_0)n\) active satellites. There are fewer than \(p_0n\)
+dissenting votes altogether and at least \(4p_0n\) voters in each
+class. Thus \(y\) has more than three quarters of the active votes
+in each class.
+
+Apply Lemma~\ref{lem:vote} to send \(\pi(y)\) from \(C_1\) to \(U\)
+and from \(C_2\) to \(V\). Together with the local projections of
+the anchor letters, these operations give a projected-label gate for
+\(a_A,a_B,y\) on the three groups \(A,B,\{U,V\}\). Its auxiliary
+tensor \(J\) is the product of the two voter tensors and, on the
+promise, is independent of \(u,\pi\). Let \(j\) be the sum of their
+allowances. The gate costs at most \(j+\lambda u+O(H)\), where
+Equation~\eqref{eq:split-gap} gives
+\[
+ \lambda=\max_{i\in C_1} w(\{x_i,U\})
+           +\max_{i\in C_2} w(\{x_i,V\})
+           \le w(\{U,V\})-4\rho .
+\]
+All three groups together have width one. Their individual widths sum
+to at least \(1+\lambda+4\rho-s\). For the pair \(A,B\), the union
+exceeds the sum by \(s\). For either anchor and \(\{U,V\}\), adjoining
+\(U\) already increases the width by at least \(0.06\), while
+\(w(\{U,V\})\le10^{-3}\). Thus Lemma~\ref{lem:oracle} applies with
+\(\sigma=\rho\). On the majority promise this test vanishes unless
+\(a_A=a_B=y\), in which case the equal-anchor test requires full
+agreement.
+
+On agreement every satellite has a retained broadcast copy of \(y\).
+Use it to permute the local symbol slots in the two voter tensors as
+in Lemma~\ref{lem:vote}, then erase the broadcast registers. For each
+branch the permuted \(J\) is fixed, nonzero, and has price at least
+\(j-O(H)\). Including it in the branch offset therefore recovers the
+allowances to within \(O(H)\). The other offsets are already fixed.
+Supply all unused branches' offsets in each branch before summing.
+Exactly one split check passes, so the agreement output is independent
+of the activity pattern as well as of \(y\). The at most \(dq(n+1)\)
+branches cost \(O(H)\) to sum. The three oracle groups contain at most
+\(|A|+|B|+2\) sites, so their contribution to the cost in
+Lemma~\ref{lem:oracle} is \(O(H+\log(2|S|)+\ell/\rho)\).
+\end{proof}
+
+A violation that survives the guard has distinct anchor letters, each
+occurring only once, and a repeated letter among the active satellites.
+No satellite letter occupies more than \((1-p_0)n\) active sites.
+Section~\ref{sec:masks} uses these facts to correct false ties. Shortening
+the letters leaves the activity flags, and hence the existing split data,
+in place. A recursive call that changes the active set pays \(G\) once
+for its new split, then \(g_0\) for its guard.

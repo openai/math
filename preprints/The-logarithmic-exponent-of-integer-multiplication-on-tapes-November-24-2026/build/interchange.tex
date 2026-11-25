@@ -1,0 +1,491 @@
+\section{Interchanging address fields on tapes}
+\label{sec:interchange}
+
+A square matrix stored row by row becomes its transpose when the row
+and column fields of its address exchange places. Multiplication will
+need the same operation on selected fields of a much longer address.
+For example, the entry at $(i,x,g,y,t)$ must be written at
+$(i,y,g,x,t)$. The blocks indexed by $i$, the intervening index $g$,
+and the records indexed by $t$ can all be arbitrarily large. Their
+total volume affects the time linearly. It is the width of $x$ and
+$y$ that determines the overhead per symbol.
+
+Write $[d]=\{0,\ldots,d-1\}$ and store arrays in lexicographic order,
+most significant index first. The address is the position of a symbol
+in a stream. The machine never needs a separate address record for
+each symbol.
+
+\begin{theorem}[Interchange on fixed tapes]\label{thm:interchange}
+For each $\alpha>1/2$ there is a deterministic multitape Turing machine
+with a fixed finite alphabet and a fixed number of one-dimensional tapes
+with the following property. Given positive integers $P,G,B,u$ in
+canonical binary and a bit array in lexicographic order on
+\[
+          [P]\times[2^u]\times[G]\times[2^u]\times[B],
+\]
+it writes the array obtained by interchanging the second and fourth
+indices. If $V=PGB\,2^{2u}$, it uses $O_\alpha(Vu^\alpha)$ transitions
+and visits $O_\alpha(V)$ tape cells. In each transition each tape head
+moves by at most one cell. The same bounds hold for a stream over any
+fixed finite alphabet, with constants also depending on that alphabet.
+\end{theorem}
+
+For $P=G=B=1$, Theorem~\ref{thm:interchange} transposes a binary
+matrix of side $2^u$. A digit-by-digit implementation of the swap
+makes a separate linear-volume pass for each of the $u$ pairs of
+digits. Our algorithm shares a smaller collection of passes among
+many pairs. We prove the result for $1/2<\alpha<1$, which implies all
+larger exponents as well.
+
+\subsection{Tape operations and the target for one recursive step}
+
+The recursion uses a prime radix $b$ chosen below. A field of $f$
+consecutive digits takes values in $\mathbb Z/b^f\mathbb Z$. A
+\emph{call} interchanges two such fields in a single stream, leaving
+all other coordinates fixed. At each level we charge separately for
+calls and for operations that take linear time in the stream volume.
+
+Copying aligned streams, combining their entries by a fixed finite
+table, and splitting and merging streams at a fixed digit all take
+linear time. More generally, an invertible lower triangular rational
+change on a fixed number of fields, read in physical order, costs a
+linear number of tape steps. Apply the changes in descending order of
+the target field, so each controlling field still has its original
+value. A diagonal scaling acts on one field and each off-diagonal
+term shifts it by a multiple of an earlier field. These operations
+include preparation of the shifts in the presence of arbitrary
+intervening and trailing indices \cite[Lemmas~3 and~4]{Tape}.
+
+For instance, a fixed value of the controlling field precedes a run of
+at least $b^f$ entries containing the shifted field. This run pays for
+reading the control and computing the wrap point. Rotating contiguous
+blocks implements the shift. Multiplication by a fixed positive
+integer that is a unit modulo $b$ has a bounded number of increasing
+pieces, and a finite residue counter enumerates the outputs. Reversing
+the construction gives inverse scaling. For nested scans a binary
+counter on a separate tape tracks each range. Ripple carries, resets,
+and head returns cost linear time over each complete scan
+\cite[Section~2]{Tape}. For a general invertible rational change on
+$d$ fields, factor its matrix as $L_1\Pi L_2$ with lower triangular
+$L_1,L_2$ and a field permutation $\Pi$. This requires at most $d-1$
+calls in addition to the linear work \cite[Lemma~9]{Tape}. For this factorization see also
+\cite{Grigoriev1982}. We choose $b$ after all the rational matrices and
+factorizations, avoiding their denominators and the numerators of their
+required units. They then specialize to every modulus $b^f$.
+
+At a recursive step the two chunks each contain $m$ main fields of
+width $f$. Let $Q_j$ exchange the $j$th pair. Their product
+interchanges all main fields. On a fixed batch of independent streams,
+the prediction and exact repair of
+\cite[Theorem~\ext{F}{thm:repair}]{oaF} reduces this product to
+$O(\sqrt{m\log(2m)})$ stages, together with conversions on a small
+fraction of the streams. Each stage combines the identity and the
+individual swaps linearly. Executing its $m$ swaps separately would
+use up the saving in the number of stages.
+
+To implement one stage, assign a label to each batch. For the $j$th
+swap each source and destination label will have its own way of
+expressing its physical tape address in a common coordinate system.
+Sending a stream to its own label in those coordinates performs the
+swap. We implement the identity on labels as the difference of two
+maps. The first mixes the labels through a matrix of small rank. The
+second cancels the unwanted off-diagonal transfers, whose support is
+partitioned into rectangles. In a rectangle every source sends to
+every destination, so we can add the sources together before making
+any copies. The cancellation is valid only if both contributions
+refer to the same logical address.
+
+Two quantities therefore matter for the choice of labels. The
+rank \emph{fraction} controls how many streams enter the full
+coordinate changes for individual swaps. The number of rectangles
+incident to one label and the dimension of an address change control
+the work shared by all swaps. For every $\eta>0$ we can arrange that
+the fraction is $O(1/m)$ and that the latter two quantities are
+$O(m^\eta)$ each. The calls per stream in one stage will then be
+$O(m^{2\eta})$. Even a very large number of labels costs only a fixed factor in the
+scans, since the labels are chosen before the recursion starts. This use of different fields for
+label transfers and address changes builds on \cite{Tape}. For the
+index-coding interpretation see
+\cite{BarYossefBirkJayramKol2006,Lubetzky}, and for the intersection
+constructions underlying the two-field method see
+\cite{FranklWilson1981,Alon1998,Matousek2010} and
+\cite[Section~1.6]{Tape}.
+
+\subsection{A family of labels}
+
+Choose an odd prime $p$ and a power of two $q$. Here $p$ is the
+characteristic of the data. The address maps will be built over
+$\mathbb Q$. Set $h=2p-1$ and let $\mathcal U=[q]^h$, of size
+$n_0=q^h$. Call two elements of $\mathcal U$ far if their Hamming
+distance is $p$. A label is an element of
+$\mathcal V=\mathcal U^h$, of size $N=n_0^h$. For $v,w\in\mathcal V$
+let $k(v,w)$ be the number of coordinates in which the two inner words
+are far. Define the symmetric matrix $P_*$ on $\mathcal V$ by assigning
+a one to each diagonal entry and to each pair differing in exactly $p$
+coordinates with far inner words in all $p$. Give the other entries
+value zero.
+
+\begin{lemma}\label{lem:interchange-labels}
+The rank $r_*$ of $P_*$ over $\mathbb F_p$ satisfies
+$r_*/N=O_p(q^{-p^2})$. Its off-diagonal support is a disjoint union
+of directed rectangles. Each label belongs to at most
+\[
+          \lambda=O_p\big(q^p(1+\log q)^{p^2}\big)
+\]
+rectangles on either side. On each rectangle $k(v,w)=p$ across the
+two sides, and $k(v,w)=0$ within either side.
+\end{lemma}
+
+\begin{proof}
+For inner words at distance $d$, the matrix $P_0$ of equal or far
+pairs has entry $1-d^{p-1}$ in $\mathbb F_p$. Write $d$ as the sum
+of coordinate inequality indicators and expand. Each resulting term
+depends on at most $p-1$ coordinates. It factors as a tensor product
+of matrices of rank at most $q$ on those coordinates and all-ones
+matrices on the others. There are $O_p(1)$ terms, so
+$\operatorname{rank}(P_0)/n_0=O_p(q^{-p})$.
+Writing $e$ for the outer distance, $P_*$ is the entrywise product of
+$P_0^{\otimes h}$ and the matrix with entry $1-e^{p-1}$. Expand the
+latter in outer coordinate indicators. In each term at least
+$h-(p-1)=p$ coordinates retain $P_0$, and each other coordinate has
+rank at most $n_0$. The tensor product rank bound and summation over
+$O_p(1)$ terms give the claimed estimate.
+
+For an ordered far pair of inner words, specify the $p$ differing
+positions and the common letters elsewhere. At the first differing
+position fix both letters. At each other differing position partition
+ordered pairs of distinct letters into rectangles using the first bit
+at which their binary strings differ. A rectangle specifies the common
+prefix and the orientation of the two next bits. Each letter belongs
+to at most $\log_2 q$ such rectangles on a specified side. This gives
+a disjoint inner decomposition with
+$O_p(q(1+\log q)^{p-1})$ incidences per word on either side. Words
+on one side can vary in only $p-1$ positions, so no two are far.
+For the outer pairs specify the $p$ differing coordinates, fix the
+common inner words elsewhere, and take a product of these inner
+rectangles on the differing coordinates. This proves the incidence
+bound and both assertions about $k$.
+\end{proof}
+
+The scalar transfers will take place over $\mathbb F_p$. The same
+labels must also describe coordinate changes which can be prepared on
+tapes. For this purpose we use a rational vector space in which two
+labels on the same side of a rectangle have the same pairwise Gram
+block, while going to the other side exchanges the two coordinates.
+
+On the rational vector space with two generators per label take the
+symmetric bilinear form whose $(v,w)$ block is
+\begin{equation}\label{eq:interchange-gram}
+ \left(1-\frac{k(v,w)}p\right) I_2+
+   \frac{k(v,w)}p\begin{pmatrix}0&1\\1&0\end{pmatrix}.
+\end{equation}
+Let $\mathcal D$ be the quotient by its radical and denote the two
+resulting vectors by $x_v,y_v$. Its dimension $D$ satisfies
+$2\le D=O_p(n_0)$. Indeed, each summand of $k$ factors through
+the $n_0$ inner words of one coordinate, and the constant matrix on
+labels has rank one. Each $(x_v,y_v)$ is an orthonormal pair for the
+induced form. Put $a=D-2$ and
+$\mathcal D_v=\langle x_v,y_v\rangle^\perp$.
+
+The parameter $D$ measures the cost of a general change of layout.
+The two levels of the label construction brought the rank fraction
+down to $O_p(q^{-p^2})$ while keeping $D$ proportional to the number
+of \emph{inner} words. These rational address changes specialize
+modulo $b^f$. The prime $p$ continues to govern only the scalar data.
+
+\subsection{A shared application of a sum of swaps}
+
+Write the $m$ pairs of main fields in physical order as
+$H_1,\ldots,H_m,N_1,\ldots,N_m$, and place $a=D-2$ reserved fields
+before and $a$ after them. Every field has width $f$ and ranges over
+all $b^f$ values. The reserves index occupied data, so the algorithm
+must restore these fields. Unmentioned spectator indices keep their
+places. At each label there are $R$ independent rows, each a stream
+over a fixed finite commutative $\mathbb F_p$-algebra. For
+$Q_j$ the exchange of $H_j$ and $N_j$, one stage acts by
+\begin{equation}\label{eq:interchange-pencil}
+                   A_0+\sum_{j=1}^m A_j Q_j ,
+\end{equation}
+where the $A_j$ are fixed $R\times R$ scalar matrices independent of
+the label. The number of calls per input stream, averaged over all
+$RN$ inputs, is at most
+\begin{equation}\label{eq:interchange-stage-cost}
+            O\!\left(D(1+\lambda)
+                  \left(1+\frac{m r_*}{N}\right)\right).
+\end{equation}
+All other work costs linear time in the input volume, with a constant
+allowed to depend on the finite stage.
+
+To prove this, choose a basis of $\mathcal D_v$ once for each $v$. For query
+$j$ the source address map $S_{v,j}$ uses this basis for the early
+reserved fields and $x_v,y_v$ for $H_j,N_j$. These $D$ columns
+express the corresponding part of the address in $\mathcal D$.
+The late reserved fields and all spectators retain their values. The
+destination map $T_{v,j}$ uses the same basis of $\mathcal D_v$ and the
+reversed columns $y_v,x_v$. To specify the action of a scalar matrix
+$M$ on labels, write $X_v$ for the function giving the vector of $R$ input symbols at
+each address of source $v$. For an address bijection $U$ write
+$(U_*X)(d)=X(U^{-1}d)$. 
+Map all source addresses into common coordinates $z$, apply the
+scalar transfers there, then use the inverse destination maps to return
+to physical addresses. With transfer matrix $M$ on labels this gives
+the source-to-destination block $M_{wv}(T_{w,j}^{-1}S_{v,j})_*$. At a
+fixed common address the output is consequently
+\begin{equation}\label{eq:interchange-label-map}
+       Y_w(T_{w,j}^{-1}z)=\sum_v M_{wv}\,X_v(S_{v,j}^{-1}z).
+\end{equation}
+For $M=I$ only label $w$ contributes to itself, and
+$T_{w,j}^{-1}S_{w,j}=Q_j$. Equation~\eqref{eq:interchange-label-map}
+is linear in $M$. Thus we can use the identity
+\[
+         I=P_*-\sum_{(L,K)}\mathbf 1_K\mathbf 1_L^{\mathsf T},
+\]
+where $(L,K)$ ranges over the disjoint directed rectangles of
+Lemma~\ref{lem:interchange-labels}, with sources in $L$ and
+destinations in $K$. The two terms may process addresses in different
+physical orders. At every addition or cancellation they must identify
+the same $z$.
+
+\paragraph{Preparing one layout for all queries at an endpoint.}
+A rectangle may choose its own physical order for the common
+addresses. We will change basis on the reserves once at each of its
+endpoints. After that preparation every query can reach the common
+layout using only shifts controlled by earlier fields.
+
+Fix a rectangle of Lemma~\ref{lem:interchange-labels} and list its
+sources with orientation $(x_v,y_v)$ and its destinations with
+orientation $(y_w,x_w)$. Write the resulting pairs as $(u_i,z_i)$.
+By \eqref{eq:interchange-gram} every mutual oriented Gram block is
+$I_2$. Choose a reference pair $(u_0,z_0)$ and set
+\[
+    E=\operatorname{span}\{u_i-u_0,z_i-z_0:i\},\qquad
+    U=E\oplus\langle u_0,z_0\rangle .
+\]
+Here $E$ lies in the orthogonal complement of every oriented pair.
+Thus the indicated sum is direct and $U$ is the span of all oriented
+vectors. Choose a complement $C$ to $U$ in $\mathcal D$ and fix bases
+of $C$ and $E$.
+
+At endpoint $i$, lift each chosen basis vector of $C$ to the
+orthogonal complement of $(u_i,z_i)$ by subtracting its projection
+onto this pair. The lifts together with the basis of $E$ form a basis
+of that complement. Change the early reserved fields to coordinates
+in this basis. Exchange the $E$ coordinates with a prescribed equal
+number of late spare fields. This change of address on the $2a$
+reserved fields costs $O(D)$ calls and is independent of $j$. The
+early positions now include the lifted $C$ coordinates, and the late
+positions include the $E$ coordinates. For every $j$ the remaining
+change to a common rectangle layout is lower triangular. In fact each
+lift differs from its chosen $C$ vector by an element of $U$, and
+$u_i-u_0,z_i-z_0$ lie in $E$. In physical order the common layout
+therefore has $C$ coordinates early, the $u_0,z_0$ coordinates at
+$H_j,N_j$, and $E$ coordinates late. All displaced spare coordinates
+have the same positions at every endpoint. The forward lower
+triangular change at sources and the inverse at destinations both
+cost linear time. Figure~\ref{fig:rectangle-layout} displays the blocks
+of this change in physical order.
+
+\input{layout}
+
+
+\paragraph{Delivery by rectangles.}
+Write a directed rectangle as $(L,K)$, with sources $L$ and
+destinations $K$. To implement $M=I$, evaluate
+\eqref{eq:interchange-label-map} on $P_*$ and subtract its value on
+each off-diagonal rectangle. For a given rectangle the quantity to
+send to every $w\in K$ at a common address $z$ is the same vector
+\[
+             X_{L,j}(z)=\sum_{v\in L} X_v(S_{v,j}^{-1}z).
+\]
+Prepare the endpoint changes on the reserved fields once for every
+incidence, using copies at the sources. For each $j$ the lower
+triangular operations then put the summands of $X_{L,j}$ in the same
+physical order. Add them in a scan, retain a copy of their sum, and
+send its negative to the destinations of the rectangle. Apply $A_j$
+pointwise, and at each destination accumulate the resulting terms
+over $j$ after the inverse lower triangular operations. Undo the
+change on the reserved fields only after this accumulation.
+
+
+\paragraph{Delivery at low rank.}
+For the $P_*$ contribution choose $r_*$ independent rows $I$ and
+$r_*$ independent columns $J$. Over $\mathbb F_p$ we have
+\[
+              P_*=(P_*)_{:J}\,((P_*)_{IJ})^{-1}\,(P_*)_{I:}.
+\]
+This factorization uses only $r_*$ intermediate vectors at each
+common address. Gathering them directly in one fixed address order
+would require reordering all the source streams for each $j$ before
+the first matrix could act. Instead, for basis row $i\in I$ the
+vector required by $(P_*)_{I:}$ at $z$ is
+\[
+          X_i(S_{i,j}^{-1}z)+
+            \sum_{(L,K):\,i\in K}X_{L,j}(z).
+\]
+The singleton uses the source layout at $i$. Every other term is a
+rectangle sum already produced in its rectangle layout. Disjointness
+of the rectangles accounts for each source in the row support exactly
+once. There are at most $1+\lambda$ terms, irrespective of the number
+of sources in the support. Convert these terms to one fixed layout
+for $z$, then add. Each conversion acts on the early and late fields
+and $H_j,N_j$, hence costs $O(D)$ calls per internal row. In the
+fixed layout apply $((P_*)_{IJ})^{-1}$ and $A_j$ pointwise.
+
+The support of each column in $J$ has the same decomposition on the
+destination side. Convert the corresponding intermediate vector to
+its singleton layout and to each incident rectangle layout, then
+distribute it by the destination lower triangular operations. These
+rectangle contributions enter the same destination sums before the endpoint
+changes are undone. Finally add together all destined rectangle
+contributions and direct singleton contributions at each destination
+in its ordinary layout (along with the $A_0$ term).
+
+Thus the changes on reserved fields cost
+$O(RND(1+\lambda))$ calls for the entire stage. For each $j$ the
+$r_*$ basis rows and $r_*$ basis columns use at most
+$2Rr_*(1+\lambda)$ single-stream conversions. They cost
+$O(mRr_*D(1+\lambda))$ calls in total, proving
+\eqref{eq:interchange-stage-cost}. The row matrices are fixed. Their applications use a finite number of tapes and table entries.
+
+
+The first term in the call count prepares the endpoints once for
+all $m$ queries. The second is the only term that pays a fresh
+coordinate change for each query. It does so on the $r_*$ intermediate
+streams at each internal row index. Since $m r_*/N$ stays bounded,
+these two costs are of the same order after averaging over input
+streams.
+
+\subsection{Spectral conversion and the choice of constants}
+\label{subsec:swap-spectrum}
+
+Over odd characteristic the swaps $Q_j$ have a common spectral
+coordinate system. On each two-element orbit of $Q_j$ place the sum
+at the address with $H_j<N_j$ and the difference (smaller address
+minus larger address) at the address with $H_j>N_j$. Leave equal
+pairs as they are. Apply these changes independently over all $j$.
+Each conversion in either direction requires one copied interchange
+per pair and pointwise operations, using $1/2$ in the inverse. The
+sum and difference coordinates have eigenvalues $1$ and $-1$,
+respectively. Since each positive-width field has at least two values,
+one may take a two-element orbit in every pair and independently
+choose its sum or difference. Thus all $2^m$ sign patterns occur.
+To generate the comparisons in linear time,
+fix a prefix ending immediately before $N_j$. Its $H_j$ is known,
+and its $N_j$-and-suffix fibre splits into three consecutive runs.
+If the suffix range is $S$, computing the run lengths takes
+$\operatorname{poly}(1+f+\log S)$ steps per prefix, absorbed by the
+$b^f S$ positions in the fibre. The elementary-streams lemma provides
+the nested scans and amortized counters. An arbitrarily long prefix
+index needs only to be advanced, while its controlled field $H_j$
+uses $O(f)$ digits.
+
+
+To compute the whole product $\prod_j Q_j$, use the simultaneous repair
+program of \cite[Theorem~\ext{F}{thm:repair} and
+Corollary~\ext{F}{cor:swap-repair}]{oaF}. It specifies the batch width
+$R$ and a fixed finite scalar extension over $\mathbb F_p$, whose
+elements serve as the data alphabet throughout the recursion. At
+each common frequency a swap has eigenvalue $+1$ or $-1$. The
+program predicts the product of these signs on most of the batch and
+recovers the exceptional rows by interpolation. Its table needs only
+the sign pattern, which the scans just described generate. The result
+on every one of the $R$ independent input streams is exact.
+
+The program uses $O(\sqrt{m\log m})$ stages of
+\eqref{eq:interchange-pencil}, pointwise operations, and at most $4s$
+full row conversions at each label, where $s\le R/(2m^3)$. Each full
+conversion uses $m$ calls. The correction thus costs at most $4ms/R$
+calls per input stream. The time spent in the stages is controlled by
+\eqref{eq:interchange-stage-cost}.
+
+Choose $1/2<\gamma<\alpha$. Take $q$ to be the smallest power of two
+at least $m^{1/p^2}$. Then $m r_*/N=O_p(1)$,
+$D=O_p(m^{(2p-1)/p^2})$, and
+\[
+       D(1+\lambda)\le m^{(3p-1)/p^2+o_p(1)}
+          \qquad (m\longrightarrow\infty).
+\]
+Choose $p$ sufficiently large that $1/2+(3p-1)/p^2<\gamma$.
+For sufficiently large fixed $m$, the complete computation of the
+main swaps on $W=RN$ independent streams uses at most $Wm^\gamma$
+calls. This follows by multiplying \eqref{eq:interchange-stage-cost}
+by the number of stages and adding $4ms/R$ per stream for repair.
+Also choose $m$ so that
+\begin{equation}\label{eq:interchange-contraction}
+                         2m^\gamma+2a<m^\alpha .
+\end{equation}
+All matrices, bases, row widths, and endpoint instructions have now
+been fixed. Choose a compatible radix prime $b>W$, with $W>2$.
+All linear operations on data, including scalar extension arithmetic,
+are fixed finite tables. Recursive calls move symbols of this very
+same alphabet, regardless of the depth of recursion.
+
+
+\subsection{Running the recursion}
+\begin{proof}[Proof of Theorem~\ref{thm:interchange}]
+First consider two width-$e$ fields in radix $b$, with arbitrary
+spectator ranges. Set $f=\lfloor(e-1)/(m+2a)\rfloor$. If $f=0$ the
+width is bounded, and individual digit moves cost linear time. For
+$f\ge1$, partition each width-$e$ field, from the front, into one
+digit, $a$ fields of width $f$, the $m$ main fields of width $f$,
+another $a$ fields of width $f$, and a remainder of fewer than $m+2a$
+digits. The first group of $a$ fields in the earlier chunk supplies
+the early reserve. The second group of $a$ fields in the later chunk
+supplies the late reserve.
+
+Split on the first digit of the earlier chunk. Group its $b$ values
+into batches of $W$, padding the last batch, and retain the batch
+number as a spectator. The result consists of $W$ aligned streams,
+each of volume $V'\lceil b/W\rceil/b\le2V'/W$, where $V'$ is the
+volume at this recursion node. Splitting, padding, and subsequent
+merging cost $O_\alpha(V')$ independently of the prefix range.
+Run the finite main-swap computation, implementing each call by this
+same general interchange algorithm on a single stream. The complete
+operation applies the main swaps to each row separately and preserves
+every other address, including both occupied reserves. Discard the
+padding and merge. It remains to interchange $2a$ corresponding
+pairs of width-$f$ fields and boundedly many pairs of individual
+digits. Perform the former recursively on the full stream and the
+latter directly.
+
+Let $T(e)$ bound time per symbol of the input stream, uniformly over
+the three spectator ranges. The construction gives
+\[
+            T(e)\le C_\alpha+(2m^\gamma+2a)T(f).
+\]
+Indeed the main computation makes at most $Wm^\gamma$ calls on
+streams of relative volume at most $2/W$. The other $2a$ calls
+each have relative volume one. Since $f\le e/m$,
+\eqref{eq:interchange-contraction} and induction give
+$T(e)=O_\alpha(e^\alpha)$.
+
+For the tape implementation use the depth-first parking schedule of
+\cite[Proposition~11]{Tape}. A main call
+parks the node's other live streams on stack tapes at their current
+ends. Returning to the node restores them from those ends. Clearing
+work areas, moving heads, and copying parked streams cost $O_\alpha(V')$
+at the node, including all its finitely many descents. The child
+descriptor collapses the spectator ranges to the prefix, gap, and
+suffix of its two fields. Its calculation and the local control stack
+use polynomial time in $1+\log V'$, absorbed by $O_\alpha(V')$.
+Space at an active node is $O_\alpha(V')$. A main descent shrinks
+volume by a factor at most $2/W<1$. During each of the $2a$
+full-volume descents the main streams have already been merged and
+their workspace cleared. Pass the active stream to the child and
+park only a descriptor and return instruction. Consequently the
+parked arrays sum geometrically along any path. The depth is
+$O(1+\log(e+1))$ and the parked descriptors have total size
+$O_\alpha((1+\log(e+1))(1+\log V'))$ at a root of volume $V'$,
+which is $O_\alpha(V')$. Work tapes and their stack areas are reused,
+so these bounds also count visited cells.
+
+Finally, for binary chunks take the least $e$ with $b^e\ge 2^u$.
+Pad each of the two numerical ranges from $2^u$ to $b^e$ by lexicographic
+scans as in \cite[Lemma~12]{Tape}. The volume
+increases by a factor less than $b^2$, and the full swap preserves
+the set of genuine addresses. Scanning out those addresses returns
+the required stream. This costs linear additional time and space,
+and $e=O(u)$. Bits are represented by the distinct elements $0,1$ of
+the data algebra. A fixed larger input alphabet can be encoded in a
+fixed number of bit streams. This proves the theorem.
+\end{proof}

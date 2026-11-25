@@ -1,0 +1,305 @@
+\section{A gate of bounded cost for every alphabet}\label{sec:recurrence}
+
+The alphabet enters the mask recursion only through the number \(b\)
+of bits needed to name a letter. We will obtain three successive cost
+bounds in \(b\). On the inner anchors, of surplus \(2\rho\), a linear
+bound with slope \(\rho/4\) suffices. A call on these anchors replaces a
+mask diagonal and saves \(2\rho\) per remaining bit before paying for the
+call. This saving gives a logarithmic bound on the original anchors, of
+surplus \(\rho\). Finally, the small increase in each group's width
+given by Lemma~\ref{lem:layout} makes the cost bounded independently of
+\(b\).
+
+\subsection{Two estimates for the recursive test}
+
+Use the overheads \(g_0,G\) of Lemma~\ref{lem:mask-recursion}. The
+unchanged active set costs \(g_0\) at a recursive step. A call on a
+smaller active set must also pay \(G\) to install its split data. For
+\(n\) active satellites put
+\[
+ D(n)=\left\lfloor\frac{\log n}{-\log(1-p_0)}\right\rfloor,\qquad
+ l_0=\lceil4g_0/\rho\rceil,\qquad
+ A_j=10(l_0+G)(j+1).
+\]
+Every eligible smaller set has \(D(n')\le D(n)-1\), since
+\(n'\le(1-p_0)n\). Put \(D_*=\lceil H\rceil+D(r)\) and \(A_*=A_{D_*}\).
+In the binary layout \(p_0=1/256\), so \(D_*=O(H)\). The additional
+\(\lceil H\rceil\) in this definition ensures
+\(A_*\ge (g_0/\rho)H\).
+
+\begin{lemma}[Linear and logarithmic costs]\label{lem:two-rates}
+For every \(b\ge0\) and \(2\le n\le r-2\), the gates of
+Section~\ref{sec:masks} on the groups of surplus \(2\rho\) and \(\rho\)
+admit the respective net cost bounds
+\begin{align}
+ f_{2\rho}(b,n)&\le A_{D(n)}+\rho b/4, \label{eq:inner-rate}\\
+ f_\rho(b,n)&\ll A_*+(g_0/\rho)\log(2+\rho b/A_*).
+ \label{eq:root-rate}
+\end{align}
+\end{lemma}
+\begin{proof}
+For \eqref{eq:inner-rate}, induct on \(b\), simultaneously for all
+\(n\), and set \(D=D(n)\). The exact comparison of
+Lemma~\ref{lem:mask-recursion} costs \(2\rho b\), which proves the
+claim when \(7\rho b/4\le A_D\). Above this threshold we have
+\(l_0\le b\). Take \(l=l_0\), \(b'=b-l\) in \eqref{eq:recursion}.
+In the main branch the linear bound decreases by
+\(\rho l/4\ge g_0\), enough to pay the overhead.
+
+If a correction has an eligible child, \(D\ge1\), and the cost
+increment in \eqref{eq:recursion} for each head using such a child
+is at most
+\[
+  3l+g_0+G+A_{D-1}-7\rho b'/4
+  < (3+7\rho/4)l+g_0+G-(A_D-A_{D-1})<0 .
+\]
+Here \(A_D-A_{D-1}=10(l+G)\). At least one head must use the child.
+The largest upper bound therefore occurs with one. Including the
+outside costs \(g_0+2\rho b'\), the correction costs at most
+\[
+ A_{D-1}+3l+2g_0+G+\rho b'/4\ \le\ A_D+\rho b/4 .
+\]
+This proves the first estimate, including the case with no eligible child.
+
+For \eqref{eq:root-rate}, use the exact comparison while
+\(\rho b\le100A_*\). At greater lengths take
+\(l=\lceil\rho b/50\rceil\) and \(b'=b-l\). By \eqref{eq:inner-rate}
+the increment for each head using a child is at most
+\[
+  3l+g_0+G+A_*-7\rho b'/4\ \le\ -\rho b .
+\]
+Indeed \(l\le\rho b/50+1\), \(g_0+G\le A_*\), and
+\(0<\rho<10^{-3}\). This pays even the full outside charge \(\rho b'\)
+of the correction. Equation~\eqref{eq:recursion} thus gives
+\(f_\rho(b,n)\le g_0+f_\rho(b',n)\), using nonnegative cost bounds.
+Each such step leaves \(b'\le(1-\rho/50)b\) bits. It takes at most
+\(O(\rho^{-1}\log(2+\rho b/A_*))\) steps to reach the exact comparison,
+whose cost there is at most \(100A_*\).
+\end{proof}
+
+\subsection{Removing the dependence on the bit length}
+
+Enlarge each of the \(r\) groups in the layout of surplus \(\rho\) by
+the width increment \(\alpha=\rho/(10r)\) of Lemma~\ref{lem:layout}.
+Every satellite participates in this final construction. We can still
+call the gate on the original groups, with cost bound
+\(f(t)=f_\rho(t,r-2)\) from \eqref{eq:root-rate}. Its activity flags
+are all one, so its split data are fixed. The wider groups give the
+exact checks a saving proportional to \(t\), which will dominate
+\(f(t)\).
+
+\begin{lemma}[Uniform cost in the alphabet]\label{lem:uniform-mask}
+On the enlarged groups, for every \(b\ge0\) there is a gate of net
+cost \(F(b)\ll A_*\) satisfying Lemma~\ref{lem:diagonal} on the full
+domain of replicated \(b\)-bit letters. It returns a fixed nonzero
+tensor on a constant column and zero on every column with a repeated
+letter and at least two different letters.
+\end{lemma}
+\begin{proof}
+At \(b=0\) the unit gate has \(F(0)=0\). For the step from \(t\)
+to \(t+1\) bits, write each letter as \((a,v)\), where
+\(a\in\{0,1\}\), \(v\in\mathbb F_2^t\). Supply two independent
+full mask diagonals with labels \(m_0,m_1\in\mathbb F_2^t\).
+Keep both mask slots and apply the shorter enlarged-group gate to the
+letters \(v+m_a\). On a constant column its return is both full
+diagonals times the shorter gate's offset \(Q\). Its net cost against
+this offset is \(F(t)\).
+
+On an inadmissible column a repeated original letter stays repeated
+after masking. Thus a mask pair contributes only when every masked
+tail equals one common value \(z\). Both heads must then occur.
+Otherwise adding the same mask to every tail preserves the original
+disagreement. We reproduce these surviving terms exactly, without the
+guard of Section~\ref{sec:guard}, so the repeat may involve an anchor.
+
+\paragraph{The two occupied heads.}
+Sum over the two anchor head bits and check them locally. If they
+are equal, also sum over the first satellite of the other head, checking
+its head and checking the opposite bit at every earlier satellite.
+When both heads occur exactly one branch passes, and when only one
+occurs none passes. The logarithm of the number of branches is \(O(H)\).
+In a passing branch sum over a public \(t\)-bit label \(z\). For each
+\(a\in\{0,1\}\), the exact mask output \(I_a(z)\) is \(E_S(v+z)\)
+if all letters with head \(a\) have a common tail \(v\), and is zero
+otherwise. Since both heads are occupied, the tensor
+\(\sum_z I_0(z)\otimes I_1(z)\) supplies exactly the mask pairs that
+produce a common masked tail. Every such pair occurs once.
+
+Let \(u_a\) be the sum of the widths of the \emph{original} anchors
+with head \(a\), so \(u_0+u_1=1-\rho\). The exact output \(I_a(z)\)
+can be produced at cost at most \((1-u_a-\alpha)t\).
+With one anchor of head \(a\), broadcast its tail from the enlarged
+anchor. With no anchor of this head, broadcast from its designated
+enlarged satellite, of width \(\alpha\). In either case compare the
+broadcast tail with every member of the head and add \(z\) locally
+to form the mask. If both anchors have head \(a\), first compare their
+tails at cost \((\rho-2\alpha)t\). On the surviving domain their
+union, of width one, broadcasts the common tail at zero cost.
+These operations use the domain version of Lemma~\ref{lem:broadcast}.
+
+\paragraph{An alternative output at a repeated head.}
+Construct \(T_a(z)\) on the original groups. Give each member of head
+\(a\) its letter \(v+z\), and independently sum over a dummy \(t\)-bit
+letter for each member of the other head. A dummy satellite is summed
+at its single original site by the local vector \(\sum_v e_v\).
+A dummy anchor requires a partial diagonal, so the dummy cost is
+\((1-\rho-u_a)t\). Each satellite, real or dummy, takes part in the
+call of cost \(f(t)\). Its original site can choose locally between
+the real letter and the dummy sum. Thus the call uses the fixed split
+data for all \(r-2\) satellites.
+
+Apply the promise broadcast from the two original anchors, keep its
+output in the mask slot, and erase the temporary registers. When the
+anchors agree, every site receives their common letter.
+Lemma~\ref{lem:broadcast}(iii) bounds the net cost on the whole
+domain by \(O(\log(2|S|))\). The gate and broadcast offsets have a fixed
+product \(P_a\), padded across public branches if necessary.
+Thus \(T_a(z)\) has net cost at most
+\[
+       (1-\rho-u_a)t+f(t)+O(\log(2|S|)).
+\]
+Pad the exact output to \(\widehat I_a(z)=I_a(z)\otimes P_a\).
+
+Suppose a pair of equal original letters has head \(a\). The input
+of the original-group gate then already contains a repeat, whatever
+the dummies are. It can survive only if all its inputs agree.
+If two real tails in this head differ there is no surviving term.
+If every real tail has value \(v\), the unique surviving assignment
+sets every dummy to \(v+z\), and the broadcast acts on its promise.
+In either case \(T_a(z)=\widehat I_a(z)\).
+
+For each \(z\) use the correction
+\[
+ \widehat I_0(z)\otimes\widehat I_1(z)
+ -
+ \big(\widehat I_0(z)-T_0(z)\big)\otimes
+ \big(\widehat I_1(z)-T_1(z)\big).
+\]
+At every inadmissible column with both heads present the second
+product is zero, since one head contains a repeat. This conclusion
+holds for every output of the other head's broadcast away from its
+promise. Summing the first product over \(z\) therefore recovers
+the surviving terms of the main branch. Append \(Q\) to the
+correction and \(P_0\otimes P_1\) to the main branch, then subtract.
+On inadmissible columns with a single head both branches already
+vanish. On a constant column the correction vanishes and the return
+is \(G_S(2^t)^{\otimes2}\otimes Q\otimes P_0\otimes P_1\).
+
+\paragraph{Summing the costs.}
+The product of the two exact outputs cancels in the expansion of the
+correction. Every remaining summand uses one or two of the cheaper
+outputs \(T_a\). Relative to the price \(t+h(P_a)\) of its slot in
+the common offset, an exact head saves at least \((u_a+\alpha)t\).
+A head using \(T_a\) contributes at most
+\(f(t)-(u_a+\rho)t+O(\log(2|S|))\). Pay \(t\) for the shared \(z\).
+Since \(u_0+u_1=1-\rho\), the resulting recurrence is
+\begin{equation}\label{eq:outer-sum}
+ F(t+1)\le
+ \operatorname{lsum}\!\left(F(t),\;
+ Cg_0+\max\{f(t)-\alpha t,\;2f(t)-\rho t\}\right),
+\end{equation}
+where \(\operatorname{lsum}(x,y)=\log_2(2^x+2^y)\) and \(C\) is
+absolute. The first correction cost uses one \(T_a\), the second
+uses both. All public choices and the sum of the three surviving
+terms are included in \(Cg_0\).
+
+Set \(x=\rho t/A_*\). Since \(A_*\ge(g_0/\rho)H\) and
+\(\log r\le H\), the logarithmic term in \eqref{eq:root-rate} costs
+\(O(A_*)\) up to \(x=r\). For all \(x\ge0\), use
+\(\log(2+x)\le\log r+\log(2+x/r)\) and
+\(\log(2+y)\le C_\delta+\delta y\). Choosing \(\delta>0\) small
+enough gives
+\[
+                     f(t)\le C_1 A_*+\alpha t/8 .
+\]
+Both correction costs in \eqref{eq:outer-sum} are therefore at most
+\(C_2 A_*-\alpha t/2\), including the overhead. Iterating after
+exponentiation gives
+\[
+  2^{F(b)}
+     \le 1+2^{C_2 A_*}\sum_{t=0}^{b-1}2^{-\alpha t/2}
+     \le 1+O(2^{C_2 A_*}/\alpha).
+\]
+Finally \(\log(1/\alpha)=\log(10r/\rho)=O(A_*)\) by
+Lemma~\ref{lem:layout}. This proves the bound uniformly in \(b\).
+\end{proof}
+
+\subsection{The bound for sets}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Let \(r\ge4\), and take a nonempty sunflower-free family of \(N\)
+words of length \(k\). Embed the alphabet of each coordinate in a
+binary cube, choosing the length independently at each coordinate.
+Lemma~\ref{lem:uniform-mask} gives a gate of net cost \(O(A_*)\)
+for each cube. The enlarged groups have surplus \(9\rho/10\).
+Lemma~\ref{lem:diagonal} now gives
+\[
+                         (9\rho/10)\log_2 N\ll k A_* .
+\]
+In the binary layout \(d\ll H\), \(\ell\ll L\), \(\log |S|\ll H\),
+and \(\rho^{-1}\ll H\sqrt L\) by Lemma~\ref{lem:layout}. The split
+cost \(G=O(dqH)\) of Lemma~\ref{lem:splitdata} is \(O(H^2)\), and
+the guard and summation overheads give
+\[
+ g_0/\rho\ll H/\rho+\ell/\rho^2\ll H^2 L^2,\qquad
+ A_*\ll H(g_0/\rho+G)\ll H^3L^2 .
+\]
+Hence \(\log_2 N\ll kH^4L^{5/2}\). For \(r=3\) the fixed planar
+construction in Section~\ref{sec:plane} gives \(\log_2 N=O(k)\).
+
+For a \(k\)-uniform set family the coloring in Section~\ref{sec:words}
+retains at least an \(e^{-k}\) fraction of its members as words.
+Multiplication by \(e^k\) is absorbed by the absolute constant in
+\(B_r\). For sets of size at most \(k\), pad each member to size \(k\)
+with fresh elements belonging only to that member. Padding preserves
+all intersections between distinct members, so the bound applies to
+the original family as well.
+\end{proof}
+
+The diagonal comparison also applies when a word family contains
+sunflowers, provided a tensor on the word indices can annihilate their
+contributions. This costs only once for a whole tuple of words.
+
+\begin{corollary}[A tensor vanishing on sunflowers]\label{cor:weighted}
+Let \(r\ge3\) and let \(\mathcal W\) consist of \(N\ge1\) distinct words
+of length \(k\). Suppose an order-\(r\) array over the working field,
+indexed by \(\mathcal W^r\), has tensor rank \(R\), equals one on the
+diagonal, and vanishes on every nondiagonal tuple admissible in
+every coordinate. Then
+\[
+        \log_2 N\ll kH^4L^{5/2}+H\sqrt L\,\log_2 R .
+\]
+\end{corollary}
+\begin{proof}
+Multiply each joint word-index term in the diagonal comparison by
+the specified array entry. For a simple tensor, one representative
+of each group multiplies by its factor locally. Summing over a rank
+decomposition costs at most \(\log_2 R\). The coordinate gates kill
+every tuple with an inadmissible column. The array kills the remaining
+nondiagonal tuples, and its diagonal entries preserve the common
+offset. Thus \((9\rho/10)\log_2 N\ll k A_*+\log_2 R\) for \(r\ge4\).
+For \(r=3\) apply the same weighting to the planar comparison of
+Proposition~\ref{prop:comparison}, with the three groups of
+Section~\ref{sec:plane}. Their positive surplus and the total
+cost per coordinate are absolute constants, giving
+\(\log_2 N\ll k+\log_2 R\).
+\end{proof}
+
+The optimal base \(b_r=\sup_{k\ge1}M_r(k)^{1/k}\) is also the limiting
+growth rate as \(k\to\infty\) by the product construction of
+Abbott~\cite[Theorem~1]{Abbott66}. Take sunflower-free uniform
+families of respective set sizes \(k,l\) on disjoint ground sets, and
+form all unions of a member of each. If \(r\) of the unions formed a
+sunflower, their projections to either ground set would have constant
+pairwise intersection. If two projections there were equal, that
+common intersection would be the entire projected set. By uniformity
+every projection containing it would equal it. If no two were equal,
+the projections would themselves be a sunflower. Thus both projections
+would be constant, contradicting distinctness of the unions.
+Consequently \(M_r(k+l)\ge M_r(k)M_r(l)\), and Fekete's
+lemma applied to \(\log M_r(k)\) gives
+\[
+                         b_r=\lim_{k\to\infty}M_r(k)^{1/k}.
+\]
+The block transversals in the introduction give \(b_r\ge r-1\).
+Whether \(b_r=O(r)\) remains open.

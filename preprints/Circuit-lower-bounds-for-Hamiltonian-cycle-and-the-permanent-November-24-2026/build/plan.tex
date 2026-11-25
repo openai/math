@@ -1,0 +1,36 @@
+\begin{figure}[!hb]
+\centering
+\begin{tikzpicture}[
+  font=\small,align=center,
+  branch/.style={draw=#1,fill=#1!4,rounded corners=2pt,line width=.55pt,
+                 inner xsep=6pt,inner ysep=6pt,text width=5.25cm,minimum height=14mm},
+  finish/.style={draw=ink,fill=ink!5,rounded corners=2pt,line width=.55pt,
+                 inner sep=6pt,text width=9.0cm},
+  arrow/.style={-{Stealth[length=1.8mm]},draw=ink,line width=.55pt}]
+\node[branch=sea] (geom) at (-3.05,0)
+  {\textbf{Without expansion}\\[2pt]
+   One placement makes low-rank\\ terms cheap across every balanced cut.};
+\node[branch=rust] (comp) at (3.05,0)
+  {\textbf{With expansion}\\[2pt]
+   Compression lets a program simulate\\ a proposed circuit for its own count.};
+\node[branch=sea,below=5mm of geom] (binary)
+  {An explicit binary tensor exceeds
+   the price of these supplies.};
+\node[branch=rust,below=5mm of comp] (signed)
+  {A table of signed path counts forces a contradiction, even in the border model.};
+\node[inner sep=0pt,outer sep=0pt,fit=(binary)(signed)] (witnesses) {};
+\node[finish,below=6mm of witnesses] (both)
+  {Each witness polynomial is a projection of Hamiltonian cycle,
+   and of the permanent outside characteristic two.};
+\draw[arrow] (geom)--(binary);
+\draw[arrow] (comp)--(signed);
+\draw[arrow] (binary.south)--(binary.south|-both.north);
+\draw[arrow] (signed.south)--(signed.south|-both.north);
+\end{tikzpicture}
+\caption{The two witnesses for Theorem~\ref{thm:main}. Each verifier
+gives a projection at polynomially larger order
+(Lemma~\ref{gadget:verifier}). The counting argument also gives a
+stretched-exponential bound in the characteristics where it applies
+(Theorem~\ref{thm:stretch}).}
+\label{fig:plan}
+\end{figure}

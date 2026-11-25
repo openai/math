@@ -264,6 +264,11 @@ sources:
     id: ../preprints/An-explicit-power-saving-for-the-exact-discrete-Fourier-transform-September-25-2026/main.pdf
     type: article
 
+  - title: "An exponential bound for sunflowers"
+    authors: ["OpenAI"]
+    id: ../preprints/An-exponential-bound-for-sunflowers-November-24-2026/paper.pdf
+    type: article
+
   - title: "An exponential state lower bound for two-way nondeterministic complementation"
     authors: ["OpenAI"]
     id: ../preprints/An-exponential-state-lower-bound-for-two-way-nondeterministic-complementation-September-25-2026/paper.pdf
@@ -339,6 +344,11 @@ sources:
     id: ../preprints/Choiceless-polynomial-time-with-counting-does-not-capture-polynomial-time-September-23-2026/paper.pdf
     type: article
 
+  - title: "Circuit lower bounds for Hamiltonian cycle and the permanent"
+    authors: ["OpenAI"]
+    id: ../preprints/Circuit-lower-bounds-for-Hamiltonian-cycle-and-the-permanent-November-24-2026/paper.pdf
+    type: article
+
   - title: "Classical capacity and entropy inequalities for generalized amplitude damping"
     authors: ["OpenAI"]
     id: ../preprints/Classical-capacity-and-entropy-inequalities-for-generalized-amplitude-damping-September-24-2026/paper.pdf
@@ -392,6 +402,11 @@ sources:
   - title: "Entropy and Face Dimension of the Perfect-Matching Polytope"
     authors: ["OpenAI"]
     id: ../preprints/Entropy-and-Face-Dimension-of-the-Perfect-Matching-Polytope-September-23-2026/main.pdf
+    type: article
+
+  - title: "Euclidean geometry in the asymptotic spectrum of tensors"
+    authors: ["OpenAI"]
+    id: ../preprints/Euclidean-geometry-in-the-asymptotic-spectrum-of-tensors-November-24-2026/paper.pdf
     type: article
 
   - title: "Exact asymptotic moduli in a Daugavet subspace of L1"
@@ -512,6 +527,11 @@ sources:
   - title: "Nonuniqueness for Bounded Measurable Scalar Conductivities in Three Dimensions"
     authors: ["OpenAI"]
     id: ../preprints/Nonuniqueness-for-Bounded-Measurable-Scalar-Conductivities-in-Three-Dimensions-September-23-2026/paper.pdf
+    type: article
+
+  - title: "Paths, trees and grids separate Valiant’s hierarchy"
+    authors: ["OpenAI"]
+    id: ../preprints/Paths-trees-and-grids-separate-Valiants-hierarchy-November-24-2026/paper.pdf
     type: article
 
   - title: "Perfect completeness for 2-to-1 games"
@@ -654,6 +674,11 @@ sources:
     id: ../preprints/Strict-convexity-and-differentiability-of-the-planar-exponential-first-passage-limit-shape-September-24-2026/main.pdf
     type: article
 
+  - title: "Strongly polynomial linear programming"
+    authors: ["OpenAI"]
+    id: ../preprints/Strongly-polynomial-linear-programming-November-24-2026/paper.pdf
+    type: article
+
   - title: "Subpolynomial dimension reduction in $L_p$"
     authors: ["OpenAI"]
     id: ../preprints/Subpolynomial-dimension-reduction-in-Lp-September-23-2026/paper.pdf
@@ -667,6 +692,11 @@ sources:
   - title: "Subsphere methods for memory–sample lower bounds in noiseless Gaussian regression"
     authors: ["OpenAI"]
     id: ../preprints/Subsphere-methods-for-memory-sample-lower-bounds-in-noiseless-Gaussian-regression-September-27-2026/paper.pdf
+    type: article
+
+  - title: "Superpolynomial graph diameter of simple polytopes"
+    authors: ["OpenAI"]
+    id: ../preprints/Superpolynomial-graph-diameter-of-simple-polytopes-November-24-2026/paper.pdf
     type: article
 
   - title: "Symmetry of semialgebraic bounded domains with compact quotient"
@@ -772,6 +802,21 @@ sources:
   - title: "The logarithmic Brunn–Minkowski conjecture"
     authors: ["OpenAI"]
     id: ../preprints/The-logarithmic-Brunn-Minkowski-conjecture-September-23-2026/paper.pdf
+    type: article
+
+  - title: "The logarithmic exponent of finite Fourier transforms"
+    authors: ["OpenAI"]
+    id: ../preprints/The-logarithmic-exponent-of-finite-Fourier-transforms-November-24-2026/paper.pdf
+    type: article
+
+  - title: "The logarithmic exponent of integer multiplication on tapes"
+    authors: ["OpenAI"]
+    id: ../preprints/The-logarithmic-exponent-of-integer-multiplication-on-tapes-November-24-2026/paper.pdf
+    type: article
+
+  - title: "The matrix multiplication exponent is nine fourths"
+    authors: ["OpenAI"]
+    id: ../preprints/The-matrix-multiplication-exponent-is-nine-fourths-November-24-2026/paper.pdf
     type: article
 
   - title: "The maximal triangular Hilbert transform at the symmetric point"
@@ -895,20 +940,17 @@ sources:
     type: article
 
 related_formalizations:
-  # Imported libraries, ordered by direct import count in project Lean sources.
+  # Ordered by explicit imports in project Lean sources, excluding vendored library sources.
   - id: https://github.com/leanprover-community/mathlib4
+    relationship: builds-on
+
+  - id: https://github.com/leanprover/lean4
     relationship: builds-on
 
   - id: https://github.com/AlexKontorovich/PrimeNumberTheoremAnd
     relationship: builds-on
 
-  - id: https://github.com/n-yamaguchi-0729/ClassFieldTheory
-    relationship: builds-on
-
-  - id: https://github.com/CBirkbeck/AINTLIB
-    relationship: builds-on
-
-  - id: https://github.com/google-deepmind/formal-conjectures
+  - id: https://github.com/leanprover-community/batteries
     relationship: builds-on
 
   - id: https://github.com/math-inc/strongpnt
@@ -917,22 +959,31 @@ related_formalizations:
   - id: https://github.com/abenenson/rellich-kondrachov
     relationship: builds-on
 
-  - id: https://github.com/harfe/fixed-point-theorems-lean4
+  - id: https://github.com/ZIB-IOL/lemmata
+    relationship: builds-on
+
+  - id: https://github.com/cslib-community/complexitylib
+    relationship: builds-on
+
+  - id: https://github.com/leanprover/hex-lll
     relationship: builds-on
 
   - id: https://github.com/TauCetiProject/TauCeti
     relationship: builds-on
 
-  - id: https://github.com/fpvandoorn/carleson
+  - id: https://github.com/leanprover/hex-lll-theory
     relationship: builds-on
 
-  - id: https://github.com/lana-agents/heights
+  - id: https://github.com/n-yamaguchi-0729/ClassFieldTheory
+    relationship: builds-on
+
+  - id: https://github.com/harfe/fixed-point-theorems-lean4
+    relationship: builds-on
+
+  - id: https://github.com/leanprover/hex-gram-schmidt-mathlib
     relationship: builds-on
 
   - id: https://github.com/Aaron1011/gromov
-    relationship: builds-on
-
-  - id: https://github.com/lana-agents/iut
     relationship: builds-on
 
   - id: https://github.com/alonamaloh/schoenflies-lean
@@ -941,10 +992,38 @@ related_formalizations:
   - id: https://github.com/leanprover-community/sphere-eversion
     relationship: builds-on
 
-  - id: https://github.com/ahhwuhu/zeta_3_irrational
+  - id: https://github.com/leanprover/hex-matrix-mathlib
+    relationship: builds-on
+
+  - id: https://github.com/CBirkbeck/AINTLIB
     relationship: builds-on
 
   - id: https://github.com/BennyAvelin/AbsorptionCutoff
+    relationship: builds-on
+
+  - id: https://github.com/leanprover/cslib
+    relationship: builds-on
+
+  - id: https://github.com/leanprover/hex-matrix
+    relationship: builds-on
+
+  - id: https://github.com/Paul-Lez/HodgeConjecture
+    relationship: builds-on
+
+  # Related formalizations with zero direct imports.
+  - id: https://github.com/google-deepmind/formal-conjectures
+    relationship: builds-on
+
+  - id: https://github.com/fpvandoorn/carleson
+    relationship: builds-on
+
+  - id: https://github.com/lana-agents/heights
+    relationship: builds-on
+
+  - id: https://github.com/lana-agents/iut
+    relationship: builds-on
+
+  - id: https://github.com/ahhwuhu/zeta_3_irrational
     relationship: builds-on
 
   - id: https://github.com/lana-agents/belyi
@@ -1000,6 +1079,10 @@ status:
     - comparator_config: ComparatorChallenges/AmplitudeDamping.json
       declaration: OAI.GAD.main
       file: OAI/InformationTheory/AmplitudeDamping/Main.lean
+
+    - comparator_config: ComparatorChallenges/ArithmeticHierarchy.json
+      declaration: OAI.Hierarchy.Valiant.strict_inclusions
+      file: OAI/Hierarchy/Strict.lean
 
     - comparator_config: ComparatorChallenges/ArnoldCounterexample.json
       declaration: OAI.ArnoldCounterexample.main
@@ -1241,6 +1324,14 @@ status:
       declaration: OAI.ExactFourier.main_theorem
       file: OAI/Computability/FourierCircuit/Main.lean
 
+    - comparator_config: ComparatorChallenges/ExactFourier.json
+      declaration: OAI.LinearAlgebra.FiniteFourier.fourierComplexity
+      file: OAI/LinearAlgebra/FiniteFourier/Main.lean
+
+    - comparator_config: ComparatorChallenges/ExactFourier.json
+      declaration: OAI.LinearAlgebra.FiniteFourier.batchedFourierComplexity
+      file: OAI/LinearAlgebra/FiniteFourier/BatchedTheorem.lean
+
     - comparator_config: ComparatorChallenges/FactorGeneration.json
       declaration: OAI.Generator.single_generation_of_II1_separable_predual
       file: OAI/Analysis/FactorGeneration/Main.lean
@@ -1317,6 +1408,30 @@ status:
       declaration: OAI.HenonLaneEmden.main_nonexistence
       file: OAI/Analysis/HenonEmden/Main.lean
 
+    - comparator_config: ComparatorChallenges/Hirsch.json
+      declaration: OAI.Geometry.Hirsch.main
+      file: OAI/Geometry/Hirsch/Main.lean
+
+    - comparator_config: ComparatorChallenges/Hirsch.json
+      declaration: OAI.Geometry.Hirsch.theorem_1_1
+      file: OAI/Geometry/Hirsch/Main.lean
+
+    - comparator_config: ComparatorChallenges/Hirsch.json
+      declaration: OAI.Geometry.Hirsch.superpolynomial_graph_diameter
+      file: OAI/Geometry/Hirsch/Main.lean
+
+    - comparator_config: ComparatorChallenges/Hirsch.json
+      declaration: OAI.Geometry.Hirsch.graph_diameter_beats_polynomials
+      file: OAI/Geometry/Hirsch/Main.lean
+
+    - comparator_config: ComparatorChallenges/Hirsch.json
+      declaration: OAI.Geometry.Hirsch.not_polynomialHirsch
+      file: OAI/Geometry/Hirsch/Main.lean
+
+    - comparator_config: ComparatorChallenges/Hirsch.json
+      declaration: OAI.Geometry.Hirsch.theorem_1_2
+      file: OAI/Geometry/Hirsch/Main.lean
+
     - comparator_config: ComparatorChallenges/HodgeConjectureCMAbelianVarieties/main.json
       declaration: HodgeCM.hodge_conjecture_for_cm_abelian_varieties
       file: ComparatorChallenges/HodgeConjectureCMAbelianVarieties/Solution.lean
@@ -1372,6 +1487,14 @@ status:
     - comparator_config: ComparatorChallenges/KaplanskyQuasitrace.json
       declaration: OAI.Kaplansky.kaplansky_quasitrace_counterexample
       file: OAI/Analysis/Kaplansky/Main.lean
+
+    - comparator_config: ComparatorChallenges/LinearProgramming.json
+      declaration: OAI.Optimization.LinearProgramming.strongly_polynomial_feasibility
+      file: OAI/Optimization/LinearProgramming/Feasibility.lean
+
+    - comparator_config: ComparatorChallenges/LinearProgramming.json
+      declaration: OAI.Optimization.LinearProgramming.strongly_polynomial_optimization
+      file: OAI/Optimization/LinearProgramming/Optimization.lean
 
     - comparator_config: ComparatorChallenges/LocalSmoothing.json
       declaration: OAI.Analysis.Fourier.LocalSmoothing.Comparator.euclidean_local_smoothing
@@ -1437,21 +1560,21 @@ status:
       declaration: OAI.MatchingEntropy.entropy_main
       file: OAI/Combinatorics/PerfectMatching/Main.lean
 
+    - comparator_config: ComparatorChallenges/MatrixExponent.json
+      declaration: OAI.LinearAlgebra.SpectralBooks.square_exponent
+      file: OAI/LinearAlgebra/SpectralBooks/ExactExponent.lean
+
+    - comparator_config: ComparatorChallenges/MatrixExponent.json
+      declaration: OAI.LinearAlgebra.SpectralBooks.dual_exponent
+      file: OAI/LinearAlgebra/SpectralBooks/ExactExponent.lean
+
+    - comparator_config: ComparatorChallenges/MatrixExponent.json
+      declaration: OAI.LinearAlgebra.SpectralBooks.rectangular_exponent
+      file: OAI/LinearAlgebra/SpectralBooks/ExactExponent.lean
+
     - comparator_config: ComparatorChallenges/MatrixFields.json
       declaration: OAI.MatrixAllFields.MatrixMultiplication.AllFieldMain.omega_lt_source_constant
       file: OAI/LinearAlgebra/MatrixFields/Conclusions/AllFieldsBound.lean
-
-    - comparator_config: ComparatorChallenges/MatrixMultiplication.json
-      declaration: OAI.MatrixMultiplication.complex_omega_le_nine_quarters
-      file: OAI/LinearAlgebra/MatrixMultiplication/Main.lean
-
-    - comparator_config: ComparatorChallenges/MatrixMultiplication.json
-      declaration: OAI.MatrixMultiplication.complex_alpha_gt_93_div_200
-      file: OAI/LinearAlgebra/MatrixMultiplication/Main.lean
-
-    - comparator_config: ComparatorChallenges/MatrixMultiplication.json
-      declaration: OAI.MatrixMultiplication.complex_rectangular_omega_lt_523_div_250
-      file: OAI/LinearAlgebra/MatrixMultiplication/Main.lean
 
     - comparator_config: ComparatorChallenges/MatrixRemoval.json
       declaration: OAI.Problem348.no_polynomial_removal_bound
@@ -1473,9 +1596,25 @@ status:
       declaration: OAI.SegmentLenses.midpoint_lens_main
       file: OAI/Analysis/SegmentLenses/Main.lean
 
+    - comparator_config: ComparatorChallenges/MultitapeWeakETH.json
+      declaration: OAI.Computability.MultitapeWeakETH.main_of_weakETH
+      file: OAI/Computability/MultitapeWeakETH/Main.lean
+
+    - comparator_config: ComparatorChallenges/MultitapeWeakETH.json
+      declaration: OAI.Computability.MultitapeWeakETH.optimal_exponent_of_weakETH
+      file: OAI/Computability/MultitapeWeakETH/NearRoot.lean
+
     - comparator_config: ComparatorChallenges/Nagata.json
       declaration: OAI.Nagata.nagata_conjecture
       file: OAI/AlgebraicGeometry/PlaneCurves/Nagata.lean
+
+    - comparator_config: ComparatorChallenges/NearSquareRootMultiplication.json
+      declaration: OAI.Computability.IntegerMultiplication.sub_nlogn_integer_multiplication
+      file: OAI/Computability/IntegerMultiplication/Main.lean
+
+    - comparator_config: ComparatorChallenges/NearSquareRootMultiplication.json
+      declaration: OAI.Computability.NearSquareRoot.uniformIntegerMultiplication
+      file: OAI/Computability/NearSquareRoot/Main.lean
 
     - comparator_config: ComparatorChallenges/OddKaplansky.json
       declaration: OAI.OddKaplansky.main_theorem
@@ -1696,6 +1835,10 @@ status:
     - comparator_config: ComparatorChallenges/SubsphereCurrent.json
       declaration: OAI.SubsphereCurrent.full_current_main_scope
       file: OAI/Probability/Subsphere/Main.lean
+
+    - comparator_config: ComparatorChallenges/Sunflower.json
+      declaration: OAI.Combinatorics.Sunflower.erdosRadoSunflower
+      file: OAI/Combinatorics/Sunflower/FixedBase.lean
 
     - comparator_config: ComparatorChallenges/Superstring.json
       declaration: OAI.Superstring.main

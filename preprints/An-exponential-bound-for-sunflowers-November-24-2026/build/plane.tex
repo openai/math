@@ -1,0 +1,180 @@
+\section{A planar proof for a fixed number of petals}\label{sec:plane}
+Proposition~\ref{prop:comparison} asks for a placement with two properties.
+Sharing a word among all \(r\) groups must cost more than sharing it
+within the groups separately. At the same time, checking the agreement
+rules must have bounded cost in each coordinate, however large its
+alphabet. We will place two groups on line segments and the other
+\(r-2\) groups at points between them. In this placement, comparing
+two symbols already shared over suitable groups of sites costs a bounded
+amount.
+
+\subsection{Comparing and copying shared symbols}
+Fix a spectral point \(\varphi\) on \(S\). Let \(P,T\subseteq S\) be
+disjoint nonempty sets of sites and put \(K=P\cup T\). Each site of \(K\)
+receives a \(b\)-bit control. An \emph{equality filter} consists of
+fixed nonzero input and return tensors \(R,Q\) and controlled local maps.
+When the sites of \(P\) all read \(x\) and those of \(T\) all read \(y\),
+the maps must take \(R\) to \(\mathbf 1_{\{x=y\}}Q\). On any other
+assignment of the controls the output is unrestricted. Denote by
+\(c_b(P,T)\) the infimum of the net costs \(h(R)-h(Q)\).
+Taking \(b=\lceil\log_2|\Sigma|\rceil\) accommodates any finite alphabet
+\(\Sigma\). A one-symbol alphabet needs no test.
+
+\par\Needspace{6\baselineskip}
+\begin{theorem}[Equality testing]\label{thm:filter}
+Put \(g=w(P)+w(T)-w(K)\), \(g_-=\max\{0,-g\}\), and
+\(\ell=\log_2(2|K|)\). For every \(b\ge1\),
+\[
+        g_- b\ \le\ c_b(P,T)\
+             \le\ g_- b+Cw(K)\sqrt{b\ell}.
+\]
+In particular the cost per bit tends to \(g_-\). When \(g>0\), there
+is an equality filter of net cost at most \(Cw(K)^2\ell/g\) for every
+\(b\), where \(C\) is an absolute constant.
+\end{theorem}
+
+For an implication \((U,V)\to W\), let \(P\) read sites in both \(U,V\)
+and let \(T\) read sites in \(W\). When the implication fails, \(P\)
+reads one symbol and \(T\) a different one, so the filter gives zero.
+When all three symbols agree it returns \(Q\). Thus a positive \(g\)
+gives exactly the alphabet-independent guarantee of
+Proposition~\ref{prop:comparison}. Sections~\ref{sec:copy} and~\ref{sec:filter}
+prove the equality estimate. We will also need a second way to enforce
+an implication when the target lies between the two sources.
+
+\begin{lemma}[Copying inside a convex hull]\label{lem:segment}
+Let \(P,Z\) be disjoint nonempty sets of sites with \(w(P\cup Z)=w(P)\).
+For every \(N\ge1\), a controlled restriction on \(P\) returns
+\(Q\otimes E_Z(i)\) whenever all sites of \(P\) read \(i\in[N]\),
+for a fixed nonzero tensor \(Q\). Its net cost is at most
+\(w(P)\log_2(|Z|+2)\). For the Euclidean spectral point of
+Theorem~\ref{thm:flat}, the width condition holds whenever
+\(Z\subseteq\conv(P)\).
+\end{lemma}
+\begin{proof}
+Write \(c=|Z|\). Choose \(L\) from \(c+1,c+2\) so the characteristic
+does not divide \(L\), and let \(\zeta\) be a primitive \(L\)-th root
+of unity. Supply \(G_{P\cup Z}(L^N)\), indexing the shared basis by
+\(t=(t_1,\ldots,t_N)\in(\mathbb Z/L\mathbb Z)^N\). When a source
+reads \(i\), it deletes \(t_i\) and keeps the other coordinates in
+order. One source also multiplies by \(L^{-1}\zeta^{-ct_i}\).
+Each target maps \(e_t\) to \(\sum_{j=1}^N\zeta^{t_j}e_j\).
+
+Fix the retained source index and a tuple of target indices
+\((j_z)_{z\in Z}\). If \(m\) of them equal \(i\), summation over \(t_i\)
+contributes the factor \(L^{-1}\sum_{s=0}^{L-1}\zeta^{(m-c)s}\).
+This is zero unless \(m=c\), since \(0\le m\le c<L\).
+When \(m=c\) all phases cancel, leaving coefficient one. The output is
+therefore \(G_P(L^{N-1})\otimes E_Z(i)\). With \(w(P\cup Z)=w(P)\),
+Equation~\eqref{eq:price} gives net cost \(w(P)\log_2 L\).
+\end{proof}
+
+\subsection{The placement and its agreement rules}
+Name the two anchor groups \(A,B\) and the remaining groups
+\(Z_1,\ldots,Z_{r-2}\). In each coordinate use the rules
+\begin{equation}\label{eq:rules}
+ (A,B)\to Z_i,\qquad (A,Z_i)\to B,\qquad (B,Z_i)\to A,
+ \qquad (Z_i,Z_j)\to A\quad(i<j).
+\end{equation}
+If the anchors agree, the first rules force agreement everywhere. An
+agreeing anchor and satellite force the other anchor to agree. Two
+agreeing satellites first force agreement with \(A\), which in turn
+forces agreement with \(B\). Thus a column satisfying the rules is
+either constant or pairwise distinct.
+
+Set
+\[
+   t=\frac{1}{2(r-1)},\qquad \eta=\frac{t^2}{4},\qquad
+   y_i=1-\frac{i}{r-1}\quad (1\le i\le r-2).
+\]
+The anchors occupy the ends of two vertical unit segments at horizontal
+coordinates \(0\) and \(1+\eta\), together with the sites
+\(a_i=(0,y_i)\) and \(b_i=(1+\eta,y_i)\) on those segments.
+Group \(Z_i\) occupies the single site \((t,y_i)\). The whole placement
+has semiperimeter \(D=2+\eta\). By Theorem~\ref{thm:flat}, a group
+\(P\) has weight \(w(P)=\delta(P)/D\), with \(\delta(P)\) its
+semiperimeter. Only the anchors contribute to the sum of group weights,
+so the surplus for Proposition~\ref{prop:comparison} is
+\[
+              \rho=1-\frac{2}{2+\eta}=\frac{\eta}{2+\eta}>0 .
+\]
+
+\begin{figure}[htb]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small]
+  \begin{scope}
+    \draw[gray!65] (0,0) rectangle (3.9,2.65);
+    \fill[rust!13] (0,0)--(.65,1.8)--(0,2.65)--cycle;
+    \draw[rust!75!black] (0,0)--(.65,1.8)--(0,2.65);
+    \draw[very thick,ink] (0,0)--(0,2.65) (3.9,0)--(3.9,2.65);
+    \draw[sea,thick,dashed] (0,1.8)--(3.9,1.8);
+    \foreach \x in {0,3.9}{\foreach \y in {0,.65,1.8,2.65}
+      {\fill[ink] (\x,\y) circle(1.6pt);}}
+    \node[above] at (0,2.68) {\(A\)};
+    \node[above] at (3.9,2.68) {\(B\)};
+    \node[left] at (0,1.8) {\(a_i\)};
+    \node[right] at (3.9,1.8) {\(b_i\)};
+    \fill[rust] (.65,1.8) circle(2.2pt) node[above right,text=black] {\(Z_i\)};
+    \fill[rust] (.65,.65) circle(2.2pt) node[right,text=black] {\(Z_j\)};
+    \draw[<->,gray!80!black] (0,-.32)--node[below,text=black]{\(1+\eta\)}(3.9,-.32);
+  \end{scope}
+  \begin{scope}[xshift=6.3cm]
+    \fill[rust!10] (0,.2) rectangle (1.4,2.35);
+    \draw[gray!75] (0,.2) rectangle (1.4,2.35);
+    \draw[very thick,ink] (0,.2)--(0,2.35);
+    \draw[very thick,rust] (1.4,.2)--(1.4,2.35);
+    \foreach \y/\lab in {2.35/i,.2/j}{
+      \fill[ink] (0,\y) circle(1.8pt) node[left,text=black]{\(a_{\lab}\)};
+      \fill[rust] (1.4,\y) circle(2.2pt) node[right,text=black]{\(Z_{\lab}\)};}
+    \draw[<->,gray!80!black] (-.72,.2)--node[left,text=black]{\(d\)}(-.72,2.35);
+    \draw[<->,gray!80!black] (0,-.32)--node[below,text=black]{\(t\)}(1.4,-.32);
+  \end{scope}
+\end{tikzpicture}
+\caption{At left, \(a_i\) and \(b_i\) can copy a common symbol to
+\(Z_i\) on their joining segment. The shaded triangle is the convex hull of \(A\cup\{Z_i\}\),
+whose semiperimeter exceeds that of \(A\).
+At right, the four sites used to check \((Z_i,Z_j)\to A\)
+form a rectangle with \(d=|y_i-y_j|>t\).}
+\label{fig:placement}
+\end{figure}
+
+For \((A,B)\to Z_i\), read \(a_i\) and \(b_i\). Their segment contains
+\(Z_i\), as in Figure~\ref{fig:placement}. Lemma~\ref{lem:segment}
+copies their common label to \(Z_i\) at bounded cost. The local map
+there accepts the copied label precisely when it equals the satellite's
+own control.
+
+For \((Z_i,Z_j)\to A\), use \(P=\{Z_i,Z_j\}\) and \(T=\{a_i,a_j\}\).
+Both segments have length \(d=|y_i-y_j|\ge2t\), and their union spans
+the rectangle in Figure~\ref{fig:placement}. The corresponding
+semiperimeter gap is \(2d-(d+t)=d-t\ge t\). Theorem~\ref{thm:filter}
+applies with \(g=(d-t)/D\). For \(r=3\) there is only one satellite
+and no rule of this type.
+
+For \((A,Z_i)\to B\), let \(P\) contain \(Z_i\) and the endpoints of
+\(A\), and let \(T\) consist of the endpoints of \(B\). Adding a point
+at height \(y\in[0,1]\) and horizontal distance \(s\) from a unit
+segment increases its semiperimeter by
+\[
+  \frac{\sqrt{y^2+s^2}+\sqrt{(1-y)^2+s^2}-1}{2}
+     \ \ge\ \frac{\sqrt{1+4s^2}-1}{2} .
+\]
+The inequality follows from the triangle inequality applied to
+\((y,s)\) and \((1-y,s)\). Here \(s=t\). For \((B,Z_i)\to A\) the
+same calculation uses \(s=1+\eta-t\ge t\). In either case the
+increase is at least
+\(2t^2/(\sqrt{1+4t^2}+1)>t^2/2\), since \(t\le1/4\).
+The two anchors together span the whole rectangle. Subtracting its
+semiperimeter \(2+\eta\) leaves a gap greater than \(t^2/2-\eta=\eta\).
+Thus both filters have \(g>\eta/D\).
+
+Each filter just used reads at most five sites. The \(O(r)\) rules
+with a satellite and an anchor as antecedents therefore cost \(O(r^2)\)
+each, and the \(O(r^2)\) satellite-pair rules cost \(O(r)\) each.
+Copying from the two anchors costs \(O(1)\) per satellite.
+Since \(\rho\) is of order \(r^{-2}\), Proposition~\ref{prop:comparison}
+gives \(\log_2|\W|=O(r^5 k)\). The transfer in Section~\ref{sec:words}
+adds only \(O(k)\) to this logarithm for set families.
+This already gives an exponential bound in \(k\) for every fixed \(r\).
+Part~\ref{part:quant} obtains the stronger dependence on \(r\) by
+testing many implications together.

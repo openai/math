@@ -1,0 +1,46 @@
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+   font=\small, >=Stealth,
+   amp/.style={line width=.7pt,-{Stealth[length=1.7mm]}},
+   layer/.style={minimum width=9mm,minimum height=6.5mm,
+                 draw=ink,inner sep=1.5pt,fill=white,font=\small},
+   result/.style={layer,fill=sea!9,draw=sea}
+]
+\begin{scope}
+ \draw[ink!45] (2.4,0)--(0,0)--(0,2.2);
+ \draw[amp,ink!65] (0,0)--(2.03,0)
+       node[below right,inner sep=1pt] {$w_v$};
+ \draw[amp,sea] (0,0)--(0,2.03) node[above,inner sep=2pt] {$U_av$};
+ \draw[amp,rust] (0,0)--(18:2.03) node[right,inner sep=2pt] {$Vv$};
+ \draw[ink!55,dashed] (0,0)--(54:2.03);
+ \draw[sea,amp] (18:1.7) arc[start angle=18,end angle=54,radius=1.7];
+ \draw[sea,amp] (54:1.7) arc[start angle=54,end angle=90,radius=1.7];
+ \node[font=\footnotesize,fill=white,inner sep=.5pt] at (9:1.21) {$\phi$};
+ \node[font=\footnotesize,inner sep=.5pt] at (37:1.25) {$2\phi$};
+ \node[font=\footnotesize,inner sep=.5pt] at (73:1.25) {$2\phi$};
+\end{scope}
+\begin{scope}[shift={(4.05cm,0cm)}]
+ \foreach \y/\name in {1.55/T,.65/{T^\perp}}{
+    \node[left,inner sep=2.5pt] at (0,\y) {$\name$};
+    \draw[ink!65,-{Stealth[length=1.6mm]}] (0,\y)--(6.95,\y);
+ }
+ \foreach \x/\fiberop/\borrowop in {
+     .55/{D_3}/I,1.8/{U_a}/{B'},3.05/{D_2}/I,4.3/{U_a^*}/{(B')^*},5.55/{D_1}/I}{
+    \node[layer,fill=sea!4] at (\x,1.55) {$\fiberop$};
+    \node[layer] at (\x,.65) {$\borrowop$};
+ }
+ \node[text=rust] at (1.8,2.15) {$B$};
+ \node[text=rust] at (4.3,2.15) {$B^*$};
+ \node[result] at (7.55,1.55) {$U_a$};
+ \node[result] at (7.55,.65) {$I$};
+ \node[font=\footnotesize,text=ink] at (3.05,.04) {Execution order};
+\end{scope}
+\end{tikzpicture}
+\caption{Building \(U_a\oplus I\) on occupied coordinates. In each
+plane spanned by \(w_v\) and \(U_av\), a pair of reflections rotates
+\(Vv\) towards \(U_av\) by \(2\phi\) (shown with \(J=2\)). On the
+right, the cyclic chirp multiplies by \(D_2\) in the amplified basis.
+The two transformations of the borrowed coordinates cancel.}
+\label{fig:borrow}
+\end{figure}

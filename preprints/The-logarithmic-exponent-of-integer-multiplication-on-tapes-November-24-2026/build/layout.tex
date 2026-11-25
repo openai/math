@@ -1,0 +1,43 @@
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+ stage/.style={draw=sea,fill=sea!4,rounded corners=2pt,
+  text width=4.0cm,align=center,inner sep=5pt},
+ head/.style={font=\footnotesize,align=center},
+ block/.style={minimum width=1.22cm,minimum height=.60cm,inner sep=1pt,
+   draw=ink!30,font=\small},
+ idblock/.style={block,draw=sea,fill=sea!9},
+ depblock/.style={block,draw=rust!75,fill=rust!8},
+ zeroblock/.style={block,fill=black!2,text=ink!55}]
+\node[font=\small\bfseries] at (-3.37,1.72) {Once per endpoint};
+\node[stage] (lift) at (-3.37,.60)
+  {Put the early reserve in a basis of lifted $C$ vectors and $E$ vectors.};
+\node[stage] (late) at (-3.37,-1.20)
+  {Move $E$ to the late reserve by exchanging equal-width fields.};
+\draw[-{Stealth[length=1.6mm]},draw=sea] (lift)--(late);
+
+\node[font=\small\bfseries] at (2.05,1.72) {For each query $j$};
+\node[head] at (1.40,.85) {lifts of $C$};
+\node[head] at (2.62,.85) {$u_i,z_i$};
+\node[head] at (3.84,.85) {$E$};
+\node[head,anchor=east] at (.66,.24) {$C$};
+\node[head,anchor=east] at (.66,-.36) {$u_0,z_0$};
+\node[head,anchor=east] at (.66,-.96) {$E$};
+\foreach \x/\y in {1.40/.24,2.62/-.36,3.84/-.96}
+  \node[idblock] at (\x,\y) {$I$};
+\foreach \x/\y in {2.62/.24,3.84/.24,3.84/-.36}
+  \node[zeroblock] at (\x,\y) {$0$};
+\foreach \x/\y in {1.40/-.36,1.40/-.96,2.62/-.96}
+  \node[depblock] at (\x,\y) {$*$};
+\node[head] at (2.35,-1.63) {Early reserve, main pair, late reserve\\in physical order on both axes};
+\end{tikzpicture}
+\caption{The address change at one endpoint of a directed rectangle.
+The left-hand preparation is shared by all queries. On the right,
+columns are the prepared endpoint coordinates, and rows are their
+coordinates in the common rectangle layout. Each possible
+off-diagonal block ($*$) adds a contribution from an earlier field
+to a later one, so the remaining change and its inverse require only
+linear-time tape scans. Unshown fields retain their positions during
+this per-query change.}
+\label{fig:rectangle-layout}
+\end{figure}

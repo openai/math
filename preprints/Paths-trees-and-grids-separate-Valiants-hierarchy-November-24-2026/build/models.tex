@@ -1,0 +1,69 @@
+\section{Arithmetic models and projections}\label{sec:notation}
+
+All polynomials are formal and commutative. A circuit over \(F\) uses
+binary addition, subtraction, and multiplication gates. Its size \(s\)
+counts the operation gates. A formula is a circuit with a tree of
+gate occurrences. We allow an arbitrary affine form in the input
+variables at each leaf, free of charge. An ABP sums products of affine edge labels along source--sink paths in
+a directed acyclic graph. Its size counts both vertices and edges. These input conventions preserve the
+polynomial-size classes for families of polynomially bounded arity.
+We impose no bound on the degree of intermediate computations.
+Throughout, logarithms have base two.
+
+Series and parallel composition turn a formula into a branching program
+of linear size. A circuit can evaluate a branching program in
+topological order, summing at each vertex the value at each predecessor
+times the connecting edge label. Finally, a family in \(\VNP\) has the
+form
+\[
+          f_n(X)=\sum_{b\in\{0,1\}^{p(n)}}g_n(b,X)
+\]
+for a polynomially bounded \(p(n)\) and \((g_n)\in\VP\). Taking
+\(p(n)=0\) gives the last inclusion in Theorem~\ref{thm:main}.
+
+\paragraph{Degree-component border size.}
+Fix a homogeneous target of degree \(D\) and put \(K=\overline F\).
+The target has \emph{degree-component border size} at most \(s\) if
+its coefficient vector lies in the Zariski closure, over \(K\), of the
+degree-\(D\) components of outputs of size-\(s\) or smaller computations
+in the specified model. Approximating outputs can have terms in other
+degrees. The following lemma accounts for those terms when a substitution
+uses constants and lowers the degree.
+
+\begin{lemma}[Projection]\label{lem:projection}
+Let \(f\) be homogeneous of degree \(D\) and suppose that substituting
+affine forms for its variables gives a homogeneous polynomial \(g\).
+If \(f\) has degree-component border size at most \(s\), then in the
+same model \(g\) has degree-component border size at most
+\(O((s+1)(D+1)^2)\) for circuits and \(O((s+1)^2)\) for formulas or ABPs.
+\end{lemma}
+\begin{proof}
+First extract the degree-\(D\) component of each approximating output.
+A circuit computes all components through degree \(D\) at each gate,
+using convolution at multiplication gates. This uses
+\(O((s+1)(D+1)^2)\) gates. A size-\(s\) formula or ABP has output degree
+at most \(s+1\). Over the infinite field \(K\), interpolation in
+\(t\) at \(s+2\) distinct values isolates degree \(D\) in the scaled
+output \(f_{\rm out}(tX)\). If \(D>s+1\) the component is zero.
+Combining the scaled copies otherwise costs \(O((s+1)^2)\).
+
+Substitute the prescribed affine forms in the extracted component
+and read its component of degree \(\deg g\). For the target this
+returns \(g\). From the degree-\(D\) coefficient space to the
+degree-\(\deg g\) coefficient space, the resulting map is linear.
+It therefore takes the original target into the closure of the
+transformed outputs, with the stated size bound.
+\end{proof}
+
+\paragraph{Subgraphs and smaller alphabets.}
+The polynomial \(Z_{G,q}\) is homogeneous of degree \(|V(G)|\) and
+set-multilinear in the vertex tables. For a subgraph \(H\subseteq G\)
+and \(2\le q'\le q\), a substitution of variables, zero, and one sends
+\(Z_{G,q}\) to \(Z_{H,q'}\). Pin each unused edge to state one and allow
+only the first \(q'\) states on the retained edges. A table entry
+inconsistent with these choices is set to zero. A consistent entry
+becomes the corresponding variable at a retained vertex and becomes
+one at a deleted vertex. Each labeling of \(H\) has exactly one
+surviving extension to \(G\). This gives the projections used in the
+three witness proofs. Lemma~\ref{lem:graph-minor} extends the construction
+to graph minors.

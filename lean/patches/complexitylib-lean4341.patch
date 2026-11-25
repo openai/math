@@ -11,6 +11,19 @@ index a39c61a..ea33a70 100644
  public import Mathlib.LinearAlgebra.Matrix.Determinant.Bird.Defs
  public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
  import Mathlib.Algebra.Order.BigOperators.Group.LocallyFinite
+diff --git a/Complexity/Computability/Machines/Turing/MultiTape/Internal/BinaryCounter.lean b/Complexity/Computability/Machines/Turing/MultiTape/Internal/BinaryCounter.lean
+index 421a130..6c4f63f 100644
+--- a/Complexity/Computability/Machines/Turing/MultiTape/Internal/BinaryCounter.lean
++++ b/Complexity/Computability/Machines/Turing/MultiTape/Internal/BinaryCounter.lean
+@@ -9,7 +9,7 @@ module
+ public import Cslib.Init
+ public import Mathlib.Data.Nat.Basic
+ public import Mathlib.Logic.Function.Iterate
+-public import Mathlib.Order.SuccPred.Nat
++public import Mathlib.Data.Nat.SuccPred
+ import Mathlib.Tactic.Linarith
+ import Mathlib.Tactic.Ring
+ 
 diff --git a/lakefile.toml b/lakefile.toml
 index 7752f5b50..4b373406e 100644
 --- a/lakefile.toml

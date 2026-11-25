@@ -1,0 +1,106 @@
+\begin{proof}
+First we represent the computation by rows of local tensors. We then
+group rows into a wire network to which Theorem~\ref{thm:compressor}
+applies. At fixed final wire bits, each remaining position will yield
+one factor in the expansion.
+
+The RAM trace has a trivalent bit network with $O(U)$ rows, rounded
+to a power of two, and $w^{O(1)}$ gates and incident bits per row.
+Initialize two consecutive input bits in separate tracks of the same
+row. Split each execution step into boundedly many microsteps making at
+most one memory probe apiece, counting instruction fetches. As in the
+sorting-based memory check for RAM traces \cite{TinyRAM}, guess reads,
+check register transitions, and sort initialization and probe records
+by address and time. Adjacent records enforce each read value, starting
+with zero at an uninitialized address. Use deterministic local circuits,
+canonical padding for unused fields and a unique continuation on halt.
+Every accepting path has exactly one valid trace completion and its field
+weight is supplied at the last row. In Batcher's bitonic sorting
+network~\cite{Batcher}, each exchange layer uses fixed XOR partners.
+Successive-row connections have XOR offsets that are strings of low
+ones. The offset list has polynomial length in $w$, and the local gates,
+partners and slot numbers are computable from row and track identifiers
+in $w^{O(1)}$ steps. At any smaller cap $m$ of logarithm $O(w)$ the same construction
+uses $O(m)w^{O(1)}$ gates, as required for the universal tick.
+
+Put $S=2^{\lfloor w/2\rfloor}$ and group consecutive rows in buckets
+of $S$. A bucket contains $V^{1/2+o(1)}$ gates, and there are
+$V^{1/2+o(1)}$ buckets. This choice leaves room under the $V^{0.6}$
+bounds for both computing a local factor and describing the entire
+partition. The high row bits form a binary vector, or lane. At each lane put a
+cyclic cursor through its coordinate positions. From a cursor site use
+two arcs to the next cursor site, staying on the lane or flipping the
+current coordinate. Repeat arcs to obtain the fixed power-of-two in-
+and out-degree $d_0$ of Theorem~\ref{thm:compressor}. Base endpoints are
+distinct and the displacement of each base arc is fixed. Place the bucket
+tensor at cursor zero. Route each inter-bucket XOR offset through a
+cursor cycle, flipping its indicated coordinates. Each step is a
+permutation of the lanes. Give each offset slots numbered by exchange
+type, low source row bits and bit within the message. Relays equate
+the occupied slots and pin unused ones to zero. The prefix of the
+offset already traversed determines the original lane for a relay.
+Pad arc widths uniformly, reserving slots for every such combination of
+offset, exchange type, low source row bits and bit number. Their ranges
+give the capacities in $w^{O(1)}$ work per position.
+It follows that the number of positions $P_0$ and maximum arc width $W_0$
+satisfy
+\[
+         P_0\le (U/S)w^{O(1)},\qquad W_0\le Sw^{O(1)}.
+\]
+To evaluate a bucket or relay on given arguments, generate its rows,
+guess the local internal bits and check the wires. This takes
+$Sw^{O(1)}$ steps per path.
+
+Proposition~\ref{lem:ports} supplies port graphs over $F$, of fixed
+degree and arbitrarily large power-of-two order, in the loopless symmetric
+form required by Theorem~\ref{thm:compressor}. Fix the resulting compressor
+identities over $F$.
+The number of lane coordinates is $\log_2(U/S)+O(1)\sim w/2$, enough
+for $s$ blocks, each consuming a fixed number. For the theorem's mass
+$1/(d_0P_0)$ per arc the initial square root of energy is at most
+$d_0P_0W_0\le Uw^{O(1)}$. The final total arc width is at most
+$2^{-s}(d_0P_0W_0+O(P_0))$. Concatenate the final arc strings into $t$, using the same slice of
+$t$ at the two ends of each arc. At fixed $t$ the contraction is the
+product over final positions. An admitted history $h$ sends each whole
+old factor to one new position at every substep. Thus the input bits
+of a given row go to one $J_{h,j}$, with both bits of an external pair
+still together.
+
+For the numerical descriptors use the scans in Lemma~\ref{lem:descriptors}.
+They generate bounded lists of arc endpoints, widths, offsets, ties,
+slices, preimages and map records at each position. Motif admission uses
+binary widths as in Theorem~\ref{thm:conversion}, and layout comparisons use
+sums of squares with fixed rational coefficients after removal of the
+common scale. The number of blocks is $o(w)$, with a bounded number of
+substeps each, and all widths and counts stay polynomial in $U$.
+They therefore take $O(w)$ bits. Use fixed-length indices or lengths
+determined by earlier choices, and canonical padding. Following the
+unique destination of each initial bucket gives its final factor's
+interval list without inspecting any input value. There are at most
+$P_0$ bucket intervals. The combined time and storage are
+$P_0w^{O(1)}=V^{1/2+o(1)}$.
+
+Evaluate each factor down its tree of constituent tensors, guessing
+the summed fields and multiplying local entries. Charge the initial
+bucket costs above. At each substep charge a fixed polynomial in $w$
+times the number of positions, the total field lengths and the sum
+of $1+M_0$ over local map occurrences, where $M_0$ is the maximum
+demand width of the corresponding motif. In particular the map entries
+of Theorem~\ref{thm:conversion} can be evaluated by scanning the $O(1+M_0)$
+fixed-size selectors, checking copies and totals, and multiplying
+the selected base entries with running offsets on the bounded list of
+fields. The resulting work is $(1+M_0)w^{O(1)}$ per map. Each field
+or maximum demand uses boundedly many incident widths, and the
+constituent records go to unique final positions. The block-boundary
+energy estimate in Theorem~\ref{thm:compressor}, and its two substep estimates
+\eqref{eq:compress-shrink}, \eqref{eq:compress-refresh} within each block, bound total width at every substep by
+$Uw^{O(1)}$. Summing the charges gives the claimed total, with room
+for indexing, subroutine cleanup and sequential multiplication of
+several factors. Per factor there are at most $C^s$ constituent objects
+of width at most $C^s(W_0+1)$ for a fixed $C$, by the same theorem.
+It follows that the work and the input-bit count at each position are
+$V^{1/2+o(1)}\le V^{0.6}$ for large $w$. The bounds were obtained by
+counting fields, widths and constituent records. These are numerical
+descriptors, so the controller can compute each charge before the input
+bits arrive.
+\end{proof}

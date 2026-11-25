@@ -1,0 +1,355 @@
+\section{The price of a sphere tensor}\label{sec:sphere}
+
+How expensive can a tensor be when the dimensions of its legs are
+prescribed? Prepare the tensor at a site \(o\), then send each leg to its
+destination \(x_i\) along a wire. In the logarithmic price \(H\), a wire
+costs its length times the logarithm of its dimension. In particular,
+for every nonzero sphere tensor of Section~\ref{sec:fermions},
+\begin{equation}\label{eq:sphere-transport}
+ H(C(\mathbf h;\mathbf z);x_1,\ldots,x_k)
+ \le \sum_{i=1}^k d(o,x_i)\log\dim V_{h_i}.
+\end{equation}
+The marked points \(z_i\) determine the tensor's entries. The sites
+\(x_i\) determine its price. For legs of log dimension at most \(Na_i\),
+the cheapest such center gives an upper bound of
+\(N\inf_o\sum_i a_i d(o,x_i)\). Under the standing hypothesis
+\(\omega_F<9/4\), sphere tensors attain this bound to leading order
+(Corollary~\ref{cor:sphere-caps}).
+
+We also need to know which energies make a sphere tensor expensive
+at a given placement. We put a quadratic penalty on each leg width.
+Squared width is proportional to the energy recorded by the order of
+a collision. Theorem~\ref{thm:sphere} identifies the
+optimizing widths with distances from a weighted barycenter, whose
+weights are set by the penalties.
+
+Fix an algebraically closed field \(F\), distinct \(z_1,\ldots,z_k\in F\),
+and sites \(\mathbf x=(x_1,\ldots,x_k)\) in a complete CAT(0) spectral
+space \(X\) over \(F\), with \(k\ge2\). Write \(H_{\mathbf x}\) for the
+price at this placement and \(D\) for its scale. Let \(c=\pi/\sqrt3\)
+be the constant from Lemma~\ref{lem:dimension}. For \(N\ge1\) an integer,
+define the normalized width of energy \(h\) by \(w_N(h)=c\sqrt h/N\).
+For positive penalties \(\lambda_1,\ldots,\lambda_k\), set
+\begin{align}
+ B_N&=\max_{\mathbf h}
+ \left\{N^{-1}H_{\mathbf x}(C(\mathbf h;\mathbf z))-
+                      \sum_i\lambda_iw_N(h_i)^2\right\},
+ \label{eq:sphere-objective}\\
+ E&=\min_{o\in X}\sum_i\frac{d(o,x_i)^2}{4\lambda_i}.
+ \label{eq:sphere-energy}
+\end{align}
+Zero tensors may be discarded in the maximum. The unique minimizer \(o\)
+in~\eqref{eq:sphere-energy} is the barycenter with weights proportional
+to \(1/\lambda_i\). It lies in the closed convex hull of the \(x_i\).
+Write \(r_i=d(o,x_i)\) and \(\rho_N=\sqrt{\log(2N)/N}\).
+
+\begin{theorem}[Sphere prices]\label{thm:sphere}
+Suppose \(\omega_F<9/4\). Then
+\begin{equation}\label{eq:sphere-estimate}
+       0\le E-B_N\le O(\rho_N).
+\end{equation}
+For every choice of maximizing energies \(\mathbf e\) at each \(N\),
+\begin{equation}\label{eq:sphere-profile}
+ w_N(e_i)=\frac{r_i}{2\lambda_i}+O(\sqrt{\rho_N}),
+ \qquad
+ \frac{H_{\mathbf x}(C(\mathbf e;\mathbf z))}{N}=2E+O(\sqrt{\rho_N}).
+\end{equation}
+The constants are uniform for fixed \(k\), bounded scales \(D\), and all
+\(\lambda_i\) in a fixed compact subinterval of \((0,\infty)\).
+\end{theorem}
+
+For two sites at distance \(L\), the barycenter divides the joining
+segment in the ratio \(\lambda_1:\lambda_2\). Both limiting widths
+are therefore \(L/[2(\lambda_1+\lambda_2)]\). More generally, to
+weight site \(i\) by a mass \(a_i>0\), choose
+\(\lambda_i=1/(2a_i)\). Its width then approaches \(a_i r_i\), and the
+normalized price approaches \(\sum_i a_i r_i^2\). Section~\ref{sec:incidence}
+uses these individual widths to measure the effect of several
+simultaneous collisions.
+
+By Lemma~\ref{lem:dimension}, \(\log\dim V_h\le c\sqrt h\).
+Completing squares in~\eqref{eq:sphere-transport} gives, for any
+nonzero \(C=C(\mathbf h;\mathbf z)\),
+\begin{equation}\label{eq:sphere-squares}
+ \frac{H_{\mathbf x}(C)}{N}-\sum_i\lambda_i w_N(h_i)^2
+ \le E-\sum_i\lambda_i
+             \left(w_N(h_i)-\frac{r_i}{2\lambda_i}\right)^2 .
+\end{equation}
+The vacuum tensor, with all energies zero, has price zero. Thus the
+maximum exists, \(0\le B_N\le E\), and the optimizing widths are bounded
+uniformly in the range of Theorem~\ref{thm:sphere}, since the original
+sites have diameter at most \(D\) and \(r_i\le D\). If all sites
+coincide, zero energies attain the maximum and
+\eqref{eq:sphere-squares} proves the theorem. For the remaining case,
+the proof finds one extra site \(y_N\) satisfying
+\[
+ d(x_i,y_N)\le 2\lambda_i w_N(e_i)+O(\rho_N)\qquad(1\le i\le k)
+\]
+for every fixed maximizing tuple \(\mathbf e\). Squaring and summing
+these distances gives a lower bound on the optimizer's penalty.
+The change in its penalty from scale \(N\) to \(N+1\) then gives the
+lower bound on \(B_N\).
+
+\subsection{Pricing one additional leg}
+
+The extension must work for all collisions at once. Synchronization
+reduces that requirement to a price bound for products of sphere
+tensors in which all additional legs have the same marked position
+\(s\). A principal part at \(s=z_i\) then allows all the additional
+legs to be closed at the single site \(x_i\).
+
+\begin{lemma}\label{lem:sphere-added}
+Suppose \(\omega_F<9/4\), fix \(R>0\) and put \(\mu=\max_i\lambda_i\).
+For every \(N\ge2\) the base price has an extension of scale \(D\) to
+one more site \(y_N\) such that
+\begin{multline}\label{eq:sphere-aux}
+ H_{\mathbf x,y_N}\bigl(C((\mathbf h,g);(\mathbf z,s))\bigr)\\
+ \le N\left(B_N+\sum_j\lambda_j w_N(h_j)^2+\mu w_N(g)^2\right)
+       + O_{k,R}(D\log(2N))
+\end{multline}
+simultaneously for all \(h_j,g\le RN^2\) and \(s\in F\setminus\{z_j\}\).
+\end{lemma}
+
+\begin{proof}
+Let the \(u\)th factor in a product of \(m\) sphere tensors have energies
+\(\mathbf h_u,g_u\) and additional position \(s\). A closure inserts
+one joint state in the tensor product of the \(m\) additional argument
+spaces. By Corollary~\ref{cor:sharedprice} for rational families, it
+suffices to bound every such closure at the shared generic parameter.
+A strict violation would persist on an open set of values of \(s\)
+and of the closure coordinates, by closedness of price sublevels.
+We may therefore fix any joint state over \(F\), keep it constant
+as \(s\) varies, and bound the closed product at every regular value.
+
+If all \(g_u=0\), the closed product is a scalar multiple of the base
+product and~\eqref{eq:sphere-objective} applies.
+Otherwise a factor with \(g_u>0\) must contract at least one generator
+at \(s\) with a generator at a fixed point in every matching. Those
+contractions vanish at infinity. Thus the closed product is a rational
+tensor vanishing at infinity, with poles only at the \(z_i\), and equals
+the sum of its principal parts.
+
+At the pole \(z_i\), fuse the additional point in each factor with its
+\(i\)th point, using offsets \(1\) and \(0\), respectively. A term with
+intermediate energies \(e_u\) has Laurent order \(\sum_u(e_u-h_{ui}-g_u)\), by
+Proposition~\ref{prop:fusion}. After inserting the joint state, this term
+is a restriction of a product of base sphere tensors in which the
+\(i\)th energies have been replaced by \(e_u\). Indeed all \(m\) fusion
+maps and the joint state now act at the single site \(x_i\). The price
+of a term of negative order is therefore at most
+\begin{align*}
+ &\sum_u N\left(B_N+\sum_j\lambda_j w_N(h_{uj})^2
+             +\lambda_i\bigl(w_N(e_u)^2-w_N(h_{ui})^2\bigr)\right)
+ \\
+ &\hspace{40pt}\le \sum_u N\left(B_N+\sum_j\lambda_j w_N(h_{uj})^2
+                      +\mu w_N(g_u)^2\right).
+\end{align*}
+Indeed a principal-part term has \(\sum_u e_u<\sum_u(h_{ui}+g_u)\).
+The identity \(w_N(h)^2=c^2h/N^2\) converts this single inequality
+on total energy to the displayed bound, including factors whose
+individual Laurent orders are positive. The integers \(2e_u\) have sum at most
+\(4RmN^2\), giving at most
+\(\binom{m+\lfloor4RmN^2\rfloor}{m}\) possibilities for each \(i\).
+Thus the ordinary-sum price inequality costs \(O_{k,R}(mD\log(2N))\)
+for all principal parts. This proves the required product test with
+the error in~\eqref{eq:sphere-aux} per factor.
+\end{proof}
+
+\subsection{Recovering a wire by a collision}
+
+\begin{proof}[Proof of Theorem~\ref{thm:sphere}]
+Fix maximizing energies \(\mathbf e\), abbreviate \(u_i=w_N(e_i)\),
+and write \(Q_N=\sum_i\lambda_i u_i^2\). Choose a half-integer
+\(g\) nearest to \(N\log(2N)\). Lemma~\ref{lem:dimension} gives
+\begin{equation}\label{eq:sphere-testwidth}
+ v=w_N(g)\asymp\sqrt{\frac{\log(2N)}{N}},
+ \qquad
+ \log\dim V_g=Nv-O(\log(2N))
+\end{equation}
+for sufficiently large \(N\). We use this small but growing space to
+probe the distance from \(y_N\) to each \(x_i\). The choice
+\(v\asymp\rho_N\) balances the quadratic cost \(v^2\) of the added width
+with the normalized interpolation cost \(O(\log(2N)/N)\).
+
+Hold \(h_j=e_j\) for \(j\ne i\). Lemma~\ref{lem:width} says that the
+fusion maps at \(z_i\) give a surjection
+\begin{equation}\label{eq:sphere-surjection}
+ \bigoplus_h V_h\longrightarrow\operatorname{Hom}(V_g,V_{e_i}),
+ \qquad (a_h)_h\longmapsto\sum_h I_{e_i}(a_h,-),
+\end{equation}
+using only \(h\) with \(\sqrt h\le\sqrt{e_i}+\sqrt g+O(1)\).
+Choose \(R\) in Lemma~\ref{lem:sphere-added} large enough for these
+energies and all other \(e_j\). The bound on optimizing widths makes
+one \(R\) sufficient throughout the uniform range of the theorem.
+Choose the site \(y_N\) from that lemma. It works simultaneously
+for every choice of \(i,h\) and every regular \(s\). In the single
+sphere tensor with \(h_i=h\), extract the coefficient of
+\((s-z_i)^{e_i-h-g}\) whenever the parities agree. Fusion identifies
+this coefficient, up to a scalar sign, with \(C(\mathbf e;\mathbf z)\)
+precomposed at \(i\) by \(I_{e_i}:V_h\otimes V_g\to V_{e_i}\).
+
+The required order \(e_i-h-g\) can be positive. Each coordinate
+function is bounded at infinity, and fusion bounds its pole
+orders at the \(z_j\) by \(2RN^2\). A common denominator of degree
+\(O_{k,R}(N^2)\) consequently turns every entry into a polynomial of
+at most that degree. Interpolating at distinct regular points of \(F\)
+recovers any Laurent coefficient as the same linear combination of
+the corresponding tensor evaluations.
+
+Identify \(a\otimes f\in V_{e_i}\otimes V_g^*\) with the map
+\(b\mapsto f(b)a\). A right inverse in~\eqref{eq:sphere-surjection}
+writes this map as a sum of fusion maps, linearly in \(a\otimes f\).
+Precompose the recovered coefficients with the components of this
+inverse at \(x_i\) and add. With \(b\in V_g\) at \(y_N\), the resulting
+form is
+\[
+ (a\otimes f,b)\longmapsto f(b)\,
+             C(\mathbf e;\mathbf z)(\ldots,a,\ldots).
+\]
+Figure~\ref{fig:sphere-wire} illustrates the resulting factorization.
+The tensor is the optimizer times a wire of dimension \(\dim V_g\)
+between \(x_i\) and \(y_N\). Its price is the sum of their logarithmic
+prices.
+All \(h\) and interpolation values together contribute only polynomially
+many summands, so the ordinary-sum inequality costs \(O(\log(2N))\).
+By \eqref{eq:sphere-aux}, producing the wire can increase the old
+\(i\)th width from \(u_i\) to at most \(u_i+v+O(N^{-1})\) and adds the
+new width \(v\). Subtract the optimizer's price \(N(B_N+Q_N)\) to get
+\begin{align*}
+ d(x_i,y_N)\frac{\log\dim V_g}{N}
+ &\le \lambda_i\bigl((u_i+v+O(N^{-1}))^2-u_i^2\bigr)
+           +\mu v^2+O\!\left(\frac{\log(2N)}{N}\right)\\
+ &\le 2\lambda_i u_i v+O\!\left(v^2+\frac{\log(2N)}{N}\right).
+\end{align*}
+
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm,
+ dot/.style={circle,fill=ink,inner sep=2.5pt},
+ gate/.style={draw=ink,rounded corners=2pt,fill=ink!5,inner sep=3pt},
+ wire/.style={line width=.9pt,draw=sea}]
+ \node[font=\small\bfseries] at (-3.25,1.45) {Collision at a marked point};
+ \node[dot,label=below:{$z_i$},label=above:{$V_h$}] (old) at (-4.45,0) {};
+ \node[dot,label=below:{$s$},label=above:{$V_g$}] (new) at (-2.10,0) {};
+ \draw[-{Stealth[length=5pt]},draw=rust,line width=.8pt]
+       ([xshift=-3pt]new.west) -- ([xshift=3pt]old.east);
+ \node[font=\footnotesize] at (-3.27,-.72)
+       {coefficient gives \(I_{e_i}\colon V_h\otimes V_g\to V_{e_i}\)};
+
+ \node[font=\small\bfseries] at (3.1,1.45) {Tensor at the spectral sites};
+ \node[dot,label=below:{$a\otimes f$ at $x_i$}] (xi) at (2.73,-.15) {};
+ \node[dot,label=below:{$b$ at $y_N$}] (y) at (4.77,-.15) {};
+ \node[gate] (c) at (1.3,.58) {\(C(\mathbf e;\mathbf z)\)};
+ \draw[draw=ink,line width=.8pt] (c) -- node[above right,inner sep=1pt] {\(a\)} (xi);
+ \draw[wire] (xi) -- node[above] {\(f(b)\)} (y);
+ \draw[draw=ink] (c.west) -- ++(-.28,.15);
+ \draw[draw=ink] (c.west) -- ++(-.28,-.15);
+\end{tikzpicture}
+\caption{The collision at \(s=z_i\) supplies a fusion map for each
+admissible \(h\). Their span contains \(b\mapsto f(b)a\).
+Inserting this map gives the original tensor with input \(a\) and a
+wire joining the two spectral sites. The other legs keep their
+placements.}\label{fig:sphere-wire}
+\end{figure}
+
+The extended scale bounds \(d(x_i,y_N)\le D\). Hence
+\eqref{eq:sphere-testwidth} yields \(d(x_i,y_N)\le2\lambda_i u_i+O(v)\).
+All constants here are uniform as stated.
+
+The extension can be realized in a complete CAT(0) spectral space.
+The closed convex hull of the old sites is canonically isometric to
+their original hull by Lemma~\ref{lem:geodesic}.
+Projection onto it weakly decreases distances to the old sites.
+Consequently
+\begin{equation}\label{eq:sphere-Q}
+ E\le\sum_i\frac{d(x_i,y_N)^2}{4\lambda_i}
+     \le Q_N+O\!\left(\sqrt{\frac{\log(2N)}{N}}\right).
+\end{equation}
+This is a lower bound on the penalty paid by every optimizer. To turn
+it into a lower bound on the optimized price, reuse the same energies
+in the objective defining \(B_{N+1}\). Their price is unchanged, while
+their penalty in \((N+1)B_{N+1}\) is \(N^2Q_N/(N+1)\), compared with
+\(NQ_N\) in \(NB_N\). Thus
+\[
+ (N+1)B_{N+1}-NB_N\ge\frac{N}{N+1}Q_N.
+\]
+Sum this inequality and~\eqref{eq:sphere-Q} up to scale \(N\).
+The errors sum to \(O(\sqrt{N\log(2N)})\) and \(E\) is uniformly
+bounded. Together with \(B_N\le E\) this proves~\eqref{eq:sphere-estimate}.
+Equation~\eqref{eq:sphere-squares} now gives the width estimates
+in~\eqref{eq:sphere-profile}. The widths and their targets are bounded,
+so \(Q_N=E+O(\sqrt{\rho_N})\). Adding \(B_N\) gives the asserted price.
+\end{proof}
+
+\subsection{Prescribed widths and uniform comparison}
+
+\begin{corollary}[Prescribed widths]\label{cor:sphere-caps}
+Under the hypotheses of Theorem~\ref{thm:sphere}, fix positive width
+caps \(a_i\). Then
+\begin{equation}\label{eq:sphere-caps}
+ \lim_{N\to\infty}
+ \frac{1}{N}\max_{\mathbf h:\,w_N(h_i)\le a_i}
+            H_{\mathbf x}(C(\mathbf h;\mathbf z))
+ = \inf_{o\in X}\sum_i a_i d(o,x_i).
+\end{equation}
+Convergence is uniform over all placements of bounded scale.
+\end{corollary}
+
+\begin{proof}
+Transport gives the upper bound. Fix \(\tau>0\) and minimize
+\(\sum_i a_i\sqrt{d(o,x_i)^2+\tau^2}\) on the closed convex hull of
+the sites. For \(r\) between zero and the hull diameter the function \(r\mapsto\sqrt{r^2+\tau^2}-\epsilon r^2\) is
+convex and increasing for sufficiently small \(\epsilon>0\). The CAT(0)
+midpoint inequality then makes every minimizing sequence Cauchy, giving
+a minimizer by completeness.
+Metric projection shows that this is also a minimizer on \(X\).
+Write \(r_i=d(o,x_i)\) at this minimizer and set
+\(2\lambda_i=\sqrt{r_i^2+\tau^2}/a_i\). The tangent upper bound for the
+concave function \(s\mapsto\sqrt{s+\tau^2}\) shows that \(o\) minimizes
+\(\sum_i d(o,x_i)^2/(4\lambda_i)\) as well. Indeed the tangent
+majorant for the smoothed objective agrees with it at \(o\) and differs
+from this quadratic objective by a constant.
+
+At scale bounded by \(D_0\), we have \(r_i\le D_0\). For fixed \(\tau\)
+these penalties stay in a compact positive interval. The limiting
+widths in~\eqref{eq:sphere-profile} are
+\(a_i r_i/\sqrt{r_i^2+\tau^2}\), bounded strictly below \(a_i\) uniformly.
+Thus every maximizing tuple at large \(N\) meets the caps. Its normalized
+price is
+\[
+ 2E+o(1)
+ =\sum_i a_i\frac{r_i^2}{\sqrt{r_i^2+\tau^2}}+o(1)
+ \ \ge\ \inf_{z\in X}\sum_i a_i d(z,x_i)-\tau\sum_i a_i+o(1).
+\]
+Let \(\tau\downarrow0\) after taking \(N\to\infty\).
+\end{proof}
+
+A maximizing energy tuple in Corollary~\ref{cor:sphere-caps} can depend
+on the placement. The local construction of Section~\ref{subsec:plant-private}
+compares a single tensor against all spectral prices simultaneously.
+Taking a direct sum over the admissible energies gives that tensor at
+a logarithmic cost in each leg dimension.
+
+\begin{corollary}[A common comparison tensor]\label{cor:universal}
+Suppose \(\omega_F<9/4\). Fix the \(k\) marked positions and positive
+caps \(a_1,\ldots,a_k\). Let \(A_N\) be the direct sum of all nonzero
+\(C(\mathbf h;\mathbf z)\) with \(w_N(h_i)\le a_i\) at every leg.
+Then
+\[
+ \frac{H_{\mathbf x}(A_N)}{N}=\inf_{o\in X}\sum_i a_i d(o,x_i)+o(1)
+\]
+uniformly over placements of bounded scale in complete CAT(0)
+spectral spaces over \(F\). The \(i\)th leg of \(A_N\) has log dimension
+at most \(Na_i+O_{k,\mathbf a}(\log(2N))\).
+\end{corollary}
+
+\begin{proof}
+Each leg admits \(O_{\mathbf a}(N^2)\) half-integer energies, so
+there are \(O_{k,\mathbf a}(N^{2k})\) summands. Each summand is a
+restriction of \(A_N\), and the direct-sum inequality bounds the price
+of \(A_N\) by the largest summand price plus
+\(O_{k,\mathbf a}(D\log(2N))\). Corollary~\ref{cor:sphere-caps} now
+gives the stated limit. Each \(i\)th summand leg has dimension at most
+\(e^{Na_i}\) by Lemma~\ref{lem:dimension}, so summing those dimensions
+gives the claimed bound.
+\end{proof}

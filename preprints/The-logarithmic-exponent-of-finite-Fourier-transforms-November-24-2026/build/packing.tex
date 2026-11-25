@@ -1,0 +1,412 @@
+\section{Polynomial convolution over arbitrary fields}\label{sec:pack}
+
+Multiplying two polynomials of degree less than $n$ amounts to
+computing the convolution of their two coefficient lists. If the field
+contains suitable roots of unity, one can evaluate both polynomials,
+multiply their values pointwise and interpolate. We will obtain the same
+logarithmic exponent over fields that may lack those roots.
+
+\begin{theorem}[Formal polynomial multiplication]\label{thm:conv}
+For every $\alpha>1/2$, a division-free circuit over $K$ computes the
+$2n-1$ coefficients of the product of two length-$n$ polynomials in
+$O_\alpha(n(1+\log n)^\alpha)$ binary additions, subtractions and
+multiplications. The count includes multiplication by prescribed scalars
+and the implied constant is uniform over all fields $K$.
+\end{theorem}
+
+Each scalar in a root extension of degree $e$ occupies $e$ base-field
+coordinates. We use each coordinate to hold input coefficients or
+their products. The computation is a convolution on $N$ cyclic
+addresses, carrying $r$ extension scalars per address as the
+coefficients of a truncated polynomial.
+Its total dimension $erN$ is comparable to the original length $n$.
+Multiplying at one address reduces to ordinary convolution over $K$
+at a length $O(er)$ whose logarithm is much smaller than $\log n$.
+
+The choice of $N$ supplies a grid of small prime axes. In positive
+characteristic the extension contains the required roots on every axis.
+In characteristic zero we adjoin roots of order $p-1$ on an axis of
+prime length $p$. A change of basis and a polynomial deformation then
+give a pointwise multiplication using these shorter transforms.
+Cantor and Kaltofen gave a convolution algorithm over arbitrary
+algebras using $O(n\log n\log\log n)$ operations
+\cite{CantorKaltofen}. For smooth extension degrees and many-axis
+transforms in polynomial arithmetic see
+\cite{harveyhoevenfinite,harveyhoevenconditional}.
+
+\subsection{Packing the product without wraparound}
+
+Suppose $E=K(\xi)$ has degree $e$, and choose positive integers $r,N$
+with $8n\le erN\le9n$. Write $J_h=E[z]/(z^h)$ for truncated
+polynomials of length $h$ (jets). In $J_r[X]/(X^N-1)$ the monomials
+$\xi^a z^b X^j$, $0\le a<e$, $0\le b<r$, $0\le j<N$, form a
+$K$-basis. To pack the inputs, reserve half of the room on each axis
+for the growth in exponents when two monomials are multiplied.
+Take radices
+\[
+ E_0=\lceil e/2\rceil,\qquad R=\lceil r/2\rceil,\qquad
+ U=\lceil N/2\rceil.
+\]
+Since $E_0 RU\ge erN/8\ge n$, each input fits in the lower part of this
+array. With $0\le a<E_0$, $0\le b<R$ and $0\le j<U$, place its coefficients
+by the rule
+\begin{equation}\label{poly:eq:mixed-radix-packing}
+           a+E_0 b+E_0 Rj \quad\longmapsto\quad \xi^a z^b X^j,
+\end{equation}
+padding unused positions with zeros. The inequality
+$2(\lceil k/2\rceil-1)<k$ applied at $k=e,r,N$ shows that
+multiplying two occupied monomials adds their exponents without
+reduction by the minimal polynomial of $\xi$, by $z^r$, or by $X^N-1$.
+
+In the product, gather every coordinate $(a,b,j)$ with
+$0\le a<e$, $0\le b<r$ and $0\le j<N$ by the integer $a+E_0 b+E_0 Rj$, retaining
+indices $0,\ldots,2n-2$. Different triples can contribute to the same
+index because of carries in the smaller radices. The index of each
+product monomial is the sum of its two input indices, so gathering
+gives ordinary convolution at all $2n-1$ outputs. Packing and
+gathering cost $O(erN)$.
+
+\subsection{Choosing the cyclic length and the field extension}
+
+Put $T=\lceil\log n\rceil$. There is an absolute $C$ such that, with
+$B=CT$ and for all sufficiently large $T$, there is a list of distinct odd primes
+$p_i\le B$ whose product exceeds $n^2$ and
+\[
+ \log\mathrm{lcm}_i(p_i-1)=O(B^{4/5}\log B).
+\]
+We may omit any one forbidden prime. Shifted smooth primes have a similar role in matrix nonrigidity
+\cite[Section~4]{DvirLiu}.
+To see the claim, count primes $p\in[B/2,B]$
+with $p\equiv1\bmod q$, summing over primes $B^{1/5}\le q\le B^{1/4}$.
+By the Bombieri--Vinogradov theorem
+\cite{BombieriV}, the sum is
+\[
+  (\operatorname{Li}(B)-\operatorname{Li}(B/2))
+              \sum_q 1/(q-1)+O(B/(\log B)^2)
+   = \Omega(B/\log B)
+\]
+by Mertens' theorem. Each $p$ is counted at most five times.
+All prime factors of each $p-1$ are at most $B^{4/5}$, so
+there are at most $B^{4/5}$ prime powers (largest power for each prime)
+to include in the least common multiple, and each is at most $B$.
+Taking $C$ large gives the claim.
+
+Let $\ell=2$ except in characteristic two, where we take $\ell=3$.
+This makes the radix invertible in $K$. In positive characteristic
+also omit the characteristic from the list of primes.
+In characteristic zero take primitive roots of all orders $p_i-1$,
+and in positive characteristic take primitive roots of all orders $p_i$.
+In both cases include a primitive root at the largest $\ell$-power
+at most $8B$. Its powers supply the smaller radix lengths.
+Let $E=K(\xi)$, where $\xi$ is a primitive root of order the least
+common multiple of all these orders, and put $e=[E:K]$.
+
+We claim that $\log e=O(B^{4/5}\log B)$. In characteristic zero
+the order of $\xi$ bounds $e$, so the claim follows from the estimate
+on the least common multiple of the $p_i-1$. In characteristic $b>0$,
+we can choose $\xi\in\mathbb F_{b^D}$ for
+\[
+ D= \mathrm{lcm}_i(p_i-1)\cdot\varphi(\text{largest $\ell$-power up to $8B$}).
+\]
+Indeed $b$ is a unit modulo every required order. Its order modulo
+$p_i$ divides $p_i-1$, and its order modulo any required $\ell$-power
+divides the indicated totient. Hence $b^D-1$ is divisible by all the
+orders. Since $E\subseteq K\mathbb F_{b^D}$, we have $e\le D$, as
+required.
+
+Take $N=\prod_{i=1}^d p_i$ from the longest prefix with
+$eN\le n/B$.
+Since $e=2^{o(T)}$ while the full product exceeds $n^2$, the
+prefix is nonempty and has a next prime for all large $T$. That prime
+is at most $B$ and would violate the upper bound, so
+$n/B^2<eN\le n/B$. Choose an integer $r$ so that
+\[
+                8n\le erN\le 9n.
+\]
+The number $d$ of axes is at most $B$, and $B\le r\le9B^2$. In
+particular
+\[
+             erN=\Theta(n),\qquad \log(6er)=O(T^{4/5}\log T).
+\]
+The first estimate accounts for the storage used by the packing above.
+The second provides the saving in the recursive calls.
+
+\subsection{Counting gates over the base field}
+
+Let $M_K(j)$ denote the minimum circuit size of ordinary length-$j$
+polynomial convolution over $K$. To charge a family of shorter
+convolutions by its total operand length, put
+$\mu_K(s)=1+\max_{1\le j\le s}M_K(j)/j$.
+
+\begin{lemma}[Multiplication and shifts in jet coordinates]\label{poly:lem:descent-jet-cost}
+Multiplication in $J_h$ costs $O(eh\mu_{K}(2eh))$ gates.
+In characteristic zero, for any fixed $c\in K$, the shift $P(z)\mapsto P(z+c)$ of a
+degree-$<h$ polynomial over $E$ costs $O(eh\mu_{K}(h))$ gates.
+\end{lemma}
+\begin{proof}
+Represent the two jet inputs by bivariate polynomials of degrees $<e$
+in $Y$ and $<h$ in $z$. Substitute $Y=w$ and $z=w^{2e-1}$. Raw product
+exponents in $Y$ are at most $2e-2$, so the substitution separates the
+rows of the product. Each packed operand has length at most $2eh$.
+Multiply as ordinary polynomials over $K$. Keep the first $h$ rows and reduce each modulo the fixed monic minimal
+polynomial $D$ of $\xi$ over $K$. For a row $V=DQ+S$ of degree $<2e$
+with $\deg S<e$, reversing at degrees $2e-1,e,e-1$ gives
+\begin{equation}\label{poly:eq:reciprocal-reduction}
+  V^{\rm rev}\equiv D^{\rm rev}Q^{\rm rev}\pmod {Y^e}.
+\end{equation}
+Truncate $V^{\rm rev}$ modulo $Y^e$, multiply there by the precomputed
+inverse of $D^{\rm rev}$, reverse the quotient, and subtract $DQ$. The two products per row
+have operand lengths at most $e+1\le2e$. This reduction uses only
+monicity and works over any coefficient ring. Together with the packed
+product, all these multiplications have total operand length $O(eh)$.
+
+For the shift, the new coefficient of $z^b$ is
+\[
+  \frac1{b!}\sum_{j=b}^{h-1} j!\,[z^j]P\,
+                             \frac{c^{j-b}}{(j-b)!}.
+\]
+After reversal this is one fixed convolution of length $h$ per
+$K$-coordinate, together with fixed scalings.
+\end{proof}
+
+A convolution with a fixed operand is a linear map at the same
+asymptotic cost, even when the available multiplication circuit is an
+arbitrary division-free circuit. Retain the constant and linear parts
+of each wire in the remaining input. At a product gate the linear part
+is $a_0b_1+a_1b_0$, where $a_0,b_0$ are precomputed constants.
+The linear output is the required map.
+
+Consider one layer of Section~\ref{sec:lay} on $V=O(N)$ registers
+with entries in $J_h$. A shear block of size $2^j$ acts independently
+on the $eh$ base-field coordinates of each entry. Since $j=O(1+T)$,
+Lemma~\ref{lem:shear} bounds its cost by
+$O_\beta(2^j eh(1+T)^\beta)$ for $\beta>1/2$. A monomial layer needs
+at most $V$ multiplications by prescribed jet scalars. Summing the block sizes for the shear layer and applying
+Lemma~\ref{poly:lem:descent-jet-cost} to the monomial layer bounds
+the cost in either case by
+\begin{equation}\label{poly:eq:descent-sync}
+ O_\beta\big(Veh((1+T)^\beta+\mu_K(2eh))\big).
+\end{equation}
+For a tensor product of Fourier matrices of sides $a\le B$, suppose
+their orders are invertible and their roots are in $E$. On each axis
+take the least $\ell$-power at least $2a$, which is less than $6a$.
+The roots for this auxiliary length are in $E$ by construction.
+Radix stages and Lemma~\ref{up:toeplitz} give a word of
+$O(1+\log B)$ layers on each axis with a bounded ratio of workspace
+to data. Lemma~\ref{up:fibers} synchronizes the axis words in the same
+depth and at constant total workspace overhead. Thus the cost of the
+whole transform is Equation~\eqref{poly:eq:descent-sync} times
+$O(1+\log B)$.
+
+\paragraph{Positive characteristic.}
+Chinese remaindering identifies the cyclic $N$-address space with a
+$p_1\times\cdots\times p_d$ grid under componentwise addition.
+Every axis order is invertible and $E$ contains a primitive root of
+each order. Two forward transforms, $N$ products in $J_r$, and one
+inverse transform therefore compute cyclic convolution. Fix
+$1/2<\beta<\alpha$. Since $erN=\Theta(n)$, this costs at most
+\begin{equation}\label{poly:eq:descent-cost}
+ O_\beta\big(n(1+\log B)((1+T)^\beta+\mu_K(6er))\big).
+\end{equation}
+The argument in characteristic zero will allow jets of length $3r$,
+which accounts for the factor $6$ here.
+
+\subsection{A binomial coordinate on a prime axis in characteristic zero}
+
+We now pass from the prime axis of length $p$ to an axis of length
+$p-1$, whose roots lie in $E$.
+Fix a prime $p$ from the list, put $m=p-1$, and choose a primitive
+$m$th root $\omega\in E$. Let
+$A=E[x]/(1+x+\cdots+x^{p-1})$.
+
+\begin{lemma}[Prime cyclic algebra in binomial coordinates]\label{poly:lem:descent-prime}
+There is a $\lambda\in E^\times$ and an isomorphism
+\[
+ E[x]/(x^p-1)\simeq E\times E[Y]/(Y^m-\lambda).
+\]
+The coordinate change in either direction has a word of
+$O(1+\log p)$ layers on its $p$ coordinates with $O(p)$ restored workspace.
+\end{lemma}
+\begin{proof}
+The factors $x-1$ and $1+x+\cdots+x^{p-1}$ are coprime since the
+second takes the nonzero value $p$ at $1$. Chinese remaindering
+gives a scalar coordinate by evaluation at $1$ and a second coordinate
+in $A$. Choose a generator $g$ of $(\Z/p\Z)^\times$.
+Order the nonzero residues by powers of $g$, as in Rader's
+prime-length Fourier transform~\cite{rader}. The powers $x^{g^t}$ for
+$0\le t<m$, with exponents taken modulo $p$, form a basis of $A$. They span since their sum is $-1$, and there
+are $m=\dim_E A$ of them. The automorphism $x\mapsto x^g$ permutes
+them cyclically. Its Fourier eigenbasis consists of the Lagrange resolvents
+\[
+ \gamma_j=\sum_{t=0}^{m-1}\omega^{-jt}x^{g^t},
+ \qquad 0\le j<m,
+\]
+with eigenvalues $\omega^j$ and $\gamma_0=-1$. The algebra $A$ is
+reduced because its defining polynomial has simple roots. Hence the
+nonzero element $\gamma=\gamma_1$ has nonzero powers. In particular
+$\gamma^m$ belongs to the invariant line $E\cdot1$ and equals a
+nonzero scalar $\lambda\in E^\times$. Thus $\gamma$ is a unit even
+when $A$ is a product of fields. For $1\le j<m$ we have
+$\gamma^j=\kappa_j\gamma_j$ for some $\kappa_j\in E^\times$.
+Thus $Y\mapsto\gamma$ identifies the binomial quotient with $A$.
+
+In the cyclic algebra write an input as
+$v_*+\sum_t v_t x^{g^t}$ and set $w_j=\sum_t\omega^{jt}v_t$.
+Fourier inversion gives its image in $A$ as
+$v_*+m^{-1}\sum_j w_j\gamma_j$. The coordinate in the scalar factor,
+the constant coefficient in the binomial factor, and its positive-degree
+coefficients are respectively
+\[
+  v_*+w_0,\qquad v_*-w_0/m,\qquad
+  \frac{w_j}{m\kappa_j}\quad(1\le j<m).
+\]
+Lemma~\ref{up:toeplitz}, using the least $\ell$-power at least $2m$ as working length, applies the transform on its $m$
+coordinates with restored workspace while leaving $v_*$ in place. The remaining two-coordinate
+map has determinant $-p/m$, so it and its inverse have constant-length
+words by elementary elimination and the shear construction.
+The other steps are permutations and nonzero scalings.
+The inverse transform is a forward transform at $\omega^{-1}$ followed
+by scaling by $1/m$.
+\end{proof}
+
+For $p=3$ the nonconstant eigenvector is $\gamma=x-x^2$. The relation
+$x^2+x+1=0$ gives $\gamma^2=-3$, so the binomial factor in this case
+is $E[Y]/(Y^2+3)$.
+
+The Chinese remainder isomorphism on the address group sends $X^j$
+to the monomial of exponents $(j\bmod p_\nu)_\nu$. It identifies
+$J_r[X]/(X^N-1)$ with the tensor product of the prime cyclic algebras
+over $J_r$ by a permutation of coefficients. Apply
+Lemma~\ref{poly:lem:descent-prime} on all axes and distribute this tensor
+product over the scalar and binomial factors. The resulting blocks
+are indexed by subsets $S\subseteq\{1,\ldots,d\}$. Writing
+$m_\nu=p_\nu-1$, the block for $S$ is
+\[
+ \mathcal T_S=J_r[Y_\nu:\nu\in S]/
+             (Y_\nu^{m_\nu}-\lambda_\nu:\nu\in S).
+\]
+Its width is $W_S=\prod_{\nu\in S}m_\nu$, and
+$\sum_S W_S=\prod_\nu(1+m_\nu)=N$. By
+\eqref{poly:eq:descent-sync} and Lemma~\ref{up:fibers}, both input conversions and the final inverse
+conversion fit within \eqref{poly:eq:descent-cost}.
+
+\subsection{Multiplying a block with one deformation parameter}
+Fourier evaluation would multiply each block pointwise if its defining
+binomials split, but $\lambda_\nu$ need not have an $m_\nu$th root in $E$.
+We connect the block to one with relations $Y_\nu^{m_\nu}=1$ by varying a
+single parameter $t$. We compute the product in a truncation at $t=0$
+long enough to recover its coefficients as polynomials in $t$, then take
+their Taylor expansions at $t=1$. Li, Moreno Maza and Schost used a common parameter
+to deform relations in separate variables~\cite[Section~2.2, proof of Theorem~2]{triangularLMS}.
+Bostan, Chowdhury, van der Hoeven and Schost developed the method for
+triangular sets~\cite[Section~4.2, Proposition~7]{homotopyBCHS}.
+Here the inputs themselves carry $r$ coefficients in the parameter,
+and each binomial relation adds at most one to the degree required
+for recovery.
+
+\begin{lemma}[Multiplication through a split block]\label{poly:lem:descent-deform}
+Let $H=2r+d$. Multiplication in $\mathcal T_S$ reduces to a tensor
+Fourier transform on each of two arrays over $J_H$, one inverse tensor
+transform, $W_S$ pointwise products in $J_H$, and a constant number
+of jet scalings and polynomial shifts per basis monomial. The Fourier
+axes have widths $m_\nu$, $\nu\in S$.
+\end{lemma}
+\begin{proof}
+Use the $E[t]$-algebra
+\[
+ \mathcal A=E[t][Y_\nu:\nu\in S]/
+ \bigl(Y_\nu^{m_\nu}-f_\nu(t):\nu\in S\bigr),
+ \qquad f_\nu(t)=1+(\lambda_\nu-1)t.
+\]
+Its basis over $E[t]$ consists of the monomials whose exponent on each axis
+is less than $m_\nu$, by successive division by the separate monic
+relations. Use this same basis after each specialization. For the
+$p=3$ example above the relation is $Y^2=1-4t$. In the product
+$(a+bY)(c+dY)$ of two constant lifts, the scalar coefficient is
+$ac+bd(1-4t)$. A single wrap changes its value from $ac+bd$ at $0$
+to $ac-3bd$ at $1$.
+
+Use $z_1=t-1$ for the parameter in $J_r$ at $t=1$, and $z_0=t$
+for the parameter in $J_H$ at $t=0$. At the first endpoint, the map
+from the specialized algebra to $\mathcal T_S$ sends the class of
+$Y_\nu$ to $u_\nu Y_\nu$, where
+$u_\nu^{m_\nu}=f_\nu(1+z_1)/\lambda_\nu$.
+At the second endpoint the target is the split block with
+$Y_\nu^{m_\nu}=1$. The corresponding map sends the class of $Y_\nu$
+to $v_\nu Y_\nu$, where $v_\nu^{m_\nu}=f_\nu(z_0)$.
+Each right-hand side has constant term one. The root with constant term
+one exists and is unique, since the next unknown coefficient occurs
+with multiplier $m_\nu\in E^\times$. These assignments respect the
+defining relations and multiply each basis monomial by a unit.
+We precompute that multiplier and its inverse for each monomial.
+
+Start with two elements of $\mathcal T_S$ and undo the isomorphism
+at $t=1$. For each coefficient choose its degree-$<r$ representative
+in $z_1$ and substitute $t-1$ for $z_1$. These coefficients specify lifts
+of the two elements to $\mathcal A$. In a product of basis monomials
+$Y^aY^b$, the coefficient introduced by reduction is
+\[
+  \prod_{\nu\in S:\ a_\nu+b_\nu\ge m_\nu} f_\nu(t).
+\]
+Each axis contributes at most one factor, so the coefficient polynomials
+of the lifted product have degree at most $2r-2+|S|<H$. Consequently their residues modulo $t^H$ give every coefficient of
+the actual product polynomial. Reading these representatives in $E[t]$
+lets us evaluate at $t=1+z_1$ even though the local calculation used
+only jet arithmetic at zero (Figure~\ref{poly:fig:deformation}).
+\input{poly-deformation-figure}
+
+To compute these residues, pad the lifted coefficients to length $H$,
+apply the isomorphism at zero, and evaluate at the $m_\nu$th roots of
+unity on every axis. This identifies the split algebra with a product
+of $W_S$ copies of $J_H$ because each Fourier evaluation is invertible
+over $E$. Multiply pointwise, invert the tensor evaluation, and undo
+the isomorphism at zero. Read the resulting length-$H$ coefficient
+arrays as the actual product polynomials in $t$. Substitution of $1+z_1$
+followed by truncation modulo $z_1^r$ specializes the product at the first
+endpoint. The isomorphism there returns the required product in
+$\mathcal T_S$. For $S=\varnothing$ the tensor evaluations are identities.
+\end{proof}
+
+For the three tensor transforms in a block $S$,
+use \eqref{poly:eq:descent-sync} times $O(\log B)$, with volume
+$V=W_S$, jet length $H\le3r$. The return transforms use
+the same estimate as the forward transforms. The pointwise
+products and the scales and shifts in the deformation lemma
+also fit by Lemma~\ref{poly:lem:descent-jet-cost}
+(shift by $\pm1$).
+Summing over blocks proves the cyclic multiplication
+bound~\eqref{poly:eq:descent-cost} in characteristic zero as well.
+
+\begin{proof}[Proof of Theorem~\ref{thm:conv}]
+Packing our ordinary convolution gives, in every characteristic and for all large $n$,
+\[
+ M_K(n)/n=O_\beta((1+\log T)((1+T)^\beta+\mu_K(6er))),
+ \qquad \log(6er)=O(T^{4/5}\log T).
+\]
+For large $n$ we have $6er<n$. Induct on $n$ with the uniform
+bound $M_K(n)/n\le C'(1+T)^\alpha$. The direct layer term contributes
+$O_\beta((1+\log T)(1+T)^\beta)=o(T^\alpha)$.
+Under the induction hypothesis the recursive term contributes at most
+\[
+  O_\beta\!\left((1+C')(1+\log T)
+                       (1+T^{4/5}\log T)^\alpha\right)
+     =(1+C')o(T^\alpha).
+\]
+Choose a threshold, independent of $K$ and $C'\ge1$, at which these
+terms fit the claimed bound. Below it direct multiplication supplies
+the base cases after increasing $C'$.
+\end{proof}
+
+\begin{corollary}[Fixed convolution and Toeplitz matrices]\label{cor:toe}
+With $\alpha$ as above, any length-$n$ fixed convolution,
+and hence any Toeplitz matrix on $n$ coordinates, has binary linear circuits over
+the same field of size $O_\alpha(n(1+\log n)^\alpha)$.
+\end{corollary}
+\begin{proof}
+Specialize one operand in Theorem~\ref{thm:conv} and retain the
+linear parts at the gates. For a Toeplitz matrix $(t_{i-j})_{0\le i,j<n}$,
+multiply the input polynomial by
+$\sum_{k=-(n-1)}^{n-1}t_kX^{k+n-1}$ after padding to length $2n-1$.
+The coefficient at $i+n-1$ is the desired output at $i$. These fixed
+linear maps will supply the large axes in Section~\ref{sec:last}.
+\end{proof}

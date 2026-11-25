@@ -1,0 +1,180 @@
+--- a/HexBareiss/Bareiss.lean
++++ b/HexBareiss/Bareiss.lean
+@@ -237,7 +237,7 @@
+ 
+ /-- If pivot search fails, every entry in the searched suffix of the pivot
+ column is zero. -/
+-@[grind]
++@[grind .]
+ theorem findPivot?_eq_zero_of_none [Zero R] [DecidableEq R]
+     (M : Matrix R n n) (col : Fin n)
+     (start : Nat) (hfind : findPivot? M col start = none)
+@@ -979,7 +979,7 @@
+ 
+ omit [One R] [Neg R] in
+ /-- With zero fuel, the row-pivoted Bareiss loop returns its input state. -/
+-@[grind]
++@[grind =]
+ theorem pivotLoopWith_zero_fuel (state : BareissState R n) :
+     pivotLoopWith quot 0 state = state := by
+   rfl
+@@ -987,7 +987,7 @@
+ omit [One R] [Neg R] in
+ /-- If the current step is already past the last update step, the row-pivoted
+ Bareiss loop returns its input state. -/
+-@[grind]
++@[grind =]
+ theorem pivotLoopWith_done (fuel : Nat) (state : BareissState R n)
+     (hDone : ¬ state.step + 1 < n) :
+     pivotLoopWith quot (fuel + 1) state = state := by
+@@ -997,7 +997,7 @@
+ /-- If the current row-pivoted Bareiss pivot is already nonzero, one loop
+ iteration applies `stepMatrixWith quot`, advances the step, and recurses without
+ changing the row-swap counter. -/
+-@[grind]
++@[grind =]
+ theorem pivotLoopWith_of_regular_no_swap (fuel : Nat) (state : BareissState R n)
+     (hDone : state.step + 1 < n)
+     (hp : state.matrix[state.step][state.step] ≠ 0) :
+@@ -1014,7 +1014,7 @@
+ omit [One R] [Neg R] in
+ /-- If the current pivot is zero and pivot search finds no replacement row,
+ the row-pivoted Bareiss loop records a singular step. -/
+-@[grind]
++@[grind =]
+ theorem pivotLoopWith_of_singular_no_pivot (fuel : Nat) (state : BareissState R n)
+     (hDone : state.step + 1 < n)
+     (hp0 : state.matrix[state.step][state.step] = 0)
+@@ -1030,7 +1030,7 @@
+ /-- If the current pivot is zero, pivot search finds a replacement row, and
+ the swapped pivot is nonzero, one loop iteration swaps rows, applies
+ `stepMatrixWith quot`, advances the step, increments the row-swap counter, and recurses. -/
+-@[grind]
++@[grind =_]
+ theorem pivotLoopWith_of_regular_swap (fuel : Nat) (state : BareissState R n)
+     (hDone : state.step + 1 < n)
+     (hp0 : state.matrix[state.step][state.step] = 0) {pivot : Fin n}
+@@ -1138,7 +1138,7 @@
+ 
+ omit [One R] [Neg R] in
+ /-- With zero fuel, the no-pivot Bareiss loop returns its input state. -/
+-@[grind]
++@[grind =]
+ theorem noPivotLoopWith_zero_fuel (state : BareissState R n) :
+     noPivotLoopWith quot 0 state = state := by
+   rfl
+@@ -1146,7 +1146,7 @@
+ omit [One R] [Neg R] in
+ /-- If the current step is already past the last update step, the no-pivot loop
+ returns its input state. -/
+-@[grind]
++@[grind =]
+ theorem noPivotLoopWith_done (fuel : Nat) (state : BareissState R n)
+     (hDone : ¬ state.step + 1 < n) :
+     noPivotLoopWith quot (fuel + 1) state = state := by
+@@ -1155,7 +1155,7 @@
+ omit [One R] [Neg R] in
+ /-- If the no-pivot loop sees a zero pivot before completion, it records the
+ current step as singular. -/
+-@[grind]
++@[grind =]
+ theorem noPivotLoopWith_of_singular (fuel : Nat) (state : BareissState R n)
+     (hDone : state.step + 1 < n)
+     (hp : state.matrix[state.step][state.step] = 0) :
+@@ -1165,7 +1165,7 @@
+ omit [One R] [Neg R] in
+ /-- If the current no-pivot Bareiss pivot is nonzero, one loop iteration applies
+ `stepMatrixWith quot`, advances the step, and recurses on the remaining fuel. -/
+-@[grind]
++@[grind =]
+ theorem noPivotLoopWith_of_regular (fuel : Nat) (state : BareissState R n)
+     (hDone : state.step + 1 < n)
+     (hp : state.matrix[state.step][state.step] ≠ 0) :
+@@ -1182,7 +1182,7 @@
+ omit [One R] [Neg R] in
+ /-- Entries in rows already processed, or in columns strictly before the current
+ step, are unchanged by subsequent no-pivot loop iterations. -/
+-@[grind]
++@[grind =]
+ theorem noPivotLoopWith_matrix_entry_of_row_le_or_col_lt (fuel : Nat)
+     (state : BareissState R n) (i j : Fin n)
+     (hfixed : i.val ≤ state.step ∨ j.val < state.step) :
+@@ -1657,18 +1657,18 @@
+   stepMatrixWith_borderedMinor_update exactDiv source current k hk hnext i j hi hj
+     pivot prevPivot hpivot hentry hleft htop hexact
+ 
+-@[grind]
++@[grind =]
+ theorem pivotLoop_zero_fuel (state : BareissState Int n) :
+     pivotLoop 0 state = state :=
+   pivotLoopWith_zero_fuel (quot := exactDiv) state
+ 
+-@[grind]
++@[grind =]
+ theorem pivotLoop_done (fuel : Nat) (state : BareissState Int n)
+     (hDone : ¬ state.step + 1 < n) :
+     pivotLoop (fuel + 1) state = state :=
+   pivotLoopWith_done (quot := exactDiv) fuel state hDone
+ 
+-@[grind]
++@[grind =]
+ theorem pivotLoop_of_regular_no_swap (fuel : Nat) (state : BareissState Int n)
+     (hDone : state.step + 1 < n)
+     (hp : state.matrix[state.step][state.step] ≠ 0) :
+@@ -1682,7 +1682,7 @@
+           singularStep := none } :=
+   pivotLoopWith_of_regular_no_swap (quot := exactDiv) fuel state hDone hp
+ 
+-@[grind]
++@[grind =]
+ theorem pivotLoop_of_singular_no_pivot (fuel : Nat) (state : BareissState Int n)
+     (hDone : state.step + 1 < n)
+     (hp0 : state.matrix[state.step][state.step] = 0)
+@@ -1694,7 +1694,7 @@
+       { state with singularStep := some state.step } :=
+   pivotLoopWith_of_singular_no_pivot (quot := exactDiv) fuel state hDone hp0 hfind
+ 
+-@[grind]
++@[grind =_]
+ theorem pivotLoop_of_regular_swap (fuel : Nat) (state : BareissState Int n)
+     (hDone : state.step + 1 < n)
+     (hp0 : state.matrix[state.step][state.step] = 0) {pivot : Fin n}
+@@ -1726,25 +1726,25 @@
+           singularStep := none } :=
+   pivotLoopWith_of_regular_swap (quot := exactDiv) fuel state hDone hp0 hfind hp
+ 
+-@[grind]
++@[grind =]
+ theorem noPivotLoop_zero_fuel (state : BareissState Int n) :
+     noPivotLoop 0 state = state :=
+   noPivotLoopWith_zero_fuel (quot := exactDiv) state
+ 
+-@[grind]
++@[grind =]
+ theorem noPivotLoop_done (fuel : Nat) (state : BareissState Int n)
+     (hDone : ¬ state.step + 1 < n) :
+     noPivotLoop (fuel + 1) state = state :=
+   noPivotLoopWith_done (quot := exactDiv) fuel state hDone
+ 
+-@[grind]
++@[grind =]
+ theorem noPivotLoop_of_singular (fuel : Nat) (state : BareissState Int n)
+     (hDone : state.step + 1 < n)
+     (hp : state.matrix[state.step][state.step] = 0) :
+     noPivotLoop (fuel + 1) state = { state with singularStep := some state.step } :=
+   noPivotLoopWith_of_singular (quot := exactDiv) fuel state hDone hp
+ 
+-@[grind]
++@[grind =]
+ theorem noPivotLoop_of_regular (fuel : Nat) (state : BareissState Int n)
+     (hDone : state.step + 1 < n)
+     (hp : state.matrix[state.step][state.step] ≠ 0) :
+@@ -1758,7 +1758,7 @@
+           singularStep := none } :=
+   noPivotLoopWith_of_regular (quot := exactDiv) fuel state hDone hp
+ 
+-@[grind]
++@[grind =]
+ theorem noPivotLoop_matrix_entry_of_row_le_or_col_lt (fuel : Nat)
+     (state : BareissState Int n) (i j : Fin n)
+     (hfixed : i.val ≤ state.step ∨ j.val < state.step) :

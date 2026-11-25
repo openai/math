@@ -9,11 +9,9 @@ noncomputable section
 
 namespace MatrixMultiplication.Arithmetic
 
-variable {F : Type*} [Field F]
-
 namespace Gate
 
-variable {Input R S : Type*}
+variable {F : Type*} [Field F] {Input R S : Type*}
 
 def mapRegister (f : R → S) : Gate F Input R → Gate F Input S
   | .constant z => .constant z
@@ -36,7 +34,7 @@ end Gate
 
 namespace Program
 
-variable {Input : Type*}
+variable {F : Type*} [Field F] {Input : Type*}
 
 def oldIndex (r s : ℕ) (i : Fin r) : Fin (r + s) := ⟨s + i.val, by omega⟩
 
@@ -104,7 +102,14 @@ inductive Expression (F Input : Type*) where
 
 namespace Expression
 
-variable {Input : Type*}
+variable {F : Type*} [Field F] {Input : Type*}
+
+def cost : Expression F Input → ℕ
+  | .constant _ => 0
+  | .input _ => 0
+  | .add e f => e.cost + f.cost + 1
+  | .sub e f => e.cost + f.cost + 1
+  | .mul e f => e.cost + f.cost + 1
 
 def eval (inputs : Input → F) : Expression F Input → F
   | .constant z => z
@@ -113,12 +118,9 @@ def eval (inputs : Input → F) : Expression F Input → F
   | .sub e f => e.eval inputs - f.eval inputs
   | .mul e f => e.eval inputs * f.eval inputs
 
-def cost : Expression F Input → ℕ
-  | .constant _ => 0
-  | .input _ => 0
-  | .add e f => e.cost + f.cost + 1
-  | .sub e f => e.cost + f.cost + 1
-  | .mul e f => e.cost + f.cost + 1
+-- Keep the matcher name referenced by existing compiled modules.
+set_option linter.auxLemma false in
+abbrev eval.match_1 := @cost.match_1
 
 structure Compiled (e : Expression F Input) where
   registers : ℕ
@@ -182,6 +184,23 @@ def compile : (e : Expression F Input) → Compiled e
 
 end Expression
 end MatrixMultiplication.Arithmetic
+
+namespace LinearAlgebra.SpectralBooks
+
+open MatrixMultiplication.Arithmetic MvPolynomial
+
+variable {F I : Type*} [Field F]
+
+/-- The formal polynomial represented by an arithmetic expression. Kept with `Expression.cost`
+so Lean compiles the two recursions with the same matcher as the ArithmeticHierarchy challenge. -/
+def expressionPolynomial : Expression F I → MvPolynomial I F
+  | .constant z => C z
+  | .input i => X i
+  | .add e f => expressionPolynomial e + expressionPolynomial f
+  | .sub e f => expressionPolynomial e - expressionPolynomial f
+  | .mul e f => expressionPolynomial e * expressionPolynomial f
+
+end LinearAlgebra.SpectralBooks
 
 end
 

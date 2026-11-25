@@ -1,0 +1,435 @@
+\section{A moving family forces a lower bound of 9/4}\label{sec:motion}
+
+A tensor depending on a scalar parameter can have a different
+price-minimizing placement at each parameter value.
+Section~\ref{sec:sync} will construct these placements on a disk. We
+show that a nonconstant family satisfying the disk comparisons forces
+square matrix multiplication to have exponent at least \(9/4\). The first step is
+geometric. At the depth where a translation first moves a point, a
+rescaled neighborhood contains a tree in which two branches meet at
+the valuation of the difference of their parameters. The second step
+uses prices on four equal branches of that tree. With the fourth tip
+at a generic parameter, a label shared by all four tips has price at
+most \(3/2\) times the price of a wire spanning the diameter, to
+first order.
+Section~\ref{sec:boundary} uses collisions between the tips to pass
+from this estimate to a three-site comparison for matrix multiplication rank.
+
+Let \(F\) be algebraically closed. Take an uncountable set \(\mathcal U\)
+of indeterminates, and put
+\[
+ K_0=\operatorname{Frac}\bigl(F(\mathcal U)[t^{\mathbb Q}]\bigr),
+ \qquad \mathcal O=\{z:\nu(z)\ge0\},\qquad J=\{z:\nu(z)>0\},
+\]
+with the lowest-exponent valuation and \(\nu(0)=+\infty\).
+An indeterminate is \emph{fresh} for finite data in \(K_0\) if it
+does not occur in those data. Consider a family of sites \(x_z\),
+\(z\in J\), in a spectral space over \(F\), subject to the following
+conditions.
+\begin{enumerate}
+\item Adding the same \(w\in J\) to all indices, and permuting
+  \(\mathcal U\), preserve the prices of all tensors over \(F\).
+\item For a nonzero tensor on any finite list of slots, let \(P(c)\)
+  be its price at the sites \(x_{a_i+b_i c}\), where \(a_i,b_i\in J\).
+  With \(u\) fresh, \(P(c)\le P(u)\) for \(c\in\mathcal O\).
+  For \(c_j\in\mathcal O\) of distinct residues and positive rational
+  lengths \(s_j,s_\infty\), the same test satisfies
+  \begin{equation}\label{eq:motion-star}
+   \sum_j\frac{P(c_j+t^{s_j}u)-P(u)}{s_j}
+       +\frac{P(t^{-s_\infty}u)-P(u)}{s_\infty}\ \ge\ 0
+  \end{equation}
+  whenever the indices at the outer end lie in \(J\). Here \(u\) is
+  fresh also for the star data. Thus the price at the generic point
+  of the disk is at most the weighted mean of its end prices, with
+  weights proportional to the reciprocals of the corresponding
+  lengths. The two comparisons are the ordinary-price versions of
+  specialization and the submean inequality in Lemma~\ref{lem:star}.
+\item Some two sites have positive distance, and
+  \(d(x_0,x_z)\to0\) as \(\nu(z)\to+\infty\).
+\end{enumerate}
+The inequalities apply in particular to distances, by testing a
+two-site wire and dividing its price by the logarithm of its size.
+
+\begin{theorem}[Rigidity of analytic motion]\label{thm:motion}
+ If such a family exists, square matrix multiplication over $F$ has exact rank at least $n^{9/4}$ for each side $n$.
+\end{theorem}
+
+\subsection{The threshold for displacement}
+
+To find a scale at which motion persists after rescaling, fix a point
+under all translations of sufficiently high valuation. Its orbit
+starts to move when the valuation falls below the threshold for that
+point. We shall choose the point so that its displacement has a
+strictly negative left derivative at the threshold.
+
+By translation invariance \(x_w\ne x_0\) for some \(w\in J\). Choose
+rational \(0<b<\nu(w)\) and replace \(x_z\) by \(x_{t^b z}\). This
+still gives a nonconstant family satisfying all three conditions.
+Specialization of the wire \(d(x_0,x_{t^bc})\) bounds the radius of
+the new family by its value at a fresh \(u\). Thus we can work in the
+bounded closed convex hull \(X\) of the new sites, taken in a complete
+CAT(0) spectral extension. By the geodesic determination of prices in
+Section~\ref{sec:prices}, the symmetries act on \(X\) by
+price-preserving isometries. Write \(g_w\) for the action of translation.
+
+We first extend the affine comparisons in Condition~2 to sites
+\(g_{a_i+b_i c}A_i\) with \(A_i\in X\). If \(A_i\) is obtained by a
+finite sequence of geodesic interpolations between original sites,
+every segment in its construction undergoes the same translation as
+\(A_i\). Its length and the two distances specifying the interpolation
+point are constant across the comparison. Lemma~\ref{lem:geodesic}
+therefore extends the star inequality through each interpolation. It
+extends specialization in the same way, with the specialized placement
+as center and the generic placement as its sole end. Now approximate
+arbitrary \(A_i\) by such points and apply the transport inequality
+\eqref{eq:prices-transport}. The approximating sequences for these
+finitely many sites involve only countably many indeterminates, so one
+choice of \(u\) serves throughout. If every \(A_i\) is invariant under
+permutations, permuting indeterminates while fixing the finite test
+data makes the comparison available at any fresh \(u\).
+
+For \(r>0\) rational and \(A\in X\), take \(u\) outside a countable
+support for \(A\), such as the variables in a sequence of finite
+geodesic constructions converging to \(A\). Specialization gives
+\begin{equation}\label{eq:motion-R}
+ R(A,r):=\sup_{\nu(w)\ge r}d(A,g_w A)
+          =d(A,g_{t^r u}A).
+\end{equation}
+For any given \(w\) with \(\nu(w)\ge r\), specialization bounds its
+displacement by the generic displacement at a variable fresh for both
+\(A\) and \(w\). Permuting that variable to \(u\) while fixing a
+countable support for \(A\) gives the same bound for every \(w\).
+Conversely, \(t^r u\) itself belongs to the subgroup. Apply
+\eqref{eq:motion-star} to the distance \(d(A,g_{t^rc}A)\) with one
+inner end at zero. For positive rational \(r-s,r,r+b\) with
+\(s,b>0\), this gives
+\[
+ \frac{R(A,r)-R(A,r-s)}{s}
+ \ \le\ \frac{R(A,r+b)-R(A,r)}{b}.
+\]
+Thus \(R(A,\cdot)\) is convex. It lies between zero and
+\(\operatorname{diam}X\), so it extends continuously to \(r>0\) with
+a Lipschitz bound on each compact subinterval independent of \(A\).
+Squeezing the supremum in \eqref{eq:motion-R} between its values at
+rational depths identifies it with this extension at real depths.
+
+The common fixed set \(X_r=\{A:R(A,r)=0\}\) of the subgroup
+\(\nu(w)\ge r\) is closed and convex. The circumcenter of any orbit of
+this subgroup belongs to \(X_r\). Since the orbit of \(A\) contains
+\(A\) and fits in the ball of radius \(R(A,r)\) about \(A\), this gives
+\(d(A,X_r)\le R(A,r)\). In particular,
+\(f(r)=d(x_0,X_r)\) is positive whenever the subgroup moves \(x_0\),
+decreases with \(r\), and tends to zero by Condition~3. For
+\(0<h<r\), the projection \(A_r\) of \(x_0\) to \(X_r\) satisfies
+\[
+ 0\le f(r-h)-f(r)\le R(A_r,r-h)-R(A_r,r).
+\]
+The common Lipschitz bound makes \(f\) locally Lipschitz. Its strict
+decrease somewhere gives a depth \(r_*\) with \(f'(r_*)<0\). Fix
+\(A=A_{r_*}\). Every permutation of the indeterminates fixes \(x_0\)
+and preserves \(X_{r_*}\), so it fixes this unique projection.
+The last display bounds the left derivative of the convex function
+\(R(A,\cdot)\) at \(r_*\) by \(f'(r_*)\). To the right of \(r_*\) it
+vanishes identically. Writing \(-k<0\) for the left derivative gives
+\begin{equation}\label{eq:motion-kink}
+ R(A,r_*+h)=k(-h)_+ +o(|h|).
+\end{equation}
+
+\subsection{Rescaling at the threshold}
+
+Take rational \(\varepsilon\downarrow0\) and choose rational
+\(r_0=r_*-\varepsilon+o(\varepsilon)\). In the pointed spectral
+ultralimit at \(A\), rescale distances and prices by \(2/(k\varepsilon)\).
+For each \(z\in K_0\) take the point \(L_z\) represented by
+\[
+   g_{t^{r_0}z(t^\varepsilon)}A ,
+\]
+where the substitution fixes \(F(\mathcal U)\). For fixed \(z\) the
+translation index is in \(J\) eventually and the rescaled displacement
+is bounded by \eqref{eq:motion-kink}. Finite initial terms can be
+chosen arbitrarily. Additivity of the index substitution gives
+translation invariance for all \(z\in K_0\). Permutation invariance
+follows since every permutation fixes \(A\) and commutes with the
+substitution. To transfer the star comparison for arbitrary affine
+expressions in \(c\), observe that their coefficients become
+\(t^{r_0}a_i(t^\varepsilon),t^{r_0}b_i(t^\varepsilon)\) before passing
+to the limit. The centers \(c_j(t^\varepsilon)\) still have distinct
+residues, each star length is multiplied by \(\varepsilon\), and all
+the tested indices lie in \(J\) eventually. Thus the common factors
+in \eqref{eq:motion-star} cancel and the inequality passes to the
+ultralimit. The same argument applies to specialization.
+
+At a generic parameter the limiting distance follows directly from
+\eqref{eq:motion-R} and \eqref{eq:motion-kink},
+\[
+ d(L_0,L_{t^ru})=2(1-r)_+
+ \qquad(r\in\mathbb Q).
+\]
+The same formula holds at every parameter of that valuation. More
+precisely,
+\begin{equation}\label{eq:motion-leaves}
+ d(L_z,L_{z'})=2(1-\nu(z-z'))_+ .
+\end{equation}
+For distinct indices write \(z'-z=t^r v\) with \(\nu(v)=0\).
+Translation and specialization give the upper bound, which is already
+equality for \(r\ge1\). If \(r<1\), test \(d(L_0,L_{t^rc})\) on a star
+with two inner ends centered at zero and at \(v\). The slope on the
+zero arm of any length \(0<a<1-r\) is \(-2\). On the outer arm it is
+\(+2\), by the generic distance formula. These slopes cancel in
+\eqref{eq:motion-star}, leaving a nonnegative slope on the \(v\)-arm.
+Specialization makes that slope nonpositive, so its end distance
+equals the generic value \(2(1-r)\). Choose the length \(b\ge1-r\) on
+this arm. The upper bound already proved identifies
+\(L_{t^r(v+t^bu)}=L_{t^rv}\), which gives equality in
+\eqref{eq:motion-leaves}.
+
+\subsection{Geodesics of the disk tree}
+
+The distance formula places the leaves. To locate the branch points,
+we prove that the midpoint of two leaves lies on each geodesic joining
+one of them to a third leaf at least as far away as the other.
+
+Let \(B=L_b\), \(C=L_{b+v}\), \(d(B,C)=2h>0\),
+and let \(m\) be their midpoint. Take a star with inner ends \(0,1\),
+each of length \(h\), and outer length \(s\). On \([B,C]\), prescribe
+the point \(m\) at the center and the outer end, and \(B,C\) at the
+two inner ends. Its distances to each endpoint are harmonic for the
+weights proportional to the inverse end lengths. Lemma~\ref{lem:geodesic}
+therefore permits comparing its distance to \(L_{b+cv}\). At the inner
+ends this distance is zero by \eqref{eq:motion-leaves}. At the outer
+end it is at most \(3h+2s\) by going through \(B\). Consequently the
+generic center distance \(J_*=d(m,L_{b+uv})\) satisfies
+\[
+  0\le-\frac{2J_*}{h}+\frac{3h+2s-J_*}{s}.
+\]
+Sending \(s\) to infinity yields \(J_*\le h\), and specialization
+gives the same bound throughout the unit disk. More generally,
+\begin{equation}\label{eq:motion-midpoint}
+ d(m,L_{b+cv})\le h+2s \qquad(\nu(c)\ge-s,\ s\ge0 \text{ rational}).
+\end{equation}
+Indeed the generic value for \(c=t^{-s}u\) is convex in \(s\) by
+one-inner-end comparisons. It starts at most \(h\) and is bounded
+above by \(3h+2s\) throughout. Its secant slopes from zero are thus
+at most \(2\). Specialization proves the assertion.
+
+If \(d(B,L_z)=2h+2s\) with \(s\ge0\), apply
+\eqref{eq:motion-midpoint} with \(c=(z-b)/v\). The triangle inequality
+forces equality and \(m\in[B,L_z]\). In particular every leaf at
+distance \(2h\) from \(B\) gives the same midpoint. For each rational
+\(\ell\le1\), denote by \(P(z,\ell)\) the point of \([L_z,L_{z'}]\)
+at distance \(1-\ell\) from \(L_z\) for any sufficiently distant
+\(L_{z'}\). For \(\ell<1\) choose first \(z'\) at distance
+\(2(1-\ell)\) and use the midpoint just proved. For \(\ell=1\)
+take \(L_z\). Two distinct leaves \(L_z,L_{z'}\) at distance \(2h\)
+meet at depth \(1-h=\nu(z-z')\). Choose a third leaf sufficiently
+far from both. The midpoint test applied from each original leaf
+places their common midpoint on both geodesics to the third. Above
+the meeting depth the two paths lie in opposite halves of
+\([L_z,L_{z'}]\). Below it they lie on the same segment from the
+midpoint to the third leaf, by uniqueness of geodesics. Coincident
+leaves have the same path at every depth. This gives
+\begin{equation}\label{eq:motion-tree}
+ d(P(z,\ell),P(z',\ell'))=
+       \ell+\ell'-2\min\{\ell,\ell',\nu(z-z')\}.
+\end{equation}
+The point \(P(z,\ell)\) thus depends only on the disk
+\(\{z':\nu(z'-z)\ge\ell\}\). Its ancestors correspond to the larger
+disks containing it.
+
+In a finite star comparison we can now prescribe points
+\(P(a+bc,\ell)\) with depths harmonic across that star. Choose a
+far leaf \(L_{t^{-N}}\) with \(N\) sufficiently large. Its distance
+to every \(L_{a+bc}\) in the finite test is the same, and the
+corresponding segment contains the prescribed site. The prescribed distances to these
+two endpoints are \(1-\ell\) and its complement in their common
+distance. Lemma~\ref{lem:geodesic} applies. It also gives specialization
+for constant depths. In particular the price of a fixed nonzero tensor along a ray
+\(c=\xi+t^\rho u\) is convex in \(\rho\) if each depth is affine in
+\(\rho\), since any three rational radii are compared by a star with
+one inner end at zero. At \(\rho=0\), the generic values obtained
+from \(u\) and \(\xi+u\) coincide for integral \(\xi\), by the two
+specializations in opposite directions.
+
+\subsection{The price of a common label at four sites}
+
+Place the common label \(\Delta_{[4]}(q)=\sum_{j=1}^q e_j^{\otimes4}\),
+\(q\ge2\), at the tips of four equal branches of the disk tree. Choose
+the first three centers \(z_1=0,z_2=1,z_3\in F\setminus\{0,1\}\)
+and let the fourth center \(z_4=c\) vary. At a fresh \(c=u\), the
+four tips \(P(z_i,\ell)\) at rational depth \(0<\ell<1\) have common
+origin \(P(0,0)\) and pairwise distance \(2\ell\). Denote the price
+of their label divided by \(\log q\) by \(D_\ell\). It vanishes at
+\(\ell=0\). Joint geodesic convexity and the upper bound \(4\ell\)
+from four size-\(q\) wires to the common origin give a finite
+one-sided slope
+\[
+ \underline D=\lim_{\ell\downarrow0}\frac{D_\ell}{2\ell}.
+\]
+The denominator is the rate of a single wire between two of the tips.
+We estimate the ratio by moving the fourth center toward each of the
+three fixed centers in turn.
+
+On the arm toward \(z_i\), let \(c=z_i+t^r u\) for \(0\le r\le2\ell\).
+Increase the depths of \(i,4\) by \(r/2\) and decrease those of the
+other pair by \(r/2\). Take \(2\ell\le1\), so all four depths remain
+in the tree. By \eqref{eq:motion-tree} the two within-pair distances
+are \(h=2\ell-r\), and all four distances between pairs are \(2\ell\).
+The path joining the pair midpoints grows by precisely the amount
+the within-pair distances shrink. Figure~\ref{fig:collision} depicts
+the collision with \(z_1\). Relabeling gives the collision with \(z_3\)
+used in Section~\ref{sec:boundary}. When \(r=2\ell\), both pairs have
+merged. The grouped vectors \(e_j\otimes e_j\) are linearly independent
+at each end, so the label is equivalent under local maps to one
+size-\(q\) wire. Its rate at the collision is exactly \(2\ell\).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    x=1cm,y=1cm,
+    outer/.style={draw=ink,line width=.75pt},
+    trunk/.style={draw=sea,line width=1.15pt},
+    site/.style={circle,fill=ink,inner sep=0pt,minimum size=4.2pt},
+    branch/.style={circle,draw=ink,fill=white,inner sep=0pt,minimum size=4.0pt},
+    lab/.style={font=\small,inner sep=2pt},
+    stage/.style={font=\small,anchor=north,inner sep=1pt}
+  ]
+  \begin{scope}
+    \coordinate (p) at (0,0);
+    \coordinate (one) at (-.86,.66);
+    \coordinate (four) at (-.86,-.66);
+    \coordinate (two) at (.86,.66);
+    \coordinate (three) at (.86,-.66);
+    \draw[outer] (one)--(p)--(two) (four)--(p)--(three);
+    \node[lab,above right] at (-.47,.36) {$\ell$};
+    \node[branch] at (p) {};
+    \foreach \pt/\val/\side in {one/1/left,four/4/left,two/2/right,three/3/right}{
+      \node[site] at (\pt) {};
+      \node[lab,\side=2pt] at (\pt) {$\val$};
+    }
+    \node[stage] at (0,-1.02) {$h=2\ell$};
+  \end{scope}
+  \draw[-{Stealth[length=4pt]},draw=black!50] (1.51,0)--(2.13,0);
+  \begin{scope}[shift={(4.11,0)}]
+    \coordinate (leftbranch) at (-.67,0);
+    \coordinate (rightbranch) at (.67,0);
+    \coordinate (one) at (-1.36,.66);
+    \coordinate (four) at (-1.36,-.66);
+    \coordinate (two) at (1.36,.66);
+    \coordinate (three) at (1.36,-.66);
+    \draw[outer] (one)--(leftbranch)--(four) (two)--(rightbranch)--(three);
+    \draw[trunk] (leftbranch)--(rightbranch);
+    \node[lab,above] at (0,.02) {$2\ell-h$};
+    \node[lab,above right] at (-1.11,.41) {$h/2$};
+    \node[branch] at (leftbranch) {};
+    \node[branch] at (rightbranch) {};
+    \foreach \pt/\val/\side in {one/1/left,four/4/left,two/2/right,three/3/right}{
+      \node[site] at (\pt) {};
+      \node[lab,\side=2pt] at (\pt) {$\val$};
+    }
+    \node[stage] at (0,-1.02) {$0<h<2\ell$};
+  \end{scope}
+  \draw[-{Stealth[length=4pt]},draw=black!50] (6.10,0)--(6.72,0);
+  \begin{scope}[shift={(8.36,0)}]
+    \draw[trunk] (-.90,0)--(.90,0) node[lab,midway,above] {$2\ell$};
+    \node[site] at (-.90,0) {};
+    \node[site] at (.90,0) {};
+    \node[lab,below] at (-.90,-.05) {$1,4$};
+    \node[lab,below] at (.90,-.05) {$2,3$};
+    \node[stage] at (0,-1.02) {$h=0$};
+  \end{scope}
+\end{tikzpicture}
+\caption{Collision of the fourth tip with the first. On the middle
+tree the distance inside each pair is \(h\), and the segment between
+pair midpoints has length \(2\ell-h\). At the right endpoint the
+common label is a single wire of length \(2\ell\).}
+\label{fig:collision}
+\end{figure}
+
+
+Across these three arms the depth slopes sum to \(-1/2\) at each of
+the first three sites and to \(3/2\) at site \(4\). To make all depths
+harmonic, add two arms of length \(\ell\). On an unused finite arm
+\(a\in F\setminus\{z_1,z_2,z_3\}\) increase every depth at slope
+\(1/2\). By specialization its end rate is at most \(D_{3\ell/2}\).
+On the outer arm use \(c=t^{-r}u\). Only the fourth depth changes, at
+slope \(-2\). At \(r=\ell\) this site is \(P(0,-\ell)\). Write
+\(D_\ell^-\) for the resulting label rate.
+The ray price functions are continuous at their origins. Indeed for
+small signed \(r\) the same affine depth prescriptions and \(t^r\) or
+\(t^{-r}\) give a convex extension across zero.
+
+Figure~\ref{fig:harmonic} records the five depth changes in a single
+comparison. The sum down each column is zero, which is the harmonicity
+condition for the corresponding site.
+
+\begin{figure}[htb]
+\centering
+\begin{tikzpicture}[font=\small,
+ inner/.style={draw=ink,line width=.8pt},
+ end/.style={inner sep=2pt,anchor=west},
+ twig/.style={draw=sea,densely dashed,line width=.85pt},
+ up/.style={draw=rust,line width=1.05pt}]
+ \draw[inner] (0,0)--(1.9,1.4) node[end] at (1.96,1.4){$z_1$};
+ \draw[inner] (0,0)--(2.32,.4) node[end] at (2.38,.4){$z_2$};
+ \draw[inner] (0,0)--(2.18,-.9) node[end] at (2.24,-.9){$z_3$};
+ \draw[twig] (0,0)--(.48,-1.08);
+ \draw[up,{Stealth[length=4pt]}-] (-1.18,0)--(0,0);
+ \node at (-1.58,0) {$\infty$};
+ \node at (.58,-1.38) {$a$};
+ \fill[ink] (0,0) circle (1.8pt);
+ \node at (-.19,.36) {$u$};
+ \node[anchor=west] at (3.58,0) {$
+  \renewcommand{\arraystretch}{1.22}
+  \begin{array}{c | c c c c | l}
+     &1&2&3&4&\text{end estimate}\\ \hline
+
+    z_1 &1&-1&-1&1& 2\ell\\
+    z_2 &-1&1&-1&1& 2\ell\\
+    z_3 &-1&-1&1&1& 2\ell\\
+    a&1&1&1&1& D_{3\ell/2}\\
+    \infty&0&0&0&-4&D_\ell^-
+  \end{array}$};
+\end{tikzpicture}
+\caption{The five arms based at the generic point \(u\) of the
+parameter disk. The three collision arms have length \(2\ell\), the
+unused finite arm \(a\) and the outer arm have length \(\ell\). The
+table gives twice the four depth slopes and an upper bound for the
+label rate at each end.}
+\label{fig:harmonic}
+\end{figure}
+
+
+We compare \(D_\ell^-\) to the generic rate. Start the outer ray
+at a fixed small depth \(\lambda>0\) and stop at \(0<R<\lambda\),
+with all lengths rational. Write \(D(\lambda,R)\) for the rate.
+The first three sites have radius \(\lambda\) about \(P(0,0)\).
+By \eqref{eq:motion-tree} the fourth site also has radius \(\lambda\),
+with its first \(R\) units of geodesic going toward negative depths.
+Contract all four radii from \(\lambda\) to \(\ell\le R\).
+This gives the placement defining \(D_\ell^-\), so convexity gives
+\[
+   \frac{D_\ell^-}{2\ell}\le\frac{D(\lambda,R)}{2\lambda}.
+\]
+Taking the upper limit in \(\ell\), then \(R\downarrow0\) by ray
+continuity, then \(\lambda\downarrow0\), yields
+\(\limsup D_\ell^-/(2\ell)\le \underline D\). Substituting the upper bound for
+the fourth finite end into \eqref{eq:motion-star} gives
+\begin{equation}\label{eq:motion-fourstar}
+ 0\le 3\frac{2\ell-D_\ell}{2\ell}
+      +\frac{D_\ell^--D_\ell}{\ell}
+      +\frac{D_{3\ell/2}-D_\ell}{\ell}.
+\end{equation}
+The three collision arms contribute \(3(1-\underline D)\) in the limit. The outer
+arm has upper limit at most zero, and the last term tends to \(\underline D\) since
+\(D_{3\ell/2}/(3\ell)\to \underline D\). Hence \(0\le 3(1-\underline D)+\underline D\), giving
+\begin{equation}\label{eq:motion-upper}
+                        \underline D\le 3/2 .
+\end{equation}
+
+The rectangular comparison of Section~\ref{sec:boundary} will use this
+bound near the endpoint \(h=0\) in Figure~\ref{fig:collision}. There
+the three fixed tips form a tripod with a pair of short arms and one
+long arm. Propagating the resulting limiting price equality to the
+balanced tripod gives a common-label rate of \(8/3\). The three
+matrix multiplication wires on that tripod have total length \(6\),
+so the rank comparison has exponent \(6/(8/3)=9/4\).

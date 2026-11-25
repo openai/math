@@ -1,0 +1,143 @@
+\section{Testing a column with many symbols}\label{sec:design}
+
+In the planar proof an implication is tested for every possible pair
+of equal symbols. A column with \(r\) entries has \(\binom r2\) such
+pairs. To obtain the bound of Theorem~\ref{thm:main} with its stated
+dependence on \(r\), we construct a single test for the whole column.
+It returns a fixed nonzero tensor on agreement and vanishes on every
+\emph{violation}, meaning that some symbol repeats but the column is
+nonconstant. Its value on pairwise distinct symbols may be arbitrary.
+
+Take \(r\ge4\). Write \(H=\log(2r)\) and \(L=\log(2H)\), with all
+logarithms in base two. Two of the symbols are held on groups of sites
+\(A,B\), called the anchors. The other symbols are held at individual
+satellite sites. The recursive test will sometimes use only a subset
+of the satellites, called the active satellites. The two anchors have
+joint width one and individual widths summing to \(1-s\). Since the
+satellites are points, this leaves a surplus \(s>0\) in the word-count
+comparison of Section~\ref{sec:words}. We seek a bound on the cost of
+one column that is independent of the length of its symbols.
+
+\paragraph{Shortening a symbol.}
+Split each symbol into a head \(a\) and a tail \(v\) of \(b'\) bits.
+For every possible head, sum over a mask \(m_a\) of \(b'\) bits shared
+by all sites. Apply the shorter test to the column of shifted tails
+\(v+m_a\), with bitwise addition modulo two. Retain the masks in the
+output. On agreement every choice of masks survives, so the test
+returns their full diagonals. On a violation the repeated symbol stays
+repeated. The shorter test can therefore survive only if all the
+shifted tails take a single value \(z\). We have to subtract the masks
+producing this \emph{false tie}.
+
+For a given \(z\), every entry \((a,v)\) forces \(m_a=v+z\). If two
+tails at one head disagree, there is no solution. An empty head
+leaves its mask free. Figure~\ref{fig:example} gives a five-entry
+column in which only the two satellites \(P,R\) repeat a letter.
+At \(z=01\), the two occurrences of head \(10\) both require
+\(m_{10}=10\).
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+ lab/.style={anchor=east,inner sep=0pt},bit/.style={font=\small\ttfamily},
+ line/.style={draw=ink!45},child/.style={draw=rust!75,fill=rust!5,
+ rounded corners=2pt,inner xsep=6pt,inner ysep=4pt}]
+ \fill[sea!7,rounded corners=2pt] (2.26,-.32) rectangle (4.82,2.28);
+ \draw[sea!75,rounded corners=2pt] (2.26,-.32) rectangle (4.82,2.28);
+ \foreach \y/\name in {2/Site,1.49/Head,.98/Tail,.47/Mask for \(z=01\),-.04/Shifted tail}
+   \node[lab] at (-.7,\y){\name};
+ \foreach \x/\site/\head/\tail/\mask in
+   {0/A/00/10/11,1.35/B/01/01/00,2.87/P/10/11/10,4.21/R/10/11/10,5.63/T/11/10/11}{
+    \node at (\x,2){\(\site\)};
+    \node[bit] at (\x,1.49){\head};
+    \node[bit] at (\x,.98){\tail};
+    \node[bit,text=sea] at (\x,.47){\mask};
+    \node[bit] at (\x,-.04){01};
+ }
+ \draw[line] (-.43,1.76)--(6.06,1.76);
+ \draw[line] (-.43,.22)--(6.06,.22);
+ \draw[-{Latex[length=2mm]},thick,sea] (3.54,-.32)--(3.54,-.7);
+ \node[child] at (3.54,-1.02) {\(\bigl(u,t,\mathtt{10},\mathtt{10}\bigr)\)};
+ \node[lab] at (2.14,-1.02){Shorter column};
+\end{tikzpicture}
+\caption{One false tie and its correction. The shaded satellites carry
+the same original symbol. Their required mask becomes their input in
+the shorter column, alongside the two auxiliary anchor inputs \(u,t\).
+The repeat forces this column to pass only at \(u=t=\mathtt{10}\).
+The sum over \(u,t\) thus recovers the required mask.}
+\label{fig:example}
+\end{figure}
+
+\paragraph{Recovering the cost of a false tie.}
+We could supply every mask, sum over \(z\), and check the constraints
+\(m_a=v+z\) locally. Relative to the mask diagonals returned on
+agreement, this would leave \(b'\) bits to pay for \(z\). First
+consider a violation in which neither anchor symbol repeats. At a
+false tie each anchor must be alone in its head, since every entry in
+a given head must have the same tail. Each anchor can therefore
+compute its mask locally from \(z\) and broadcast it. A broadcast
+from \(A\) to all sites costs \((1-w(A))b'\), saving \(w(A)b'\) against
+the full mask diagonal. The two anchors together pay for
+\((1-s)b'\) of the cost of \(z\). This leaves \(sb'\).
+
+A head containing a genuine satellite repeat can cover the remainder.
+Give two auxiliary anchor groups independent dummy labels \(u,t\);
+their widths sum to \(1-s'\), with \(s'\ge s\). For each active
+satellite in the chosen head, give the shorter test its required mask
+\(v+z\). If a whole symbol repeats in that head, the shorter column
+has a repeat for every pair \(u,t\). If its required masks differ, it
+always vanishes. If the masks agree, exactly one pair \(u,t\) makes
+the shorter column constant. The auxiliary anchors can then broadcast
+their common label from their joint width of one. The cost of the two
+dummy labels saves \(s'b'\) against the full mask diagonal, before
+the cost of the shorter test itself.
+
+Inclusion--exclusion removes the need to identify the repeated head. Let
+\(I_i\) be the exact mask operation for head \(i\), and let \(T_i\) be
+the operation using the shorter test, with the auxiliary tensor
+factors made common to the terms. With two possible non-anchor heads,
+use
+\[
+          I_0\otimes I_1-(I_0-T_0)\otimes(I_1-T_1).
+\]
+At a repeated symbol in head \(i\) we have \(T_i=I_i\), so the
+display equals the exact mask correction. When the product is
+expanded, every remaining term uses at least one shorter test.
+Section~\ref{sec:masks} carries out this cancellation for any number
+of heads, keeping each mask tuple in its own output slot.
+
+\paragraph{Controlling the size of the shorter test.}
+A preliminary gate, the \emph{guard}, handles violations with a
+repeated anchor symbol. It also kills a violation when one symbol
+occurs at more than \((1-p_0)n\) of the \(n\) active satellites, for
+a fixed \(p_0>0\). On a surviving violation a head larger than this
+threshold cannot have a common tail. Its exact correction is then
+zero, and we can omit the shorter test at that head. Thus a recursive
+call that changes the active satellites always reduces their number
+by a fixed fraction.
+
+The difficulty in implementing the guard is to compare a widely
+repeated symbol with the anchors without sending every satellite
+symbol to them. On the guard's large-majority promise, a balanced split of the active
+satellites into two geometrically separated classes leaves the same
+symbol in a strict majority in each class. For any projection of the letters onto \(u\)
+bits, Section~\ref{sec:vote} sends the two projected majorities to
+two designated destinations, charging one wire per class. The
+placement in Section~\ref{sec:geometry} makes the width of the two
+destinations exceed the combined wire rates by more than \(s\).
+Together with the anchor widths \(1-s\), this gives the strict width
+inequality in Lemma~\ref{lem:oracle}. That lemma recovers the equality
+test for full symbols from tests of their projections. Once both
+anchors agree, the test can check every active satellite locally.
+Section~\ref{sec:guard} combines these operations.
+
+Shortening the letters alone preserves the split. We pay to determine
+a new split only when a correction changes the active satellites.
+For the binary layout used in the proof, there are \(O(\log r)\) such
+changes along any branch. In
+Section~\ref{sec:recurrence} this yields first a linear cost with
+slope below the auxiliary anchor surplus, then a logarithmic cost in
+the symbol length when \(s'>s\). Slightly enlarging the groups gives
+a further saving on each tail bit. The last sum of corrections then
+converges uniformly in the alphabet, giving the required bound on
+the cost of one column.

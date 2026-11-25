@@ -1,0 +1,99 @@
+\section{Tensor prices and wire distances}\label{sec:prices-background}
+A bilinear algorithm of rank \(r\) constructs its tensor from \(r\)
+independent scalar products by local linear maps. A \emph{spectral
+point} assigns a value to tensors that can only decrease under such
+maps. Tensoring multiplies the values, so their logarithms add. We call
+these logarithms \emph{prices}. Applied to a wire, the price measures
+the cost of sharing an index between its two sites. This is how a
+spectral point gives a geometry on the sites of a tensor network.
+
+\subsection{From tensors to distances}
+Fix a field and a finite set \(S\) of at least two sites. Each tensor
+has one finite-dimensional vector space at each site. A tensor \(T\)
+is a \emph{restriction} of \(U\) if one linear map at each site takes
+\(U\) to \(T\). For a tensor product, group the factors at each site.
+For a direct sum, take the direct sum of the spaces at every site, so
+the two tensors occupy separate blocks. The unit \(\mathbf 1\) is the
+tensor \(1\) in one-dimensional spaces.
+
+A spectral point \(\varphi\) is a restriction-monotone map to
+\(\mathbb R_{\ge0}\) that preserves zero and the unit and satisfies
+\[
+     \varphi(T\oplus U)=\varphi(T)+\varphi(U),\qquad
+     \varphi(T\otimes U)=\varphi(T)\varphi(U).
+\]
+Every nonzero tensor restricts to \(\mathbf 1\), so its value is at least
+one. The price at scale \(D>0\) is \(H(T)=D\log\varphi(T)\), with
+\(H(0)=-\infty\). In this section and Part~I logarithms are natural.
+Thus the prices of~\cite{oaG} are multiplied by \(\log 2\) at the same scale.
+
+For a nonempty \(A\subseteq S\), the tensor
+\[
+         \Delta_A(q)=\sum_{j=1}^q\bigotimes_{i\in A} e_j
+\]
+shares a \(q\)-valued index among the sites of \(A\). Its other legs are
+one-dimensional. Tensoring diagonals multiplies their dimensions, and a
+local projection can discard any set of labels. Comparing powers of
+dimensions \(q\) and \(2\) therefore gives
+\[
+            H(\Delta_A(q))=\delta(A)\log q,\qquad q\ge2.
+\]
+We call \(\delta(A)\) the common-label rate on \(A\). In particular
+\(\Delta_S(q)\) is a direct sum of \(q\) units, so \(\delta(S)=D\).
+For \(a\ne b\), \(\Delta_{\{a,b\}}(q)\) is a wire of dimension \(q\).
+Write \(d(a,b)=\delta(\{a,b\})\) and set \(d(a,a)=0\).
+For example, matrix rank across a fixed cut of \(S\) is a spectral
+point. At scale one its wire distance is one for sites on opposite
+sides of the cut and zero for sites on the same side.
+
+Joining two wires by contracting their common endpoint gives a wire
+between their other endpoints. Monotonicity and additivity of price
+give the triangle inequality for \(d\). A \(q_i\)-dimensional wire
+can also move a leg of dimension \(q_i\) from \(x_i\) to \(y_i\).
+Moving each leg of a nonzero tensor \(T\), then applying the same
+argument in reverse, gives the transport bound
+\begin{equation}\label{eq:prices-transport}
+       |H(T;x)-H(T;y)|\le\sum_i d(x_i,y_i)\log q_i .
+\end{equation}
+Here \(x=(x_i)\) and \(y=(y_i)\) are the placements of the legs. Group
+the legs assigned to one site. When all legs are at a single site, any
+nonzero tensor there is equivalent to the unit and has price zero.
+
+\subsection{Geometric extension and spectral comparison}
+A \emph{spectral space} is a metric space with compatible prices for
+all finite placements, whose wire rates are the given distances.
+Compatibility allows trivial legs to be added and legs at coincident
+sites to be grouped. On a finite set of positive diameter the scale is
+its common-label rate, which may vary with the set. At a single point the
+scale is zero. Identifying sites at zero wire distance turns a spectral
+price on finitely many sites into a spectral space.
+
+Every spectral space embeds, with all its prices, in a complete
+\(\operatorname{CAT}(0)\) spectral space. In the extension every pair
+\(a,b\) has a unique midpoint \(m\), and every point \(o\) satisfies
+\[
+      d(o,m)^2\le \tfrac12 d(o,a)^2+\tfrac12 d(o,b)^2
+                                      -\tfrac14 d(a,b)^2 .
+\]
+Prices are jointly convex as their legs move along geodesics. Distances
+and prices may be rescaled together. In a pointed metric ultralimit
+of these spaces, the price of a fixed tensor on a bounded sequence of
+placements is the ultralimit of its prices
+\citep[Sections~\ext{G}{sec:spectra} and~\ext{G}{sec:limits},
+Theorem~\ext{G}{thm:geometry} and Proposition~\ext{G}{prop:joint-convexity}]{oaG}.
+We also use convexity of distance and nonexpansiveness of nearest-point
+projection onto a nonempty closed convex set. A finitely supported
+probability measure has a unique barycenter \(b\) minimizing its mean
+squared distance. Evaluating the same mean at \(z\) increases it by at
+least \(d(z,b)^2\) \citep{BridsonHaefliger,oaG}.
+
+Over an algebraically closed field, price sublevel sets in a fixed tensor
+format are Zariski closed. Under a field extension, the possible joint
+values of spectral points on tensors defined over the original field
+are preserved \citep[Section~\ext{G}{sec:spectra}]{oaG}.
+Finally, if two nonzero tensors on the same sites satisfy
+\(\varphi(T)<\varphi(U)\) for every spectral point, there is a fixed
+integer \(C\) such that, for every \(j\ge1\), \(T^{\otimes j}\)
+is a restriction of the direct sum of \(C\) copies of \(U^{\otimes j}\).
+We use this strict form of spectral comparison to turn price inequalities
+into exact tensor restrictions \citep[Lemma~\ext{G}{lem:spectral-comparison}]{oaG}.

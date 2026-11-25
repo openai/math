@@ -1,0 +1,252 @@
+\section{A tight output or a descent at a probe}\label{sec:vertex}
+
+The output floors transmit information down a subtree and back to
+its root. Fix a probe \(x\) for bucket \(P\), and at each module use
+the local coordinates of the block containing \(x\). Under a coordinate
+restriction, a floor is \emph{retained} when its row is supported on
+the retained coordinates. At the current module one may raise each
+retained output floor independently from zero to a prescribed value.
+This includes floors on propagated outputs. The descendant systems
+initially keep their original inequalities.
+
+Call a module \emph{ready} if the restriction keeps its coordinates
+associated to \(W_\ell,p_\ell,F_{\ell,P},G_{\ell,P}\) for every label
+\(\ell\). At height zero it suffices to keep the output coordinate for
+\(P\). Readiness is a condition on this one module.
+
+\begin{lemma}[Descent at a probe]\label{lem:descent}
+The parameters at each height can be chosen with a positive allowance
+for independent raises of the module's output floors. For every choice
+of raises within that allowance, each vertex of the restricted slice
+of a ready subtree has at least one of the following properties.
+\begin{enumerate}
+\item A quick output of the module in bucket $P$ is at its floor.
+\item The module has positive height and has a label $\ell$ with the
+following property for every child at $\ell$. After allowed raises of
+that child's output floors, the point restricted to its subtree is a
+vertex. A retained child output is at its prescribed floor precisely
+when its propagated output is at its floor in the parent.
+\end{enumerate}
+The second alternative includes a label with no children.
+\end{lemma}
+
+The two quick outputs in bucket \(P\) enforce this alternative in
+different ways. If neither kind is tight, we first find a bundle of
+labels on which the link between \(W\) and the price \(p\) is slack.
+The \(F\)-outputs are responsible for this freedom. The tournament
+then singles out a label in the bundle, and a \(G\)-output forces its
+price into the interval in which the parent floors become admissible
+raises in every child.
+
+\begin{proof}
+At height zero take allowance $1/2$. At the probe for $P$, the
+absolute-value bound on its output has value $-1$, and every other
+present output is at least $2$. All pair bounds touching the $P$
+output are therefore strict. Unless that output is at its floor, it
+can move in both directions.
+
+For a module of positive height we prove that \(\varepsilon\lambda/4\)
+is an allowance. The child systems and their shifts are already fixed.
+Suppose there are arbitrarily small \(\sigma>0\) for which the
+assertion fails. Take a sequence \(\sigma\downarrow0\) and, for each
+term, a counterexample vertex with prescribed raises
+\(0\le a_j\le\varepsilon\lambda/4\). Pass to a subsequence fixing the
+module, probe and coordinate restriction. In particular, every
+retained target quick output is strictly above its prescribed floor.
+
+At this sample we need only the current block's rows at the module
+(Section~\ref{sec:layers}). By readiness the triangular change
+\eqref{eq:module-coordinates} is invertible on the retained variables.
+All prices and target outputs are present. An output from another
+bucket is used only when its associated coordinate is retained.
+
+\smallskip
+\noindent\emph{Bounds for the children.}
+Keep the current module fixed. Each child point is then a vertex of its
+own restricted system augmented by the propagated floors and pair rows
+from the parent. The frozen section is a product
+over children, since a pair of propagated outputs belongs to a single
+class from a single child. Dividing these extra rows by $\varepsilon$
+gives fixed normals and right-hand sides $a_j/\varepsilon-p_\ell/\varepsilon$
+and $\delta-2p_\ell/\varepsilon$, respectively. The price floor
+$p_\ell\ge-K_0\varepsilon$ and the bound $a_j\le\varepsilon\lambda/4$
+bound these right-hand sides above. For a tight extra row its right-hand
+side also has a lower bound. Indeed it then equals the corresponding
+physical child output or the sum of two such outputs, and a retained
+parent row includes the supports of the relevant child floors. Indeed
+the output expressions have nonnegative coefficients in the coordinates
+\eqref{eq:module-coordinates}, so their supports cannot cancel in a sum.
+The child floors give fixed lower bounds at \(x\). A vertex is determined by
+linearly independent tight rows of full rank in the retained child
+coordinates. Their normals come from finitely many fixed matrices, and
+all their tight right-hand sides have just been bounded on both sides.
+Thus the child coordinates remain bounded as \(\sigma\downarrow0\).
+
+\smallskip
+\noindent\emph{A common limiting state.}
+Now freeze the children instead. The current node is a vertex of this
+section. Recall from \eqref{eq:layer-state} that $z=W-\sigma g(x)\mathbf 1$
+and that its coarse constraint is $z^+\in D Z_x$, with
+$D=1+M_0\sum_\ell z_\ell^-$. Hold this particular value of $D$ fixed
+and replace $W$ and all its constraints by
+\[
+  \widehat z\in D Z_x,\qquad
+  F_{\ell,Q}\ge\widehat z_\ell-\sigma o_Q(x),\qquad
+  p_\ell\ge\widehat z_\ell-3\mu .
+\]
+The point with $\widehat z=z^+$ is feasible. At negative entries of
+$z$, the displayed output links follow from $F_{\ell,Q}\ge0$ and
+$p_\ell\ge-K_0\varepsilon>-3\mu$ for small $\sigma$.
+It is still a vertex. Any two-sided motion in the new section fixes
+the zero entries of $\widehat z$ by nonnegativity. Restore their
+original $z$-values and let the other entries move with $\widehat z$
+on a sufficiently short segment. All negative parts stay fixed, so the
+original dilation is preserved. The original links follow from
+$z\le\widehat z$, and $W\ge0$ holds since moving entries of $z$
+are positive. This would lift any nonzero two-sided motion to the
+original section.
+
+Divide the current variables by \(D\), writing dots for the
+result. Since \(W\ge0\),
+\[
+        1\le D\le 1+M_0V\sigma g(x).
+\]
+In the divided coordinates every constraint can be written with a
+normal independent of \(\sigma\). For the tournament constraints,
+first multiply \eqref{eq:module-tournament} by \(\varepsilon\).
+The frozen child coordinates are bounded, so propagated floors and
+pair rows give lower bounds on \(\dot p_\ell\) of order
+\(O(\varepsilon)\). The limiting inequalities reduce to
+\[
+ \dot{\widehat z}\in Z_x,\qquad
+ \dot p_\ell\ge\dot{\widehat z}_\ell,\qquad
+ \dot F_{\ell,Q}\ge\dot{\widehat z}_\ell,\qquad
+ \dot G_{\ell,Q}\ge\dot p_\ell .
+\]
+All remaining rows follow from these inequalities. Their right-hand
+sides tend to zero, and their left-hand sides are nonnegative
+combinations of the displayed variables. Take a further subsequence
+on which one nonsingular matrix of tight rows determines the divided
+vertex. Its right-hand sides converge, so its solution converges and
+the same independent rows remain tight in the limit. The limit is
+therefore a vertex of the displayed polyhedron. The differences
+$\dot p-\dot{\widehat z}$, $\dot F-\dot{\widehat z}$ and $\dot G-\dot p$,
+taken label by label, identify the limiting system
+with $Z_x$ times an orthant. At a vertex all those differences vanish and
+$\dot{\widehat z}$ equals a vertex $z_*$ of $Z_x$. Since $Z_x$ is
+the convex hull of the sample states plus the nonnegative orthant,
+$z_*$ is one of the states.
+
+\smallskip
+\noindent\emph{Freedom of the prices at zero labels.}
+We claim that whenever $z_{*,\ell}=0$ the original price satisfies, for all sufficiently small $\sigma$ in our sequence,
+\begin{equation}\label{eq:zero-price-link}
+                  p_\ell>z_\ell-3\mu .
+\end{equation}
+Call a target $F$ or $G$ \emph{paired} if one of its pair inequalities
+is tight. Pass to a fixed pattern of pairings for the target $F$'s.
+For a paired target $F$, the other-bucket partner is at most $\mu$
+by the tight pair bound and nonnegativity. The partner's link then gives
+$\widehat z_\ell\le\mu$. Thus the target link to $\widehat z_\ell$ is
+strict, as $\widehat z_\ell-\sigma<0$. The price floor
+$p_\ell\ge-K_0\varepsilon>-2\mu$ implies
+\eqref{eq:zero-price-link} at such a label.
+
+It remains to show that a target \(F_{\ell,P}\) at a zero label
+cannot be unpaired. In the divided system the target link has an
+offset of order \(\sigma\), whereas the other tight rows have offsets
+of order at most \(\mu=\sigma^2\). For each unpaired target \(F\),
+use \((F_{\ell,P}+\sigma)/D\) in place of \(F_{\ell,P}/D\).
+Its floor and pair rows are slack, so the only tight row involving
+this variable is its link to \(\widehat z_\ell\). The translation
+cancels the offset in that row. For paired targets the link is already
+slack. In the translated tight system the right-hand sides therefore differ
+from their limits by \(O(\mu)\). The rows of \(Z_x\) are fixed,
+the other-bucket \(F\)-links have zero offset, and the remaining price,
+pair and floor terms have size \(O(\mu)\) or \(O(\varepsilon)\).
+The tight basis has a fixed inverse, which gives the same error bound
+for each translated variable. At a zero label the limiting
+target output is zero, while any unpaired translated output is at least
+$\sigma/D$. This contradicts $\mu=\sigma^2$ and $D\to1$,
+establishing \eqref{eq:zero-price-link}.
+
+\smallskip
+\noindent\emph{One label for all children.}
+Let $s$ be the site containing the probe in its current block $E$.
+Each tournament tuple for another site $s'$ has a label with
+$z_{*,\ell}>0$, by the bound of $r$ zeros per foreign bundle. At
+that label $p_\ell$ tends to a positive value, whence
+$u_\ell^{s'}\to-\infty$. All other terms are bounded above by $K_1$
+before weighting, so every foreign-site tournament row is strict.
+
+Choose a bundle $H_i(s)$ on which $z_*$ vanishes. Fewer than $2^r$
+of its positions have $u_\ell^s>0$. Otherwise there is a transitive
+$(r+1)$-tuple among them, contradicting its tournament row. Indeed
+any tournament on $2^r$ vertices has a vertex beating at least
+$2^{r-1}$ others, and induction supplies the rest of the tuple. Choose
+a position outside this positive set beating every position in it,
+using the defining property of the tournament on positions. Pass to a
+subsequence so its label $\ell\in H_i(s)$ is fixed. We have $u_\ell^s\le0$.
+If $u_\ell^s<-\delta/2$, every current-site tournament row containing
+this label is strict. Indeed the label determines $i$, so every
+such tuple lies in $H_i(s)$. All positive terms follow
+$\ell$ in the order and each has weight at most $1/M_1$ times that
+of $\ell$. Their combined contribution, relative to its weight, is
+at most $rK_1/M_1<\delta/2$.
+
+Express the selected price in local child units by
+\[
+  \theta=-p_\ell/\varepsilon-D_{E_s}(x)
+        =\delta+u_\ell^s-R_{t-1}(x)\le\delta .
+\]
+A propagated output \eqref{eq:module-propagation} is
+$\varepsilon(v_j-\theta)$ for the local child output $v_j$.
+The child pair sum exceeds $10\delta$, so a
+retained pair has parent sum $\varepsilon(v_j+v_k-2\theta)>8\varepsilon\delta$,
+strictly above its bound $\varepsilon\delta$.
+At this label the target $G$ link has bound $\varepsilon(-\theta-\lambda)$,
+and each other-bucket $G$ link has bound $\varepsilon(-\theta+\lambda)$.
+
+If $G_{\ell,P}$ is unpaired, it must attain its link bound, since its floor is slack and it could otherwise move alone. It follows that
+$\theta<-\lambda$. We can then move the price $p_\ell$ and every
+present $G$ at this label by the same small amount in either
+direction. Indeed,
+$u_\ell^s=\theta-\delta+R_{t-1}(x)<-\delta/2$, using
+$R_{t-1}(x)\le\delta/8$. All tournament rows at this price are
+therefore slack. Its price floor is slack too, since at that floor
+$u_\ell^s=K_0-T_{E_s}(x)-\delta>0$.
+Its link from $W$ is slack by \eqref{eq:zero-price-link}.
+All present other-bucket $G$'s exceed $2\varepsilon\lambda$, so their
+floors and pair rows are strict. The target $G$ has slack floor and
+no tight pair. Each retained propagated output also exceeds \(\varepsilon\lambda\),
+since \(v_j\ge0\), while its floor is at most
+\(\varepsilon\lambda/4\). Its pair rows were shown strict above.
+The price motion preserves the \(G\)-links, contradicting extremality.
+
+Thus the target $G$ is paired. Its other-bucket partner has value at most
+$\varepsilon\lambda/4$. Substituting the other-bucket link gives
+$3\lambda/4\le\theta\le\delta$. Freeze the selected price. For a
+propagated output with floor $a_j\in[0,\varepsilon\lambda/4]$ the
+parent now requires
+\[
+                  v_j\ge \theta+a_j/\varepsilon .
+\]
+The right-hand side is positive and at most $\delta+\lambda/4\le2\delta$,
+within the child's floor allowance. Because the price coordinates are
+present, this propagated row survives precisely when the child output
+floor survives. All other parent rows on these child coordinates
+are the slack propagated pair bounds. A two-sided motion of any one
+child point respecting the new floors would consequently lift to a
+two-sided motion of the original vertex. Each child point is a vertex
+with these raises, and equality in a raised floor gives equality in
+the parent's propagated floor. This proves the second alternative for
+our common label, contradicting the choice of the sequence.
+
+The contradiction excludes a sequence of failures for a fixed module,
+probe and restriction, even when the raises vary along the sequence.
+There are finitely many such triples at this height, so one sufficiently
+small \(\sigma\) works for all of them. This choice uses only the local
+rows at the current height and the systems and shifts already fixed at
+lower heights. Once the floor allowance is known, the current shifts
+can be chosen as in Section~\ref{sec:layers}.
+\end{proof}

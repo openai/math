@@ -1,0 +1,156 @@
+\section{Exterior tensors at a prescribed placement}\label{sec:exterior}
+
+The star centered at the cone tip supplies a tensor by sending its
+indices separately to their sites. To detect the saving obtained by
+using a separate supplier on each side of a balanced cut, we need a
+tensor whose price at the original sites is already close to the cost
+of the star. We first construct such a tensor for a prescribed
+placement. In one copy, its nonzero entries are maximal minors of a
+matrix selected for those sites and their spectral price.
+Section~\ref{sec:packing} will group copies by site and retain certain
+row letters to obtain a weighted tensor by restriction from one
+explicit binary tensor.
+
+Let $Y$ be a complete Hadamard cone with tip $0$ and homogeneous spectral
+prices over an algebraically closed field $K$. We use natural logarithms.
+For a $b\times N$ matrix $C$, consider $N$ inputs with two states,
+empty and occupied. The coefficient on the set of occupied inputs $I$
+is the ordered minor $\det C_I$ when $|I|=b$, and zero otherwise.
+For example, when the columns are $(1,t_i)^{\mathsf T}$ and $b=2$,
+the coefficient on $\{i,j\}$, $i<j$, is $t_j-t_i$. The exterior
+product of the occupied columns produces these coefficients and lets
+us keep track of the number of times each input is used in many copies.
+
+More generally, let $A_i\subseteq E$ be subspaces spanning a
+finite-dimensional space $E$. For $\ell\ge1$, wedge the inputs from
+$\bigwedge^*(A_i\otimes K^\ell)$ in a fixed order, take the component
+of top degree, and apply a volume form on $E\otimes K^\ell$. Write
+$\Omega_\ell((A_i))$ for this multilinear form. Its \emph{sector}
+$\Omega_{\ell,p}$ fixes the exterior degree $p_i$ at each input, with
+$\sum_i p_i=\ell\dim E$. A \emph{supplier} $(A_i,y_i,\theta_i)$ puts
+this input at the site $y_i$ and credits it $\theta_i$ units per degree.
+The value of a list of suppliers is the largest biased sector price per
+copy, optimized over the number of copies,
+\begin{equation}\label{ext:value}
+ \lambda((A_i,y_i,\theta_i)_i)
+ =\sup_{\ell\ge1}\frac1\ell
+   \max_p\left\{H(\Omega_{\ell,p};y)+\sum_i\theta_i p_i\right\}.
+\end{equation}
+Linear maps into $E$ may replace the inclusions $A_i\subseteq E$.
+Factoring a map through its image and choosing a linear section gives
+restrictions in both directions, so the sector prices agree. Taking
+one map $K\to E$ per column of $C$ gives the form $\Omega_\ell(C)$
+and the value $\lambda(C;y,\theta)$.
+
+A column of degree $p$ in $\ell$ copies has local dimension
+$\binom{\ell}{p}$. Sending this input from the tip to a site at
+distance $r$ costs at most $r\log\binom{\ell}{p}$. If $h$ denotes
+binary entropy in nats, its biased price per copy is bounded by
+$rh(p/\ell)+\theta p/\ell$. Maximizing the latter over $p/\ell\in[0,1]$
+gives the budget for a single column,
+\[
+ A(r,t)=r\log(1+e^{t/r})\quad(r>0),\qquad
+ A(0,t)=\max(0,t),
+\]
+where $t$ is its bias. Summing these budgets gives the star upper bound
+$\lambda(C;y,\theta)\le\sum_i A(\|y_i\|,\theta_i)$.
+We use Vandermonde matrices with columns
+$(1,t_i,\ldots,t_i^{b-1})^{\mathsf T}$ for distinct $t_i\in K$.
+Any $b$ of these columns form a basis of $K^b$.
+
+\begin{theorem}[Exterior near-star estimate]\leavevmode\phantomsection\label{ext:star}
+Let $x_1,\ldots,x_d$ be unit sites with uniform Cartan barycenter $0$.
+Give each site $q$ column suppliers, with identical lists of biases
+\[
+ \theta_j=-M+(2j-1)M/q,\qquad 1\le j\le q.
+\]
+Suppose $N=dq$ is even and $M\ge100\log N$. Write $y,\theta$ for
+the resulting lists of $N$ sites and biases. There exists an
+$(N/2)\times N$ Vandermonde matrix $C$ satisfying
+\[
+ 0\le \sum_i A(1,\theta_i)-\lambda(C;y,\theta)
+       \le C_0 M(1+N/q^2)\log N
+\]
+with an absolute constant $C_0$.
+\end{theorem}
+
+To see what the lower bound asks of the columns, give the tip an
+additional supplier of the whole space $E$ and vary its bias $s$.
+As $s$ increases, it becomes advantageous to take more degrees at
+the tip. The marginal value of $s$ measures those degrees per copy.
+Subtracting it from $b=\dim E$ gives the \emph{threshold rank} $r_s$
+still supplied by the original columns. Equation~\eqref{ext:recover}
+will recover the original price by integrating $r_s$.
+
+A single column at a unit site has threshold rank
+$p_i(s)=(1+e^{s-\theta_i})^{-1}$, and
+$\int_0^\infty p_i(s)\,ds=A(1,\theta_i)$. To recover the star budget
+we would like $r_s$ to be close to $\sum_i p_i(s)$ above zero, where
+the columns must contribute independently, and close to $b$ below
+zero, where they must fill $E$. For an ordinary subset of Vandermonde
+columns these two requirements meet in the identity
+$\rank(C_I)=\min(b,|I|)$.
+
+For priced columns we can construct an event of dimension $p_i(s)$ for
+each column. Intersection dimensions give a probability law for each
+\emph{pair} of events. These laws need not extend to a joint law for all
+the events, so in general we cannot sample a subset $I$ and count its
+members. Section~\ref{sec:flags} inserts event indicators one at a
+time and shows how the resulting count bounds the Vandermonde rank from
+below.
+Section~\ref{sec:achieve} uses the centered sites and the evenly spaced
+biases to control the second moment of this count over insertion orders.
+This gives one choice of columns with small integrated rank loss.
+
+\subsection{Exterior price rules}
+
+We record the properties of the exterior value that underlie the
+threshold rank. First, the supremum in~\eqref{ext:value} is a limit.
+Split the copy indices into blocks of lengths $\ell_1,\ell_2$ and fix
+a maximizing sector in each block. Wedge the two inputs locally at
+every supplier. The sector of the combined system then restricts to
+the product of the two sectors. The sign for moving the blocks past
+one another is constant on the fixed degrees. Hence the unnormalized
+maxima are superadditive. They are bounded above by $O(\ell)$ by
+transport, and spanning gives a nonzero sector. Fekete's lemma now
+yields the limit. Reordering suppliers also changes each sector only
+by a scalar sign. For the full exterior form this sign can depend on
+the degrees of the inputs.
+
+Enlarging or adding suppliers gives restrictions onto the original
+sectors. Increasing a bias can only increase the value, and shifting all biases
+by $a$ adds $a\dim E$ because the total degree is fixed. Joint convexity
+and positive homogeneity in the labels follow from the corresponding
+properties of price. Continuity follows from transport and the bound
+$\ell\dim A_i\log 2$ on the logarithm of each local dimension. A zero
+subspace contributes nothing.
+
+Two suppliers at the same site and bias may be merged by replacing their
+subspaces with their sum. Precomposing the merged form with local
+wedge multiplication gives the form on each split sector. For the reverse inequality, fix a
+merged degree and take the direct sum of the wedge maps over all degree
+splits. This map is onto because the two subspaces span their sum. A
+linear section expresses the merged tensor as an ordinary sum of
+restrictions, one for each of at most $\ell\dim E+1$ splits. Their
+bias credits agree. Lemma~\ref{price:rules} bounds the extra price by
+$O(\log(\ell+1))$, which vanishes per copy. Direct sums of systems in
+complementary summands of $E$ add values, since their nonzero sectors
+factor.
+
+Finally, consider lists $L_1,L_2$ with a spanning common sublist.
+We prove the diminishing-increments inequality
+\[
+ \lambda(L_1\cup L_2)+\lambda(L_1\cap L_2)
+ \le \lambda(L_1)+\lambda(L_2).
+\]
+Place the lists in separate summands of $E\oplus E$ and merge common
+suppliers. For $t\ne0$ apply the change of coordinates
+$(u,v)\mapsto(u+v,tv)$. Each common supplier still supplies
+$A_i\oplus A_i$ and can keep its original basis. Use the transformed
+bases, polynomial in $t$, for all exclusive suppliers. At $t=0$ they
+supply subspaces of the first summand. Each limiting sector is thus
+a specialization of isomorphic sectors, so its price cannot increase
+by Lemma~\ref{price:rules}. Splitting the common suppliers again gives
+the union in the first summand and the intersection in the second.
+Additivity now gives the displayed inequality. For lists with repeated
+members, use named occurrences to form the union and intersection.

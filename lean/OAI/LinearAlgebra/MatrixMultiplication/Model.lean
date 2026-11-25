@@ -19,6 +19,13 @@ namespace Gate
 
 variable {F Input Register : Type*}
 
+def cost : Gate F Input Register → ℕ
+  | .constant _ => 0
+  | .input _ => 0
+  | .add _ _ => 1
+  | .sub _ _ => 1
+  | .mul _ _ => 1
+
 def eval [Field F] (inputs : Input → F) (registers : Register → F) :
     Gate F Input Register → F
   | .constant z => z
@@ -27,12 +34,7 @@ def eval [Field F] (inputs : Input → F) (registers : Register → F) :
   | .sub i j => registers i - registers j
   | .mul i j => registers i * registers j
 
-def cost : Gate F Input Register → ℕ
-  | .constant _ => 0
-  | .input _ => 0
-  | .add _ _ => 1
-  | .sub _ _ => 1
-  | .mul _ _ => 1
+abbrev eval.match_1 := @cost.match_1
 
 end Gate
 

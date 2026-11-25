@@ -1,0 +1,212 @@
+\phantomsection\label{app:probing-proof}
+\begin{proof}
+Fix a summand. Write $wz_i$ for its outstanding bits on commodity $i$.
+Record the bit positions in order at each endpoint, so any subsequent
+identity on these positions is valid under the surrounding contractions.
+Let $S$ count the normalized capacity fees and linear costs already
+incurred, less a credit of $2M/(nw)$ for each external catalyst bit
+used in a replacement. An unused catalyst bit can be routed through
+its column center for exactly its credit. Thus, once all commodity
+demands are met, the total cost is at most $S+2MN_c/(nw)$. We control
+the cost of unfinished demands by the potential $F_s(z)$.
+
+\paragraph{Marginal cost of a demand.}
+Let $\mu$ be the strong convexity constant of $f$. At the maximizer
+$x=x_s(z)$ the box optimality condition gives
+\[
+                        z_i\ge s\nabla_i f(x)\ge s\mu x_i .
+\]
+For the second inequality, vary only coordinate $i$ and use the
+vanishing of $\nabla_i f$ on its lower face. On that face the first
+inequality follows from $z_i\ge0$. In particular, a price bounded away
+from zero guarantees stock when $s$ is bounded away from zero. Choose
+an integer $B$ greater than every gradient coordinate bound. For
+$z_i\ge B$ we have $x_i=a_i$. We can therefore fulfill all stock above
+$B$ along the prescribed route at cost at most $a_i/n$ per unit while
+decreasing $F_s$ by precisely that amount per unit. We apply this cap
+after every stock increase.
+
+With the inventory norm induced by $\langle\cdot,\cdot\rangle$, the
+two optimality inequalities and strong convexity give
+\[
+ \|x_s(z)-x_{s'}(z')\|
+       \le \frac{\|z-z'\|+C|s-s'|}{\mu\min(s,s')}.
+\]
+Comparing the two maxima at their respective optimizers now gives
+$\nabla_z F_s(z)=x_s(z)$ and $\partial_s F_s(z)=-f(x_s(z))$.
+For bounded inventories and $s,s'$ in a compact subinterval of
+$(0,1]$, the preceding estimate makes the first-order remainder
+uniformly quadratic. We will use these derivatives both to price a
+local replacement and to pay for new probes.
+
+\paragraph{A failed test gives a cheaper exact identity.}
+On a ball that fails the test, demand one bit of each positive-priced
+commodity and of every catalyst pair. Let $L$ be the sum of their
+assigned prices. The zero wire metric fails the test, so $L>0$.
+Available replacements are commodities at prices $x_i$, catalyst pairs
+at $2M$, and core links and currently tested probes at their lengths
+$\lambda_e$. A replacement commodity enters the inventory. A
+replacement catalyst pair can be installed immediately along its center
+route.
+
+Increase all replacement prices by the same sufficiently small amount
+to obtain positive lengths $l_e$. On a nonsingleton ball, every
+normalized spectral wire metric $d$ then satisfies
+\[
+             \sum_{e\ \mathrm{demanded}}d_e
+               < L\max_{e\ \mathrm{available}}d_e/l_e .
+\]
+The connected core makes the maximum positive. If no increase works, take a
+sequence of violations as the price increase tends to zero and rescale
+each violating metric to make its maximum ratio one. The lengths of
+a spanning tree bound the scales. In the limit every replacement
+respects its original price bound, yet the sum of the demand distances
+is at least $L$. Each demand must therefore attain its own bound.
+This realizes the prices of all catalysts and positive-priced commodities,
+and the zero-priced commodities have distance zero. The resulting metric
+passes the test, a contradiction. On a singleton all demands can be
+supplied locally.
+
+By compactness the displayed inequality holds with some $L_-<L$ in
+place of $L$. Take the product of width-$b_0$ demand wires. As supply,
+take the direct sum over replacement options $e$ of a single wire of
+width $\lfloor b_0 L_-/l_e\rfloor$ on $e$. For large fixed $b_0$ every
+spectral point values the supply strictly above the demand, by the
+uniform margin. Lemma~\ref{lem:spectral-comparison} supplies the $r$th
+demand power from a direct sum of at most $C(b_0)$ copies of the $r$th
+supply power. Expansion gives an ordinary sum over $F$ of restrictions
+of replacement products. With $b=b_0r$ bits per demand and $m$
+replacement options, each term costs at most $bL_-$, and there are at
+most $C(b_0)m^r$ terms. Choosing first $b_0$ and then $r$ makes the
+number of bits specifying a term arbitrarily small relative to $b$.
+
+For $J=O(w)$ simultaneous copies, the outer selector records only the
+histogram of the $J$ choices. It uses $O(\log(2w))$ bits because the
+alphabet is fixed. Inside that summand, transmit the full choice word
+on a core spanning tree, check its histogram, and sum over the words with
+that histogram. The histogram fixes the installed widths, while each word
+specifies offsets within them. In this way every original word
+contributes its tensor with its original coefficient. The tree has
+bounded total length, so the rate just obtained makes the cost of
+transmitting the word less than half the saving $Jb(L-L_-)$. Fixed
+tables, prefix sums and sorting of bit positions implement the local
+operations with $O(w\,\mathrm{polylog}(h))$ trivalent gates since
+$w\le h^A$. Each auxiliary deterministic check has a unique valid
+history.
+
+Suppose the mean discrepancy exceeds a fixed tolerance. Bounded overlap
+and bounded discrepancies yield $\Omega(n)$ disjoint balls failing by
+a fixed amount. In each bounded local format the vectors whose
+discrepancy reaches this fixed lower bound form a compact set. At any one
+vector the saving from its identity persists on a neighborhood where every selected
+positive-priced commodity stays bounded away from zero. A finite
+subcover gives a fixed menu with uniform margins. An $o(1)$
+normalized-norm error in the grid approximation affects only $o(n)$
+balls by more than a fixed coordinate tolerance.
+
+Use $J=\lfloor\alpha w/b\rfloor$ copies on each selected ball, checking
+the actual stock and skipping deficient balls. For fixed sufficiently
+small $\alpha>0$ the stock inequality at the beginning of the proof
+guarantees adequate inventory on every accurate ball while $s$ stays
+bounded away from zero. The $o(n)$ inaccurate balls have bounded
+cost per ball in units of $w$. In this simultaneous round, use the marginal prices $x_i$ for newly
+created and fulfilled demands. Include the linear link costs and deduct
+the $2M$ credit for each consumed external catalyst bit. After division by $nw$ these changes decrease the
+first-order estimate for $S+F_s(z)$ by at least $c\alpha$, uniformly
+for large $h$. The change in inventory has normalized norm $O(\alpha)$,
+so its quadratic error is $O(\alpha^2)$. Fixing $\alpha$ sufficiently
+small leaves a uniform positive decrease in every new summand. This
+applies to both the core test and the test with one purchased activation.
+
+\paragraph{Paying for probes when the core test passes.}
+Fix rational $s$. Suppose the excess of $x=x_s(z)$ exceeds $1/4$ and
+its core discrepancy is sufficiently small. Choose the activation
+from the grid approximation to $x$. For some fixed $\zeta>0$ and
+test tolerance, every $x'$ of at most this discrepancy with the
+purchased probes satisfies, for all sufficiently large $h$,
+\[
+                      (s/2)\mathcal D_f(x',x)\ge P+\zeta .
+\]
+If such constants did not exist, a sequence with discrepancies tending
+to zero and margins tending to zero or less would contradict
+\eqref{eq:protocol-activation}. Bounded coordinates and gradients,
+the Lipschitz gradient, and the normalized-norm approximation let us
+use the actual maximizer in the inequality.
+
+Buy the probes once. Hold half the inventory in reserve and start with
+$z/2$ at time $s/2$. The potential is then $F_{s/2}(z/2)=F_s(z)/2$.
+Feeding the reserve back at rate $z/s$ as time advances to $s$ would
+keep $x$ fixed and restore the original potential in the absence of
+replacements. Feed at this same rate on a fine fixed rational mesh.
+Before each increment, apply rounds of simultaneous local replacements
+until the current maximizer $x'$ has small discrepancy with the probes.
+Along the feed the instantaneous increase in potential is at most
+\[
+ \langle z/s,x'\rangle-f(x')
+ \le F_s(z)/s-\mathcal D_f(x',x)
+ \le F_s(z)/s-2(P+\zeta)/s .
+\]
+The first inequality is the box optimality condition
+$\langle z/s-\nabla f(x),x'-x\rangle\le0$ at the original maximizer.
+Over the interval of length $s/2$, the feed therefore recovers at
+most $F_s(z)/2-P-\zeta$. This pays the capacity fee $P$ and decreases
+$S+F_s$ by $\zeta$. The sum of the quadratic mesh errors is proportional
+to the mesh spacing. Rounding the split and the increments to whole bits,
+returning the original reserve exactly, costs $o(1)$. A fine enough
+mesh leaves a saving of at least $\zeta/2$.
+
+The number of replacement rounds in a purchase can be bounded uniformly
+even when $S$ is negative. The stock cap and bounded derivatives give
+a bound for the total possible increase from the purchase, feed and
+time changes without the test. Once the accumulated replacement savings
+exceed that bound plus the required saving, complete the feed directly.
+
+\paragraph{Finishing the payloads within budget.}
+Start at $z=0$, $s=1$ and pay $P_{\mathrm{core}}\le1$. On a fine fixed
+mesh, inject a total of exactly $w$ bits on each payload commodity.
+Next decrease time to a fixed rational $s_0>0$ with $s_0f(a)<1$
+uniformly. Before each increment, bring the excess down to at most
+$1/2$. Apply a replacement round at large discrepancy, or buy probes
+at small discrepancy when the excess exceeds $1/4$. The overlap of
+these excess thresholds allows fixed-precision decisions. Purchased
+links stay paid. To choose a new activation we test the core alone.
+During the corresponding feed we test the core with its new probes.
+
+At excess at most $1/2$, the mean payload price is at most $3/2$
+during injection. During the time decrease, $f(x_s(z))\le j(s)+1/2$.
+Since $\int_0^1 j(s)\,ds\le1$, each phase costs at most two on a fine
+enough fixed mesh, including rounding. Finally route the remaining
+requests along their prescribed core routes. Substituting $a$ in the
+maximum defining $F_{s_0}(z)$ shows that this costs at most
+$F_{s_0}(z)+s_0f(a)$, so the final $S$ is less than $10$.
+
+As in the purchase step, the outer loop has a uniform stopping bound.
+Even without the low-excess tests, the bounded derivatives control the
+sum of all injection and time-change increases, and routing capped
+stock directly has bounded cost. If the accumulated decreases exceed
+this crude bound, complete the scheduled injections, time changes and
+routing directly. Each trajectory thus performs uniformly bounded
+numbers of reductions, purchases and replacement rounds.
+
+Reserve $O(w)$ external bits per catalyst pair in advance and return
+unused bits on their center routes. Aggregate repeated uses of each
+available link into a single installed width with one capacity fee.
+Bounded incidence and bounded routes give a bounded number of pieces
+per site and step. Widths, boundaries and histograms require
+$\mathrm{polylog}(h)$ bits per piece, with $O(h)$ more bits for site
+identifiers. In the fixed local topology, pad each list to its maximum
+length and sort position tags to split, concatenate or permute its
+pieces. This takes $O(w\,\mathrm{polylog}(h))$ gates per site. Given
+the layout, value and activation routines, the control handles the
+fixed-precision menus, greedy disjoint-ball packings, stock checks,
+histograms and link-width lists in $O(n\,\mathrm{polylog}(h))$ word
+operations. Tolerance decisions have fixed slack, so their constants
+may be hardwired. Mesh arithmetic uses rationals and rounded bit counts.
+
+Use a unique encoding for each histogram and set unused selector fields
+to zero. Each replacement is an exact identity under every contraction
+on its ordered bit positions. Expanding the successive replacements
+therefore gives exactly the payload matching times the external catalyst
+identities with the prescribed multiplicities. The normalized cost is
+at most $10+2MN_c/(nw)$ in every summand, as claimed.
+\end{proof}

@@ -1,0 +1,448 @@
+\section{Quadratic programming and complementarity}\label{sec:quadratic}
+
+At a minimum of a convex quadratic over a polyhedron, each inequality
+has either zero slack or zero multiplier. If we knew which entry to set
+to zero in every pair, we could recover the point and its multipliers
+by solving linear equations and inequalities. We find those zeros by
+applying the pricing method of Section~\ref{sec:lp} to the more general
+monotone linear complementarity problem~\cite{CD,CPS}.
+
+Given \(M\in\RR^{N\times N}\) and \(q\in\RR^N\), the linear
+complementarity problem asks for \(z,w\in\RR^N\) satisfying
+\begin{equation}\label{eq:lcp}
+ z\ge0,\qquad w=Mz+q\ge0,\qquad z^\top w=0 .
+\end{equation}
+Here \(M\) is \emph{monotone}, meaning \(M+M^\top\succeq0\).
+Nonnegativity makes the last equality equivalent to \(z_iw_i=0\)
+for every \(i\).
+
+\begin{theorem}[Monotone linear complementarity]\label{thm:lcp}
+There is a deterministic strongly polynomial algorithm
+that, for any monotone linear complementarity
+problem~\eqref{eq:lcp},
+returns a solution or an infeasibility certificate \(u\ge0\)
+satisfying \(M^\top u\le0\) and \(q^\top u<0\).
+\end{theorem}
+
+For convex quadratic programming the earlier bit-polynomial algorithm
+is due to Kozlov, Tarasov and Khachiyan~\cite{KTK}. Interior-point
+methods for monotone complementarity include those of Kojima, Mizuno
+and Yoshise~\cite{KMY}. Granot and Skorin-Kapov obtained Tardos-type
+bounds with matrix dependence for strictly convex quadratics~\cite{GSK},
+and Cui, Li and Miao obtained such bounds for separable
+quadratics~\cite{CLM}. V\'egh's strongly polynomial algorithms for
+network flows with convex costs include separable quadratic costs~\cite{VQ}.
+
+Monotonicity enters at two distinct steps. It ensures that feasibility
+of the linear constraints in~\eqref{eq:lcp} suffices for existence of a
+complementary solution. To \emph{find} one, we also use it to construct
+a convex set that approximates every scaled, normalized solution
+and has small complementarity gap throughout. The midpoint argument of
+Lemma~\ref{lem:mid} then makes the coordinate labels unambiguous.
+
+\subsection{Linear feasibility and existence of a solution}
+
+By Cottle's theorem~\cite{Cottle}, a monotone LCP has a solution
+whenever its linear constraints are feasible. For the proof, we first
+record the attainment argument for convex quadratics, which will also
+give the unboundedness certificate in Corollary~\ref{cor:qp}.
+
+Consider \(\tfrac12 x^\top Gx+c^\top x\) on a nonempty polyhedron
+\(\{x:Ax\le b\}\), where \(G\) is symmetric positive semidefinite.
+The Frank--Wolfe attainment theorem~\cite{FW} in this setting follows
+from the following alternative. There may be a direction
+
+\begin{equation}\label{eq:baddir}
+ d:\quad Ad\le0,\qquad Gd=0,\qquad c^\top d<0,
+\end{equation}
+giving rays of descent to \(-\infty\). Otherwise
+\(c=Gv-A^\top\mu\) for some \(v,\mu\) with \(\mu\ge0\), by Farkas.
+Writing \(G=T^\top T\), the objective is then
+\[
+ \tfrac12\|T(x+v)\|_2^2-\mu^\top Ax+\mathrm{const}.
+\]
+The pairs \((T(x+v),\mu^\top Ax)\) attainable with \(Ax\le b\)
+form a polyhedron, with second component bounded above.
+So in this image space the objective has compact sublevel sets
+on the polyhedron. There is an optimum.
+
+
+Now minimize
+\(z^\top w\), \(w=Mz+q\), subject to \(z,w\ge0\).
+If feasible there is an optimum by attainment, since the objective
+is a convex quadratic and bounded below by zero.
+Any such optimum solves the LCP. Indeed, in the variable \(z\)
+it also minimizes the linearization there, so by LP duality
+there are multipliers \(u,v\ge0\) with
+\[
+ w+M^\top z=v+M^\top u,\qquad w^\top u=z^\top v=0.
+\]
+Dotting the stationarity equation (with all terms on the left)
+with \(z-u\) gives
+\[
+ z^\top w+u^\top v+(z-u)^\top M(z-u)=0.
+\]
+All three terms are nonnegative, proving the claim.
+
+\subsection{Labeling for complementarity}
+
+First use Theorem~\ref{thm:lp} to test the linear constraints
+\(-z\le0,\ -Mz\le q\). In the infeasible case, the Farkas
+multipliers on \(-Mz\le q\) form the desired certificate \(u\).
+In the feasible case with \(q=0\), take \(z=w=0\). For \(q\ne0\)
+collect the scaled affine spaces in the single linear subspace
+\[
+ W=\{(z,Mz+\alpha q):z\in\RR^N,\ \alpha\in\RR\}.
+\]
+View these vectors \(y=(z,w)\) as rows when used with bases
+and scalings. Use positive slots for \(z\), negative for \(w\),
+so \(Q(y)=z^\top w\). Use as row basis \(B_0\)
+a basis of the directions with \(\alpha=0\), say from unit vectors
+in the \(z\)-space, followed by \((0,q)\).
+
+
+Choose a solution \(y\), with \(\alpha=1\), of minimal support.
+It is a circuit of \(W\). Indeed, if the subspace supported on
+\(\supp y\) had dimension at least two, the linear functional
+\(\alpha\) would vanish on a nonzero vector there. Move from \(y\)
+in one of the two directions along this vector until a positive
+entry first reaches zero. The resulting vector still has
+\(\alpha=1\), all its entries are nonnegative, and it retains at
+least one zero in each pair. It would therefore be a solution
+of smaller support.
+
+As before, apply calibration (Theorem~\ref{thm:cal})
+and the extremal price theorem (Theorem~\ref{thm:prices}),
+restarting price search on a calibration restart.
+Use the same parameters~\eqref{eq:labelpars}.
+At a queried price vector let \(B_*=LB_0D\)
+be the true basis corresponding to the answer \(B\)
+as in Theorem~\ref{thm:cal}.
+Our task is to give label \(h\) at \(i\)
+if slot \((i,h)\) maximizes surplus for such a solution circuit
+(with its calibrated demands).
+After scaling the circuit by \(D\) and normalizing, the entry
+at such a slot is at least \(1/3\).
+As in LP we will test for large entries using only \(B\).
+To avoid conflicting labels, we again want
+a convex set of candidates on which \(Q\) is uniformly small,
+to use the midpoint argument (Lemma~\ref{lem:mid}).
+We develop the constraints first with the true basis.
+
+\paragraph{A convex constraint for a scaled solution.}
+With the reciprocal scaling \(D\), the complementarity gap
+\(Q(y)=z^\top w\) is unchanged. On the subspace with \(\alpha=0\),
+the gap is \(z^\top Mz\ge0\). The first \(N\) rows of \(B_*=LB_0D\)
+span this subspace after scaling because \(L\) is lower triangular.
+The last diagonal entry of \(L\) is positive, so a vector with
+\(\alpha>0\) has a positive coefficient on the last row.
+
+Write the row coefficients as \(\xi=(v^\top,\lambda)\) with
+\(v\in\RR^N\). Gathering the terms that contain \(\lambda\) gives
+\[
+ Q(\xi B_*)=v^\top A_*v-\lambda g_*(\xi),
+\]
+where \(A_*\) is symmetric positive semidefinite and \(g_*\) is
+linear. In the scaled, normalized representation of a solution,
+\(\lambda>0\) and \(Q(\xi B_*)=0\). Hence
+\(g_*(\xi)=v^\top A_*v/\lambda\ge0\). Every such solution belongs to
+the convex set
+\[
+ \lambda\ge0,\qquad g_*(\xi)\ge0,\qquad
+ v^\top A_*v\le \lambda g_*(\xi).
+\]
+Indeed, \(\sqrt{v^\top A_*v}\) is a seminorm and the geometric mean of
+the two nonnegative quantities on the right is concave. This is the
+rotated second-order cone constraint in the coordinates of \(B_*\).
+
+\paragraph{A label test on the rational basis.}
+With \(B\), use again the decomposition
+\(Q(\xi B)=v^\top A v-\lambda g(\xi)\),
+taking \(A\) symmetric as before. Recall \(H=2^{100N^2}\),
+\(\epsilon=H^{-10}\), and set
+\(
+ \widetilde A=A+H^{-50}I.
+\)
+Use candidates \(y=\xi B\)
+as in~\eqref{eq:box}
+(again with \(\|\xi\|_\infty\le H\),
+\(-\epsilon\le y_s\le 2\) for each entry),
+with the \emph{additional} constraints
+\begin{equation}\label{eq:rot}
+ \lambda\ge0,\qquad
+ g(\xi)+\epsilon\ge0,\qquad
+ v^\top \widetilde A v\le(\lambda+\epsilon)(g(\xi)+\epsilon).
+\end{equation}
+These height shifts let us work with only absolute accuracy on the
+basis entries,
+even when a solution has \(\lambda\) tiny or \(g_*(\xi)=0\).
+
+
+Indeed, \(B\) is within \(H^{-100}\) of \(B_*\),
+which is bounded by \(2\) entrywise. Hence \(A,g\) are within
+\(20NH^{-100}\) of \(A_*,g_*\) coefficientwise, by taking dot
+products. Thus \(\widetilde A\) is positive semidefinite,
+so the constraints are convex together as before.
+Also for \(\|\xi\|_\infty\le H\),
+\[
+ |g(\xi)|\le H^2,\qquad
+ |g(\xi)-g_*(\xi)|\le H^{-90},
+ \qquad |v^\top(\widetilde A-A_*)v|\le H^{-45}.
+\]
+All candidates satisfy
+\[
+ Q(y)\le \epsilon(\lambda+g(\xi)+\epsilon)\le H^{-1}.
+\]
+And for any solution \(y_0\), write
+\(y_0D/\|y_0D\|_\infty=\xi B_*\), with
+\(\|\xi\|_\infty\le H\).
+To see that \(y=\xi B\) is a candidate, observe that it approximates \(\xi B_*\) within \(\epsilon^2\)
+entrywise, and~\eqref{eq:rot} holds since in particular
+\[
+ (\lambda+\epsilon)(g(\xi)+\epsilon)
+ \ \ge\ \lambda g_*(\xi)+\epsilon^2/2
+ \ \ge\ v^\top \widetilde A v.
+\]
+
+
+Assign \(+\) at \(i\) if the candidate set contains a point with
+\(y_{i+}\ge1/4\), and assign \(-\) otherwise. Only short rational
+data enter this test. To carry it out using the bit-polynomial convex
+QP algorithm~\cite{KTK}, divide by the positive quantity
+\(\lambda+\epsilon\). Introduce
+\(s=1/(\lambda+\epsilon)\), \(\bar\xi=s\xi\) and \(\bar y=sy\).
+Multiply every linear constraint, including the label threshold, by
+\(s\), and impose
+\[
+ s\ge\frac{1}{H+\epsilon},\qquad
+ \bar\lambda+\epsilon s=1,\qquad
+ \bar v^\top\widetilde A\bar v\le g(\bar\xi)+\epsilon s,
+ \qquad \bar\xi=(\bar v^\top,\bar\lambda).
+\]
+The last inequality is~\eqref{eq:rot} multiplied by \(s^2\).
+Conversely, dividing the barred variables by \(s>0\) recovers the
+original constraints. This perspective transformation~\cite[\S2.3.3]{Boyd}
+leaves one convex quadratic inequality on a bounded polyhedron.
+Indeed, \(\bar\lambda\ge0\) gives \(s\le1/\epsilon\), and the scaled
+box constraints bound \(\bar\xi,\bar y\). Test linear feasibility
+first. On a nonempty polyhedron, minimize the left side minus the right
+side of the quadratic inequality and accept exactly when its minimum
+is nonpositive.
+
+\begin{proof}[Conclusion of the proof of Theorem~\ref{thm:lcp}]
+As in LP, consider the final uninterrupted price search, with demands given by
+calibration. A solution circuit, scaled and normalized at a query,
+has entry at least \(1/3\) at each slot of maximal surplus on
+its support. A candidate therefore reaches \(1/4\) at this slot.
+No candidate can reach the same threshold at the opposite slot by convexity and
+Lemma~\ref{lem:mid}. As a result the labels are consistent
+with the solution circuit's demands.
+
+
+Write \(x\) for the prices returned by the extremal price algorithm.
+In each pair allow only one slot to be positive, namely at the
+sign of \(x_i\) (arbitrary choice when zero).
+Return to the original system~\eqref{eq:lcp}
+and impose the indicated zeros.
+Each demand on the solution circuit's support is positive and
+met, so these zeros retain the solution circuit. Theorem~\ref{thm:lp}
+recovers a solution of the resulting linear system.
+
+The number and sizes of the label tests obey the same bounds as in
+Section~\ref{sec:lp}. Their convex QP data have short binary
+encodings. The two LP calls on the original data check initial
+feasibility and recover the solution. All steps are deterministic.
+\end{proof}
+
+A single solution \((z_*,w_*)\) also gives a linear description of
+the entire solution set~\cite{Man}. On the region \(z,w\ge0\),
+\(w=Mz+q\), the identity
+\[
+ z^\top w=z^\top w_*+z_*^\top w+(z-z_*)^\top M(z-z_*)
+\]
+splits the gap into three nonnegative terms. Their sum is zero
+precisely when
+\[
+ z^\top w_*+z_*^\top w=0,\qquad (M+M^\top)(z-z_*)=0 .
+\]
+The second equivalence uses positive semidefiniteness of \(M+M^\top\).
+Consequently the solution set is a polyhedron. To find a solution of
+maximum support, test which entries can be positive by linear
+feasibility. Averaging the witnesses gives a solution positive on
+all those entries at once.
+
+\subsection{Quadratic optimization and conic feasibility}
+
+The first-order optimality conditions for a convex quadratic are
+an affine variational inequality~\cite{KT,KuhHist}. Their classical
+complementarity formulation~\cite{CD,CPS} yields the following
+algorithm.
+
+\begin{corollary}[Convex quadratic programming and affine variational inequalities]\label{cor:qp}
+Both problems below are solvable in deterministic strongly
+polynomial time for arbitrary real data.
+\begin{enumerate}
+ \item \emph{Affine variational inequalities.} Given a polyhedron \(P=\{x\in\RR^n:Ax\le b\}\)
+ and monotone \(G\in\RR^{n\times n}\), \(c\in\RR^n\),
+ find \(x\in P\) such that
+ \((Gx+c)^\top(x'-x)\ge0\) for all \(x'\in P\), or report
+ that none exists.
+ \item \emph{Convex quadratic programming.} For such \(P\) and symmetric \(G\succeq0\), minimize
+ \(\tfrac12 x^\top Gx+c^\top x\) over \(P\), returning an
+ optimum and multipliers, or certifying infeasibility or
+ unboundedness.
+\end{enumerate}
+\end{corollary}
+
+
+\begin{proof}
+By LP duality the variational inequality at \(x\in P\) holds
+if and only if there are multipliers satisfying
+\[
+ Gx+c+A^\top\mu=0,\qquad
+ \mu\ge0,\qquad
+ \mu^\top(b-Ax)=0.
+\]
+Write \(x=Ru\) for \(R=[I\ {-I}]\), with \(u\ge0\).
+The requirements on \(u,\mu\) are exactly~\eqref{eq:lcp}
+for
+\[
+ z=\binom{u}{\mu},\qquad
+ M=\begin{pmatrix}
+  R^\top GR & R^\top A^\top\\ -A R & 0
+ \end{pmatrix},\qquad
+ q=\binom{R^\top c}{b}.
+\]
+Indeed, applying \(R^\top\) includes each entry of
+\(Gx+c+A^\top\mu\) and its opposite in the first block
+of \(w\), forcing zero. Monotonicity is
+immediate, so apply Theorem~\ref{thm:lcp}.
+
+For the quadratic objective, first test feasibility of \(P\) by
+Theorem~\ref{thm:lp}. If \(P\) is empty this gives a Farkas
+certificate. Otherwise retain a feasible point \(x_0\) and test the
+linear conditions~\eqref{eq:baddir} on \(d\). Any such \(d\) gives
+the ray \(x_0+td\), \(t\ge0\), along which the objective decreases
+to \(-\infty\). If no such direction exists, the attainment argument
+gives a minimum. Convexity makes the variational inequality necessary
+and sufficient for optimality, so the complementarity solution yields
+an optimizer and its multipliers. These reductions use a constant
+number of layers of scalar computations and calls as in
+Section~\ref{sec:arithmetic}.
+\end{proof}
+
+The LCP and convex QP algorithms and their certificates transfer to
+ordered fields by the argument in Section~\ref{sec:lp}. Diagonalizing
+the symmetric form by congruence shows that its positive
+semidefiniteness persists in a real closure.
+
+\paragraph{Projection.}
+For any \(v\) and any nonempty polyhedron \(P\), minimizing
+\(\|x-v\|_2^2\) over \(P\) gives its Euclidean projection.
+If a polytope is given by vertices, barycentric variables express
+membership by linear constraints. This includes the minimum-norm
+point of a vertex-given simplex.
+See Hong and Verma~\cite{HV} for earlier connections of
+strong polynomiality questions for convex QPs and projection, and
+De Loera, Haddock and Rademacher~\cite{DLHR}
+for an LP reduction \emph{to} the minimum-norm problem in an
+integer-input model, as well as exponential behavior of Wolfe's
+combinatorial algorithm \cite{W76}.
+Fujishige, Kitahara and V\'egh~\cite{FKV} give bounds using circuit
+imbalance for update-and-stabilize methods for box-constrained least
+squares.
+
+\paragraph{A conic consequence.}
+Another short application, using perspective again,
+is to a special case of second-order cone programming
+(see~\cite{Lobo,Boyd} for background and applications).
+
+\begin{corollary}[Lorentz constraints with proportional quadratic parts]\label{cor:lor}
+One can deterministically decide, in strongly polynomial time,
+real feasibility of linear weak inequalities together with a single
+Lorentz constraint
+\begin{equation}\label{eq:lor}
+ \|F(x)\|_2\le h(x)
+\end{equation}
+for real affine maps \(F,h\) with vector and scalar output, respectively,
+and return a point in case of feasibility.
+
+More generally we can decide feasibility, within the same bound,
+for arbitrarily many Lorentz constraints if the Hessians
+\(\nabla^2(\|F(x)\|^2_2-h(x)^2)\)
+(one for each constraint)
+span at most one dimension
+\textup{(}e.g., ball constraints of the form
+\(\|x-c\|_2\le r\) for given \(c,r\)\textup{)}.
+We can return an exact feasible point here using an output
+representation \(a+b\sqrt d\),
+giving scalar \(d\ge0\) and vectors \(a,b\)
+in the field generated by the input.
+\end{corollary}
+
+
+\begin{proof}
+In the single-constraint case,
+test first for feasibility with \(h(x)=0\), by LP
+(since we then just require \(F(x)=0\) for~\eqref{eq:lor}).
+For \(h(x)>0\) use variables \(s=1/h(x),y=sx\),
+writing the conditions as \(s>0\)
+together with
+\[
+ Ay\le sb,\qquad H(y,s)=1,\qquad f(y,s):=\|T(y,s)\|_2^2\le1,
+\]
+with \(Ax\le b\) the given linear constraints and \(H,T\)
+the linear forms or maps obtained by homogenizing
+\(h,F\) using \(s\).
+Find a point satisfying all but possibly the norm constraint
+(or conclude infeasibility) by LP.
+If this point does not already give a solution,
+minimize \(f\) over the linear conditions with \(s>0\)
+relaxed to \(s\ge0\),
+by Corollary~\ref{cor:qp}.
+A minimum greater than one proves infeasibility. If the minimum
+is less than one, interpolate between its value and the value at the
+point from LP, choosing a positive weight on the latter so the
+interpolated value is one. The corresponding convex combination has
+\(s>0\) and \(f\le1\) by convexity. If the minimum is one, we need
+a minimizer with \(s>0\). Strict convexity of the squared norm in
+the \(T\)-image makes that image the same at every minimizer.
+Fix it to the value already found and test for \(s>0\) by LP.
+
+
+Now for several constraints of the indicated type,
+require the right-hand sides nonnegative and square the constraints.
+Besides linear constraints the result has the form
+\[
+ \ell_j(x)\le q(x),\qquad q(x)\le r_k(x)\qquad(\text{respective indices }j,k)
+\]
+for affine \(\ell_j,r_k\) and one quadratic form \(q\),
+after rescaling inequalities (all quadratic parts
+are multiples of one).
+Impose also all \(\ell_j(x)\le r_k(x)\).
+
+On this linear region, test separately for feasibility with the
+lower bounds, and for feasibility with the upper bounds.
+For the lower bounds, try each \(j\) as a maximizing index. Impose
+\(\ell_j\ge\ell_{j'}\) for all \(j'\) and enforce \(\ell_j\le q\)
+using its original Lorentz constraint. The upper bounds are treated
+in the same way by enumerating a minimizing index. If either list
+is empty, its separate feasibility test consists of linear
+constraints alone.
+If there are both kinds, with feasibility for each separately,
+consider the segment between the two witnesses. At each point, the lower
+bounds all hold or the upper bounds all hold (since \(\ell_j\le r_k\)).
+These are closed conditions, so somewhere on the segment both hold.
+We can find such a point by testing endpoints and enumerating roots
+of nonconstant quadratic or linear constraint polynomials on the
+segment (an endpoint of the closed feasible portion suffices).
+Testing at such a root takes ordinary scalar operations and comparisons
+by isolating a radical and squaring (checking signs first).
+Only constantly many layers of subroutine calls
+or polynomial-size arithmetic formulas are needed,
+so we get strong polynomiality as claimed.
+\end{proof}
+
+A radical in the generalization can be necessary for a witness.
+For example, \(\|(2x,1)\|_2\le3\) and
+\(\|(1,1)\|_2\le x\) together force \(x=\sqrt2\).

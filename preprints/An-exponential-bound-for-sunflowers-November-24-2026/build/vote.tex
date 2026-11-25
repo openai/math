@@ -1,0 +1,153 @@
+\section{Reading a majority by differentiation}\label{sec:vote}
+
+Suppose each active site in a group \(C\) holds a symbol and a strict
+majority hold the same symbol \(y\). We want to send \(\pi(y)\) to a
+destination \(U\), for a projection \(\pi\) specified after the
+resources for the gate have been chosen. The cost per output bit will
+be the largest price of a wire from one voter to \(U\). There is also
+a fixed allowance for all the possible symbols. On unanimity the
+gate returns almost this entire allowance in a single fixed tensor.
+
+The construction keeps one slot for each possible symbol. Each slot
+carries a tensor supported at a fixed total degree. A voter subtracts
+a fixed amount of degree in the slot for its own symbol. We choose
+that amount so a strict majority exhausts an ordinary slot. A
+derivative doubles the available degree in exactly one slot, and only
+the term in which that slot belongs to the winner survives.
+
+\subsection{Degree tensors and the vote}
+
+For a nonempty set \(C\) of sites and an integer \(m\ge1\), put
+\[
+ W_m(C)=
+ \sum_{\substack{e_i\ge0\ (i\in C)\\ \sum_{i\in C}e_i=m-1}}
+         \bigotimes_{i\in C}v_{e_i},
+\]
+where \(v_e\) is the basis vector indexed by degree \(e\).
+Equivalently, \(W_m(C)\) takes the coefficient of \(t^{m-1}\) in a
+product in \(\mathbb F[t]/(t^m)\). If \(m\) is a power of the
+characteristic, changing the basis at every site to
+\((1+t)^x\), \(0\le x<m\), gives the constraint
+\(\sum_i x_i\equiv m-1\pmod m\). Indeed, \((1+t)^m=1\) in this
+algebra, and among the basis polynomials only \((1+t)^{m-1}\) has a
+term of degree \(m-1\).
+
+We use the spectral point from the compatible Euclidean prices of
+Theorem~\ref{thm:flat}. For these prices \(W_m(C)\) has the same value
+as a common label of size \(m\) when \(m\) is a power of the
+characteristic. The estimate at other sizes will measure what the gate
+returns. Section~\ref{sec:degree} proves both statements.
+
+\begin{lemma}[Price of a fixed total degree]\label{lem:degree-width}
+Over an algebraically closed field of characteristic \(p>0\), for the
+compatible Euclidean prices and every nonempty \(C\),
+\[
+              h(W_m(C))=w(C)\log m
+              \qquad(m\text{ a power of }p).
+\]
+For any integer \(s\ge1\) and \(|C|\ge2\), one has
+\[
+              h(W_s(C))\ge
+              w(C)\log\left\lceil\frac{s}{|C|-1}\right\rceil .
+\]
+In particular \(h(W_s(C))\ge w(C)\log s-O(\log(2|C|))\) for all
+nonempty \(C\), with an absolute implied constant.
+\end{lemma}
+
+\begin{lemma}[A vote with one wire]\label{lem:vote}
+Let \(C\) be a nonempty set of sites and \(U\) a site outside \(C\).
+Each voter holds a \(b\)-bit symbol and an activity flag. The domain
+fixes the number \(n\ge1\) of active voters. There is an allowance
+\(j\ge0\) such that for each \(0\le l\le b\) a gate taking a public
+projection \(\pi\colon\{0,1\}^b\to\{0,1\}^l\) as a control has cost at most
+\[
+               j+l\max_{i\in C}w(\{i,U\})+\log |C|.
+\]
+When a strict majority of the active voters hold \(y\), the gate
+appends \(e_{\pi(y)}\) at \(U\) and a nonzero tensor \(J\) on \(C\).
+For each such input the same \(J\) works for every choice of \(l,\pi\).
+When all active voters hold \(y\), a permutation of symbol slots,
+determined by \(y\) and applied at every site of \(C\), takes \(J\) to
+a fixed tensor of price at least \(j-O(\log(2|C|))\).
+\end{lemma}
+
+\begin{proof}
+Choose a power \(m\) of \(p\) with \(m\ge100(n+1)^2\). Put
+\(M=2^b\) and \(j=Mw(C)\log m\). Use slots with degree basis
+\(v_0,\ldots,v_{2m}\), padding smaller tensors with zeros.
+
+\emph{Doubling the degree.}
+For \(z\in\mathbb F\), define the entry of \(V(z)\) at a degree tuple
+\((e_i)\) to be the coefficient of \(t^{m-1}\) in the remainder of
+\(t^{\sum_i e_i}\) modulo \(t^m-zt\). Reduction of a monomial of
+degree at least \(m\) lowers its degree by \(m-1\) and multiplies it
+by \(z\). At total degree \(a>0\) divisible by \(m-1\), the entry is
+\(z^{a/(m-1)-1}\). All other entries vanish. Thus \(V(0)=W_m(C)\),
+and \(V'(0)=W_{2m-1}(C)\) has total degree \(2(m-1)\).
+
+At \(z\ne0\) the polynomial \(t^m-zt\) has \(m\) distinct roots,
+since its derivative is \(-z\). Interpolating at those roots expresses
+the coefficient of \(t^{m-1}\) as a weighted sum of \(m\) evaluations.
+Each evaluation of a product factors across the sites. Consequently
+\(V(z)\) is a restriction of \(G_C(m)\), of price at most \(w(C)\log m\).
+
+\emph{Sending the projection.}
+Index the \(M\) slots by symbols. Define the polynomial tensor
+\begin{equation}\label{eq:vote-derivative}
+ T_\pi(z)=\sum_{x\in\{0,1\}^b} e_{\pi(x)}^{(U)}
+           \otimes\bigotimes_{u\in\{0,1\}^b}
+             \begin{cases} V'(z),&u=x,\\ V(z),&u\ne x. \end{cases}
+\end{equation}
+At \(z\ne0\), entrywise differentiation multiplies the entry of \(V(z)\)
+by \((\sum_i e_i-(m-1))/((m-1)z)\). The denominator is invertible
+because \(p\) divides \(m\). This multiplier is a sum of local
+diagonal operators. At voter \(i\) use \(e_i/((m-1)z)\), subtracting
+\(1/z\) at one designated voter.
+
+For the summand corresponding to voter \(i\), supply \(V(z)^{\otimes M}\)
+at cost at most \(j\) and share an \(l\)-bit label \(v\) between \(i\)
+and \(U\). At \(i\), apply the sum of its local operators on the slots
+\(x\) with \(\pi(x)=v\), and erase \(v\). Site \(U\) keeps \(v\).
+Summing over the voters appends \(T_\pi(z)\) for every choice of the
+public control \(\pi\). A summand pays for one wire, and summing
+\(|C|\) gates adds at most \(\log|C|\) to the largest cost by
+\eqref{eq:sum-prices}. For each input tensor, including its public
+controls and any auxiliary factors, this output is polynomial in \(z\).
+Specialization at zero therefore satisfies the same cost bound.
+
+\emph{Selecting the winner.}
+Write \(a_0=\lfloor n/2\rfloor+1\) and
+\(d=\lfloor(m-1)/a_0\rfloor+1\).
+Each active voter locally replaces \(v_e\) by \(v_{e-d}\) in the slot
+for its symbol, sending \(v_e\) to zero when \(e<d\). Let \(t_x\)
+count the votes for \(x\). If \(t_y\ge a_0\), then \(t_yd>m-1\).
+Every term in \eqref{eq:vote-derivative} at zero vanishes except the
+one with the derivative in slot \(y\). For \(x\ne y\),
+\(t_xd\le(a_0-1)d\le m-1\), since \(m-1\ge a_0(a_0-1)\).
+For the winning slot, put \(s=2(m-1)-nd+1\). From \(2a_0-n\ge1\)
+and \(d\le(m-1)/a_0+1\) we get
+\[
+             s\ge(m-1)/a_0-n+1\ge m/(2(n+1)).
+\]
+There is thus enough degree in the winning slot even if all \(n\)
+voters choose it.
+
+In the surviving term, each tuple of remaining degrees lifts uniquely
+by adding \(d\) at voters for the corresponding symbol. The lifted
+degrees sum to the prescribed degree and are at most \(2(m-1)\).
+It follows that \(J\) is a product of fixed-degree tensors, with
+\(W_{\,2(m-1)-t_y d+1}(C)\) in slot \(y\) and \(W_{\,m-t_x d}(C)\) in
+each other slot \(x\). All factors are nonzero. This description also
+shows that \(J\) is independent of \(l,\pi\).
+
+On unanimity, moving slot \(y\) to the front gives the tensor
+\(W_s(C)\otimes W_m(C)^{\otimes(M-1)}\), which depends only on the fixed
+parameters. By Lemma~\ref{lem:degree-width} its price is at least
+\[
+     j-w(C)\log(m/s)-O(\log(2|C|))
+                         \ \ge\ j-O(\log(2|C|)),
+\]
+since \(n\le |C|\) and \(w(C)\le1\).
+\end{proof}
+
+\input{degree}

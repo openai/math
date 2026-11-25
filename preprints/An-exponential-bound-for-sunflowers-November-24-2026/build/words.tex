@@ -1,0 +1,164 @@
+\section{From a family of words to a shared label}\label{sec:words}
+
+\subsection{The transversal reduction}
+Let \(\W\subseteq\Sigma_1\times\cdots\times\Sigma_k\), where each
+alphabet is finite. Arrange an ordered \(r\)-tuple of words as the rows
+of an \(r\times k\) array. Call a column \emph{admissible} if its symbols
+are all equal or pairwise distinct. If two rows coincide and all columns
+are admissible, the repeated entry in each column forces that column to
+be constant. Thus an array with admissible columns consists either of a
+single repeated word or of \(r\) distinct words. We call \(\W\)
+\emph{sunflower-free} if only the first possibility occurs.
+
+A word \(x\) represents the transversal
+\(\{(i,x_i):1\le i\le k\}\). Distinct transversals form a sunflower
+precisely when every column is admissible. Indeed, a symbol occurring in
+two rows of a column belongs to the common intersection and must occur
+in every row of that column. Conversely, the constant columns give the
+common intersection, and the other columns give disjoint petals.
+
+To find transversals in an arbitrary \(k\)-uniform family \(\F\), color
+each ground element independently and uniformly with one of \(k\) colors.
+Each member receives all \(k\) colors with probability \(k!/k^k\).
+Some coloring therefore retains at least \((k!/k^k)|\F|\) such members.
+Reading each retained set in color order identifies it with a word, and
+different coordinates use disjoint color classes. Consequently, a bound
+\(M^k\) for sunflower-free word families over arbitrary alphabets gives
+the set bound \((k^k/k!)M^k\le(eM)^k\). This is the transversal
+reduction of Alon, Shpilka and Umans~\cite[Theorem~2.6]{ASU}, based
+on the partition argument of Erd\H{o}s and Kleitman~\cite{EK}.
+
+\subsection{The price of sharing a label}
+Our starting tensor lets each of \(r\) groups choose a word independently.
+Testing the columns will leave one word shared by all groups. To compare
+these two tensors we measure the price of sharing one of \(|\W|\)
+labels on a prescribed set of sites.
+
+Let \(S\) be a finite set of at least two sites. Tensors belong to
+\(\bigotimes_{s\in S}V_s\), with each \(V_s\) a finite-dimensional
+vector space over a fixed algebraically closed field of characteristic
+\(p>0\). One may take \(p=2\). Positive characteristic enters the degree
+constraint in Part~\ref{part:quant}. A \emph{restriction}
+\(R\longrightarrow T\) applies one linear map at each site. Tensor
+products group the factors at each site. In a direct sum \(R\oplus T\),
+the local spaces are direct sums at every site, and the two tensors are
+added after inclusion in their respective blocks.
+
+For a nonempty subset \(P\subseteq S\), put
+\[
+       E_P(j)=\bigotimes_{s\in P}e_j,\qquad
+       G_P(L)=\sum_{j=1}^{L}E_P(j),
+\]
+with scalar factors \(1\) outside \(P\). In each summand of \(G_P(L)\),
+every site in \(P\) holds the same basis label \(j\). We call this tensor
+a \emph{diagonal}, or a partial diagonal when \(P\ne S\). Its basis
+labels can equally well be the members of a word family of size \(L\).
+
+A \emph{spectral point} \(\varphi\) assigns nonnegative real values to
+tensors. It takes zero to zero and the scalar unit to one, is monotone
+under restriction, multiplies on tensor products and adds on direct
+sums~\cite{Strassen}. Every nonzero tensor restricts to the unit.
+Its \emph{price} \(h(T)=\log_2\varphi(T)\) is therefore nonnegative.
+Define \(w(P)=h(G_P(2))\), the price of one bit shared on \(P\). Then
+\begin{equation}\label{eq:price}
+       h(G_P(L))=w(P)\log_2 L,\qquad 0\le w(P)\le w(S)=1 .
+\end{equation}
+Indeed, tensoring diagonals multiplies their label counts, and a local
+projection can discard any set of labels. Compare \(L^m\) with the
+two neighboring powers of two, take prices, divide by \(m\), and let
+\(m\) tend to infinity. Sending each \(e_j\) to \(1\) at a site removes
+that site from the shared label, so \(w(P)\) is monotone in \(P\).
+The full diagonal \(G_S(2)\) is the direct sum of two units. At a
+single site the diagonal is a nonzero vector and its price is zero.
+
+\subsection{The comparison}
+A site that holds a basis label \(x\) can use it as a \emph{control}.
+For any family of linear maps \(M_x\) with common domain and codomain,
+the assignment
+\[
+             e_x\otimes v\longmapsto e_x\otimes M_xv
+\]
+defines a single linear map. Thus the site can read a coordinate of
+its word, keep the word label, and use the symbol to choose the next
+operation. The same prescription acts term by term on a sum. Operations
+can write fresh basis labels as controls for later maps. Adding two
+restrictions with common output spaces uses the direct sum of their
+inputs. To subtract the second output, multiply its block by \(-1\)
+at one site.
+
+Partition \(S\) into \(r\) nonempty groups, and assign one symbol to
+each group. For three distinct groups, the rule \((U,V)\to W\) says
+that when \(U\) and \(V\) agree, \(W\) must have their common symbol.
+A list of rules \emph{forces admissibility} if every assignment
+satisfying them gives an admissible column. A test for a rule starts
+with an auxiliary tensor \(R\). At selected sites of the three groups,
+the group symbol controls a local map. If all three symbols agree, the
+test must return a prescribed nonzero tensor \(Q\). Its \emph{net cost}
+is \(h(R)-h(Q)\). The spaces, \(R\), and \(Q\) are fixed independently
+of the values of the controls.
+
+\begin{proposition}[Comparison of independent and shared labels]\label{prop:comparison}
+Fix a spectral point and a partition of \(S\) into \(r\) groups with
+\(\rho=w(S)-\sum_J w(J)>0\). Suppose a list of rules forces admissibility.
+For each rule \(j\) and every finite alphabet, suppose there is a test
+of net cost at most \(c_j\) that returns its fixed tensor whenever the
+three symbols agree and returns zero whenever the rule is violated.
+Then every nonempty sunflower-free word family of length \(k\) satisfies
+\[
+                 \rho\log_2|\W|\le k\sum_j c_j .
+\]
+\end{proposition}
+
+\begin{proof}
+Write \(N=|\W|\). The tensor \(\bigotimes_J G_J(N)\) has one summand
+for every independent choice of a word in \(\W\) at each group \(J\).
+Supply a separate test for each rule in each column, and let \(R\) and
+\(Q\) denote the products of their input and return tensors. On each
+summand, run the tests controlled by the symbols of the chosen words,
+retaining the word labels.
+
+An \(r\)-tuple other than a repeated word has an inadmissible column,
+because \(\W\) is sunflower-free. Some rule there is violated. Its
+zero output kills the entire summand, whatever the other tests return.
+On a repeated word every test returns its prescribed tensor. Summing
+over the surviving words gives the restriction
+\[
+        \left(\bigotimes_J G_J(N)\right)\otimes R
+                 \longrightarrow G_S(N)\otimes Q .
+\]
+By monotonicity and Equation~\eqref{eq:price}, sharing the word across
+all groups increases its price by \(\rho\log_2 N\). This increase
+is at most \(h(R)-h(Q)\le k\sum_j c_j\).
+\end{proof}
+
+\subsection{Choosing the prices by a Euclidean placement}
+Proposition~\ref{prop:comparison} asks for weights with a positive
+surplus \(\rho\) and with bounded costs for the tests. We choose them
+by placing the sites in Euclidean space. For a finite nonempty set
+\(P\subset\R^d\) or its convex hull, put
+\[
+    \delta(P)=\sqrt{2\pi}\,\E\max_{x\in P}\langle G,x\rangle,
+    \qquad G\sim N(0,I_d).
+\]
+This normalization of Gaussian mean width gives zero on a point and
+Euclidean length on a segment, since \(\sqrt{2\pi}\,\E(G_1)_+=1\).
+It is translation invariant and additive under Minkowski sums.
+In the plane it is the semiperimeter of the convex hull, with a
+degenerate segment counted twice in the perimeter.
+
+\begin{theorem}[Euclidean prices {\cite[Theorem~\ext{G}{thm:main} and Section~\ext{G}{sec:spectra}]{oaG}}]\label{thm:flat}
+For any field and any finite set of distinct sites \(S\subset\R^d\)
+with \(D=\delta(S)>0\), there is a spectral point on tensors on \(S\)
+over that field for which
+\[
+                   w(P)=\frac{\delta(P)}{D}
+                   \qquad(\varnothing\ne P\subseteq S).
+\]
+\end{theorem}
+
+We take the point induced by the compatible Euclidean assignment
+of~\cite{oaG}. Thus a single evaluation prices every shared label in
+the comparison. Section~\ref{sec:plane} uses semiperimeters to choose
+the groups and the sites read by each rule. Section~\ref{sec:degree}
+uses the joint convexity, isometry invariance and dilation law of the
+same assignment to price a total-degree constraint.

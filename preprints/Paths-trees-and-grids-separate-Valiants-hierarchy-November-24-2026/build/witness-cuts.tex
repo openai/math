@@ -1,0 +1,46 @@
+\begin{figure}[!hbp]
+\centering
+\begin{tikzpicture}[x=.48cm,y=.48cm,font=\small,
+ ordinary/.style={draw=ink,line width=.7pt},
+ crossing/.style={draw=rust,densely dashed,line width=1.15pt},
+ chosen/.style={circle,draw=ink,fill=ink,inner sep=0pt,minimum size=4.3pt},
+ outside/.style={circle,draw=ink,fill=white,inner sep=0pt,minimum size=4.3pt}]
+\begin{scope}
+  \foreach \i in {0,...,3} {
+    \draw[ordinary] (\i,0)--(\i,3);
+    \draw[ordinary] (0,\i)--(1,\i) (2,\i)--(3,\i);
+    \draw[crossing] (1,\i)--(2,\i);
+  }
+  \foreach \i in {0,...,3} {
+    \foreach \j in {0,1} \node[chosen] at (\j,\i) {};
+    \foreach \j in {2,3} \node[outside] at (\j,\i) {};
+  }
+  \node at (1.5,-1.05) {Square grid};
+\end{scope}
+\begin{scope}[xshift=3.65cm]
+  \coordinate (root) at (1.8,3);
+  \coordinate (l) at (.6,1.5); \coordinate (r) at (3,1.5);
+  \coordinate (ll) at (0,0); \coordinate (lr) at (1.2,0);
+  \coordinate (rl) at (2.4,0); \coordinate (rr) at (3.6,0);
+  \draw[crossing] (root)--(l);
+  \draw[ordinary] (root)--(r) (l)--(ll) (l)--(lr) (r)--(rl) (r)--(rr);
+  \foreach \v in {l,ll,lr} \node[chosen] at (\v) {};
+  \foreach \v in {root,r,rl,rr} \node[outside] at (\v) {};
+  \node at (1.8,-1.05) {Complete binary tree};
+\end{scope}
+\begin{scope}[xshift=7.35cm]
+  \draw[ordinary] (0,1.5)--(2.25,1.5) (3,1.5)--(4.5,1.5);
+  \draw[crossing] (2.25,1.5)--(3,1.5);
+  \foreach \i in {0,...,3} \node[chosen] at (.75*\i,1.5) {};
+  \foreach \i in {4,...,6} \node[outside] at (.75*\i,1.5) {};
+  \node at (2.25,-1.05) {Path};
+\end{scope}
+\end{tikzpicture}
+\caption{Three cuts between filled and open vertices. Four edges
+cross the middle of this grid. On the binary tree a balanced split
+can cross just one edge, so the ABP argument prescribes the size of
+the smaller set more carefully. On the path, a proper nonempty prefix
+of any size cuts just one edge. The formula argument combines splits
+at several scales.}
+\label{fig:witness-cuts}
+\end{figure}

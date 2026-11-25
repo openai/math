@@ -1,0 +1,42 @@
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[font=\small,x=1cm,y=1cm,line cap=round,
+ term/.style={minimum height=.43cm,minimum width=.52cm,inner sep=2pt,
+              draw=ink,fill=white,rounded corners=.8pt},
+ source/.style={draw=sea,fill=sea!5,circle,inner sep=3pt}]
+\begin{scope}[xshift=-3.3cm]
+  \node[font=\small\bfseries] at (0,1.55){Supplying the rows};
+  \filldraw[fill=ink!4,draw=ink!35] (-.38,-1.08) rectangle (2.23,1.08);
+  \node[align=center,text=ink,font=\footnotesize] at (.92,0)
+     {network\\of price $S$};
+  \node[source] (root) at (-2.28,0) {$o$};
+  \foreach \i/\y in {1/.78,2/0,3/-.78}{
+    \node[term] (A\i) at (-.38,\y) {$A_\i$};
+    \node[term] at (2.23,\y) {$B_\i$};
+    \draw[sea,line width=.6pt] (root)--(A\i);
+  }
+  \node[font=\footnotesize,align=center] at (.03,-1.53)
+    {Pin cost at most $n/\sqrt2+o(n)$};
+\end{scope}
+\draw[ink,-{Stealth[length=2mm]}] (-.56,0)--(.56,0);
+\begin{scope}[xshift=3.3cm]
+  \node[font=\small\bfseries] at (0,1.55){Extracting independent wires};
+  \foreach \i/\y in {1/.78,2/0,3/-.78}{
+     \node[term] (left\i) at (-1.58,\y) {$A_\i$};
+     \node[term] (right\i) at (1.58,\y) {$B_\i$};
+  }
+  \foreach \i in {1,...,3}\foreach\j in {1,...,3}
+    \draw[ink!33,thin] (left\i.east)--(right\j.west);
+  \draw[rust,line width=.9pt] (left2.east)--(right1.west);
+  \node[font=\footnotesize,align=center] at (0,-1.53)
+    {Wire cost at least $(1-\rho)n-o(n)$};
+\end{scope}
+\end{tikzpicture}
+\caption{An array bit in position $(2,1)$ appears at row terminal $A_2$
+and column terminal $B_1$. Over many uses, Lemma~\ref{lem:entropy}
+turns these paired copies into independent wires, with a rate for
+each pair given by its conditional entropy. The prices shown are per
+use, with $n=N^2$ as $N$ grows. Three rows and columns illustrate the
+pairing.}
+\label{fig:advice}
+\end{figure}

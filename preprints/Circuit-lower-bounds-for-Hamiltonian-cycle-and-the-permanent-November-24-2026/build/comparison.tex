@@ -1,0 +1,322 @@
+\section{From balanced cuts to circuit lower bounds}\label{sec:comparison}
+
+Each monomial of a set-multilinear polynomial uses one variable from
+each of $d$ disjoint rows. If every row has length $q$, its coefficients form a
+tensor $T$ indexed by $[q]^d$, where $[q]=\{1,\ldots,q\}$. Write
+\[
+ f_T(X)=\sum_{j_1,\ldots,j_d\in[q]} T_{j_1\cdots j_d}
+                    X_{1,j_1}\cdots X_{d,j_d}.
+\]
+Taking a tensor power gives more variables without increasing the
+degree. In $T^{\otimes h}$ each row index is a word of length $h$, so
+$f_{T^{\otimes h}}$ still has degree $d$ and now has $dq^h$ variables. Brand et al.\ study the
+asymptotic circuit complexity of these grouped powers \cite{BrandMany}.
+
+\begin{theorem}[Explicit tensors of low degree]\label{thm:lowdegree}
+There are an absolute positive integer $a$ and absolute constants $c,C>0$
+with the following property. For every sufficiently large even $d$, set
+$m=\lceil\log_2 d\rceil$ and $w=\lceil a d m^{3/2}\rceil$. There is a
+tensor $T_d$ with entries in $\{0,1\}$ on $d$ rows of common side $q_0$,
+with $w\le\log q_0\le Cw$, such that over every field $F$ whose
+characteristic has no ports,
+\[
+  \bsz_F^{[d]}(f_{T_d^{\otimes h}})
+       \ge \exp(c h d w/\sqrt m) \qquad(h\ge1).
+\]
+An entry of $T_d$ is computable in time polynomial in $w$, uniformly in $d$.
+\end{theorem}
+
+\begin{corollary}[Bounds in the number of variables]\label{cor:variable-budget}
+Over every field whose characteristic has no ports, there is a uniform
+$\VNP$ family on at most $n$ variables of degree
+$d=\Theta(\log n/(\log\log n)^{3/2})$ and degree-component border size
+at least $\exp(\Omega((\log n)^2/(\log\log n)^2))$ for all sufficiently
+large $n$. For each fixed sufficiently large even $d$ and all
+$n\ge d q_0(d)$, grouped powers of the same $T_d$ give a uniform
+$\VNP$ family of degree $d$, using at most $n$ variables and requiring
+size $n^{\Omega(d/\sqrt{\log d})}$ in this model.
+\end{corollary}
+
+To prove Theorem~\ref{thm:lowdegree}, we extract a sum of low-rank
+tensors from a small circuit. The cut on which a summand has low rank
+can vary with the summand. We place the rows once and bound the cost
+of every summand at those same sites. A second estimate gives an
+explicit tensor whose price exceeds the total cost of this sum unless
+the circuit is large. We use natural logarithms for prices.
+
+\subsection{Balanced cuts in a circuit}
+
+A bipartition of $[d]$ is \emph{balanced} if each side has at least
+$d/3$ rows. The matrix of a tensor on such a cut has rows indexed by
+the choices on one side and columns indexed by the choices on the
+other. Its rank is the least number of products across the cut whose
+sum is the tensor. Allowing the cut to vary over all nontrivial
+bipartitions in such a sum gives Naslund's partition rank
+\cite{Naslund}. A related lower bound for multiplicative complexity
+uses products across three blocks of sizes $d-2,1,1$
+\cite{BrandKaskiWang}. A product on one cut can have large matrix
+rank on another, which limits the information from testing a single
+flattening (see \cite{egow} for barriers to matrix-rank methods).
+Here the balanced-gate argument of arithmetic depth reduction
+\cite{VSBR} ensures that each product can use a balanced cut.
+
+\begin{lemma}[Balanced cuts]\label{lem:balanced}
+For $d\ge4$, the coefficients that use one variable in each of $d$
+rows of the output of a size-$s$ circuit form a sum of at most $2^d$
+tensors. Each summand has rank at most $2^{O(d)}(s+1)$ on its own
+balanced cut, with at most one summand per cut. For degree-component
+border size $s$, the coefficient tensor lies in the closure of the
+set of these sums.
+\end{lemma}
+
+\begin{proof}
+Set any variables outside the designated rows to zero. At each gate
+keep the component of row multidegree $\mathbf1_I$ for
+every $I\subseteq[d]$. Sums and differences act componentwise. At a
+product, sum over decompositions of $I$ into two disjoint row sets.
+Every discarded monomial has degree at least two in some row and
+cannot contribute to a later $\mathbf1_I$ component. Computing these
+components gives a circuit of size $2^{O(d)}(s+1)$ with a
+row set at each gate, including the empty row set for scalar gates.
+
+Expand the full-set output into parse trees. In each tree follow the
+selected branch at a sum or difference and the child with more rows
+at a product, breaking ties by a fixed rule. Stop at the first gate
+with at most $2d/3$ rows. Its row set has at least $d/3$ elements,
+since a product step decreases the row count by at most half and an
+additive step preserves it.
+
+Group the trees by their stopping gate. Any parse below that gate
+fits each context in the group, since the path choice uses only the
+row sets and branches above it. The other factors in the context use
+the complementary rows. Summing the group thus gives one product
+across its cut, with the signs of differences included in the
+expansion. Collect products from gates with the same cut to obtain
+the rank bound. Extracting these coefficients from the degree-$d$
+component is a linear map, so the decomposition gives the asserted
+containment after taking closures.
+\end{proof}
+
+\subsection{Two price estimates at one placement}
+
+Work over an uncountable algebraically closed extension $K$ of
+$\overline F$. A lower bound over $K$ descends to $F$. For each
+circuit architecture the coefficient map is polynomial in the
+constants, and the kernel of its pullback on coordinate rings
+commutes with scalar extension. There are finitely many architectures
+at a fixed format and size.
+
+\paragraph{One placement for every cut.}
+Theorems~\ref{prod:main} and~\ref{lamp:certificate} supply $d$ unit
+sites $x_1,\ldots,x_d$ in a Hadamard metric cone, with uniform
+Cartan barycenter at the tip $o$. The barycenter minimizes the mean
+squared distance to the sites. The cone has dilations $z\mapsto tz$
+for $t\ge0$. Write $\|z\|=d(o,z)$ and
+\[
+ \langle x,z\rangle=\tfrac12\bigl(\|x\|^2+\|z\|^2-d(x,z)^2\bigr).
+\]
+The cone distance law gives $\langle x,tz\rangle=t\langle x,z\rangle$
+\cite{BH}. For a cut $\ell$, let $b_\ell(i)\in\{0,1\}$ indicate
+the side containing row $i$. The same theorems give two points
+$Z_{\ell,0},Z_{\ell,1}$ for each cut, at distance at most one, with
+\begin{equation}\label{eq:score}
+ \max_b\|Z_{\ell,b}\|=O(\sqrt d),\qquad
+ \sum_i\langle x_i,Z_{\ell,b_\ell(i)}\rangle
+                       \ge c_0 d/\sqrt m .
+\end{equation}
+The norm bound uses the fact that there are at most $2^d$ cuts.
+The sum in Equation~\eqref{eq:score} measures the first-order decrease
+in total distance to the rows when two suppliers move away from $o$
+along their respective rays. We take the product with a Hilbert space
+and choose homogeneous prices as in Section~\ref{sec:prices}.
+Lemma~\ref{price:diagonal} bounds the price of sharing an $L$-valued
+label among the row sites by $O(\sqrt m\log L)$.
+
+\paragraph{A tensor that nearly attains the star bound.}
+For any integer $dm\le w\le d^2$, Theorem~\ref{pack:witness} supplies
+a single binary tensor $T$ of log side $\Theta(w)$. A local linear
+map on each row takes $T$ to a tensor $\widehat U$ over $K$ whose
+choice can depend on the priced placement. Each row of $\widehat U$
+has the same finite alphabet $V$, with a real weight $t(v)$ attached
+to each letter $v$. In a grouped power the weight of a word is the
+sum of its letter weights. To price a tensor $A$ in these bases,
+take the best sector of $A^{\otimes k}$ with prescribed word weight
+in each row, adding the total prescribed weight to its ordinary
+price. The limit of this maximum divided by $k$ is the weighted price
+$\mathcal B_x(A)$ of Equation~\eqref{pack:weighted}.
+
+Theorem~\ref{pack:witness} gives a function $\mathcal F$ on positive
+distances with
+\begin{align}
+ \mathcal B_x(\widehat U)&\ge d\mathcal F(1)-O(d),&
+ r\log\sum_{v\in V} e^{t(v)/r}&\le \mathcal F(r),\nonumber\\
+ \mathcal F'(1)&=\Theta(w),&
+ \sup_{1/2\le r\le2}|\mathcal F''(r)|&=O(w).
+ \label{eq:pack-interface}
+\end{align}
+A supplier at the tip can send each index distance one to its row.
+The resulting star has weighted price bounded by $d\mathcal F(1)$.
+The witness comes within $O(1)$ per row of this benchmark.
+Lemma~\ref{pack:value} gives the corresponding rules for comparing
+supplies. Weighted prices add on grouped products and have closed
+sublevels. Summing $L$ tensors costs at most their largest weighted
+price plus the price of sharing an $L$-valued label. Sending an index
+distance $r$ adds at most $r\log\sum_{v\in V}e^{t(v)/r}$ to the
+ordinary price at the suppliers.
+
+\begin{proof}[Proof of Theorem~\ref{thm:lowdegree}]
+Let $s$ be the degree-component border size of $f_{T^{\otimes h}}$.
+Lemma~\ref{lem:balanced} puts $T^{\otimes h}$ in the closure of
+sums over balanced cuts with rank at most $2^{O(d)}(s+1)$ per cut.
+Applying the local maps to obtain $\widehat U^{\otimes h}$ preserves
+this conclusion. The maps are linear on coefficient arrays and can
+only decrease cut ranks. The same conclusion holds if one starts
+with a size-$s$ border circuit for $f_{\widehat U^{\otimes h}}$ over
+$K$. We bound $s$ in either case.
+
+For a term of rank $R\ge1$ on cut $\ell$, place two suppliers at
+$y_b=\tau Z_{\ell,b}$ for a positive $\tau$ to be chosen. A rank
+factorization represents the term by one wire carrying a label in
+$[R]$, with one factor computed at each end. Since the suppliers
+are at distance at most $\tau$, the wire costs at most $\tau\log R$.
+Send each grouped index from its supplier to its row. Its sum of
+exponential weights factors over the $h$ letters of a word.
+Equation~\eqref{eq:pack-interface} therefore bounds the term's
+weighted price by
+\begin{equation}\label{eq:cut-price}
+ \tau\log(s+1)+O(\tau d)+h\sum_{i=1}^d \mathcal F(r_i),\qquad
+ r_i=d(x_i,y_{b_\ell(i)}).
+\end{equation}
+Figure~\ref{fig:supply} compares the two networks.
+\input{supply-figure}
+
+Set $\tau=\eta/(d\sqrt m)$ for a sufficiently small absolute $\eta>0$.
+The cone distance law at a unit site gives
+$r_i=1-\tau\langle x_i,Z_{\ell,b_\ell(i)}\rangle+O(\tau^2d)$
+and $|r_i-1|=O(\tau\sqrt d)$. Using the two derivative estimates of
+Equation~\eqref{eq:pack-interface} and the sum in Equation~\eqref{eq:score}
+gives
+\[
+ \sum_i \mathcal F(r_i)\le d\mathcal F(1)
+                 -c_0\mathcal F'(1)d\tau/\sqrt m+O(w\tau^2d^2)
+               \le d\mathcal F(1)-c_1 w/m .
+\]
+The linear term saves order $\eta w/m$. Its error is $O(\eta^2w/m)$,
+so the same choice of $\eta$ gives the saving on every balanced cut.
+
+There are at most $2^d$ terms. Summing them costs $O(d\sqrt m)$ once,
+even for $h$ copies, and closedness preserves the resulting bound on
+$\widehat U^{\otimes h}$. Its weighted price is at least
+$h(d\mathcal F(1)-O(d))$ by additivity. Cancel the common contribution
+$hd\mathcal F(1)$ to obtain
+\begin{equation}\label{eq:balance-cost}
+    \tau\log(s+1)+O(hd+d\sqrt m)\ \ge\ c_1 h w/m .
+\end{equation}
+Take $w=\lceil a d m^{3/2}\rceil$. For sufficiently large absolute
+$a$ the saving $c_1 h w/m$ absorbs both errors for every $h\ge1$,
+and $dm\le w\le d^2$ for all sufficiently large $d$. Dividing by
+$\tau$ yields
+\begin{equation}\label{eq:packed-hardness}
+ \bsz_K^{[d]}(f_{\widehat U^{\otimes h}})
+       \ge \exp(c_2 h d w/\sqrt m)
+\end{equation}
+and the same bound for $f_{T^{\otimes h}}$ over $F$.
+The entry algorithm and the side bounds follow from
+Theorem~\ref{pack:witness}.
+\end{proof}
+
+\subsection{From the explicit tensor to complete polynomials}
+
+\begin{proof}[Proof of Corollary~\ref{cor:variable-budget}]
+The construction in Theorem~\ref{pack:witness} pads the row alphabets
+of $T_d$ with zeros to the predetermined size
+$q_0(d)=2^{\lceil C'w\rceil}$ for a fixed absolute integer $C'$.
+For a variable budget $n$, take the largest even $d$ with
+$d q_0(d)\le n$. Maximality gives $n<(d+2)q_0(d+2)$, and increasing
+$d$ to $d+2$ changes $w$ by at most a constant factor. Thus
+$w=\Theta(\log n)$ and
+$d=\Theta(\log n/(\log\log n)^{3/2})$. At $h=1$,
+Theorem~\ref{thm:lowdegree} gives
+\begin{equation}\label{eq:vnphard}
+   \log \bsz_F^{[d]}(f_{T_d})
+        =\Omega\!\left(\frac{(\log n)^2}{(\log\log n)^2}\right).
+\end{equation}
+For fixed sufficiently large even $d$ and $n\ge d q_0(d)$, use the
+largest $h$ such that $d q_0(d)^h\le n$. Then
+$h\log q_0(d)\ge\tfrac12\log(n/d)$ and $n\ge d^2$, giving
+$n^{\Omega(d/\sqrt{\log d})}$.
+
+For uniform $\VNP$ membership, guess the address of one variable in
+each row, compute the tensor entry, and accept if it is one. In a
+grouped power, the entry is the product of the individual bits. Each
+accepting address contributes the product of its selected variables.
+The Boolean computation has size polynomial in $n$. To express it
+as a Valiant sum \cite{Valiant}, also guess its gate values and check
+each bounded-fan-in gate by a constant-degree truth-table polynomial.
+Each address has a unique consistent assignment of gate values.
+The same construction supplies one output bit per address in each
+row, indicating which variable to use. The resulting summand has
+polynomial degree and circuit size. These Boolean tests work over
+every characteristic.
+\end{proof}
+
+The completeness projections of Valiant \cite{Valiant,Burgisser}
+transfer the lower bound to the two cycle polynomials. We give the
+weighted verifier construction here because Part~\ref{part:port}
+also needs control of degrees and of the arcs carrying variables.
+
+\input{gadgets}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main} in the absence of ports]
+Apply Lemma~\ref{gadget:verifier} to the Boolean verifier for $f_{T_d}$
+above. Its size is polynomial in $n$ with absolute constants. Thus
+$f_{T_d}$ is a projection of $\HC_M$ with $M\le A n^b$ for absolute
+$A,b$, and also of $\Per_M$ under the same bound outside
+characteristic two. To obtain any larger order, split a vertex of
+the Hamiltonian-cycle instance into a forced path, or add an identity
+block to the permanent instance.
+
+A projection that substitutes constants can mix homogeneous degrees.
+Suppose the complete polynomial of order $N$ lies in the closure
+of degree-$N$ components of size-$s$ circuit outputs. For each such
+circuit compute all homogeneous components through degree $N$ at each
+gate, using addition or convolution. The isolated
+degree-$N$ output is a full homogeneous approximant of size
+$O((N+1)^2(s+1))$. Project that output, then select its degree-$d$
+component. Both maps on coefficients are linear, so a degree-component
+border circuit for the complete polynomial gives the same border
+upper bound $O((N+1)^2(s+1))$ for $f_{T_d}$.
+
+For each sufficiently large $N$, choose $n=\lfloor(N/A)^{1/b}\rfloor$
+and pad the projected instance to order $N$. Equation~\eqref{eq:vnphard}
+now bounds $O((N+1)^2(s+1))$ from below. Since $\log n\sim b^{-1}\log N$,
+its logarithmic lower bound dominates the $O(\log N)$ cost of
+isolating the degree. This gives the claimed exponent with an
+absolute constant.
+\end{proof}
+
+\begin{corollary}[Sparse supports]\label{cor:sparse-support}
+The lower bound of Theorem~\ref{thm:main} holds on directed graphs of
+order $N$ with indegree and outdegree at most three, and, for the
+permanent outside characteristic two, on bipartite graphs of degree
+at most three with $N$ vertices on each side. More precisely, in each
+case there exists such a graph at every sufficiently large $N$, and
+each allowed arc or edge carries its own independent variable. In a
+characteristic admitting ports these graphs also attain the
+stretched-exponential bound of Theorem~\ref{thm:stretch}.
+\end{corollary}
+
+\begin{proof}
+In either branch apply Lemma~\ref{gadget:verifier} to the verifier
+used in the transfer, here for $f_{T_d}$ and in Section~\ref{sec:border}
+for the signed verifier. Keep independent variables on all permitted
+arcs or edges and set the other entries of the complete matrix to zero.
+The resulting degree-$N$ graph polynomial still projects to the verifier
+polynomial by specializing the permitted entries. Padding a directed
+vertex into a forced path puts its incoming arcs at the first vertex
+and its outgoing arcs at the last, preserving both degree bounds.
+Padding a bipartite graph by disjoint edges preserves its maximum
+degree as well. The same homogeneous extraction before specialization
+therefore transfers the verifier lower bound to these graph polynomials
+at every sufficiently large order.
+\end{proof}

@@ -1,0 +1,183 @@
+\section{Isometry-invariant prices on Hilbert space}
+\label{sec:hilbert}
+
+The mean-width law determines the price of every diagonal on a
+Euclidean flat. For a general tensor, even congruent placements on
+a flat may a priori have different prices. Assuming flats of every
+finite dimension exist, we can choose a single system on Hilbert space
+that gives equal prices to congruent placements. A high-dimensional
+flat lets us impose any finite family of such equalities to arbitrary
+accuracy.
+
+\begin{theorem}[Isometry-invariant spectral prices]\label{thm:hilbert}
+Let $F$ be a field over which there is a spectral flat in every
+finite dimension, and let $K$ be a real Hilbert space. There is a
+compatible spectral price system on $K$ over $F$ whose binary wire
+distance is the Hilbert distance. For every nonzero finite tensor $T$,
+its price $H(T;x)$ is jointly convex in the leg positions
+$x=(x_1,\ldots,x_r)$ and depends on $x$ only through the labeled
+distances $\|x_i-x_j\|$. It satisfies $H(T;tx)=tH(T;x)$ for $t\ge0$.
+\end{theorem}
+
+\begin{proof}
+For each $N\ge1$, choose a spectral flat $\mathbb R^N$ over $F$
+and equip it with the translation-invariant, homogeneous prices
+$H_N$ of Lemma~\ref{lem:homogenization}. For a nonzero tensor
+$T$ with leg dimensions $d_i$, put $b_i=\log_2 d_i$.
+The transport estimate~\eqref{eq:move} gives
+\begin{equation}\label{eq:hilbert-relocation}
+ |H_N(T;x)-H_N(T;y)|\le\sum_{i=1}^r b_i\|x_i-y_i\|.
+\end{equation}
+The bound holds in every dimension and allows several legs at one site.
+
+\emph{Finite comparisons.}
+Fix a finite family of triples $(T,x,y)$ with $T\ne0$ and $x,y$
+labeled congruent placements of $T$ in $K$. Let $E\subset K$ be a
+finite-dimensional subspace containing the sites in this family and
+fix $\varepsilon>0$. We seek a single linear isometry
+$J\colon E\to\mathbb R^N$ for which
+\[
+  |H_N(T;Jx)-H_N(T;Jy)|<\varepsilon
+\]
+for every triple. If $E=\{0\}$, every comparison is an equality.
+Otherwise put $m=\dim E$, fix orthonormal coordinates on $E$, and
+let $A=G/\sqrt N$ for an $N\times m$ matrix $G$ of independent
+standard Gaussian entries. For each placement in the family, the
+function $f_x(G)=H_N(T;Ax)$ has Lipschitz constant at most
+$N^{-1/2}\sum_i b_i\|x_i\|$ in the Frobenius metric by
+\eqref{eq:hilbert-relocation}. For congruent $x,y$, the differences
+from the first site have the same Gram matrix, so $y_i=Qx_i+v$
+for some orthogonal map $Q$ of $E$ and $v\in E$. Translation
+invariance removes $Av$ from the price, and $GQ$ has the same law
+as $G$. In particular $f_x$ and $f_y$ have equal expectations.
+
+Each $f_x$ has variance $O(N^{-1})$. To see the dimension-independent
+estimate, let $G'$ be an independent copy of $G$ and set
+$Z_s=G\cos s+G'\sin s$. Then $\dot Z_s$ is a standard Gaussian vector
+independent of $Z_s$, where we regard matrices as vectors of entries.
+For any smooth $L$-Lipschitz function $f$, Cauchy--Schwarz gives
+\[
+  2\operatorname{Var} f(G)
+  =\mathbb E\bigl(f(G')-f(G)\bigr)^2
+  \le \frac{\pi}{2}\int_0^{\pi/2}
+       \mathbb E\langle\nabla f(Z_s),\dot Z_s\rangle^2\,ds
+  \le \frac{\pi^2}{4}L^2 .
+\]
+Mollification extends the estimate to every Lipschitz $f$.
+By Chebyshev's inequality, with probability tending to one all the
+finitely many prices are within $\varepsilon/4$ of their expectations.
+Also $A^*A\to I_m$ in probability, entrywise and hence in operator
+norm since $m$ is fixed. With probability tending to one its polar
+factor $J=A(A^*A)^{-1/2}$ is defined and isometric, and $\|J-A\|$
+tends to zero in probability. By \eqref{eq:hilbert-relocation}, this
+changes each price by at most $\|J-A\|\sum_i b_i\|x_i\|$. For
+large enough $N$ some $J$ therefore satisfies all the comparisons.
+
+\emph{One price system.}
+Index these choices by triples $(E,\mathcal C,q)$, where $\mathcal C$
+is a finite family of comparisons in $E$ and $q$ is a positive
+integer. Order the triples by inclusion of the subspace and the family,
+and by increasing $q$. For each triple choose $J$ with error below
+$1/q$. Composing $J$ with the orthogonal projection onto $E$ gives a
+contraction $B\colon K\to\mathbb R^N$. For every nonzero $T$ and
+every $x$, we have $H_N(T;0)=0$ because all legs coincide there.
+The transport bound~\eqref{eq:hilbert-relocation} then puts every
+pulled-back price $H_N(T;Bx)$ in $[0,\sum_i b_i\|x_i\|]$.
+Compactness of the product of these intervals gives a subnet on which
+all prices converge. Denote the limits by $H(T;x)$. Each fixed
+comparison eventually belongs to $\mathcal C$, with tolerance tending
+to zero. Thus congruent placements have equal limiting prices. Joint
+convexity and homogeneity also pass to the limit.
+
+Fix a finite support $S\subset K$ of positive diameter. Eventually
+$S\subset E$, so $B$ is isometric on $S$. Its mean width $W(S)$,
+computed in its finite-dimensional affine span, is therefore $W(BS)$.
+Theorem~\ref{thm:flatlaw} gives this positive number as the price of
+the binary diagonal on $BS$. At each of these indices, exponentiating the prices on $S$ after division by
+$W(S)$ gives a spectral point on $S$. The spectrum is closed under
+pointwise limits, so the limiting values $2^{H(T;x)/W(S)}$, together
+with value zero for the zero tensor, again give a spectral point.
+Grouping coincident legs and adjoining trivial slots preserve prices
+at every index and in the limit. Nonzero tensors at a singleton have
+price zero, and every binary wire has price equal to its length.
+\end{proof}
+
+Theorem~\ref{thm:flats}, whose proof concludes in
+Section~\ref{sec:diagonal}, supplies the hypothesis of
+Theorem~\ref{thm:hilbert} over every field. In the resulting system,
+the shared-label formula in Theorem~\ref{thm:main} follows from
+the finite-dimensional mean-width law. For a finite nonempty
+set $S\subset K$, fix $a\in S$ and let $g$ be a standard Gaussian
+in $\operatorname{span}(S-a)$. Theorem~\ref{thm:flatlaw} on this
+finite-dimensional flat and the diagonal scaling rule of
+Section~\ref{sec:spectra} give
+\[
+ H(\Delta_S(q))=(\log_2 q)\,W(S)
+  =(\log_2 q)\sqrt{2\pi}\,\mathbb E\max_{x\in S}\langle g,x-a\rangle .
+\]
+For a singleton this is zero. For two sites it is their distance times
+$\log_2 q$.
+
+For a fixed nonzero tensor $T$, its price as a function of the
+placement is a seminorm on $K^r$ modulo common translation. Joint
+convexity and homogeneity give subadditivity, and reflection through
+the origin gives symmetry. In particular every bounded linear
+operator $L\colon K\to K$ satisfies
+\[
+                   H(T;Lx)\le\|L\|\,H(T;x).
+\]
+For a contraction, restrict $L$ to the span of the leg positions and
+extend it by zero to an endomorphism of the finite-dimensional span
+of the positions and their images. Its diagonal matrix of singular
+values is a convex combination of diagonal sign matrices, since each
+singular value belongs to $[0,1]$. The singular-value decomposition
+then expresses this endomorphism as a convex combination of orthogonal
+maps. The bound follows by joint convexity and invariance, and
+homogeneity gives the result for general $L$.
+
+\subsection{Sharpness of the crossing decomposition}
+
+The crossing decomposition in Theorem~\ref{thm:crossing} forces the
+parallelogram law on normed spectral planes. Conversely, a spectral
+Euclidean plane gives the matching lower bound on the common rank
+exponent in the unshifted decomposition. Theorem~\ref{thm:flats}
+supplies such a plane over every field, including its algebraic closure.
+
+\begin{corollary}[Sharp common crossing exponent]\label{cor:crossing-sharp}
+Fix $t,u>0$ and the wire dimensions $d_X,d_Y$ from
+Theorem~\ref{thm:crossing} at $\delta=0$. Let $R_n$ be the least $R$
+for which the two-wire tensor is a sum of two tensors of flattening
+rank at most $R$ on their respective crossing cuts. Over every field,
+\[
+                \lim_{n\to\infty}\frac{\log_2 R_n}{n}
+                    =\sqrt{t^2+u^2}.
+\]
+The limit is the same if, for each $n$, one allows membership in the
+Zariski closure of such sums over the algebraic closure of the field.
+\end{corollary}
+
+\begin{proof}
+Write $a=\sqrt{t^2+u^2}$. Theorem~\ref{thm:crossing} gives the upper
+bound. For the lower bound, place $X_+,X_-$ at $e_1,-e_1$ and
+$Y_+,Y_-$ at $e_2,-e_2$ in a spectral plane, with $e_1,e_2$
+orthonormal. The target has price $2n(t+u)+o(n)$.
+
+Fix $\rho<a$ and suppose both flattening ranks are at most $2^{n\rho}$.
+For the two cuts use the centers $\pm\varepsilon z_+$ and
+$\pm\varepsilon z_-$, respectively, where
+$z_\pm=(t e_1\pm u e_2)/a$. The factorization through these centers
+in the proof of Lemma~\ref{lem:norm} bounds the price of each summand, divided
+by $2n$, by
+\[
+ t\|e_1-\varepsilon z_\pm\|
+   +u\|\pm e_2-\varepsilon z_\pm\|+\varepsilon\rho+o(1)
+ = t+u-\varepsilon(a-\rho)+O(\varepsilon^2)+o(1).
+\]
+Fix $\varepsilon>0$ small enough to obtain a strict saving. The sum
+bound~\eqref{eq:price-ordinary-sum} adds at most the binary diagonal
+price of the four fixed terminal sites, independently of $n$. For all
+large $n$ the resulting bound is therefore strictly below the target
+price. Over the algebraic closure the same bound applies to the
+Zariski closure of these sums by Lemma~\ref{lem:spectral-closure}.
+Letting $\rho\uparrow a$ gives both lower bounds.
+\end{proof}

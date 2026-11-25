@@ -1,0 +1,201 @@
+\section{Normalized Walsh layers on tapes}\label{sec:tape-walsh}
+
+The multiplication algorithm uses short Fourier transforms on several
+address fields at once. Their factorization in Section~\ref{sec:integers}
+requires a Walsh transform on one selected bit in each of several
+fields. On one bit the transform is the normalized butterfly
+\[
+        (u,v)\longmapsto ((u+v)/\sqrt2,(u-v)/\sqrt2).
+\]
+Write \(H=2^{-1/2}\bigl(\begin{smallmatrix}1&1\\1&-1\end{smallmatrix}\bigr)\)
+for its matrix. Given a set of bits in a \(k\)-bit address, a
+\emph{selected-bit Walsh layer} applies \(H\) on those bits and the
+identity on the rest. Fixing the other bits gives independent copies
+of the same transform. The cost on tapes includes gathering those
+copies, performing the transform at fixed precision, and returning
+every record to the prescribed order.
+
+\begin{lemma}[Selected-bit Walsh layers]\label{lem:tape-walsh}
+Fix \(1/2<\rho<1\) and constants \(c,L,D>0\).
+Let \(N=2^k\), \(k\ge1\), and specify
+\(s\le ck/\log(2+k)\) distinct address bits. There is a complex
+fixed-point format with fractional and signed integer widths equal to
+fixed multiples of \(k\) in each real component. The multiples depend
+only on \(\rho,c,L,D\). Given \(N\) records in lexicographic order
+representing a vector \(x\) with \(\|x\|_2\le2^{Lk}\), a deterministic
+fixed multitape machine computes the selected-bit Walsh layer to
+absolute Euclidean error at most \(2^{-Dk}\). Its output has the
+same format and order. It takes
+\[
+ O_{\rho,c,L,D}\!\left(Nk(1+k)^\rho(1+\log(2+k))\right)
+\]
+steps, including address changes and scalar preparation, and visits
+\(O_{\rho,c,L,D}(Nk)\) cells. In the exact execution, the maps from the
+input to any intermediate numerical array and from an additive error
+in such an array to any later numerical array or output have operator
+norm at most \(C(1+k)^B\) for fixed \(C,B\). The same bounds hold for
+the adjoint layer.
+\end{lemma}
+
+\begin{proof}
+Use Corollary~\ref{cor:bit-positions} to move the selected positions
+to the low \(s\) bits. The other bits now index \(q=2^{k-s}\) spectator
+rows, each holding a complete range of \(2^s\) addresses. The empty
+selection is the identity. For odd \(s\) apply one butterfly directly
+and transform the remaining \(s-1\) bits. Splitting into the two bit
+classes aligns the operands for a scan of sums, differences and
+scalings, followed by a merge. At the precision chosen below this
+takes \(O(Nk\log(2+k))\) steps, including head returns. Bisection
+with dyadic integer-square comparisons prepares \(1/\sqrt2\) to that
+precision in \(k^{O(1)}\) steps. This settles \(s=1\). In every case
+undo the initial bit-position permutation after the arithmetic.
+
+\paragraph{A batch of transforms.}
+Use the normalized binary construction in
+\cite[Proposition~\ext{F}{prop:binary-template}, Equation~(\ext{F}{eq:kernel-template-saving})
+and Section~\ext{F}{sec:prime-kernel}]{oaF}. It supplies fixed integers
+\(A\ge3\), \(W\) and \(\sigma\). On \(W\) rows with \(Af\) address
+bits per row, it implements a normalized transform of those bits by
+\(\sigma\) child calls, each transforming one \(f\)-bit slot of one
+work row on all its fibers. Here \(f\) is even. The strict saving is
+\[
+                            \sigma/W<A^\rho .
+\]
+We may duplicate the batch and all its calls to obtain \(W\ge2\).
+Apart from the calls, the finite instruction list combines aligned
+rows and changes their addresses. Pointwise scalar choices depend on
+parities of sums of fixed functions of the \(f\) columns, each an
+\(A\)-bit tuple with one bit from each slot. An address change applies
+a fixed invertible binary matrix to every column. The scalars lie
+in a fixed finite dyadic list because the normalized child transforms
+already supply the normalization factors. The finite construction is
+effective for rational \(\rho\). For any other admissible \(\rho\)
+one can use a rational exponent strictly between \(1/2\) and \(\rho\).
+
+Divide the even part of the selected width into pieces sized for this
+recursion. Write \(\lfloor s/2\rfloor=\sum_{j=0}^J b_jA^j\), with
+\(0\le b_j<A\). Allocate \(b_j\) consecutive pieces of width \(2A^j\)
+and transform the pieces in succession. Append zero spectator rows to
+make \(q'\), the padded leading row count, a multiple of \(W^J\).
+Since \(W^J\le(1+s)^{O_\rho(1)}\) and \(q\ge2^{k/2}\) for large \(k\),
+we have \(q'\le2q\). The bounded remaining widths admit direct
+butterflies. Each full piece transform acts independently on all
+spectator coordinates, so the added rows may be removed after the
+last piece.
+
+\paragraph{A recursive call on tapes.}
+At a node with \(a=2A^j\) consecutive active bits, \(j>0\), the
+leading row count \(r\) is divisible by \(W^j\). Set \(f=a/A\).
+Split the leading rows by their residues modulo \(W\) onto \(W\)
+streams. The entries at the same position on these streams supply the
+aligned operands for one batch operation. Each stream has exactly
+\(1/W\) of the parent's volume and leading count \(r/W\), divisible
+by \(W^{j-1}\). Each child takes one work stream, designates one of
+its \(f\)-bit slots as active, and leaves every other field as a full
+spectator range. Figure~\ref{fig:walsh} shows this repeated layout.
+The outputs merge by reversing the split. At \(a=2\) use the
+four-point Walsh transform with coefficients \(\pm1/2\), splitting
+and merging its four bit classes in a bounded number of scans.
+
+\input{descent}
+
+Let \(V\) be the bit volume of the node, including spectator ranges
+and record widths. Binary elimination factors a column change into
+a fixed number of slot exchanges and slot additions. An exchange uses
+Theorem~\ref{thm:interchange}. For an addition, apply
+Lemma~\ref{lem:packed-xor} with source and target slots of width \(f\)
+and a third slot as auxiliary. All three ranges are complete, the
+auxiliary contents are restored, and the leading range \(r/W\) may
+have arbitrary length. These address changes together take
+\[
+ O_\rho\!\left(V(1+a^\rho)(1+\log(2+k))\right)+k^{O_\rho(1)}
+\]
+steps, including the narrow slots handled by direct bit operations
+in Lemma~\ref{lem:packed-xor}. Pointwise passes take
+\(O_\rho(V\log(2+k))+k^{O_\rho(1)}\) steps. To select a scalar, copy
+the slots from the address counter onto separate tapes, scan all the
+columns in parallel, accumulate the required parities, and rewind.
+Even a scan of the full \(O(k)\)-bit address per record is paid for
+by its width \(\Theta(k)\). There are only finitely many operands per
+pointwise operation. Fixed dyadic scalings use short exact products
+before rounding. A general product of two \(O(k)\)-bit numbers, as
+in the direct butterfly, costs \(O(k\log(2+k))\) tape steps \cite{hvh}.
+
+\paragraph{Work and visited space.}
+Follow the depth-first schedule of \cite[Proposition~11]{Tape}.
+Park the other streams and the parent descriptor on end-access stacks
+while one child runs. On return, restore them to their marked work
+areas. Copying, parking, erasing and rewinding add
+\(O_\rho(V)+k^{O_\rho(1)}\) work per node. The child needs access only
+to its current work areas and descriptors. Row counts, active widths,
+and prefix, gap and suffix lengths fit in \(O_\rho(k)\)-bit descriptors
+and all fixed-arity descriptor computations take \(k^{O_\rho(1)}\)
+steps.
+
+With the record width fixed throughout, divide time by volume and
+write \(T(a)\) for the resulting bound at active width \(a\), omitting
+the additive polynomial setup costs. The \(V/W\) volume of each child
+gives
+\[
+ T(a)\le C_\rho(1+a^\rho)(1+\log(2+k))
+                 +(\sigma/W)T(a/A).
+\]
+Relative to \(a^\rho\), successive levels have ratio
+\(\sigma/(WA^\rho)<1\). Geometric summation with the four-point base
+case yields \(T(a)=O_\rho(a^\rho(1+\log(2+k)))\). Also
+\(\sum_j b_j(2A^j)^\rho=O_\rho(s^\rho)\). Each piece has constant
+branching and depth \(O(\log(2+k))\), so all polynomial setup terms
+together remain \(k^{O_\rho(1)}\), absorbed by \(N=2^k\). Including
+both position permutations and the one-bit butterfly gives the
+claimed time on a padded volume of \(O(Nk)\).
+
+One node needs a fixed number of \(O(V)\)-bit streams for its scans
+and for the sparse repair sort in Lemma~\ref{lem:packed-xor}.
+Theorem~\ref{thm:interchange} also uses linear space. Along a single
+descent, the parked volumes are bounded by a constant multiple of
+\(V+V/W+V/W^2+\cdots\). Siblings and successive pieces reuse the
+same tape regions. The additional descriptor and word workspace
+along the stack is \(k^{O_\rho(1)}\), so the total number of visited
+cells is \(O_{\rho,c,L,D}(Nk)\).
+
+\paragraph{Precision.}
+Give each concatenated set of live numerical arrays its Euclidean
+norm. At one node there are a bounded number of operations on the
+live arrays. Each has bounded norm when a completed child is counted
+as one operation, since its transform on all fibers is unitary.
+Copies and pointwise combinations have bounded norm from their
+fixed coefficient and stream lists, and permutations are isometries.
+For an input-to-intermediate estimate, descend only into the successive
+calls containing the given array. An error originating inside a child
+can propagate through its returned stream to the first common ancestor
+of its operation and a later one, then down to the later array. At
+most a constant norm factor is incurred per visited level. The depth
+is logarithmic in \(k\), giving polynomial gain. If the two operations
+occur in different pieces, all complete intervening pieces are
+unitary on the padded array. Padding and restriction themselves have
+norm at most one.
+
+Round each real component after arithmetic to a grid of mesh \(2^{-p}\).
+Choose \(1/\sqrt2\) to absolute error at most \(2^{-p}\) and store the
+fixed dyadic coefficients exactly. Temporarily allow unbounded integer
+parts. Rounding an array costs at most a constant times
+\(\sqrt N\,2^{-p}\) in Euclidean norm. The approximate butterfly
+coefficient introduces an additional error of at most a constant times
+\(2^{-p}\) times the input norm. Thus while all preceding array norms
+are at most \(2^{(L+2)k}\), a single operation incurs at most
+\[
+ C_\rho\,2^{-p}\bigl(\sqrt N+2^{(L+2)k}\bigr).
+\]
+Each array contains at most a fixed multiple of \(N\) entries. There
+are \(k^{O_\rho(1)}\) array operations. Freeze their actual rounding
+faults and propagate these vectors through the exact linear maps.
+The polynomial gain bound then shows that \(p=\lceil C_{\rho,c,L,D}k\rceil\)
+makes the total error at any array at most \(2^{-Dk}\), for a
+sufficiently large constant. The corresponding ideal intermediate
+norms are at most \(C(1+k)^B2^{Lk}\). For large \(k\) induction
+therefore preserves the assumed norm bound, justifying signed integer
+width \(O_{\rho,c,L,D}(k)\). Temporary exact sums and products before
+rounding have the same order of width. Enlargement of the constant
+width factors covers the bounded remaining lengths. Finally, the layer
+is self-adjoint since \(H=H^*\).
+\end{proof}

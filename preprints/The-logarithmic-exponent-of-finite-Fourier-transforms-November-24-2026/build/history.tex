@@ -1,0 +1,72 @@
+\subsection{Earlier bounds for Fourier circuits}
+
+The classical $O(N\log N)$ count has two ingredients. Cooley and
+Tukey factor a transform of length $ab$ into transforms along the two
+axes, with a diagonal scaling between them. Good's factorization
+eliminates the scaling for coprime lengths
+\cite{Good,CooleyTukey,cooleyLewisWelch1967}. Recursing on powers of
+two gives the familiar FFT. Bluestein's reduction to convolution
+with a fixed quadratic phase, followed by padding to a power of two,
+gives the same asymptotic count for every complex transform length
+\cite{Bluestein,rabinerSchaferRader1969}.
+
+Several classical lower bounds explain when this count is necessary.
+Papadimitriou proved optimality under restrictions on the paths in
+the computation graph \cite{Papadimitriou}. Winograd counted multiplications
+separately from additions \cite{Winograd1979DFT}. For the unnormalized
+complex transform, the determinant has modulus $N^{N/2}$.
+Morgenstern showed that if scalar multipliers have modulus at most one,
+an addition can at most double the largest determinant modulus
+attainable from the available forms. At least $\tfrac12N\log_2 N$
+additions are therefore necessary \cite{Morgenstern}. Normalizing the
+transform makes its determinant have modulus one. For this transform,
+Ailon proved an $\Omega(N\log N)$ lower bound for in-place
+two-coordinate unitary operations, and an $\Omega(N\log N/R)$ bound
+for in-place rotations and scalings when every intermediate map has
+condition number at most $R$ \cite{Ailon,AilonCondition}.
+Theorem~\ref{thm:main} permits arbitrary scalar coefficients,
+intermediate storage and reuse.
+
+For power-of-two lengths, Alman and Rao used matrix nonrigidity to
+reduce the leading operation counts to $\tfrac{23}{24}N\log_2 N$
+for Walsh--Hadamard transforms over a field and $\tfrac{15}{4}N\log_2 N$
+in real arithmetic for complex cyclic transforms, up to $O(N)$ terms
+\cite{AlmanRao}. Finite tensor constructions subsequently gave
+$o(N\log N)$ circuits along a subsequence \cite{FiniteFourier}.
+At every length, the algorithm of \cite[Theorem~1.1]{ExplicitFourier}
+uses a finite network from \cite[Proposition~8 and Section~3.5]{Tape}
+to save a fixed positive power of $\log N$. It charges for array indexing and for preparing the
+scalars from a supplied root of unity of polynomial order.
+Sussman developed a recursion that handles several target maps
+together \cite{Sussman}. Kartal combined it with constructions of
+CubeJerry, Cinna Davis and Ali Romman, and Yao and Liu refined the
+resulting numerical bounds \cite{Kartal,kartalpi,YaoLiu}. A subsequent
+construction gives a saving greater than $0.0039$ in this complex
+arithmetic model \cite{RelayFourier}. The circuit size in Theorem~\ref{thm:main}
+charges only for the binary linear gates.
+
+Valiant related linear circuits to matrix rigidity, the number of
+entries that must change to reach a prescribed rank
+\cite{Valiant1975,Valiant1977}. Alman and Williams showed that the
+Walsh matrix fails Valiant's rigidity criterion \cite{AlmanWilliamsRigidity}.
+For every fixed $\delta>0$, Dvir and Liu reduce the rank of any
+sufficiently large complex abelian character table to
+$o(N/\log\log N)$ by changing at most $N^{1+\delta}$ entries
+\cite[Theorem~6.1]{DvirLiu}. Theorem~\ref{bch:uniform-robust},
+with one transform and no circuit states, gives a lower bound in the
+same variables. Reducing the rank to $\beta N$ requires more than
+$\eta N2^{\sqrt{\log N}/8}$ changes. For a smaller target rank, Alman
+showed that reducing a Walsh matrix over $\mathbb F_3$ to rank
+$\lfloor(\log_2 N)^2/80\rfloor$ requires changing more than one percent
+of its entries \cite{AlmanRigidity}.
+
+For convolution, specializing one input turns a bilinear circuit into
+a linear one. Raz used specialization for bounded-coefficient matrix
+multiplication \cite{Raz}. B\"urgisser and Lotz proved an
+$\Omega(n\log n)$ bound for complex cyclic convolution and ordinary
+polynomial multiplication in the bounded-coefficient bilinear model
+\cite{BurgisserLotz}.
+Corollary~\ref{cor:conv-exponent} uses a fixed operand over the algebraic
+closure to obtain a Fourier transform, giving a lower bound for
+division-free formal polynomial multiplication with arbitrary scalars
+over every field.

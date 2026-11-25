@@ -1,0 +1,160 @@
+\section{The sunflower bound}\label{sec:intro}
+
+How many sets can a family contain before some \(r\) of them meet in
+exactly the same core? Such a configuration is a \emph{sunflower}.
+More precisely, distinct sets \(A_1,\ldots,A_r\) form an \(r\)-sunflower
+if \(A_i\cap A_j=C\) for every \(i\ne j\). Removing the core \(C\)
+leaves pairwise disjoint petals. The core can be empty, as it is
+for any \(r\) disjoint sets.
+
+Erd\H{o}s and Rado asked whether bounding the number of elements in
+each set forces a sunflower once the family is exponentially large.
+The ground set may be arbitrarily large. Write \(M_r(k)\) for the
+largest size of a family of distinct \(k\)-element sets containing
+no \(r\)-sunflower.
+
+\begin{theorem}\label{thm:main}
+For each integer \(r\ge3\) there is a constant \(B_r\) such that every
+family of distinct sets of size at most \(k\) containing no
+\(r\)-sunflower has at most \(B_r^k\) members, for every integer
+\(k\ge1\). In particular \(M_r(k)\le B_r^k\). With logarithms to
+base two, one may take
+\[
+ B_r=2^{C H^4 L^{5/2}},\qquad H=\log_2(2r),\quad L=\log_2(2H),
+\]
+where \(C\) is an absolute constant.
+\end{theorem}
+
+The classical argument gives \(M_r(k)\le k!(r-1)^k\)~\cite{ER}.
+Take a maximal collection of disjoint members. It has at most \(r-1\)
+sets, and its union, of size at most \(k(r-1)\), meets every member.
+Among the sets containing a particular element, deleting that element
+gives a sunflower-free family of \((k-1)\)-sets. Summing over the union
+and iterating gives the factorial. Theorem~\ref{thm:main} gives a base
+independent of \(k\).
+
+Exponential growth is necessary even on a ground set of size \(k(r-1)\).
+Partition it into \(k\) blocks of size \(r-1\) and take every set that
+chooses one element from each block. There are \((r-1)^k\) such sets.
+In a sunflower, the choices within a block would have to be all equal
+or all distinct. With \(r\) choices and only \(r-1\) elements they would
+all be equal, in every block, giving the same set \(r\) times. Thus the
+optimal base \(b_r=\sup_{k\ge1}M_r(k)^{1/k}\) is at least \(r-1\).
+Whether \(b_r=O(r)\) remains open. The formulation for sets of size at
+most \(k\) follows from the uniform one by padding each set to size
+\(k\) with new elements private to that set. Padding preserves all
+pairwise intersections.
+
+\subsection{The obstruction in one coordinate}\label{sec:overview}
+
+Consider first a family in which every set chooses one element from
+each of \(k\) disjoint classes. List those elements in class order
+to obtain a word of length \(k\). In any \(r\) such words, a column
+with a common symbol contributes an element to the core. If its symbols
+are all different, its elements belong to separate petals. The
+obstruction is a \emph{partial repetition}: a symbol occurs at least
+twice but not in all \(r\) words. Figure~\ref{fig:columns} shows why a
+single such column prevents a sunflower. A random coloring of the
+ground set reduces the general \(k\)-uniform problem to these families
+at a factor of at most \(k^k/k!\le e^k\) in their size
+(Section~\ref{sec:words}). It suffices to consider finite subfamilies,
+since any violation of the bound already occurs in one.
+
+\begin{figure}[!htb]
+\centering
+\begin{tikzpicture}[x=.87cm,y=.62cm,font=\small]
+  \foreach \offset/\third/\highlight/\heading in {0/f/0/{A sunflower},5.8/d/1/{After one entry changes}}{
+    \begin{scope}[xshift=\offset cm]
+      \node[font=\small\bfseries] at (2.0,3.75) {\heading};
+      \foreach \x in {1,2,3}{\node[text=ink] at (\x,2.96) {\(\x\)};}
+      \draw[rounded corners=2pt,draw=sea,fill=sea!6]
+                         (.58,-.41) rectangle (1.42,2.41);
+      \ifnum\highlight=1
+        \draw[rounded corners=2pt,draw=rust,fill=rust!8]
+                          (1.58,-.41) rectangle (2.42,1.41);
+      \fi
+      \foreach \y/\which/\xone/\xtwo/\xthree in
+        {2/1/a/b/c,1/2/a/d/e,0/3/a/\third/g}{
+        \node[anchor=east] at (.36,\y) {\(A_{\which}\)};
+        \node at (1,\y) {\(\xone\)};
+        \node at (2,\y) {\(\xtwo\)};
+        \node at (3,\y) {\(\xthree\)};
+      }
+    \end{scope}
+  }
+\end{tikzpicture}
+\caption{In the left family every pair of sets meets in \(\{a\}\).
+Changing \(f\) to \(d\) in the last row makes \(A_2\cap A_3=\{a,d\}\).
+The other two intersections still equal \(\{a\}\).}\label{fig:columns}
+\end{figure}
+
+Call a column \emph{admissible} if it is constant or has all symbols
+distinct. In a sunflower-free family, the only ordered \(r\)-tuples
+admissible in every column consist of a single repeated word. Indeed,
+a column of distinct symbols would make the words distinct, hence give
+a sunflower. If every column is constant, the words agree.
+
+The proof turns this observation into a count. Give each of \(r\)
+groups of sites an independently chosen word from a family of size \(N\).
+At each coordinate apply a tensor operation which kills every partial
+repetition and returns a fixed nonzero tensor on a constant column.
+These two requirements suffice. Every tuple other than a single repeated word
+has a partial repetition somewhere, and the \(N\) repeated-word tuples
+all survive. The operations have converted \(r\) independently summed
+word labels into a single label shared across the groups.
+
+To measure what this conversion costs, we use a numerical function on
+tensors whose value is multiplicative under tensor products and can only
+decrease under local linear maps. The logarithm of its value is a
+\emph{price}. Sharing a label with \(N\) possible values among the sites
+of \(P\) has price \(w(P)\log_2 N\). The Euclidean geometry of the
+asymptotic spectrum~\cite{oaG} lets us choose a single price for which
+the rates \(w(P)\) are normalized mean widths of the corresponding
+sets of points. Place the groups so that the rate for their union
+exceeds the sum of their separate rates by \(\rho>0\). The change from
+independent labels to a shared one then costs at least \(\rho\log_2 N\).
+If the net cost of testing a column is at most \(f\), we obtain
+\[
+                          \rho\log_2 N\le kf .
+\]
+The central difficulty is to keep \(f\) bounded for an alphabet of
+\emph{any} size. Even two symbols being compared may have arbitrarily
+long binary names.
+
+\par\Needspace{7\baselineskip}
+\subsection{From a fixed petal count to the quantitative bound}
+
+Part~\ref{part:fixed} proves the fixed-petal bound in the plane. If any
+two symbols agree, all remaining symbols must agree with them for the
+column to be admissible. Choosing two groups as anchors reduces this
+requirement to a list of implications. When the two anchors agree,
+they can copy their common symbol directly to a site between them.
+The other implications use an equality test that shortens two binary
+labels by pairing the alphabet in all possible ways of the form \(\{x,x+p\}\). Two different labels become equal
+under exactly one of these pairings. The proof reconstructs and
+subtracts that erroneous term. In the planar placement, the net costs
+of all the corrections sum to a finite bound even as the label length
+grows (Theorem~\ref{thm:filter}). This planar construction already
+gives \(\log B_r=O(r^5)\).
+
+Part~\ref{part:quant} obtains the stated dependence on \(r\) by treating
+a whole column at once. Its test again shortens each symbol, preserving
+every genuine repetition. A partially repeated column can now pass
+only by becoming entirely constant. The task is to cancel exactly
+those false agreements. The shortened labels are obtained by removing leading bits and
+shifting the remaining bits by a mask. If a repeated symbol lies in a
+small class with the same leading bits, a recursive test on just that
+class pays for the correction. When almost all the active sites outside
+the anchors (the satellites) carry the same symbol, splitting those sites into two separated
+classes gives a majority in both. The vote in each class can be sent
+to a designated site at a cost per output bit governed by one wire
+(Lemma~\ref{lem:vote}). The Euclidean placement gives the two votes
+together enough width to test their common value against the anchors.
+This gives a bound uniform in the alphabet, with \(\log B_r\) bounded
+by a polynomial in \(\log r\).
+Corollary~\ref{cor:weighted} extends the count to word families that
+contain sunflowers. The cost of excluding them is controlled by the rank
+of an auxiliary tensor that vanishes on the sunflower tuples and equals
+one on the repeated-word tuples.
+
+\input{history}

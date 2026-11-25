@@ -1,0 +1,45 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=2.65cm,y=2.65cm,font=\small,
+  primal/.style={lagoon,line width=1.05pt},
+  dual/.style={ember,line width=.85pt,dash pattern=on 4pt off 2pt},
+  axis/.style={-{Stealth[length=3pt]},line width=.45pt,black!65},
+  marker/.style={fill=lagoon,draw=white,line width=.55pt}]
+  \newcommand{\priceaxes}{%
+    \fill[black!3] (0,0) rectangle (1,1);
+    \draw[black!27,line width=.4pt] (0,1)--(1,1)--(1,0);
+    \draw[axis] (-.19,0)--(1.22,0);
+    \draw[axis] (0,-.2)--(0,1.24);
+    \node[anchor=east,inner sep=2pt] at (-.015,1){\(1\)};
+    \node[anchor=north,inner sep=2pt] at (1,-.105){\(1\)};
+  }
+  \begin{scope}
+    \priceaxes
+    \node at (.55,1.55){Original prices \(p=(0,0)\)};
+    \draw[dual] (-.17,.010625)--(1.19,-.074375);
+    \draw[primal] (-.01125,-.18)--(.075625,1.21);
+    \path[marker] (.0625,1) circle[radius=2.3pt];
+    \node[anchor=west,inner sep=2pt] at (.12,.87){\((1/16,1)\)};
+    \node at (.53,-.40){\(z_1\) free,\quad \(z_2=+\)};
+  \end{scope}
+  \begin{scope}[xshift=7.2cm]
+    \priceaxes
+    \node at (.55,1.55){New prices \(p=(-4,0)\)};
+    \draw[dual] (-.17,.17)--(.19,-.19);
+    \draw[primal] (-.16,-.16)--(1.17,1.17);
+    \path[marker] (1,1) circle[radius=2.3pt];
+    \node[anchor=east,inner sep=2pt] at (.93,1.09){\((1,1)\)};
+    \node at (.53,-.40){\(z_1=+,\quad z_2=+\)};
+  \end{scope}
+  \draw[-{Stealth[length=4pt]},black!65] (1.37,.55)--(2.15,.55);
+\end{tikzpicture}
+\caption{Making a small witness coordinate visible. The solid line is
+the scaled primal space for \(C=\operatorname{span}\{(1/16,1)\}\), and
+the dashed line is its orthogonal complement. The dot is the
+nonnegative primal vector of sup norm one. Multiplying its first
+coordinate by \(16\) and the corresponding dual coordinate by
+\(1/16\) preserves orthogonality. At the new prices both coordinates
+reach the visibility threshold \(1/2\), so both labels are forced.
+Coordinates \(1\) and \(2\) are horizontal and vertical, respectively.}
+\label{fig:scale}
+\end{figure}

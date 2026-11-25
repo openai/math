@@ -1,0 +1,441 @@
+\section{Approximate tagged permutations at logarithmic width}\label{sec:width}
+
+Fix the finite field and the maximal flat dimension $k$ of
+Theorem~\ref{thm:protocol}. All logarithms in this section are binary.
+The tensor $\operatorname{Tag}(h,w)$ tests whether a list of $n=2^h$
+tagged $w$-bit records is a permutation of a prescribed list, with each
+tag giving the position of its payload in that list
+(Definition~\ref{def:tag}). For $w=h$, the two lists together expose
+$3nh$ bits. We show that, for every $r>0$, a factor of order $h^r$
+above this port count suffices to approximate the test. All data and
+tag indices stay exposed, and the size includes the catalyst ports.
+
+\par\Needspace{5\baselineskip}
+\begin{theorem}[Approximation at logarithmic payload width]\label{thm:cheaptag}
+Under the conclusion of Theorem~\ref{thm:protocol},
+for each $r>0$ there is a constant $C$ such that, for all sufficiently
+large $h$, $\operatorname{Tag}(h,h)$ admits a trivalent approximation
+of size $O(2^h h^{1+r})$ and gap at least
+\[
+               2^h\,2^{-C(\log(2h))^2}.
+\]
+In particular its gap is at least $2^h2^{-C'\sqrt h}$ for a fixed $C'$.
+\end{theorem}
+
+The proof compares two ways to change the payload width. With wide
+payloads, pruning the routing identity saves order $nw$ in the price of
+each discarded term, enough to cover the price of summing over tags and
+selectors. Each surviving term uses tests with shorter addresses.
+Compaction limits the number of tests installed, and amplification
+makes their combined error small enough for the parent test. In the
+other direction, stable radix sorting implements the width-$h$ test by
+packing narrow records into wide ones. The two bounds together force
+the overhead exponent at width $h$ to vanish.
+
+\input{compaction}
+
+\subsection{Amplification by sparse exact corrections}
+
+To amplify the gap for a batch of tagged tests, we will evaluate a
+small fraction of the tests exactly. We begin with the cost of one such
+evaluation.
+
+A single exact tagged test costs $O(nwh)$ for $w\ge h$. Indeed, an AKS
+sorting network uses $O(nh)$ comparators to sort the second list by tag
+\cite{AKS}. Comparing two tags and routing their payloads costs
+$O(h+w)$ bit gates, including fan-out. Compare the sorted tags with the
+prescribed positions and the sorted payloads with the first list.
+The resulting Boolean verification gives an exact trivalent tensor
+network over every field. A stable sort on $2^d$ records of $v$ bits
+also has a network consisting of one $\operatorname{Tag}(d,v)$ call and
+$O(2^d(d+v))$ additional size. Guess an input position for each proposed
+output, check the permutation of the payloads with the call, and check
+nondecreasing keys with increasing input position at ties. Each valid
+input--output pair has exactly one witness.
+
+\begin{lemma}[Amplification]\label{lem:tag-amplification}
+Let $X$ approximate $f=\operatorname{Tag}(h,w)$ with exposed data, size
+$S$, and gap $D$ (using a trivalent realization of $X$), where $w\ge h$ and $D\ge4k(\log h+3)$. Fix $C'>0$.
+For all sufficiently large $h$ and every integer $s\ge1$ with
+$\log s\le h^{C'}$, the tensor $f^{\otimes s}$ has a trivalent
+approximation of size at most $C_{\rm amp}sS$ and gap at least
+$sD/(2h)$. The size constant is absolute. The threshold for $h$ may
+depend on $C'$ and $k$.
+\end{lemma}
+
+\begin{proof}
+Truncate the tensor-power expansion by the number of errors. The
+discarded terms contain enough errors to give the amplified gap, and the
+retained terms require exact corrections at only a small fraction of
+positions. Let $I$ be the through identity on the catalyst of $X$ and put
+$F_0=f\otimes I$, $E=F_0-X$. In $(X+E)^{\otimes s}$ retain precisely
+the terms with at most $p=\lfloor s/h\rfloor$ copies of $E$. Give this
+sum the catalyst format of $s$ copies of $X$.
+
+Fix a price $H=c\log\varphi$ on the center and the $2k$ unit catalyst
+sites, induced by any spectral $k$-flat. Its scale satisfies $c\le2k$, by the star through the center.
+Normalize spectral values of one copy by $\varphi(I)$. The normalized
+values of $F_0,E,X$ are at most $1,z,1+z$, respectively, where
+$z=2^{-D/c}$. Here ordinary sum is a restriction of direct sum, and
+multiplication by a nonzero scalar preserves the price. Exact $X$ can
+be powered directly. For finite $D$ we have $z\le1/h$. Weight each
+omitted term with $j$ errors by $(hz)^{-j}$, and use multiplicativity
+and the binomial theorem. The sum of the normalized values of all
+omitted terms is at most
+\[
+                 (hz)^{p+1}(1+z+1/h)^s .
+\]
+This bounds the spectral value of the error relative to
+$\varphi(I)^s$. Since $p+1\ge s/h$ and
+$\log(1+z+1/h)\le (2\log e)/h<3/h$, the price discount is at least
+\[
+         \frac{s}{h}\bigl(D-c(\log h+3)\bigr)\ge \frac{sD}{2h}.
+\]
+
+For the size assertion, encode each position by one of three choices,
+namely ordinary $X$, a selected correction $F_0$, or a selected
+correction $-X$. Reject strings with more than $p$ selected positions. This gives
+one encoding for each summand of the retained expansion after expanding
+$E=F_0-X$. Put a switchable copy of $X$ at every position. A switched-off
+module has every internal bit fixed to zero and local value one on
+that assignment. This is implemented with a copied enable bit on its
+bounded-arity tables and equality vertices if a wire requires one.
+A position assigned $F_0$ bypasses its own catalyst bits by through
+wires and routes only its $O(nw)$ data bits to an exact $f$ module.
+Assign the sign locally at each selected $-X$. All unused fields and
+inactive lanes have a unique zero padding.
+
+If $p=0$, use $X^{\otimes s}$.
+Otherwise, repeatedly halve the list length, rounding up, until at most
+$4p$ positions remain. At every actual halving there are at most $p$
+active positions and the destination length is at least $2p$.
+The bounded-degree compaction graph for ratio two and its deterministic linear-word-time assignment algorithm (Lemma~\ref{lem:slack-compaction}) send the active positions injectively to neighbors.
+Use the chosen switches for the whole data word of a position.
+The sum of the list lengths is $O(s)$, hence data routing, including
+its interface to the local $X$ modules, costs $O(snw)$. Install exact,
+switchable $f$ modules at the final list, costing $O(pnwh)=O(snw)$.
+All graph descriptions have $O(s)$ words of advice. The configuration
+algorithm and the check on the number of selected positions use
+$O(s)$ operations on $O(\log(2s))$-bit words. Verify the deterministic memory trace by sorting its records by address
+and time with a Batcher network \cite{Batcher}. A scan in this order
+checks each read against the initialization or the most recent write, as
+in RAM verification for proof systems \cite{TinyRAM}. Chronology, unused records, and final configurations
+have fixed conventions, so each legal choice has one history.
+This control costs $O(s\,\mathrm{polylog}(2s))=O(snw)$ because the fixed
+power of $\log(2s)$ is eventually bounded by $2^h$ in the stated
+range. The implied size constants are absolute. Each exposed network
+has $S\ge nw$, and all enable wires and catalyst bypasses cost $O(sS)$.
+\end{proof}
+
+\subsection{The width profile and stable radix packing}
+
+For a polynomial payload width $w=\lceil h^a\rceil$, measure the size
+as an overhead above $nw$, keeping the required gap essentially
+proportional to the list length. Put $L(h)=\log(2h)$. For $a\ge1$,
+define $r(a)$ as the infimum of the
+real $r$ such that for some $C>0$ and all sufficiently large $h$ the
+tensor at width $w=\lceil h^a\rceil$ admits exposed approximations of
+size $O(nw h^r)$ and gap $n2^{-C L(h)^2}$ or greater. Write
+$r_*=r(1)$ and $r_\infty=\inf_{a\ge1}r(a)$. The port count and the
+exact construction give $0\le r(a)\le1$. Pinning matching padding
+bits to zero makes a wide test serve a narrower payload. For the
+reverse operation, split the wide payload into slices, copy the tags
+to every slice, and multiply the predicates. This product enforces
+the permutation condition on the common tags and every payload equality. The tag copies cost $O(nh)$ per slice.
+For any fixed $a'\ge a$ the number of slices is polynomial in $h$.
+Lemma~\ref{lem:substitution} loses at most $2k$ times that number
+in absolute gap, absorbed by increasing $C$. Thus
+\[
+                  0\le r(a)-r(a')\le a'-a .
+\]
+The same argument permits constant factors in the width at fixed $a$.
+
+In a radix sort, the digit length controls the cost of sorting a block,
+whereas the pack width controls the cost of moving many records with
+the same digit. Optimizing these two costs separately gives an upper
+bound on $r_*$ in terms of the profile at larger widths.
+
+\begin{proposition}[Packing wide records]\label{prop:tag-width-packing}
+For every fixed $a>1$,
+\[
+ r_*\le 1-\frac1a+\max\{r(a)/a,r_\infty\}.
+\]
+\end{proposition}
+
+\begin{proof}
+To check the parent tagged relation, stably radix-sort a combined list
+of sources and targets
+with their keys and record-type flags and use a final scan to check for one
+matching payload of each type at each tag. This list has $\Theta(n)$
+records of $O(h)$ bits. Take $k_0=\lfloor h^{1/a}\rfloor$ digit bits per
+pass, proceeding from least significant to most significant. For any
+fixed $B>1$, take a dyadic pack size $P$ in $[h^{B-1},2h^{B-1})$.
+
+Pad to blocks of $2^{2k_0}$ slots and stably sort each block on its
+current digit, placing dummies last. Round each nonempty digit run up
+to a multiple of $P$ and place its first real record at a multiple of
+$P$. The original slots already accommodate the old dummies. Rounding and
+alignment require only $O((2^{k_0}+1)P)$ additional slots per block. Scans compute run lengths, rounded
+lengths, and destinations (including for old dummies) in $O(h)$ per slot. A second tagged transport implements the alignment. For instance, give each source its destination as a tag (transpose the perspective on which list is in prescribed order). Positions not yet assigned are filled with padding sources in increasing order; this last condition is enforced by carrying source positions as part of the payload and checking on the output side that those sources are in order. When a
+tagged call is padded to a power of two, pin the payload on both sides
+of each extra slot to zero and fix its output tag to the address of its
+own input slot. The padded matching thus extends the original one
+uniquely. All real records in a pack now have the same digit. Obtain the key of each nonempty pack
+by a scan, stably sort the packs by that key with empty packs last, and
+retain the order of real records within the packs. The result is the
+stable sort on this digit among real records; scans ignore vacant slots and move forward across them. The list length grows each pass by a fraction
+$O(2^{-k_0}P)$ and an additive $O(2^{2k_0}+2^{k_0}P)$ for the partial
+block. Over $O(h/k_0)$ passes it stays $\Theta(n)$, with lengths fixed
+before receiving the data.
+
+There are a constant number of collections of block calls per pass,
+each of common address length $l=2k_0+O(1)$, payload width $O(h)$ and
+$\Theta(n)$ slots in total. Implement a block at the bound for $r(a)+e$,
+$e>0$, with matching constant-factor width adjustments. Amplify its
+$s=\Theta(n/2^l)$ copies by Lemma~\ref{lem:tag-amplification}, using
+$\log s\le h=l^{O_a(1)}$. Each collection costs
+$O(nh\,h^{(r(a)+e)/a})$ and has gap at least
+$\Omega(n2^{-C L(l)^2}/l)$ for a constant $C$.
+Each pass also uses one pack sort with $\Theta(n/P)$ slots, address
+length $h-O(\log h)$ and width $O(hP)$. The bound at $r(B)+e$ costs
+$O(nh\,h^{r(B)+e})$ and gives gap at least $n2^{-C_1 L(h)^2}$ after
+enlarging $C_1$ to absorb the factor $P$. The scans and tag copying cost
+$O(nh)$ per pass. Treat each collection of block calls as one product
+gate, as allowed for a multilinear tensor contraction. Across all passes
+there are polynomially many substituted gates, and the gaps dominate
+their number. A further increase of $C_1$ makes the result admissible in
+the width profile. Multiply the size bounds by $O(h^{1-1/a})$, let
+$e\downarrow0$, and take the infimum over $B>1$.
+\end{proof}
+
+\subsection{Pruning the routing identity and counting shorter calls}
+
+For a valid tag assignment $\pi$, denote by $M_\pi$ the payload
+matching tensor with entries $\prod_i\mathbf{1}_{q_i=p_{\pi(i)}}$,
+and by $\delta_\pi$ the basis tensor supported on that assignment to
+the tag ports. Definition~\ref{def:protocol} supplies an exact routing
+identity for $M_\pi\otimes I$, where $I$ denotes the protocol catalyst
+identity. Tensor each routing identity with $\delta_\pi$ at the origin
+and sum over permutations. The resulting tensor is exactly
+\[
+ \sum_{\pi\in S_n}\delta_\pi\otimes M_\pi\otimes I
+       =\operatorname{Tag}(h,w)\otimes I.
+\]
+In a network this sum is implemented by checking that the exposed tags
+form a permutation and using those tags in the control. Each valid tag
+assignment activates its own routing identity with the original selector
+multiplicities. This representation also places the error from pruning
+different tag assignments on the same set of exposed ports.
+
+Fix $\kappa>0$ and $A>1+\kappa$, and take $h^{1+\kappa}\le w\le h^A$. Retain the terms for which
+the sum of $\lambda y$ over links joining different layers is at least
+$2MN_c/w-n$. To price one discarded term, place its sites at their layer
+coordinates divided by $M$ in the unit catalyst configuration on any
+spectral $k$-flat. Local tensors and same-layer links cost zero.
+Every cross-layer link costs at most $\lambda yw/M$ since its charge
+dominates its Euclidean layer distance. The local factor $\delta_\pi$
+has price zero. Thus a discarded term has
+price at most $2N_c-nw/M$. Across all valid permutations and all
+selectors there are at most $2^{O(nh\,\mathrm{polylog}\,h)}$ terms.
+The cost of their sum is at most their maximum price plus
+$O_k(nh\,\mathrm{polylog}\,h)=o(nw)$. Consequently the surviving
+contraction approximates $\operatorname{Tag}(h,w)$ with exposed gap
+$\Omega(nw)$ relative to the through price $2N_c$. Testing the pruning
+condition adds only linear word work using the fixed rational charges.
+Each surviving term satisfies
+\begin{equation}\label{eq:tag-positive-budget}
+            \sum_{t>0}(\lambda y+t^p)\le 11n .
+\end{equation}
+
+
+We next turn the surviving traffic bound into a recursion for network
+size. Let $u:[1,\infty)\to(0,\infty)$ be a smooth, eventually constant
+function with $u(1)>r_*$ and $0\le-u'<1$. We will prove $r(a)\le u(a)$
+by induction on address length. The width-$h$ estimate starts the
+induction near $a=1$. For wider payloads, the shorter calls must fit
+inside the parent allowance $nwh^{u(a)}$.
+
+Write $a=\log_h w$, $b=-u'(a)$ and $v=u(a)+ab$, and fix
+$\epsilon>0$. When a child call uses fractions $T$ and $Y$ of
+the parent's address length and payload width, its size allowance
+\emph{per slot}, relative to the parent's, is asymptotic to
+\[
+                          T^v Y^{1-b}.
+\]
+Indeed the width exponent changes from $a$ to $\log_{Th}(Yw)$.
+The calculation after \eqref{eq:tag-uniform-width} gives the uniform
+estimate. Since $v-b=u(a)+(a-1)b>0$, we can choose $Y=T^p$ with $p>1$
+close to one so that $v-pb>0$ uniformly. Even with order $n/Y$ installed
+slots the relative cost is then $O(T^{v-pb})$, which tends to zero
+as $T$ decreases. Equation~\eqref{eq:tag-positive-budget}
+bounds the active slots in each summand. Compaction turns this into a
+bound on the number of slots installed in the common network.
+
+\begin{lemma}[Shorter calls]\label{lem:tag-shorter}
+One choice of protocol parameters works for all sufficiently
+large $h$ and $1+\kappa\le a\le A$. The pruned contraction is implemented
+exactly relative to the following tagged calls, with fixed positions and
+wiring for each format.
+\begin{enumerate}
+\item A fixed finite menu of dyadic pairs $(T,Y)$ has $0<T\le1/2$,
+$0<Y\le1$. At each installed type the calls have common address length
+$h'=Th+o(h)$ and width $w'=\lceil Yw\rceil$. Counting all physical
+slots, including idle slots, their numbers $S_{T,Y}$ satisfy
+\[
+       S_{T,Y}=\Omega(n)\quad\text{per type},\qquad
+       \sum_{T,Y} S_{T,Y} T^v Y^{1-b}\le\epsilon n .
+\]
+\item A bounded number of control calls have address length
+$h+O(\log h)$, width equal to address length, and
+$O(n\,\mathrm{polylog}\,h)$ slots altogether.
+\end{enumerate}
+All other gates and wires, including the incidences at the calls, cost
+$O(nw\,\mathrm{polylog}\,h)$.
+\end{lemma}
+
+\begin{proof}
+The continuous function $v-b=u(a)+(a-1)b$ has positive minimum
+on $[1+\kappa,A]$. Choose a rational $p>1$ sufficiently close to one
+that $v-pb$ still has positive minimum. Take $W$ large enough for
+Theorem~\ref{thm:protocol}, with $pW$ integral, and use a single type
+$(T,Y)$ given by
+\[
+ T=2^{-W},\qquad Y=T^p.
+\]
+Scale-zero groups have bounded size and are wired with switches. For the scale-$T$ groups, orient links and reserve distinct source and destination slots. Split each nonempty link into transports of width $\lceil Y w\rceil$, padding its last chunk; protocol bounds allow us to reserve fixed numbers of slots for these chunks. By \eqref{eq:tag-positive-budget} at most $c_*n$ transports are used in any one summand, where $c_*=22 T^{-p}$. Hence for $W$ sufficiently large
+\[
+ 7c_* T^v Y^{1-b}\le\epsilon
+\]
+uniformly in $a$.
+Pack whole groups by next fit into dyadic supergroups of
+size $H_0=2^{Th+o(h)}$, at least twice the largest group size after slot
+duplication. This uses $O(n/H_0+1)$ supergroups. Take $K$ a sufficiently
+small fixed dyadic fraction of $H_0$. List transports in each supergroup
+in canonical order in batches of at most $K/2$, filling all but the last.
+Reserving $K$ positions per nonempty batch uses in total at most
+$2c_*n+O((n/H_0+1)K)\le3c_*n$ positions. This choice uses the uniform
+lower bound on $c_*$ and $H_0=o(n)$.
+
+Hardwire candidate batches for every supergroup, allowing all its slots
+to be active. For each batch, Lemma~\ref{lem:slack-compaction} assigns active source and destination slots separately to two $K$-slot
+lists by bounded-degree switches. Apply the same lemma to the set of
+nonempty batches, assigning each entire pair of lists to one of
+$\lceil6c_*n/K\rceil$ physical modules. The number of candidates is
+$O(n/H_0+1)$, a bounded multiple of the number of modules, and at most
+half the modules are needed for any summand. One
+$\operatorname{Tag}(\log K,\lceil Yw\rceil)$ in each occupied module
+has its tags set to the actual matching of the two lists. For the remaining
+slots, set the tags to match the vacant destinations with vacant sources
+in increasing order and fix all unused payload bits to zero. Idle modules
+use the identity permutation and zero data. Thus every original link is
+enforced with its prescribed multiplicity. There are between $6c_*n$
+and $7c_*n$ installed slots for large $h$. This gives the weighted slot bound.
+
+All assignment graphs are fixed advice of linear word size for fixed
+parameters. Scans compute the active lists, the deterministic assignments
+and the completed permutations in $O(n\,\mathrm{polylog}\,h)$ word
+operations, including a scan of each candidate link to a $K$-slot
+batch. Whole-batch switches transport $O(K\lceil Yw\rceil)$ bits per
+incidence, while individual slot switches transport $O(\lceil Yw\rceil)$
+bits. The number of incidences per position is bounded for fixed
+parameters. Variable subfield shifts cost $O(w\log(2w))$ per site.
+Together with the site networks, pins, selector copies and outside
+catalyst ports these fit $O(nw\,\mathrm{polylog}\,h)$. For protocol
+control, guess a timed RAM history and check each bounded-word step.
+Sort the memory records, including initialization, by address and time
+and scan them to verify that reads agree with the latest value. Pad the
+history canonically and resolve ties by the step's fixed access order.
+This leaves one history for each deterministic computation. Tag validity
+can be tested by one more sort. A bounded
+number of stable sorts use $O(n\,\mathrm{polylog}\,h)$ slots with
+$O(h)$-bit records. Pad lengths to powers of two of address length at
+least $h$, and split records into a bounded number of address-width
+slices with shared tags. This gives the claimed control calls and
+$O(nh\,\mathrm{polylog}\,h)$ further size.
+\end{proof}
+
+\subsection{Closing the induction}
+
+Fix $u$ as above and choose $A$ sufficiently large in the interior of
+its constant region. We prove the size and gap estimates together by
+strong induction on the address length $h$. For every integer $h\ge2$
+and every integer $w$ with
+$h\le w\le h^A$, there are approximations with
+\begin{equation}\label{eq:tag-uniform-width}
+  \text{size}\le D_{\rm cost}\,2^h w h^{u(\log_h w)},\qquad
+  \text{gap}\ge D_h=2^h\,2^{-C_{\rm gap}L(h)^2}.
+\end{equation}
+Choose $r_*<r'<u(1)$ and $\kappa>0$ small enough that $r'<u(a)$ on
+$[1,1+\kappa]$. Fix $C_{\rm gap}>3$ strictly larger than the constant
+in the width-$h$ estimate for $r'$. On this narrow-width interval,
+slicing the payload into $\lceil w/h\rceil$ padded width-$h$ tests
+proves \eqref{eq:tag-uniform-width} for sufficiently large $h$ with
+any $D_{\rm cost}\ge1$. The strict margins absorb the slicing constants
+and the polynomial absolute gap loss.
+
+For $1+\kappa\le a\le A$, apply Lemma~\ref{lem:tag-shorter} with
+$C_{\rm amp}\epsilon<1/4$. Use the $r'$ estimate for the control calls, whose payload
+width equals their address length. Their gaps are $\omega(D_h)$ because their address
+length is $h+O(\log h)$ and the exponent constant has a strict margin.
+Every shorter type has $h'<h$ and $w'>h'$ for large $h$. If
+$w'>(h')^A$, split into
+$\lceil w'/\lfloor(h')^A\rfloor\rceil$ nearly equal integer slices.
+There are boundedly many, each of width exponent $A+o(1)$ at height
+$h'$, hence within the constant region. Treat each type as a single
+batch of $s=S_{T,Y}/2^{h'}$ identical calls, separately for each
+slice. Induction at $h'$ and Lemma~\ref{lem:tag-amplification} give
+each batch gap at least
+\[
+          \frac{sD_{h'}}{2h'}
+           =\Omega\left(\frac{n\,2^{-C_{\rm gap}L(h')^2}}{h'}\right)
+           =\omega(D_h).
+\]
+Indeed $h'=Th+o(h)$ uniformly on the fixed menu, $T\le1/2$, and
+$L(h)^2-L(h')^2\ge(2-o(1))\log h$. Also $\log s=O(h)$ and $D_{h'}$
+exceeds the amplification threshold. The outer pruned gap is $\Omega(nw)$. Each amplified batch enters
+the parent contraction as a single product gate. Thus
+Lemma~\ref{lem:substitution} charges once per type and slice, and once
+per control call. Their total number is bounded, so the resulting gap
+is at least $D_h$ for sufficiently large $h$.
+
+The ratio of the shorter per-slot size allowance to the parent allowance,
+including the amplification factor, is
+\[
+ C_{\rm amp}\frac{w'(h')^{u(\log_{h'} w')}}{w h^{u(a)}}
+        =(1+o(1)) C_{\rm amp}T^vY^{1-b}.
+\]
+In fact $\log h'=\log h+\log T+o(1)$ and
+\[
+ \log_{h'}w'-a=\frac{\log Y-a\log T+o(1)}{\log h}.
+\]
+Taylor expansion with $u'(a)=-b$ proves the formula uniformly on the
+compact interval and fixed menu. For the split case the exponent is
+constant and the slice widths sum to $w'$, giving the same allowance.
+The shorter-call work consumes at most half the proposed size for large
+$h$. For the remaining ordinary work and control costs we have
+\[
+ nw\,\mathrm{polylog}\,h+nh^{1+r'}\mathrm{polylog}\,h
+                      =o(nwh^{u(a)}),
+\]
+since $u$ has positive minimum on the interval and
+$a+u(a)\ge1+u(1)>1+r'$. This also pays for extra tag copying when
+splitting calls. All thresholds are independent of $D_{\rm cost}\ge1$.
+An enlargement of $D_{\rm cost}$ covers the finitely many smaller
+formats using exact networks. This completes the induction.
+
+\begin{proof}[Proof of Theorem~\ref{thm:cheaptag}]
+Taking $A$ arbitrarily far into the constant region in
+\eqref{eq:tag-uniform-width} gives $r(a)\le u(a)$ for every fixed $a$.
+If $r_*>0$, we can choose $u$ to decrease fast enough just above
+$a=1$, and to level off low enough at large $a$, that both terms in
+the packing bound improve on $r_*$. To do so, choose $1-r_*<b_0<1$, and choose $t>0$ sufficiently
+small and $0<e_0<(r_*+b_0-1)t$. On $[1,1+t]$ take
+$u(a)=r_*+e_0-b_0(a-1)$ and extend it smoothly to the positive plateau
+$r_*/3$ with $0\le-u'<1$. For small $t$, the linear piece stays above
+the plateau and $t/(1+t)+r_*/3<r_*$. Also
+$(t+u(1+t))/(1+t)<r_*$ by the choice of $e_0$. In
+Proposition~\ref{prop:tag-width-packing} with $a=1+t$ substitute
+$r(1+t)\le u(1+t)$ and $r_\infty\le r_*/3$. The right-hand side is
+strictly less than $r_*$. Hence $r_*=0$, which gives the assertion
+for every fixed $r>0$ by the definition of the profile.
+\end{proof}

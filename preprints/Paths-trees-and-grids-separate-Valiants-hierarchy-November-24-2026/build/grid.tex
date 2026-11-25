@@ -1,0 +1,133 @@
+\section{Square grids and general circuits}\label{sec:grid}
+
+Let $G_n$ be the $n$-by-$n$ square grid. Summation over edge labels
+places the family $(Z_{G_n,n})_n$ in $\VNP$. For the circuit lower
+bound, we use the fact that every partition
+placing at least a third of the vertices on each side cuts many edges.
+A small circuit would express the coefficient tensor as a sum in which
+each term has low rank across some such partition. The partition may
+vary with the term, as permitted in Lemma~\ref{lem:single}.
+
+\begin{theorem}[Grid circuit lower bound]\label{thm:grid}
+Let $G$ be the $r$-by-$r$ square grid, where
+$r\ge2$ and $r^2\le(\log q)^{1/3}$. Over every field, the state sum
+$Z_{G,q}$ has degree-component border circuit size at least
+$q^{\Omega(\sqrt r)}$ for all sufficiently large $q$.
+\end{theorem}
+
+To obtain the partitions, we decompose the degree-$d$ component of
+the circuit output into products of homogeneous factors of balanced
+degrees. This is a gate decomposition of the kind used by Valiant,
+Skyum, Berkowitz and Rackoff~\cite{VSBR}. Extracting the coefficients with one variable per slot turns each
+product into outer products across balanced sets of grid vertices.
+
+\begin{lemma}[Balanced slot sets]\label{lem:balanced}
+Suppose the variables are grouped into a set $V$ of $d\ge2$ slots, and
+a commutative arithmetic circuit of size $s$ computes $f$. Its slot
+tensor has a decomposition
+\[
+ A(f)=\sum_{\substack{U\subseteq V\\d/3<|U|\le 2d/3}}T_U ,
+ \qquad
+ \operatorname{rank}_{U\mid V\setminus U}(T_U)
+ \le C(s+1)(d+1)^2
+\]
+with an absolute constant $C$. In particular there are at most $2^d$
+terms. For a homogeneous target of degree $d$ and degree-component
+border circuit size at most $s$, the slot tensor belongs to the
+Zariski closure of the set of such sums.
+\end{lemma}
+
+\begin{proof}
+Write $[f]_d$ for the degree-$d$ component of $f$. At every gate,
+compute all homogeneous components through degree $d$, using
+convolution at products. This gives a homogeneous circuit for $[f]_d$
+with at most $C(s+1)(d+1)^2$ gates and inputs. The count includes
+splitting each of the $O(s+1)$ affine inputs used by the original
+circuit into its constant and linear parts.
+
+We maintain an expression for $[f]_d$ as a sum of products $Q_vP_v$,
+where $P_v$ is the polynomial at gate $v$ and $Q_v$ is its multiplier.
+Initially the only term is the output, with multiplier one. Process
+gates in reverse topological order, adding all multipliers at each gate
+before processing it. Retain a term when $\deg P_v\le 2d/3$. At a
+sum or difference of higher degree, distribute $Q_v$ to both inputs
+with the appropriate signs. At a product $P_v=P_uP_t$, choose an
+input of larger degree, say $u$, and pass the multiplier $Q_vP_t$ to
+$u$. In a tie choose the first input position. This identity works
+also for a square in characteristic two. Throughout, take gate degrees
+from the homogeneous construction and omit zero terms.
+
+Each step preserves the polynomial represented by the sum. A sum gate
+preserves degree along each input, and the larger input of a product
+of degree greater than $2d/3$ has degree greater than $d/3$.
+Consequently the retained terms give an identity
+\[
+ [f]_d=\sum_v Q_vP_v,\qquad d/3<\deg P_v\le 2d/3,\qquad
+ \deg Q_v=d-\deg P_v .
+\]
+The number of terms is at most the number of gates and inputs in the
+homogeneous circuit, since each retained gate has a single accumulated
+multiplier.
+
+For $U\subseteq V$ let $A_U(P)$ denote the array of coefficients of
+monomials in $P$ containing one variable from each slot of $U$ and
+no other variables. In any contribution to a slot coefficient of
+$Q_vP_v$, the variables contributed by $P_v$ occupy some set $U$ of
+size $\deg P_v$. The variables contributed by $Q_v$ occupy its
+complement. Collecting contributions for each $U$ gives
+\[
+ T_U=\sum_{v:\,\deg P_v=|U|}
+       A_U(P_v)\otimes A_{V\setminus U}(Q_v),
+\]
+where the tensor factors are placed in the original slot order. Each
+summand has rank at most one across this cut, which gives the asserted
+rank bound. Finally, $A(f)=A([f]_d)$, and the coefficient map on the
+space of homogeneous degree-$d$ polynomials is linear. It therefore
+takes the closure defining border size into the closure of the sums
+above.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:grid}]
+Put $d=r^2$. Color the vertices according to the two sides of a cut in
+Lemma~\ref{lem:balanced}. Each color occupies at least $r^2/3$
+vertices. If at least $r/3$ rows contain both colors, each of these
+rows supplies a horizontal crossing edge. Otherwise the mixed rows
+contain fewer than $r^2/3$ vertices altogether. Each color must then
+occupy an entire row, so every column supplies a vertical crossing
+edge. In both cases the boundary has size at least $\lceil r/3\rceil$.
+
+Let $s$ be the degree-component border circuit size of $Z_{G,q}$.
+The grid has $e=2r(r-1)\le 2d$ edges. Lemma~\ref{lem:single} applied
+to the closure in Lemma~\ref{lem:balanced}, with
+$b=\lceil r/3\rceil$, yields
+\[
+ \log\!\bigl(C(s+1)(d+1)^2\bigr)
+        \ \ge\ \tfrac12\sqrt{\lceil r/3\rceil}\,\log q.
+\]
+Since $d\le(\log q)^{1/3}$, the contribution of $C(d+1)^2$ on the
+left is $O(\log\log q)$. This proves the bound uniformly in $r$.
+\end{proof}
+
+For the family in Theorem~\ref{thm:main}, take $q=n$ and restrict the
+$n$-by-$n$ grid to an $r$-by-$r$ subgrid with
+$r=\lfloor(\log n)^{1/6}\rfloor$. Pinning the unused edges and vertices
+as in Section~\ref{sec:notation} gives the subgrid polynomial by
+projection. If the full grid has border circuit size $s$, its degree
+$n^2$ and Lemma~\ref{lem:projection} give a border circuit of size
+$O((s+1)(n^2+1)^2)$ for the subgrid. Theorem~\ref{thm:grid} requires
+this size to be at least $n^{\Omega((\log n)^{1/12})}$. The polynomial
+overhead of projection is absorbed in the exponent.
+
+It remains to realize the full family as a Boolean sum over any field
+$F$. Encode each edge state by a block of $\lceil\log n\rceil$ Boolean
+variables. At a vertex, multiply each table entry by the indicator
+that its incident blocks encode the corresponding edge labels, and
+sum over the entries. Each indicator is a product of bits and their
+complements. The product of the vertex polynomials selects exactly
+the monomial for a legal edge labeling and vanishes on every unused
+encoding. This product has polynomial degree and circuit size since
+there are $n^2$ vertices, each of degree at most four and with at most
+$n^4$ table entries. Summing it over the Boolean blocks yields
+$Z_{G_n,n}$, proving membership in $\VNP$. In the complex setting,
+Christandl et al.\ proved $\mathsf{VNP}$-hardness for square-lattice
+contractions already with two states per edge~\cite[Theorem~26]{CLSW}.

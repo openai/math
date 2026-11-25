@@ -76,6 +76,12 @@ require cslib from git
 require lemmata from git
   "https://github.com/ZIB-IOL/lemmata.git" @ "a2dd430f283febd755a6ee6932d0b0fdabfb330c" / "lean"
 
+require HexBareiss from git
+  "https://github.com/leanprover/hex-bareiss.git" @ "fea7d537c14531b3a699530f5c7776f69f0ed9a9"
+
+require HexLLLMathlib from git
+  "https://github.com/leanprover/hex-lll-theory.git" @ "761108380d7bdae23181785d52703b4883388da1"
+
 -- Declare shared dependencies last: Lake resolves later requirements first.
 -- These pins override the older versions in the upstream packages' manifests.
 require PrimeNumberTheoremAnd from git
@@ -94,6 +100,10 @@ require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git" @ "d13f23b723b8a846827a245b89c10fc7d3f11612"
 
 @[default_target] lean_lib OAI
+
+lean_lib OAI.HyperbolicObstruction where globs := #[`OAI.HyperbolicObstruction.+]
+lean_lib OAI.Hierarchy where globs := #[`OAI.Hierarchy.+]
+lean_lib OAI.ThreeFlat where globs := #[`OAI.ThreeFlat.+]
 
 lean_lib OAI.Analysis where
   roots := #[`OAI.Analysis]
@@ -326,7 +336,8 @@ post_update pkg do
 
   -- Preflight every dependency before changing any of them.
   let mut plans := #[]
-  for name in #[`complexitylib, `lemmata, `«fixed-point-theorems», `PrimeNumberTheoremAnd, `Zeta3Irrational,
+  for name in #[`complexitylib, `cslib, `lemmata, `HexBareiss, `«fixed-point-theorems»,
+      `PrimeNumberTheoremAnd, `Zeta3Irrational,
       `«rellich-kondrachov», `carleson, `StrongPNT, `AbsorptionCutoff, `AINTLIB,
       `ClassFieldTheory, `«schoenflies-lean», `SphereEversion, `gromov] do
     let label := name.toString (escape := false)

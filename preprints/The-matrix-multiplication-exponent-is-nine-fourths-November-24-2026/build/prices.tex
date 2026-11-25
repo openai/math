@@ -1,0 +1,366 @@
+\section{Price extensions and simultaneous minimization}\label{sec:prices}
+
+The compression argument introduces new sites at which to place tensor
+legs. A price on the old sites already puts a lower bound on the price
+of any proposed placement. Contract the legs at the new sites and
+evaluate the tensor that remains. One can do this on any tensor power,
+with each new site contracting all its copies at once.
+Theorem~\ref{thm:extension} shows that these lower bounds are sharp and
+gives a criterion for satisfying several price bounds at the same
+placement. In Section~\ref{sec:sync} the tensors to be placed will
+depend on a parameter. To control specialization of that parameter,
+we prove the criterion over valued fields. For a product of ordinary
+wires incident to one new site, the minimum is computed in
+\cite[Theorem~\ext{G}{thm:extension}]{oaG}.
+
+\subsection{Integral restrictions}
+Let \(K\) be a field with a real additive nonarchimedean valuation
+\(\nu\), normalized by \(\nu(0)=+\infty\). Its valuation ring is
+\(\mathcal O=\{c\in K:\nu(c)\ge0\}\). We use the given coordinate bases
+at all sites. A restriction is \emph{integral} if each local matrix has
+entries in \(\mathcal O\). A \emph{valued price} \(p\) of scale \(D>0\) on \(S\)
+(here $|S|\ge2$, as before) is real on nonzero tensors, has \(p(0)=-\infty,\ p(\mathbf1)=0\), and
+is nonincreasing under integral restriction. Its scalar, product, and
+direct-sum rules are
+\begin{equation}\label{eq:prices-axioms}
+ \begin{gathered}
+ p(cT)=p(T)-\nu(c) \quad(c\ne0), \qquad
+ p(T\otimes U)=p(T)+p(U),\\
+ p\Bigl(\bigoplus_j T_j\Bigr)=D\log\sum_j e^{p(T_j)/D}.
+ \end{gathered}
+\end{equation}
+Here \(\log\) is the natural logarithm. Thus multiplying by a scalar of
+positive valuation lowers the price. The trivial valuation recovers
+ordinary prices.
+
+We shall construct prices using a convenient equivalent form of the
+direct-sum rule. For tensors in common spaces, the right side of
+\eqref{eq:prices-axioms} bounds \(p(\sum_j T_j)\) by local addition
+of blocks. Conversely, suppose this ordinary sum bound holds and
+\(p(\Delta_S(q))=D\log q\) for every \(q\). The block inclusions
+express \(\bigoplus_j T_j\) as an ordinary sum and give the desired
+upper bound. For the lower bound, take the \(m\)-th power of the direct
+sum and project at every site onto the words in which the \(j\)-th
+summand occurs \(m r_j\) times. Local permutations identify the
+result with \(\bigotimes_jT_j^{\otimes m r_j}\) times a diagonal of
+size \(m!/\prod_j(mr_j)!\).
+For rational probability vectors \(r\) on the nonzero summands,
+take \(m\) through multiples of a common denominator. The price per copy
+is at least \(\sum_jr_jp(T_j)-D\sum_j r_j\log r_j\).
+Maximization gives the asserted identity.
+
+Write \(q_i\) for the local dimensions of \(T\) and \(\nu_{\min}(T)\)
+for the minimum valuation of an entry. For \(T\ne0\),
+\begin{equation}\label{eq:prices-range}
+ -\nu_{\min}(T)\le p(T)\le -\nu_{\min}(T)+D\sum_i\log q_i.
+\end{equation}
+For the lower bound project to an entry of minimum valuation. For the
+upper bound expand \(T\) in at most \(\prod_iq_i\) coordinate tensors
+and use the ordinary sum inequality. Thus prices of fixed
+scale form a compact space in the topology of pointwise convergence,
+since their axioms are closed in the product of the intervals
+\eqref{eq:prices-range}. The wire and transport rules above require only
+integral operations and hold also for \(p\). At one site the price of a
+nonzero vector is \(-\nu_{\min}\), since after division by a minimum-valuation
+entry it is integrally equivalent to the unit. When \(K\) contains a
+trivially valued field \(F\), restriction to tensors
+over \(F\) gives the ordinary spectral geometry of the wire distances.
+
+\subsection{A test for extending a price}
+Fix \(p\) on \(S\), and adjoin a finite set \(L\) of sites. Denote by
+\(\widehat p\) an extension to \(S\sqcup L\) of the same scale which
+retains \(p\) on tensors with trivial legs at \(L\). Such extensions
+exist by placing the added sites at old ones. Restriction to any intermediate
+list of sites containing \(S\) gives a valued price of scale \(D\).
+Indeed the diagonal on that list restricts to the base diagonal and is a
+restriction of the full diagonal, so the diagonal test applies. 
+
+A \emph{closure} applies one integral linear functional at each site of
+\(L\) and leaves all base legs free. The \emph{assisted cost} of \(T\) is
+\begin{equation}\label{eq:prices-beta}
+ \beta_p(T)=\sup_{m\ge1}\frac1m
+       \sup_{\ell}p\bigl(\ell(T^{\otimes m})\bigr).
+\end{equation}
+At a site of dimension \(q\) the functional in this formula acts on
+\(K^{q^m}\), so it may couple the \(m\) copies arbitrarily. Every
+extension satisfies \(\widehat p(T)\ge\beta_p(T)\) by monotonicity
+under closure and additivity on powers.
+
+For example, in the ordinary case take the product of two size-\(q\) wires
+from \(a\) to \(y\) and from \(y\) to \(b\), where \(a,b\) are old sites
+and \(y\) is new. Already on one copy, closing the two legs at \(y\) by
+the pairing \(e_i\otimes e_j\mapsto\delta_{ij}\) recovers the wire from \(a\)
+to \(b\). This gives the lower bound \(d(a,b)\log q\) for the product. Placing
+\(y\) at \(a\) attains it. More generally, placing \(y\) anywhere on
+the geodesic from \(a\) to \(b\) attains the bound by additivity of
+distance along that segment.
+
+\begin{theorem}[Price extension]\label{thm:extension}
+For every tensor \(T\) on \(S\sqcup L\),
+\(\beta_p(T)=\min_{\widehat p}\widehat p(T)\).
+For an arbitrary family of nonzero tensors \(T_i\) and real numbers
+\(h_i\), a single extension satisfies \(\widehat p(T_i)\le h_i\)
+for all \(i\) if and only if
+\begin{equation}\label{eq:prices-product-test}
+ \beta_p(T_{i_1}\otimes\cdots\otimes T_{i_j})
+ \le h_{i_1}+\cdots+h_{i_j}
+\end{equation}
+for every finite list of indices, with repetitions allowed.
+\end{theorem}
+
+\begin{proof}
+\emph{Minimizing one tensor.}
+The zero tensor is immediate. For a prescribed nonzero \(T\) we first
+assign prices to a finite list of distinct nonzero tensors \(A_1,\ldots,A_s\)
+containing \(T\). The exponents of their mixed products will serve as
+variables. For \(x\in\mathbb Q_{\ge0}^s\) set
+\[
+ b(x)=\frac1n\beta_p\Bigl(\bigotimes_i A_i^{\otimes nx_i}\Bigr),
+ \qquad nx\in\mathbb Z^s.
+\]
+In \eqref{eq:prices-beta} the supremum can be restricted to multiples
+of any given integer by repeating each closure independently. Thus assisted
+cost is homogeneous under powers and \(b\) is well defined.
+Independent closures, taken at common multiples, make \(b\)
+superadditive, hence concave by homogeneity.
+
+The increment per unit of coordinate \(i\) lies in the price interval
+\eqref{eq:prices-range} for \(A_i\). For the lower estimate isolate a
+minimum-valuation coefficient of every added factor, by coordinate
+projections at the base sites as well as the added sites. For the upper
+estimate expand each added factor in coordinates. Even for a closure
+coupling all copies, fixing the added indices of each term induces an
+integral closure on the old factors. The coordinate factors remaining at
+base sites have price zero, and the ordinary sum bound pays at most
+\(D\sum_j\log q_j\) per added factor of format \((q_j)\).
+This proves the increment bounds after taking powers. In particular \(b\)
+extends continuously to the real orthant.
+
+At a strictly positive rational \(x\) choose a supporting linear form
+\(u\) for this homogeneous concave function, so that
+\(b(y)\le u\cdot y\) and \(b(x)=u\cdot x\).
+The two-sided increment estimates bound \(u_i\) in the same price
+interval. We claim that the numbers \(u_i\) respect the price relations on the
+list. For example, if \(A_i=A_j\otimes A_k\), then
+\(b(x+t(e_j+e_k-e_i))=b(x)\) for both signs of sufficiently small
+rational \(t\). The supporting inequality in these two directions forces
+\(u_i=u_j+u_k\). A scalar change shifts \(b\) by minus its valuation
+per copy, giving the scalar relation by the same argument. If \(A_i\)
+restricts integrally to \(A_j\), replacing copies of \(A_j\) by
+copies of \(A_i\) can only increase \(b\). The supporting inequality
+in the direction \(e_i-e_j\) therefore gives \(u_i\ge u_j\).
+A base tensor increases \(b\) by its exact price per unit,
+since its factors pass unchanged through every closure.
+For \(\Delta_{S\sqcup L}(q)\), closing its added legs by all-ones
+functionals yields \(\Delta_S(q)\), and expanding its \(q\) diagonal
+entries gives the reverse bound. Thus its increment is \(D\log q\).
+
+To check the ordinary sum bound, let \(A_i=A_j+A_k\) in the list.
+Expand \(n\sigma\) copies of \(A_i\) in a product with multiplicities
+\(nx\), for a rational \(0<\sigma\le x_i\). A term choosing \(a\)
+copies of \(A_j\) has price after closure at most
+\(n u\cdot x-n\sigma u_i+a u_j+(n\sigma-a)u_k\).
+The ordinary sum bound on the base and the binomial formula bound
+the price after closure of the original tensor by
+\[
+ n u\cdot x-n\sigma u_i+
+ n\sigma D\log\bigl(e^{u_j/D}+e^{u_k/D}\bigr).
+\]
+Taking the supremum per \(n\) through admissible multiples yields
+\(b(x)=u\cdot x\) on the left. This proves the required bound on \(u_i\).
+Relations involving zero summands hold automatically.
+
+Let \(x\) tend to the unit vector corresponding to \(T\). The support
+vectors have a convergent subsequence and continuity gives
+\(u_T=\beta_p(T)\) in the limit. Every finite collection of price
+relations and the equality at \(T\) is therefore feasible by applying the
+construction to the list of all tensors occurring in those constraints.
+Compactness of the product of intervals gives a simultaneous
+solution for all such relations. The diagonal test following
+\eqref{eq:prices-axioms} makes this solution a valued price. This proves
+attainment for one tensor.
+
+\smallskip\noindent
+\emph{Satisfying several bounds.}
+Any extension obeying the proposed bounds satisfies
+\eqref{eq:prices-product-test} by additivity on products. Conversely,
+take a finite list of \(k\) bounds. Form \(U\) as a direct sum of
+\(N_i\) copies of \(T_i^{\otimes n}\) for each \(i\). In a power of
+\(U\) each word of summands is a mixed product. Restricting a closure
+to the blocks of that word gives an integral closure, whose price is
+bounded by \eqref{eq:prices-product-test}. Sum over the words on the
+base and take the supremum per copy to obtain
+\[
+ \beta_p(U)\le D\log\sum_i N_i e^{nh_i/D}.
+\]
+Choose \(C>\max_i h_i\) and \(N_i=\lceil e^{n(C-h_i)/D}\rceil\).
+These multiplicities bring every \(N_i e^{nh_i/D}\) into the interval
+\([e^{nC/D},2e^{nC/D}]\). At an extension minimizing \(U\), the
+direct-sum identity then gives
+\[
+ D\log N_i+n\widehat p(T_i)\le\beta_p(U)\le nC+D\log(2k),
+ \qquad
+ \widehat p(T_i)\le h_i+\frac{D\log(2k)}{n}.
+\]
+Let \(n\) tend to infinity and apply compactness, first to the finite
+list and then, by the finite intersection property, to the whole family.
+\end{proof}
+
+Two consequences will be used below. Given several extensions of \(p\),
+there is a single extension whose evaluations are bounded above by any
+fixed convex combination of theirs. Indeed, each extension bounds
+the assisted cost of every mixed product, so the averaged bounds pass
+\eqref{eq:prices-product-test}. We may also enlarge the base before
+applying the test. Suppose an enlarged base carries a price agreeing
+with \(p\) on the old base. A tensor supported on the old base and the
+unknown sites has exactly the same closures, with trivial legs on the
+extra base sites. Thus its assisted cost is unchanged. This observation
+also applies when the enlarged base has larger scale. Theorem~\ref{thm:extension}
+then gives an extension at that larger scale.
+
+\subsection{Geodesic placement}
+Assume henceforth in this section that \(K\) contains a trivially valued
+subfield \(F\). Given pairs of sites \(a_j,b_j\),
+place new sites \(y_j\) first at the \(a_j\) and then at the \(b_j\).
+The interpolation consequence of Theorem~\ref{thm:extension} gives an
+extension bounding the price of every tensor by the affine interpolation
+of these two evaluations, with weights \(1-\theta,\theta\). In particular
+\[
+ d(a_j,y_j)\le\theta\,d(a_j,b_j),\qquad
+ d(y_j,b_j)\le(1-\theta)d(a_j,b_j).
+\]
+The triangle inequality forces equality in both bounds. Thus \(y_j\)
+is the point a fraction \(\theta\) of the way along the geodesic from
+\(a_j\) to \(b_j\) in a complete \(\operatorname{CAT}(0)\) spectral
+realization over \(F\). The same extension provides the interpolation
+bound for all tensors over \(K\).
+
+\begin{lemma}[Geodesic determination and submean inequality]\label{lem:geodesic}
+Ordinary price data on any subset of a complete
+\(\operatorname{CAT}(0)\) spectral space determine all prices on its
+closed geodesic convex hull up to a price-preserving isometry fixing the
+given data. Moreover, suppose the prices at a central placement are at
+most the weighted average of prices at finitely many end placements, for
+every tensor on the original slots. In each placement adjoin points
+on corresponding geodesic segments. If the two distances of each new
+point to its endpoints at the center are the weighted averages of their
+values at the ends, the price inequality holds on the enlarged placements.
+\end{lemma}
+
+\begin{proof}
+For each new site, prescribe the prices of its size-two wires to its
+two endpoints. These prices are the two geodesic distances multiplied
+by \(\log 2\). We claim that the price of any \(T\ne0\) on the enlarged
+list is the smallest number \(h\) for which the bound \(h\) and all the
+wire bounds pass the product test. The actual price passes by closure.
+Conversely, enlarge the base to include the actual geodesic points,
+and apply Theorem~\ref{thm:extension} to duplicate sites with those
+bounds. In a common metric realization, the triangle inequality forces
+both endpoint distances of each duplicate to be the prescribed distances.
+Uniqueness of geodesics identifies the duplicate with the actual point.
+Transport~\eqref{eq:prices-transport}
+therefore gives the assertion. For a collapsed base all its prescribed
+segments are constant and the assertion follows directly.
+
+Iterating this characterization determines prices, including distances,
+on all finite geodesic constructions. Completing their union gives the
+closed convex hull by continuity of geodesic interpolation, and
+\eqref{eq:prices-transport} extends the price identifications to the
+completion. An infinite original subset causes no change since each
+finite construction starts from finitely many points.
+
+For the second assertion, a collapsed central placement is immediate.
+Otherwise fix a product in the test, a power and a closure on its new
+sites. The original submean inequality bounds the central price of the
+closed tensor by the average of its closed prices at the ends. At each
+end this is at most the price of the unclosed power by restriction,
+including a collapsed end, where every nonzero tensor has price zero.
+Divide by the power and take the supremum at the center. The averaged
+actual upper bounds on the enlarged placements thus pass the product
+test at the center, and the averaged wire bounds agree with the
+prescribed ones there. Apply the characterization just proved.
+\end{proof}
+
+\subsection{Unique evaluations at minimizing sites}
+A price minimum can admit several placements, as the two-wire example
+shows. To compare minimizers as a parameter varies, we add a strictly
+convex penalty at each unknown site. Fix \(o\) on the base. For a new
+site \(y\), form the direct sum of \(\mathbf1\) and the size-two wire
+from \(o\) to \(y\). Its direct-sum label is visible at every site in
+the configuration, so its price is
+\[
+ f(r)=D\log\bigl(1+\exp(r\log(2)/D)\bigr),\qquad r=d(o,y).
+\]
+For a nonzero tensor \(U\) on the base and a list of new sites, fix an
+integer \(M\ge1\). Its \emph{pin objective} \(V\) is the product of
+\(U^{\otimes M}\) with one such penalty tensor for each new site.
+For several objectives, each is formed on the base and its own list,
+then padded by trivial legs at the other lists.
+
+\begin{lemma}[Pinned evaluations]\label{lem:pinning}
+For a finite family of objectives on pairwise disjoint lists of new sites,
+there is a same-scale extension minimizing each objective. All such
+extensions have the same evaluations on every tensor on the joint list.
+These evaluations agree on overlaps between subfamilies. For any such
+family, including an infinite one, the resulting evaluations on tensors
+over \(F\) are realized in a complete \(\operatorname{CAT}(0)\) spectral
+space.
+
+Let \(W\) be the product of a finite family, \(G=\sum_V\beta_p(V)\),
+and \(h_T\) the pinned evaluation of a nonzero test tensor \(T\).
+For some \(c_D>0\) depending only on \(D\), and every \(n\ge1\),
+\begin{equation}\label{eq:prices-pin-limit}
+ 0\le h_T-\bigl(\beta_p(W^{\otimes n}\otimes T)-nG\bigr)
+ \le\frac{\sum_j(\log q_j)^2}{8c_D n},
+\end{equation}
+where \(q_j\) are the dimensions of the test legs grouped at the added
+sites, including dimension one for an unused site.
+\end{lemma}
+
+\begin{proof}
+Successively enlarge the base and minimize the next objective using
+Theorem~\ref{thm:extension}. Each minimization attains its original
+minimum by the base-enlargement property.
+
+To compare two assignments within a common extension, interpolate all
+corresponding sites at their midpoints, with valued price on \(U\)
+bounded by the mean of its two prices. For any two sites \(a,b\) and
+their midpoint \(m\),
+\begin{equation}\label{eq:prices-midpoint}
+ f(d(o,m))\le \tfrac12\bigl(f(d(o,a))+f(d(o,b))\bigr)
+                  -c_Dd(a,b)^2 .
+\end{equation}
+Indeed wire distances are at most \(D\), by restriction of the full
+diagonal. Choose \(c_D>0\) small enough that \(f(r)-4c_Dr^2\) is convex
+and nondecreasing on \([0,D]\), using the positive lower bounds for
+\(f'\) and \(f''\) there. Apply midpoint convexity to this function and
+the squared-distance midpoint inequality to \(4c_Dr^2\).
+The sites of each objective contain the original base, so its
+direct-sum penalty has scale \(D\) even in the larger configuration.
+If two assignments minimize that objective, the midpoint is bounded
+above by the same minimum minus \(c_D\) times the sum of the squared
+distances between corresponding new sites. These distances must all
+vanish.
+
+For two minimizing extensions \(P,P'\), enlarge \(P\) by a second copy
+of the entire list, imposing upper bounds on its evaluations from \(P'\).
+These bounds pass the product test on the old base and therefore on
+the enlarged one. Each copied objective attains its minimum, so its sites
+are at distance zero from their counterparts. Transport shows
+\(P(T)\le P'(T)\) for every test tensor. Interchanging \(P,P'\) gives
+equality. Restricting to any subfamily still minimizes its objectives.
+The resulting compatible ordinary evaluations on all finite lists
+give a spectral space after quotient by zero distances, and hence the
+claimed complete extension.
+
+Finally, adjoin an optimizing copy to an arbitrary competing assignment
+as above, and let \(d_j\) be the distances between corresponding sites.
+The midpoint objective is at least \(G\), and \eqref{eq:prices-midpoint}
+gives \(p_{\rm comp}(W)-G\ge 2c_D\sum_jd_j^2\).
+Transport gives \(p_{\rm comp}(T)\ge h_T-\sum_jd_j\log q_j\).
+Multiply the first inequality by \(n\), add the second, and complete the
+squares in the \(d_j\). Taking the minimum by
+Theorem~\ref{thm:extension} proves the upper bound in
+\eqref{eq:prices-pin-limit}. The optimizing assignment itself gives
+the lower bound.
+\end{proof}

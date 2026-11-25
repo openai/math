@@ -1,0 +1,292 @@
+\section{Packing the exterior tensor}\label{sec:packing}
+
+Theorem~\ref{ext:star} chooses a Vandermonde matrix after the row sites
+and their prices are known. The circuit lower bound of
+Theorem~\ref{thm:lowdegree} requires a single tensor with zero-one
+coefficients, specified from the integers $d$ and $w$ alone. We first
+group exterior copies into row letters and compress the row alphabet.
+The resulting tensor retains the star price to within a constant per
+row. We then encode its Vandermonde minors by integers so that every
+choice of matrix can be recovered from one binary tensor by linear maps
+on the rows.
+
+\subsection{Weighted prices on ordinary tensor powers}
+Let $A$ have ordered bases on its $d$ legs, placed at
+$x=(x_1,\ldots,x_d)$. Give each basis letter $v$ on leg $i$ a real
+weight $t_i(v)$. On that leg of the grouped power $A^{\otimes\ell}$,
+a word has weight equal to the sum of its $\ell$ letter weights.
+For a weight vector $a=(a_1,\ldots,a_d)$ let $[A^{\otimes\ell}]_a$
+be the sector obtained by projecting each leg onto the words of
+weight $a_i$. We will use the weighted price
+\begin{equation}\label{pack:weighted}
+ \mathcal B_x(A)=\lim_{\ell\to\infty}\frac{1}{\ell}
+ \max_a\left( H([A^{\otimes\ell}]_a;x)+\sum_{i=1}^d a_i\right).
+\end{equation}
+The zero sector has price $-\infty$. For $A\ne0$, the unnormalized
+maxima are superadditive. Indeed, projecting a sector of combined
+weight onto prescribed weights in two consecutive blocks supplies the
+product of their sectors. The price of a sector is at most
+$\ell H(A;x)$, and its weight is bounded above linearly in $\ell$.
+Thus the limit equals the supremum of the normalized maxima. This
+plays the role of
+the exterior-sector price of Equation~\eqref{ext:value} for ordinary
+tensor powers.
+
+\begin{lemma}[Weighted price rules]\label{pack:value}
+At any fixed placement, the weighted price has Zariski-closed
+sublevels. It is monotone under legwise maps preserving weight spaces
+and additive on grouped products when weights on pairs of letters are
+added. For tensors $A_1,\ldots,A_L$ in the same weighted format and
+$D_x=\delta(\{x_1,\ldots,x_d\})$,
+\begin{equation}\label{pack:sum}
+ \mathcal B_x\!\left(\sum_{j=1}^L A_j\right)
+ \le \max_j\mathcal B_x(A_j)+D_x\log L .
+\end{equation}
+If $H(A;y)\le Q$ and $r_i$ is the distance from $y_i$ to $x_i$, then
+\begin{equation}\label{pack:transport}
+ \mathcal B_x(A)\le Q+\sum_{i=1}^d r_i
+                 \log\sum_{v\in V_i}\exp(t_i(v)/r_i),
+\end{equation}
+where $V_i$ is any nonempty alphabet supporting $A$ on leg $i$.
+At $r_i=0$ the summand is $\max_{v\in V_i}t_i(v)$.
+\end{lemma}
+
+\begin{proof}
+For fixed $\ell$ and $a$, the entries of the sector are polynomial in
+the entries of $A$. The supremum formula expresses a weighted price
+sublevel as the intersection of inverse images of ordinary price
+sublevels, which are closed by Lemma~\ref{price:rules}. A
+weight-preserving map acts separately on each sector, giving
+monotonicity.
+
+In a power of a grouped product $A\otimes B$, refine a sector by
+specifying how much of each weight comes from $A$ and how much comes
+from $B$. Each refined sector is a product of the two corresponding
+sectors. It is a restriction of the original sector. Conversely, the
+original sector is the sum of its refinements embedded in the common
+format. The number of refinements grows polynomially in $\ell$ for
+fixed alphabets, since the letter counts determine the weights. By
+Equation~\eqref{price:sum}, the price of the original sector therefore
+exceeds the largest refinement price by at most $O(\log(\ell+1))$.
+After division by $\ell$ this gives the upper bound for additivity.
+Choosing a maximizing sector for each factor gives the lower bound.
+
+For Equation~\eqref{pack:sum}, expand the $\ell$th power of the sum.
+In each of the $L^\ell$ terms, reorder the factors to group identical
+ones, and refine a given sector by prescribing the weights within each
+group. There are polynomially many refinements per term for fixed $L$
+and fixed alphabets. If $A_j$ occurs $\ell_j$ times, the refinement
+price plus its total weight is at most
+$\sum_{j:\ell_j>0}\ell_j\mathcal B_x(A_j)$ by the supremum formula.
+The sum over terms and refinements costs at most
+$D_x\ell\log L+O(\log(\ell+1))$ in addition, by
+Equation~\eqref{price:sum}. Divide by $\ell$ and take the limit.
+
+For transport, restrict $A^{\otimes\ell}$ at $y$ to a sector of
+weight $a$. For $r_i>0$ the number of words of weight $a_i$ on its
+$i$th leg is at most
+\[
+ e^{-a_i/r_i}\left(\sum_{v\in V_i}e^{t_i(v)/r_i}\right)^\ell .
+\]
+A wire carrying those words from $y_i$ to $x_i$ costs at most $r_i$
+times the logarithm of this number. Adding back $a_i$ cancels the
+factor $e^{-a_i/r_i}$. For $r_i=0$ the wire is free and
+$a_i\le\ell\max_{v\in V_i}t_i(v)$. Taking the maximum and dividing by
+$\ell$ proves Equation~\eqref{pack:transport}.
+\end{proof}
+
+\subsection{A binary tensor for every placement}
+
+\begin{theorem}[Packed binary witness]\label{pack:witness}
+For every sufficiently large even $d$, let $m=\lceil\log_2 d\rceil$
+and let $w$ be an integer with $dm\le w\le d^2$. There are a $d$-leg
+tensor $T$ with entries in $\{0,1\}$, an alphabet $V$ with
+nonpositive weights $t(v)$, and a function $\mathcal F$ on
+$(0,\infty)$, all depending only on $d,w$. The tensor has common side
+$q_0$ with $w\le\log q_0\le Cw$. Its entries are computable in time
+polynomial in $w$.
+
+Let $x_1,\ldots,x_d$ be unit sites with uniform Cartan barycenter at
+the tip of a Hadamard cone carrying homogeneous spectral prices over an
+uncountable algebraically closed field $K$. Assume the sites have
+spare Euclidean coordinates as in Lemma~\ref{price:diagonal}. Over
+$K$, the tensor $T$ admits a rowwise restriction to a tensor
+$\widehat U$ on the alphabet $V$ satisfying
+\begin{align}
+ d\mathcal F(1)-Cd &\le \mathcal B_x(\widehat U)\le d\mathcal F(1),\label{pack:high}\\
+ r\log\sum_{v\in V} e^{t(v)/r}&\le \mathcal F(r) \qquad(r>0),\label{pack:partition}\\
+ \mathcal F(1)&\le Cw,\quad c w\le \mathcal F'(1)\le Cw,\quad
+ \sup_{1/2\le r\le2}|\mathcal F''(r)|\le Cw .\label{pack:derivatives}
+\end{align}
+The constants $c,C>0$ are absolute. The restriction may depend on the
+placement and its prices.
+\end{theorem}
+
+In the circuit comparison, $\mathcal F(r)$ bounds the cost of
+transporting one weighted row a distance $r$. Thus
+Equation~\eqref{pack:high} supplies the lower bound at unit distance,
+while Equation~\eqref{pack:derivatives} controls the saving when the
+two ends of a cut move away from the tip.
+
+\begin{proof}
+\emph{Row letters and their weights.}
+Take $q$ slots at each row, group $b$ exterior copies into one batch,
+and choose the bias range $[-M,M]$ by
+\[
+ q=\lceil w/m^2\rceil,\qquad n=dq,\qquad b=m^3,\qquad M=500m .
+\]
+The total number $n$ of slots is even and $M\ge100\log n$. Give slot
+$j$ of each row bias $\theta_j=-M+(2j-1)M/q$. By
+Theorem~\ref{ext:star} we can choose a Vandermonde matrix $C_V$ for
+these sites and biases. Group the slots of $U=\Omega_b(C_V)$ by row.
+This leaves the price unchanged, since the slots at a row occupy one
+site. A row letter $v\in \{0,1\}^{q\times b}$ records whether slot
+$j$ is occupied in copy $e$ by the bit $v_{je}$. Give it weight
+\begin{equation}\label{pack:letters}
+ t(v)=\sum_{j=1}^q\sum_{e=1}^b
+           \big(\theta_j v_{je}-\max(\theta_j,0)\big).
+\end{equation}
+At a nonzero bias, the favored bit has weight zero and the opposite
+bit costs $|\theta_j|$. At zero bias either bit is free. For the full row alphabet the
+transport term in Equation~\eqref{pack:transport} factors over the bits,
+giving
+\begin{equation}\label{pack:free}
+ \mathcal F(r)=r\log\sum_{v\in\{0,1\}^{q\times b}}e^{t(v)/r}
+      =b\sum_{j=1}^q r\log(1+e^{-|\theta_j|/r}).
+\end{equation}
+
+The choice of scales makes $\mathcal F'(1)$ of order $w$. Indeed, for
+$z\ge0$ and $1/2\le r\le2$, the summand $r\log(1+e^{-z/r})$ and
+its first two derivatives in $r$ are bounded in absolute value by
+$C e^{-z/4}$. Its first derivative at one is
+$\log(1+e^{-z})+z/(1+e^z)$, bounded below by an absolute positive
+constant for $z\le1$. The bias grid has spacing $2M/q$, so
+$\sum_j e^{-|\theta_j|/4}=O(1+q/M)$ and $\Omega(q/M)$ slots have
+$|\theta_j|\le1$. Since $q/M\to\infty$ and $bq/M=\Theta(w)$, this
+proves Equation~\eqref{pack:derivatives} and gives $\mathcal F(2)=O(w)$.
+
+\smallskip
+\noindent\emph{From exterior sectors to ordinary powers.}
+Compare $\Omega_{b\ell}(C_V)$ with $U^{\otimes\ell}$, using $\ell$
+batches of $b$ copies each and ordering the slots by row. Both
+coefficients vanish unless each copy has $n/2$ occupied slots.
+Otherwise both are a product of the same minors, with the signs of
+the permutations that put the occupied slots in copy order. The sign
+within a batch is already present in $U$. Within each row we may
+reorder the occupied bits by batch by a signed basis permutation
+local to that row. What remains is to interchange blocks belonging
+to different rows and different batches. If $p_{ia}$ is the parity
+of the occupied count in row $i$ of batch $a$, the remaining sign is
+\[
+       (-1)^{\sum_{i<j}\sum_{a>c}p_{ia}p_{jc}} .
+\]
+An earlier row in a later batch crosses a later row in an earlier
+batch, with one inversion per occupied pair.
+
+Supply the sign tensor on $d$ parity words of length $\ell$ at the
+tip and send one word to each row, at cost at most $d\ell\log 2$.
+Tensor this supply with $U^{\otimes\ell}$. A local map at each row
+keeps the parity word matching its letters, thereby multiplying each
+coefficient by the required sign. In characteristic two the sign is
+one. In a fixed exterior sector the count in each slot fixes the total
+weight on its row. We can therefore start with the weighted sector
+of $U^{\otimes\ell}$, apply the sign correction, and project further
+onto the prescribed slot counts. Maximizing over exterior sectors and
+dividing by $\ell$ gives, in the limit,
+\[
+ b\left(\lambda(C_V)-d\sum_{j=1}^{q}\max(\theta_j,0)\right)
+ \le \mathcal B_x(U)+d\log 2 .
+\]
+Here the exterior price is the limit along copy counts $b\ell$. The
+subtraction accounts for the shift in Equation~\eqref{pack:letters}.
+By Theorem~\ref{ext:star} the left side is at least
+$d\mathcal F(1)-O(bM(1+d/q)\log n)$. Since $w\ge dm$ gives
+$d/q\le m$, the error is $O(m^6)=o(d)$. Together with the cost of the
+sign correction this yields $\mathcal B_x(U)\ge d\mathcal F(1)-O(d)$.
+
+\smallskip
+\noindent\emph{Compressing the row alphabet.}
+The full alphabet uses $bq=\Theta(wm)$ bits per row. We retain the
+letters $V=\{v:t(v)\ge-Aw\}$ for a sufficiently large absolute
+integer $A$. Each retained letter contributes at least $e^{-Aw}$ to
+the sum in Equation~\eqref{pack:free} at $r=1$, so
+$|V|\le\exp(Aw+\mathcal F(1))$. Restricting the sum to $V$ also gives
+Equation~\eqref{pack:partition}.
+
+Project $U$ onto $V$ in every row to form $\widehat U$. In the full
+format write $U$ as this projection plus $d$ tensors, one for each
+possible first excluded row. On such a row one has
+\[
+ \sum_{t(v)<-Aw} e^{t(v)}
+  \le e^{-Aw/2}\sum_v e^{t(v)/2}
+  =\exp\big(-Aw/2+\mathcal F(2)/2\big).
+\]
+Choose $A$ so that the logarithm of the right side is at most
+$\mathcal F(1)-w$. By transport from the tip, any tensor with an
+excluded row has weighted price at most $d\mathcal F(1)-w$. Summing
+the $d+1$ tensors costs at most $D_x\log(d+1)=O(m^{3/2})$ by
+Equation~\eqref{pack:sum} and Lemma~\ref{price:diagonal}. Since
+$w\ge dm$, the lower bound on $\mathcal B_x(U)$ forces
+$\mathcal B_x(\widehat U)\ge d\mathcal F(1)-O(d)$. Removing the zero
+coordinates outside $V$ preserves the sector prices by mutual
+restriction. Transport from the tip gives the upper bound in
+Equation~\eqref{pack:high}.
+
+\smallskip
+\noindent\emph{One binary tensor for all Vandermonde matrices.}
+Replace the matrix parameters by indeterminates $z_1,\ldots,z_n$ in
+slot order. For a tuple of retained row letters, let $S_e$ be the
+occupied slots in copy $e$. The symbolic entry is zero if some
+$|S_e|\ne n/2$. Otherwise it is the integral polynomial
+\[
+ P(z)=\pm\prod_{e=1}^b\
+      \prod_{\substack{i,j\in S_e\\i<j}}(z_j-z_i).
+\]
+The sign reorders the occupied bits from slot order, with copy index
+innermost, to copy order, with slots increasing. The total degree is
+at most $D=bn^2$.
+
+To encode the polynomial, attach an address $a_j\in\{0,\ldots,D\}$ to
+slot $j$, carried on the row containing that slot. Attach one more
+index $0\le s\le D^2$ to the last row. At these labels set the entry
+of an integer tensor $T_0$ to
+\begin{equation}\label{pack:univariate}
+       [u^s]P(u^{a_1},\ldots,u^{a_n}).
+\end{equation}
+We claim every specialization $z_j=\xi_j$ is a rowwise restriction
+of $T_0$ over $K$. Pick $u_0\in K^\times$ such that
+$1,u_0,\ldots,u_0^D$ are distinct. Finitely many roots of unity are
+forbidden, so this is possible in any infinite field. Let $L_a$ be
+the Lagrange basis polynomial for node $u_0^a$ on this list. Send a
+row basis vector to its retained letter, multiplied by
+$\prod_{j\text{ in row}} L_{a_j}(\xi_j)$ and, on the last row, by
+$u_0^s$. Summing over $s$ evaluates the polynomial in
+Equation~\eqref{pack:univariate}, of degree at most $D^2$, at $u_0$.
+Summing over the addresses interpolates separately in each $z_j$ and
+recovers $P(\xi_1,\ldots,\xi_n)$. These maps work with the same
+integer coefficients reduced in every characteristic.
+
+The logarithm of the number of labels on any row is at most
+$O(w)+q\log(D+1)+\log(D^2+1)=O(w)$, since $\log D=O(m)$. To compute
+an entry from its row indices, first recover the retained letters.
+Multiplying the penalty $-t(v)$ by $q$ gives nonnegative integer item
+costs for the $bq$ bits, with total budget $Aqw$. A dynamic program
+counts suffix completions at each remaining budget. These counts,
+using at most $bq+1$ bits, allow lexicographic ranking and unranking
+in time polynomial in $w$. For the recovered letters and addresses,
+multiply at most $D$ binomials in Equation~\eqref{pack:univariate},
+keeping degrees through $D^2$. Each intermediate coefficient has
+absolute value at most $2^D$, and the exterior sign is computed by
+counting inversions. All of these operations take polynomial time in
+$w$.
+
+Finally, append a sign $\varepsilon\in\{-1,1\}$ and a binary position
+$0\le j\le D$ to the last leg. Set an entry to one precisely when the
+corresponding coefficient of $T_0$ has sign $\varepsilon$ and its
+absolute value has bit $j$ set. The last-leg map with multipliers
+$\varepsilon 2^j$ recovers $T_0$ over every field. The enlarged
+tensor has polynomial-time decidable zero-one entries and uses
+$O(w)$ bits per row label. Pad each leg with zero coordinates to
+$q_0=2^{\lceil C_0w\rceil}$ for an absolute integer $C_0$ large enough
+to accommodate the labels and ensure $\log q_0\ge w$.
+\end{proof}

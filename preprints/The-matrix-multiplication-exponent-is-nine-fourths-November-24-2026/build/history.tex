@@ -1,0 +1,60 @@
+\subsection{Earlier bounds for matrix multiplication}\label{sec:history}
+
+Strassen applied his seven-product identity recursively to blocks, giving
+exponent $\log_2 7$~\cite{strassen}. Subsequent algorithms found savings
+by working with several matrix products at once. Pan aggregated trilinear
+forms~\cite{pan}, Bini showed how interpolation converts approximate
+bilinear identities into exact algorithms~\cite{bini}, and Sch\"onhage's
+asymptotic sum inequality turned a direct sum of matrix products into an
+upper bound on the exponent of a single product~\cite{schoenhage}.
+Coppersmith and Winograd studied recursive extraction of disjoint
+products~\cite{cw82}. Strassen's laser method extracts them from tensor
+powers~\cite{Strassen87}, and Coppersmith and Winograd designed an auxiliary
+tensor for which progression-free sets accomplish the extraction~\cite{cw}.
+
+The successive improvements depended on how many products could be kept
+independent. Analyses of higher tensor powers~\cite{sto,ds,vw,legall},
+refined extraction and asymmetric hashing~\cite{avw,duan,alphaomega,alman},
+and numerical optimization~\cite{dupont} sharpened the bounds obtained
+from the Coppersmith--Winograd tensor. Staggered extraction gave
+$\omega_F<2.371055$ over every field~\cite{stagger}. A separate line of
+work embedded matrix products in group algebras~\cite{cohn2003,cohn2005}
+and in the algebras of coherent configurations~\cite{CohnUmansSupport}.
+
+The upper bound $9/4$ comes from polynomial multiplication. In Strassen's
+asymptotic spectrum~\cite{spectrum}, asymptotic rank is the maximum of
+normalized functions that are additive on direct sums, multiplicative on
+tensor products and monotone under restriction. Over $\mathbb C$, the
+upper-bound proof tracks how these functions value polynomial multiplication
+as the two input degrees grow. Degenerations give a lower bound on the
+growth of this profile. Interpolation gives an upper bound that depends on
+the value at matrix multiplication. Comparing the two bounds yields
+$9/4$~\cite[Theorem~1.1]{nine}. The central degeneration separates blocks
+that have independent variables on two legs and share the third. Partial
+labels and semidirect sums give related formulations of this step
+\cite{two258,li}. L\"u proved the separation step in arbitrary
+characteristic~\cite{lu}. Amanov, van den Berg and Zuiddam obtained the
+bound over every field~\cite[Theorem~1.1]{abvz}. See also the tensor-value
+proof~\cite{tensorvalue} and Shpilka's explicit algorithms~\cite{shpilka}.
+The rectangular version of the argument~\cite{uznanski,abvz} connects
+these estimates to the dual exponent studied in~\cite{coppersmith,alphaomega}.
+
+On the lower-bound side, Bl\"aser proved that the ordinary rank of $T_n$
+is at least $\tfrac52 n^2-3n$ over every field~\cite{Blaeser}.
+Over $\mathbb C$, Landsberg gave an ordinary-rank bound of
+$3n^2-o(n^2)$~\cite{LandsbergRank}, and Landsberg and Micha{\l}ek
+gave a border-rank bound of $2n^2-\lceil\log_2 n\rceil-1$
+\cite{LandsbergMichalek}. A constant factor above $n^2$ disappears on
+taking roots along the sequence $T_n^{\otimes j}\simeq T_{n^j}$.
+Barriers for the laser method and bounds from tensor irreversibility
+address algorithms that pass through specified intermediate
+tensors~\cite{limits,irreversible}. For polynomial multiplication,
+Amanov, van den Berg and Zuiddam similarly proved that $9/4$ is optimal
+for a specified set of degenerations and combination
+rules~\cite[Theorem~5.4]{abvz}. Theorem~\ref{thm:square} gives the
+matching lower bound for unrestricted arithmetic circuits. Related
+work on the spectrum constructs quantum functionals~\cite{CVZ} and
+explicit points over arbitrary fields~\cite{almanlipratt}, and describes
+the sublevel sets of asymptotic rank by polynomial
+equations~\cite{SpectralSublevels}. Wigderson and Zuiddam survey this
+framework~\cite{WZ}.

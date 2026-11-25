@@ -1,0 +1,257 @@
+\section{Finding exact certificates from partial signs}\label{sec:overview}
+
+Consider first the feasibility problem \(Ax\le b\). The algorithm searches
+for the support of a certificate. Once that support is known, the
+certificate itself can be recovered by linear algebra. The difficulty is
+that a coordinate essential to the certificate may be arbitrarily small
+compared with the others.
+
+\subsection{Which side contains a witness?}
+
+Collect all possible slack vectors, together with a homogenizing
+coordinate, into the subspace
+\[
+ C=\{(\alpha b-Ax,\alpha):x\in\RR^n,\ \alpha\in\RR\}.
+\]
+If \(C\) contains a nonnegative vector with positive last coordinate,
+division by that coordinate gives a feasible point. Its orthogonal
+complement consists of the vectors \((y,-b^\top y)\) with \(A^\top y=0\).
+A nonnegative vector there with positive last coordinate is precisely a
+Farkas certificate of infeasibility.
+
+More generally, let \(C\subseteq\RR^N\) be any subspace and let
+\([N]=\{1,\ldots,N\}\). Each coordinate \(i\) has a unique \emph{side}.
+Its side is \(+\) if some nonnegative vector in \(C\) has positive
+\(i\)th entry, and \(-\) if such a vector lies in \(C^\perp\). Farkas'
+lemma gives existence, and orthogonality rules out having both
+witnesses~\cite{Fark}. On the side of \(i\) one can choose a witness
+that is a \emph{circuit}, a nonzero vector whose support is
+inclusion-minimal among the supports of nonzero vectors in its
+subspace~\cite{Rock}.
+
+Normalize a witness to have largest entry one. An entry of size
+\(2^{-T}\) can be difficult to detect even when it is indispensable.
+Multiplying coordinate \(i\) of \(C\) by \(2^{-p_i}\) can bring that
+entry into view. Multiplying the same coordinate of \(C^\perp\) by
+\(2^{p_i}\) preserves orthogonality. We call \(p_i\) its \emph{price}.
+Figure~\ref{fig:scale} illustrates why the information at a single
+price vector may be incomplete.
+
+\input{scale}
+
+At a given \(p\), imagine a test that labels \(i\) with the correct
+side whenever some scaled, normalized nonnegative vector has \(i\)th
+entry at least \(1/2\). The other labels may be arbitrary. How could
+these answers decide \emph{every} side? Fix a nonnegative circuit \(u\)
+on side \(h\in\{-1,+1\}\). For each \(i\) in its support, the
+\emph{slot} \(s=(i,h)\) records the coordinate and its side. Assign it
+an integer \emph{demand}
+\[
+ a_s=\lfloor\log_2 u_i\rfloor+b_u,
+\]
+with a common shift \(b_u\) chosen so that all demands are positive.
+At any slot maximizing \(a_s-hp_i\), the scaled entry is within a
+factor of two of the largest scaled entry of \(u\). The label is
+therefore correct at every such maximizer, even though the test
+reveals neither the circuit nor the maximizing slots.
+
+\begin{theorem}[Extremal prices]\label{thm:prices}
+Let \(N,R\ge1\) be integers and let \(\Slots=[N]\times\{-1,+1\}\).
+There is a deterministic algorithm that queries price vectors
+\(p\in\QQ^N\), receives a label vector \(z\in\{-1,+1\}^N\) for each
+query, and returns \(x\in\QQ^N\) with the following guarantee.
+
+A hypothesis consists of a nonempty set \(S\subseteq\Slots\) and
+integer demands \(a_s\in[-R,R]\) for \(s\in S\). Its surplus at
+\(s=(i,h)\) is \(d_s(p)=a_s-hp_i\). Call the hypothesis
+\emph{consistent} if at every query and answer \((p,z)\),
+\[
+   s=(i,h)\in S,\qquad
+   d_s(p)=\max_{u\in S}d_u(p)\ge0
+   \quad\Longrightarrow\quad z_i=h.
+\]
+For each consistent hypothesis the output meets all its demands,
+that is, \(h x_i\ge a_s\) for every \(s=(i,h)\in S\).
+The bit time, including all query and answer bits, is polynomial in
+\(N\) and \(\log(R+1)\).
+\end{theorem}
+
+For the ideal test, every nonnegative circuit defines a consistent
+hypothesis as soon as \(R\) bounds its demands. Since each coordinate
+has a witness circuit and its demand is positive, the sign of \(x_i\)
+gives its side. The prices returned by the theorem need only encode
+these signs. The separate queries have already supplied the evidence.
+
+\subsection{How to answer a price query}
+
+Two numerical obstacles remain. A circuit can have entry ratios of
+arbitrary magnitude, so the bound \(R\) from the ideal test can be
+arbitrarily large at fixed dimension. Even when a rational price
+\(p_i\) has few bits, the scaling factor \(2^{p_i}\) may require
+prohibitively many bits to represent. The calibration procedure in
+Theorem~\ref{thm:cal} gives the search a short description of the
+geometry it needs. Figure~\ref{fig:architecture} shows how a query is
+answered.
+
+\input{architecture}
+
+Apply calibration to a row basis \(B_0\) of \(W=C\times C^\perp\),
+with one column for each slot. Between successive restarts, the
+queries share a single assignment of positive integer demands to
+every circuit of \(W\). The bit length of these demands is bounded by
+a polynomial in the dimension and the chosen precision. At each
+queried \(p\), calibration returns a rational matrix \(B\). For
+the analysis there is a reciprocal diagonal scaling \(D\) with two
+properties. First, \(B\) closely approximates a row basis of \(WD\)
+in which each vector of sup norm one has bounded coefficients.
+Second, every slot of maximum surplus for a circuit has scaled
+entry of magnitude at least one third of its largest scaled entry.
+One \(D\) works for all circuits at this query. Its entries may be
+very large, but only \(B\) has to be computed.
+
+To get labels from \(B\), solve an ordinary bit-polynomial LP for each
+coordinate. Give \(i\) label \(+\) if a bounded row combination of
+\(B\) is nearly nonnegative, stays in a bounded box and has
+\((i,+)\) entry at least \(1/4\). Otherwise give it label \(-\).
+The gap between \(1/3\) and \(1/4\) absorbs the approximation error.
+Opposing slots cannot both pass. In the true scaled space every
+vector \(v\) has \(\sum_i v_{i+}v_{i-}=0\) by orthogonality. If both
+tests passed, the midpoint of two passing combinations would have
+large entries in both slots and only tiny negative entries elsewhere,
+making this sum bounded away from zero. Section~\ref{sec:lp} makes the
+error bounds explicit. A circuit of \(C\) or \(C^\perp\) embeds in
+\(W\) by zeros on the other side, so all witness circuits remain
+consistent through the final uninterrupted run of the price search.
+
+\paragraph{Why minors suffice.}
+Elimination and the description of circuits use the same data.
+Fix all but one column in a square minor of \(B_0\), then vary the
+last column. The resulting determinants give a vector in the row
+space. Taking the fixed columns to be preceding pivots gives the
+next elimination row. Taking independent columns outside a circuit's
+support gives that circuit up to scale. Consequently the magnitudes
+needed to choose pivots and assign demands are governed by the same
+numbers, the logarithms \(\ell_u\) of the absolute nonzero minors.
+
+Calibration uses substitutes \(f_u\) of short bit length. They preserve
+the signs, including zeros, of integer affine forms with bounded
+coefficients in a slight perturbation of the logarithms. To see why
+this suffices, choose a pivot using \(f_u\) and the queried prices.
+Record, on a fine grid, the scaled log differences from this pivot
+for the other entries. For tiny relative magnitudes only an upper
+bound is needed. Requiring prices to reproduce these intervals gives
+linear inequalities. Eliminating the prices leaves affine
+inequalities in the log data with bounded integer coefficients.
+They hold for \(f\), hence also for the perturbed logs. A common
+price vector for the latter therefore exists. In the true geometry
+it realizes the same normalized cofactor entries to the accuracy
+needed for \(B\) and for the visibility bound
+(Section~\ref{sec:calibration}).
+
+\paragraph{Why few scales suffice.}
+There may be exponentially many nonzero minors. Section~\ref{sec:compression}
+extends Frank--Tardos rounding~\cite{FT} to requests for one minor at
+a time. The reason this works is a counting argument. Suppose the
+subset sums of \(k\) minor logarithms all differ by more than two.
+The corresponding \(2^k\) products of minors then have magnitudes that
+more than double in sorted order, so their \(2^{2^k}\) subset sums
+are distinct. Yet each sum is the value of an integer polynomial in
+the matrix entries, of bounded degree and coefficient size.
+Counting these polynomials bounds \(k\) by a polynomial in the
+dimensions.
+
+The procedure keeps a set of minor indices with this separation
+property for accurate proxies of the logs. Lattice reduction~\cite{LLL}
+provides a sequence of scales for the set. On a request, the procedure
+tries to express the new proxy in those scales using bounded integer
+digits and a small remainder. Success gives a short substitute, and
+all answers since the last restart extend to an assignment for every
+nonzero minor. Failure proves the index can be added to the separated
+set. The search then starts again with a larger set, which the
+counting bound permits only polynomially many times. Comparisons
+for extracting digits use ordinary arithmetic on the inputs.
+Small logarithms can be approximated directly. When a comparison
+involves an exceptionally large logarithm it can instead be decided
+by comparing products of powers of minors. In that case the input
+itself has enough bits, on rational data, to bound the bit length of
+the powers.
+
+Once the search returns all side signs, actual witnesses can be
+recovered by testing which coordinates can be set to zero while
+retaining a witness at the desired coordinate. At minimal support
+the restricted space is a line. Solving on that line recovers the
+witness in the original scale. Applying feasibility to the recession
+and primal--dual optimality systems then gives the alternatives in
+Theorem~\ref{thm:lp}.
+
+\subsection{Learning all demands from extremal labels}
+
+It remains to explain how Theorem~\ref{thm:prices} turns labels into
+prices. First suppose we can afford one expert per hypothesis. Give
+each expert an initial unit of wealth and let it bet on a slot of
+greatest surplus, with the option of abstaining at utility zero.
+Choose prices to minimize the wealth-weighted sum of maximum
+utilities. At this minimum, bets on opposite signs of each
+coordinate balance if ties are split suitably. Multiplying wealth
+according to agreement with the labels can therefore keep total
+wealth from increasing, even with ties resolved against each expert.
+An expert for a consistent hypothesis never loses wealth. Whenever
+any of its demands is unmet, every maximizing slot has a true label
+and the expert's wealth grows by a fixed factor. This can happen only
+logarithmically many times in the number of experts. A majority of
+queries can thus meet each consistent hypothesis's demands, and
+taking a coordinatewise median preserves each such bound. The choice
+of prices is related to the balanced points of Chen, Li and
+Yannakakis~\cite{CLY}.
+
+The full pool is too large to process. An expert who guesses the
+demands on just four slots, however, may miss the single largest
+surplus and receive no useful label. The recursive search in
+Section~\ref{sec:prices} amplifies the feedback, building on
+Soleymani and Farina~\cite{SF} and on earlier algorithms for
+games~\cite{OAIDe,OAIRa,OAITu}. From a proposal \(y\), make a child
+call that returns prices \(x\). Use the sign of \(x_i-y_i\) as
+feedback at \(y\), and query the label at \(x\) to break ties.
+Suppose the child has brought every surplus down to a threshold
+\(t'\ge0\). For any slot \(s=(i,h)\) with \(d_s(y)\ge t'\),
+\[
+ d_s(x)\le t'\le d_s(y)\qquad\Longrightarrow\qquad h x_i\ge h y_i.
+\]
+Even equality gives correct feedback, since that slot then maximizes
+surplus at \(x\). A single child can therefore give correct feedback
+on every slot above a common threshold.
+
+The analysis assigns a weight distribution on slots and a threshold
+to each node for each consistent hypothesis. If few slots by weight
+violate the current threshold, the child retains it. When many
+violate it, the child takes a higher threshold at a surplus quantile.
+Success then gives correct feedback on an upper fraction of all
+slots, which four sampled slots have a constant chance to hit.
+Experts guess the threshold from the price history as well as the
+four demands. A median combines the children, and increasing the
+weight of persistently violated slots limits the necessary depth to
+\(O(1+\log N)\).
+
+Polynomial running time also requires controlling the number of
+children. An expert invests a fraction of its wealth in a child
+while using the rest to bet locally. A failed child must return enough
+wealth to some experts to compensate for losses on its feedback.
+This accounting allows a constant number of children below the root
+and rules out failure at the root. Finally, experts guessing the same
+four slots and the same threshold pivot can be grouped by their
+at most five demand values. The regions on which those experts act
+alike have fixed dimension, so their collective bets can be computed
+in polynomial bit time.
+
+\paragraph{Other uses of the price theorem.}
+For monotone linear complementarity, the signs identify which member
+of each complementary pair must vanish for a solution on the
+selected support. A convex quadratic test supplies labels, after
+which linear feasibility gives the solution
+(Section~\ref{sec:quadratic}). For a contraction in the max norm, a
+coordinate of greatest fixed-point error moves toward the fixed
+point under the map. This gives extremal labels from function values
+(Section~\ref{sec:contractions}). Discounted value equations for
+turn-based games furnish piecewise-affine examples. Section~\ref{sec:games}
+uses these equations together with LP policy evaluation to recover
+exact values and strategies.

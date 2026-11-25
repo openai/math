@@ -1,0 +1,35 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={draw=ink!65,rounded corners=2pt,align=center,
+              inner xsep=6pt,inner ysep=5pt},
+  clockstage/.style={box,fill=ink!5,text width=5.2cm,minimum height=1.7cm},
+  clockvalue/.style={box,fill=sea!7,draw=sea!70!black,text width=5.2cm},
+  arrow/.style={-{Latex[length=2mm]},semithick,draw=ink}]
+\node[box,fill=ink!8,text width=9.4cm] (description) at (0,0)
+  {One description $D$ stores the batch network and a program\\
+   that runs the compressed evaluator on $D$ and adds one.};
+\node[clockstage] (run) at (-3.05,-2.2)
+  {Run the stored program at $T_-$\\ with its private jobs.};
+\node[clockstage] (wire) at (3.05,-2.2)
+  {Substitute $R/k$ batch networks\\ in the wiring for $D$. Evaluate\\
+   the contraction at $T_+$.};
+\node[clockvalue] (runvalue) at (-3.05,-4.1)
+  {Value by execution\\[2pt] $Z(D)\equiv 1+\#E(D)$};
+\node[clockvalue] (wirevalue) at (3.05,-4.1)
+  {Value by substitution\\[2pt] $Z(D)\equiv \#E(D)$};
+\draw[arrow] ([xshift=-3.05cm]description.south) --
+   node[midway,fill=white,inner sep=2pt]{execute the code} (run.north);
+\draw[arrow] ([xshift=3.05cm]description.south) --
+   node[midway,fill=white,inner sep=2pt]{read the code as data} (wire.north);
+\draw[arrow] (run.south) -- (runvalue.north);
+\draw[arrow] (wire.south) -- (wirevalue.north);
+\end{tikzpicture}
+\caption{Two evaluations of the same pinned contraction in
+Theorem~\ref{thm:batches}. The evaluator $E$ on the right counts the
+substituted network modulo $p$ for any public code in $D$. Compression
+lets the program on the left run that count on its own stored
+description and contribute one additional acceptance.}
+\label{fig:clock}
+\end{figure}

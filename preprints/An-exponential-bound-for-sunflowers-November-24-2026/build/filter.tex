@@ -1,0 +1,235 @@
+\section{Broadcasting a shared label}\label{sec:copy}
+
+Suppose that every source in \(P\) knows the same \(b\)-bit label \(x\).
+To send \(x\) to a set \(Z\) of new sites, one source can select the
+\(x\)-term of a diagonal shared by \(P\cup Z\). This costs \(w(P\cup Z)b\).
+Agreement across the sources lets us recover a diagonal on \(P\) in the
+same operation. The returned diagonal has price \(w(P)b\).
+This use of a readable label is related to
+\cite[Proposition~\ext{G}{lem:submod}]{oaG}.
+
+\begin{lemma}[Broadcasting]\label{lem:copy}
+Fix a spectral point on \(S\), disjoint nonempty sets \(P,Z\subseteq S\),
+and an integer \(b\ge1\). Put \(K=P\cup Z\), \(N=2^b\), and
+\(\ell=\log_2(2|K|)\). Give each site of \(P\) a control in \([N]\).
+There are an input tensor \(R\) and controlled local maps that return
+\(G_P(N)\otimes E_Z(x)\) whenever the controls all equal \(x\), with
+\[
+ h(R)-h(G_P(N))
+       \le (w(K)-w(P))b+O\!\left(w(K)\sqrt{b\ell}\right).
+\]
+The implied constant is absolute. Any such conversion returning
+\(Q\otimes E_Z(x)\) with \(Q\) fixed and nonzero has net cost at least
+\((w(K)-w(P))b\).
+\end{lemma}
+
+\begin{proof}
+For the lower bound, supply the common control as the coherent sum
+\(G_P(N)\) and retain its local basis vectors. Term by term, the conversion
+extends the common label to \(Z\). Thus
+\(G_P(N)\otimes R\longrightarrow G_K(N)\otimes Q\), and monotonicity
+gives the bound.
+
+For the construction, write \(a=|P|\) and \(c=|Z|\). The elementary
+broadcast described above selects \(x\) at one source and sends every
+basis vector to \(1\) at the others. Carry an independent \(G_P(N)\)
+through this operation. Its net cost \(w(K)b\) suffices when \(a=1\),
+since then \(w(P)=0\). It also suffices when \(b\le\ell\), since then
+\(w(P)b\le w(K)\sqrt{b\ell}\). Henceforth \(a\ge2\) and \(b>\ell\).
+
+We encode the broadcast label and the returned diagonal by integer
+vectors. In a box \(V=\{0,\ldots,q-1\}^m\), choose a set \(H\) of
+\(N\) vectors with the same Euclidean norm and identify \([N]\) with \(H\).
+For each \(u\in H\), choose an ordered set \(V_u\subseteq V\) of \(N\)
+vectors having the same norm and the same inner product with \(u\).
+We choose \(q,m\) below. On control \(u\), source \(j\) will output
+the index of a vector \(v_j\in V_u\), and target \(z\) will output
+the label \(g_z\in H\). Impose the single vector equation
+\begin{equation}\label{eq:broadcast-relation}
+  \sum_{z\in Z}g_z=cu+\sum_{j=2}^a v_j-(a-1)v_1 .
+\end{equation}
+
+Taking the inner product with \(u\) cancels all the terms involving
+\(v_j\). It gives \(\sum_z\langle u,g_z\rangle=c\|u\|^2\).
+Since every \(g_z\) has the norm of \(u\), equality forces \(g_z=u\)
+for every \(z\). Equation~\eqref{eq:broadcast-relation} now says that
+\(v_1\) is the average of the other source vectors. Their equal norms
+give \(\sum_{j=2}^a\|v_j-v_1\|^2=0\). Conversely, every
+\(v\in V_u\) gives a solution with all \(v_j=v\) and all \(g_z=u\).
+Summing over the solutions therefore returns exactly \(N\) diagonal
+terms on \(P\), each with the desired label at every site of \(Z\).
+The use of a sphere to force equality in an average is the geometric
+step in Behrend's construction~\cite{Behrend}.
+
+To impose the equation by local maps, take \(L=(a+c-1)(q-1)+1\),
+increasing it by one if the characteristic divides it. Write
+\(\Gamma=(\mathbb Z/L\mathbb Z)^m\). In every coordinate the two
+sides of Equation~\eqref{eq:broadcast-relation} differ by less than
+\(L\) in absolute value. Their equality can therefore be tested in
+\(\Gamma\). For \(D\in\Gamma\) the indicator of \(D=0\) is
+\(|\Gamma|^{-1}\sum_{\chi\in\widehat\Gamma}\chi(D)\), since the
+field contains all \(L\)-th roots of unity and \(L\) is invertible.
+
+Supply \(R=G_K(|\Gamma|)\) with its shared index named by \(\chi\).
+Each target sums over its possible \(g_z\) with coefficient \(\chi(g_z)\).
+Each source \(j\ge2\) sums over \(v_j\in V_u\) with coefficient
+\(\chi(-v_j)\), and source \(1\) uses
+\(|\Gamma|^{-1}\chi((a-1)v_1-cu)\).
+The product of these coefficients is the character summand for the
+difference of the two sides. Each output index is the basis label
+specified above, so character orthogonality gives
+\(G_P(N)\otimes E_Z(u)\). Only the source maps use a control.
+
+It remains to choose a small enough group. Set
+\[
+ d=\lceil\sqrt{b\ell}\rceil+4,\qquad q=2^d,\qquad
+ m=\lceil b/d\rceil+6 .
+\]
+The squared norm of a point in \(V\) and its inner product with a
+fixed \(u\in V\) each take at most \(B=1+m(q-1)^2\le q^3\) values,
+since \(m\le d+6\le q\). Pigeonholing by norm gives \(H\), and
+pigeonholing by both statistics gives every \(V_u\), because
+\(|V|/B^2\ge q^{m-6}\ge 2^b\). Finally \(\log_2 L\le d+\ell\) and
+\[
+ \log_2|\Gamma|\le (b/d+7)(d+\ell)
+                  \le b+O(\sqrt{b\ell}).
+\]
+Subtracting the price \(w(P)b\) of the returned diagonal gives the
+claimed net cost.
+\end{proof}
+
+\section{Constructing the equality test}\label{sec:filter}
+
+On the promise of Theorem~\ref{thm:filter}, let \(x\) be the label
+shared by \(P\) and \(y\) the label shared by \(T\). A perfect matching
+on the alphabet contracts each pair to a single name, cutting the
+number of bits by one. We will run the shorter equality test on a
+family of such matchings. When \(x\ne y\), exactly one matching
+pairs them. Its index can be computed by two broadcasts, so the
+resulting false match can be cancelled exactly.
+
+\begin{proof}[Proof of Theorem~\ref{thm:filter}]
+Put \(K=P\cup T\) and \(g=w(P)+w(T)-w(K)\).
+Fixed equal controls take \(R\) to \(Q\), so every filter has
+nonnegative cost. Supply the two controls independently as
+\(G_P(2^b)\otimes G_T(2^b)\), retaining their local indices.
+The filter kills all terms with different labels, giving
+\[
+ G_P(2^b)\otimes G_T(2^b)\otimes R
+       \longrightarrow G_K(2^b)\otimes Q .
+\]
+Taking prices gives the second lower bound \(h(R)-h(Q)\ge -gb\).
+
+We construct the upper bound first for \(S=K\), so \(w(K)=1\).
+Fix a bit length \(b\ge1\). The labels form the set \(\mathbb F_2^b\),
+regardless of the characteristic of the tensor field. For each
+nonzero \(p\), the pairs \(\{x,x+p\}\) form a perfect matching.
+Name its pairs by \((b-1)\)-bit strings and write \(\pi_p(x)\)
+for the name of the pair containing \(x\). If \(x=y\), the names
+agree in every matching. If \(x\ne y\), they agree precisely when
+\(p=x+y\). Keeping the index of each surviving matching gives the
+identity
+\[
+ \sum_{\substack{p\ne0\\ \pi_p(x)=\pi_p(y)}} E_K(p)
+ =
+ \begin{cases}
+ G_K(2^b-1), & x=y,\\
+ E_K(x+y),   & x\ne y .
+ \end{cases}
+\]
+
+We need a correction producing the second line on unequal inputs and
+zero on equal inputs. Broadcast \(x\) from \(P\) to \(T\) by
+Lemma~\ref{lem:copy}. At each site of \(T\) the control \(y\)
+selects the map \(e_x\mapsto e_{x+y}\) for \(x\ne y\) and
+\(e_y\mapsto0\). Keep this new basis label at \(T\) and use it as
+the common control for a second broadcast from \(T\) to \(P\).
+Denote the tensor products of the two input resources and the two
+returns by \(U_b\) and \(V_b\), respectively. On unequal inputs
+the output is \(V_b\otimes E_K(x+y)\). All its label slots may be
+projected onto the span of the nonzero indices. With
+\(\ell=\log_2(2|K|)\), Lemma~\ref{lem:copy} gives
+\begin{equation}\label{eq:filter-correction}
+ h(U_b)-h(V_b)\le (1-g)b+C_0\sqrt{b\ell}.
+\end{equation}
+Indeed, the two leading costs add to
+\((1-w(P))b+(1-w(T))b=(1-g)b\).
+
+Start the recursion with \(R_0=Q_0=1\). At bit length \(b\), let
+\(L_b=2^b-1\) and give every site access to the same matching index
+through \(G_K(L_b)\). The shorter filter on the two pair names
+can be applied under control of this index. With \(p\) retained,
+its output on equal labels contains the entire \(G_K(L_b)\).
+Including that diagonal in the return leads to the following choice
+of resources for the two branches.
+\begin{align*}
+ Q_b &= Q_{b-1}\otimes V_b\otimes G_K(L_b),\\
+ R_b &= \bigl(R_{b-1}\otimes V_b\otimes G_K(L_b)\bigr)
+             \oplus \bigl(Q_{b-1}\otimes U_b\bigr).
+\end{align*}
+The first summand runs the shorter filter, keeps \(V_b\), and
+returns \(Q_b\) on equal controls. On unequal controls its output is
+\(Q_{b-1}\otimes V_b\otimes E_K(x+y)\). The second summand retains
+\(Q_{b-1}\) and forms exactly this correction, with zero output on
+equal controls. Multiply its map at one site by \(-1\).
+Both sets of local maps now land in the same spaces, so their maps on
+the local direct sums produce the difference. This eliminates the
+single false match in every characteristic.
+
+Set \(f_b=\varphi(R_b)/\varphi(Q_b)\). The diagonal of \(L_b\)
+matchings is furnished and returned by the recursive branch. Thus
+only the correction contributes a new term to the price ratio.
+Additivity on direct sums and Equation~\eqref{eq:filter-correction}
+give
+\[
+ f_0=1,\qquad
+ f_b=f_{b-1}+\frac{\varphi(U_b)}{L_b\varphi(V_b)}
+      \le f_{b-1}+2^{1-gb+C_0\sqrt{b\ell}} .
+\]
+Here \(L_b\ge 2^{b-1}\). Each of the first \(b\) increments is at most
+\(2^{1+\max\{0,-g\}b+C_0\sqrt{b\ell}}\). Taking logarithms of their
+sum with \(f_0\) and using \(\log_2(b+1)=O(\sqrt b)\) yields
+\[
+ \log_2 f_b\le\max\{0,-g\}b+C_1\sqrt{b\ell}
+\]
+with absolute \(C_1\). When \(g>0\), the entire series is bounded.
+Indeed, \(C_0\sqrt{b\ell}\le gb/2+C_0^2\ell/(2g)\) gives
+\[
+ f_b\le 1+\frac{2^{1+C_0^2\ell/(2g)}}{2^{g/2}-1}.
+\]
+Since \(0<g\le1\) and \(\ell\ge1\), this gives
+\(\log_2 f_b=O(\ell/g)\) with an absolute constant.
+
+To place this filter in the original set of sites \(S\), put
+\(\theta=w(K)\). If \(\theta=0\), the tensor \(G_K(2^b)\) has price
+zero. One site in each group selects its control index from that
+diagonal and the other sites send every index to \(1\), giving
+\(\mathbf 1_{\{x=y\}}\) at zero cost.
+
+Suppose \(\theta>0\). Write \(\iota X\) for a \(K\)-tensor padded by
+scalar factors on \(S\setminus K\). Then
+\(\psi(X)=\varphi(\iota X)^{1/\theta}\) is a spectral point on \(K\)
+\cite[Section~\ext{G}{sec:spectra}]{oaG}. To see additivity, expand
+\((X\oplus_K Y)^{\otimes m}\) and group terms by their number \(j\) of
+\(X\)-factors. The \(j\)-th group is locally isomorphic to
+\[
+ G_K\!\left(\binom mj\right)
+       \otimes X^{\otimes j}\otimes Y^{\otimes(m-j)}.
+\]
+Each group can be extracted by a projection. The direct sum on \(S\)
+of all the padded groups restricts to the padded power by identifying
+the scalar slots outside \(K\). Hence \(\varphi(\iota(X\oplus_K Y))^m\)
+lies between the largest group value and \(m+1\) times that value.
+By Equation~\eqref{eq:price}, the \(1/\theta\) power of the \(j\)-th value
+is \(\binom mj\psi(X)^j\psi(Y)^{m-j}\). Its maximum differs from
+the binomial sum by at most a factor \(m+1\). Taking \(m\)-th roots
+proves additivity. The remaining spectral axioms follow from those
+of \(\varphi\).
+
+Under \(\psi\) the gap on \(K\) is \(g/\theta\). Padding the filter
+constructed there multiplies its net cost by \(\theta\). Thus for
+every \(b\ge1\) its cost on \(S\) exceeds \(\max\{0,-g\}b\) by at
+most \(C_1 w(K)\sqrt{b\ell}\), and for \(g>0\) it is bounded by
+\(O(w(K)^2\ell/g)\) uniformly in \(b\). The lower bounds proved
+above then give the limiting cost per bit.
+\end{proof}

@@ -1,0 +1,39 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,font=\small,
+   operation/.style={draw=black!60,fill=white,line width=.45pt,
+     rounded corners=2pt,align=center,inner sep=5pt,minimum height=1.1cm},
+   data/.style={-{Stealth[length=4pt]},lagoon,line width=.8pt,
+     rounded corners=3pt},
+   again/.style={-{Stealth[length=4pt]},ember,dashed,line width=.8pt,
+     rounded corners=3pt},
+   msg/.style={font=\footnotesize,inner sep=2pt,fill=white}]
+  \node[operation,minimum width=2.7cm] (learn) at (1.45,0)
+    {Price search\\[-1pt] \footnotesize Section~\ref{sec:prices}};
+  \node[operation,minimum width=2.6cm] (cal) at (6.0,0)
+    {Calibration\\[-1pt] \footnotesize Section~\ref{sec:calibration}};
+  \node[operation,minimum width=3.55cm,fill=black!5] (comp) at (12.1,0)
+    {Compression of\\minor magnitudes\\[-1pt] \footnotesize Section~\ref{sec:compression}};
+  \node[operation,minimum width=2.9cm] (labels) at (6.0,-2)
+    {Label tests by LP\\[-1pt] \footnotesize Section~\ref{sec:lp}};
+  \draw[data] (learn.east)--node[msg,midway,above]{prices \(p\)} (cal.west);
+  \draw[data] ([yshift=6pt]cal.east)--
+     node[msg,midway,above]{requested minor} ([yshift=6pt]comp.west);
+  \draw[data] ([yshift=-6pt]comp.west)--
+     node[msg,midway,below]{minor sign, \(f_u\)}
+     ([yshift=-6pt]cal.east);
+  \draw[data] (cal.south)--node[msg,midway,right]{basis estimate \(B\)} (labels.north);
+  \draw[data] (labels.west)--node[msg,above,midway]{labels \(z\)}
+      (1.45,-2)--(learn.south);
+  \draw[again] (comp.north)--(12.1,1.65)--
+      node[msg,midway,above]{on finding a new independent minor, enlarge the set and restart}
+      (1.45,1.65)--(learn.north);
+\end{tikzpicture}
+\caption{Answering queries during a side decision. The shaded step uses the original scalar entries. For a nonzero minor
+it supplies the sign and a short substitute \(f_u\) for the logarithm
+of its magnitude. The other steps use rational data of polynomial bit
+length. Each restart clears the price search and retains the enlarged
+set of minor indices. Once the search finishes, the signs of its
+returned prices give the sides.}
+\label{fig:architecture}
+\end{figure}

@@ -1,0 +1,116 @@
+import OAI.Hierarchy.DescentTerminalEmitterBoot
+import OAI.Hierarchy.DescentTerminalEmitterInputFrames
+import OAI.Hierarchy.DescentTerminalMergedPrint
+import OAI.Hierarchy.DescentTerminalChronologicalChip
+
+namespace OAI
+/-! # Issuing the graph-row key from merged cells on the reached terminal heap -/
+namespace Hierarchy.DescentTerminalEmitter
+open DescentTerminalChipRuntime DescentTerminalChipPins DescentTerminalChipSource DescentTerminalChronologicalChip
+open ThreeFlat.RAM PhysicalProcedure DescriptorExpr ProtocolRAM
+open DescentKernelHistory hiding Word
+open DescentBundleHistory DescentEpochTagKeys DescentTerminalGraphPositions
+open DescentTerminalDenseGraphRead DescentTerminalDenseWindow DescentTerminalPorts DescentTerminalCableOrder
+open DescentTerminalBinReaddress DescentTerminalRecipeRows DescentTerminalScalarTransposes
+open ThreeFlat.Routing Computability.VPVNP.BurstRAM PrivateRAM Computability.VPVNP.RAMSerialization
+open Computability.BorderVNP.Crossing
+open scoped Classical BigOperators Fin.CommRing
+noncomputable section
+variable {P U : Type} [Fintype P] {ew : P→ℕ}
+    {D S p W q piece bitsW H nodesN addrN verts rawRows initial arity groups stride : ℕ}
+    (state : Shape) (E : Layout) (m : Memory bitsW)
+    (N : Network D P ew) (home : N.Site→Fin S) (native : N.Edge ↪ Fin (Fintype.card N.Edge))
+    (external : P ↪ ℕ) (nodes : N.Site ↪ ℕ) (ops : ∀v,Boundary N v ↪ ℕ)
+    (bit : SiteBits (U:=U) N) (s : ∀v,DescentBundleHistory.Shape p (bit v)) (hp : 0<p)
+    (birth : ∀v,(bit v).Node ↪ ℕ) (privateRank : ∀v,((s v).recipe hp).restricted.Hidden ↪ ℕ) (old : Codec U initial) (wp : 0<W) (qp : 0<q)
+local notation "L" => order N home native p external nodes ops
+local notation "rsite" => fun v=>Recipe.restricted (DescentBundleHistory.Shape.recipe hp (s v))
+local notation "sites" => DescentTerminalBundleRows.site L rsite hp birth
+local notation "K" => Bins (W:=W) (q:=q) sites
+local notation "T" => DescentBundleTagKeys.capacity initial arity groups p stride
+local notation "book" => DescentBundleTagKeys.codec old arity groups p stride
+local notation "recipes" => DescentTerminalBundleRows.recipes L rsite hp birth (Codec.store book)
+variable (same : p=W*piece) (machine : sliceWidth W q piece ≤ bitsW)
+    (space : DescentTerminalBinPack.purchased W
+      (counts (q:=q) (order N home native p external nodes ops).site) ≤ state.pool)
+    (countsFit : ∀v,DescentTerminalRestrictedRows.operandCount bit s v ≤ H) (atoms : ∀v,Fintype.card (bit v).Node ≤ nodesN)
+    (refs : ∀v u,(∑j,∑g,((s v).chunk u j g).count) ≤ addrN)
+    (vertsFit : ∀i,((order N home native p external nodes ops).site i).nodes ≤ verts)
+    (fit : ∀i,((order N home native p external nodes ops).site i).rows q ≤ W)
+local notation "hH" => fun i v=>Nat.le_trans
+  (DescentTerminalRestrictedRows.hidden_bound bit s hp (Order.node L i v)) (countsFit (Order.node L i v))
+local notation "hN" => fun i v=>atoms (Order.node L i v)
+set_option quotPrecheck false in
+local notation "hA" => fun i v u=>(Eq.symm (DescentBundleHistory.Shape.recipe_refs hp (s (Order.node L i v)) u)) ▸ refs (Order.node L i v) u
+local notation "hw" => fun i v u=>le_refl p
+
+local notation "ranked" => charts (arity:=arity) (groups:=groups) (stride:=stride) N home native external nodes ops bit s hp birth privateRank old
+local notation "leaf" => DescentTerminalChronologicalIssue.leaf sites wp qp space recipes ranked hH hN hA hw vertsFit
+local notation "codes" => DescentTerminalScalarHeader.range q T H nodesN addrN p verts
+local notation "earlier" => routed state E m
+
+include fit in
+theorem keys_of_cells {K₀ : ℕ} (fitsBins : K ≤ K₀) (banks : Banks) (dst : ℕ) (pos : 0<bitsW)
+    (capacity : Room state E bitsW) (wordFit : q*p ≤ bitsW)
+    (pay : RowBit rawRows (q*p)→Bool) (outer : Ports ew)
+    (volume : (∑e,N.width e) ≤ rawRows*(q*p)) (clustered : DescentTerminalPublicGroup.Clustered N home external)
+    (z : Inputs K₀ W q piece→Bool)
+    (accept : (content N home native external nodes ops rsite hp birth wp qp same pay outer).accepts bitsW z)
+    (emptyKey : banks.empty=(DescentTerminalChronologicalBooks.empty q T H nodesN addrN p verts (W*piece)).val)
+    (bounds : ∀b∈[banks.scalar.header,banks.scalar.payload,banks.scalar.pointer],b.Fits bitsW dst)
+    (roomOut : dst+state.pool<2^bitsW) (tableFit : codes+1 ≤ 2^bitsW)
+    (keyFit : DescentTerminalChronologicalBooks.Keys q T H nodesN addrN p verts (W*piece) ≤ 2^bitsW)
+    (headerBase : banks.scalar.header.base=E.scalar) (headerRoom : state.pool≤banks.scalar.header.size)
+    (payloadRoom : K₀*W ≤ banks.scalar.payload.size) (ptrRoom : codes+1≤banks.scalar.pointer.size)
+    (readCells : ∀i : Fin state.pool,E.leaf.cells.read (DescentTerminalLeafFold.reduced E.leaf earlier state.pool state.leaves E.scratch)
+      (i.val:Computability.VPVNP.BurstRAM.Word bitsW)=(DescentTerminalLeafFold.code (leaf i):Computability.VPVNP.BurstRAM.Word bitsW))
+    (maskAlias : E.leaf.occupancy=E.leaf.cells) (romLow : E.leaf.table.Fits bitsW E.leaf.cells.base)
+    (fieldsFit : (DescentTerminalPrintedFields.capacity q T H nodesN addrN p verts).total≤2^bitsW)
+    (headerROM : ∀j : Fin (DescentTerminalPrintedFields.capacity q T H nodesN addrN p verts).total,
+      E.leaf.table.read earlier (j.val:Computability.VPVNP.BurstRAM.Word bitsW)=
+      ((DescentTerminalPrintedFields.headerTable q T H nodesN addrN p verts)[j.val]'(by simp [DescentTerminalPrintedFields.headerTable]):Computability.VPVNP.BurstRAM.Word bitsW))
+    (static : Boot banks (result state E m) z)
+    (pointer : ∀j : Fin codes,m (banks.scalar.pointer.base+j.val+1)=((j.val*2^(q*(W*piece)):ℕ):Computability.VPVNP.BurstRAM.Word bitsW))
+    (safe : ∀j : Fin codes,BeforeKey state E (banks.scalar.pointer.base+(j.val+1)) ∧
+      AfterFlights state E (banks.scalar.pointer.base+(j.val+1))) :
+    let a:=takeBits N (denseBits N (edgeCode N home native) volume) pay
+    let req:=requests (arity:=arity) (groups:=groups) (stride:=stride) N home native external nodes ops bit s hp birth privateRank old wp qp same
+      machine space countsFit atoms refs vertsFit a outer
+    ∀i : Fin state.pool,(DescentTerminalChipRuntime.key banks).eval (result state E m) (i.val:Computability.VPVNP.BurstRAM.Word bitsW)=((req i).val:Computability.VPVNP.BurstRAM.Word bitsW) := by
+  apply DescentTerminalChronologicalChip.key_read N home native external nodes ops bit s hp birth privateRank old wp qp same
+    machine space countsFit atoms refs vertsFit fit fitsBins banks dst pay outer volume clustered (result state E m) z wordFit accept
+    emptyKey bounds roomOut tableFit keyFit
+  constructor
+  · intro i
+    have printed:=DescentTerminalPackedLeaves.print_merged leaf E.leaf earlier E.scratch E.scalar pos readCells
+      capacity.leaf capacity.leafSize (by have:=capacity.endLeaf;omega) maskAlias romLow fieldsFit
+      (DescentTerminalChronologicalIssue.live_count sites wp qp space recipes ranked hH hN hA hw vertsFit) headerROM i
+    rw [DescentTerminalDenseHeaderRAM.bank_nat _ (bounds banks.scalar.header (by simp)) (i.isLt.trans_le headerRoom),headerBase]
+    exact printed
+  · intro a
+    let n:=DescentTerminalBinPack.rowIndex wp (counts (q:=q) sites) a
+    let j:=DescentTerminalScalarPadded.copyRow fitsBins n
+    have read:=static.pins true false j
+    change result state E m (banks.scalar.payload.base+j.val) = DescentTerminalChipPins.column z true false j.val at read
+    with_unfolding_all change banks.scalar.payload.read (result state E m) (j.val:Computability.VPVNP.BurstRAM.Word bitsW) =
+      ((rowWord (DescentTerminalScalarPadded.front fitsBins (planes z true)) n).val:Computability.VPVNP.BurstRAM.Word bitsW)
+    refine (DescentTerminalDenseHeaderRAM.bank_nat (result state E m) (bounds banks.scalar.payload (by simp))
+      (j.isLt.trans_le payloadRoom)).trans ?_
+    have data : result state E m (banks.scalar.payload.base+j.val) =
+        ((rowWord (planes z true) j).val:Computability.VPVNP.BurstRAM.Word bitsW) := by
+      simpa only [DescentTerminalChipPins.column,dite_eq_left j.isLt,DescentTerminalChipPins.word] using read
+    have rowAt := DescentTerminalScalarPadded.row_front fitsBins (planes z true) n
+    exact data.trans (congrArg (fun v : Computability.VPVNP.BurstRAM.Word (q*(W*piece)) =>
+      (v.val:Computability.VPVNP.BurstRAM.Word bitsW)) rowAt.symm)
+  · intro j
+    have inside : j.val+1 < banks.scalar.pointer.size := (Nat.succ_lt_succ j.isLt).trans_le ptrRoom
+    have atSlot : banks.scalar.pointer.read (result state E m) ((j.val+1:ℕ):Computability.VPVNP.BurstRAM.Word bitsW) =
+        result state E m (banks.scalar.pointer.base+(j.val+1)) :=
+      DescentTerminalDenseHeaderRAM.bank_nat _ (bounds banks.scalar.pointer (by simp)) inside
+    exact atSlot.trans ((printed_before state E m capacity (safe j).1 (safe j).2).trans
+      (by simpa only [Nat.add_assoc] using pointer j))
+
+end
+end Hierarchy.DescentTerminalEmitter
+
+end OAI

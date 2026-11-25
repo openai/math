@@ -1,0 +1,59 @@
+\part[When there are too few Euclidean directions]{When there are too few \titlebreak Euclidean directions}
+\section{Field transfer and cube exclusion}\label{sec:prices}
+
+We prove Theorem~\ref{thm:flats} by contradiction. If some Euclidean
+dimension cannot be realized, we will find a finite field over which
+spectral spaces uniformly exclude the corners of a fixed Euclidean cube.
+This exclusion constrains how points can move relative to a maximal flat
+in the routing argument of Section~\ref{sec:protocol}. Section~\ref{sec:ports}
+uses the same exclusion to construct sparse graphs for compression.
+
+\par\Needspace{4\baselineskip}
+\begin{lemma}[Field transfer]\label{lem:transfer}
+Fix an integer $a\ge1$. If spectral $a$-flats exist over every finite prime field, then
+they exist over every field.
+\end{lemma}
+\begin{proof}
+Fix any finite list in $\mathbb R^a$ and realize its distances in the assumed
+spectral flat over each prime field. In characteristic $p$,
+Lemma~\ref{lem:comparison} lets us extend scalars from $\mathbb F_p$
+while preserving the evaluations on the entire list of pairwise binary wires. Using the original common scale gives the
+prescribed distances. In characteristic zero, the same distance array occurs
+over every prime field, so a limit argument
+realizes it over $\mathbb Q$ and hence over the given field. Indeed, for a
+positive-diameter array, \eqref{eq:span-price} bounds the scale below
+by its diameter and above by the length of a spanning tree. Reduce the countably many rational tensors in
+standard bases at primes avoiding their denominators, and pass to a common
+subsequence on which scales and evaluations converge. Every rational
+restriction and every tensor-product or direct-sum identity survives reduction
+at all sufficiently large primes. The limits therefore define a spectral
+point giving the required array. A singleton array is immediate.
+
+Exhaust $\mathbb Q^a$ by finite lists containing the origin. Place each list in
+a complete spectral space over the chosen field, based at the image of zero.
+A rational point gives an eventually defined sequence of constant distance
+from the basepoint. In a pointed ultralimit these points form an isometric
+copy of $\mathbb Q^a$. Completion extends it to $\mathbb R^a$, preserving
+the joint prices on each finite placement.
+\end{proof}
+
+By Lemma~\ref{lem:transfer}, failure of Theorem~\ref{thm:flats} gives a
+finite prime field $F$ over which some dimension is missing. Realized
+dimensions are downward closed. To obtain a spectral line, start with
+the two-party flattening rank and insert a unit segment by
+Corollary~\ref{cor:spectral-geodesic}. Rescale the segment to lengths
+tending to infinity and take a pointed ultralimit based at its midpoint.
+There is consequently a largest realized dimension $k\ge1$. We fix
+$F$ and $k$ through the contradiction in Section~\ref{sec:diagonal}.
+Constants in that argument may depend on both.
+
+Consider the distance matrix of the corners of the Euclidean unit
+$(k+1)$-cube. In maximum norm this matrix has positive distance from
+the set of distance matrices of that size realizable in complete
+$\operatorname{CAT}(0)$ spectral spaces over $F$, allowing all positive
+rescalings. Otherwise
+a pointed ultralimit would realize the corners exactly. The flat
+rectangle theorem then fills in the cube by successive interpolation
+on its coordinate edges (Section~\ref{sec:crossing}). Rescaling about
+its center by factors tending to infinity and taking a pointed ultralimit
+would produce an entire $(k+1)$-flat.

@@ -1,0 +1,175 @@
+\begin{proof}[Proof of Theorem~\ref{thm:crossing}]
+The construction has three steps. We identify an integral pairing
+of operators, factor it through states with two different energy
+bounds, and count the states allowed by each bound.
+
+\smallskip\noindent\emph{The pairing.}
+Use the exterior algebra over $\mathbb Z$ on generators indexed by
+$i\ge 0$. Its basis states are finite subsets of these indices,
+written in increasing order. Let $c_i$ wedge the $i$th generator on
+the left and let $a_i$ be its signed deletion. Creation operators
+anticommute with one another, as do deletion operators, and
+$a_i c_j+c_j a_i=\mathbf 1_{i=j}\mathrm{Id}$. Give a basis state $I$
+energy $h(I)=\sum_{i\in I}(i+1/2)$. For background on the free fermion and vertex superalgebras see \cite{KacWang}. Introduce the fields
+\[
+ \psi(z)=\sum_{i\ge0}(c_i z^i+a_i z^{-i-1}),
+ \qquad \psi_j(z)=\partial^{(j)}_z\psi(z),
+ \qquad Y_I(z)={:}\prod_{i\in I}\psi_i(z){:}.
+\]
+Here $\partial^{(j)}_z z^b=\binom bj z^{b-j}$ for every integer $b$,
+using the coefficient of $v^j$ in $(z+v)^b$. The product is ordered
+by increasing $i$. The colons instruct us to expand and move creations
+to the left of deletions using permutation signs only. Such a normal
+product is skew under interchange of two fields. A coefficient $[z^b]Y_I$
+shifts energy by $b+h(I)$. Indeed each summand of a differentiated
+field shifts energy by its exponent plus the index of differentiation
+plus $1/2$.
+
+For equally large nonempty sets $I,J$, put $m=|I|=|J|$, $h=h(I)$,
+$h'=h(J)$ and $L=h+h'-1$, a nonnegative integer. We claim
+\begin{multline}\label{eq:crossing-field}
+ (z-w)^L\big(Y_I(z)Y_J(w)-(-1)^{m^2}Y_J(w)Y_I(z)\big)
+   \\= C_{IJ}\sum_{s\in\mathbb Z}z^{-s-1}w^s\,\mathrm{Id},
+\end{multline}
+where
+\[
+ C_{IJ}=(-1)^{\binom m2+\sum_{i\in I}i}
+       \det\left[\binom{i+j}{i}\right]_{i\in I,\,j\in J}.
+\]
+To see this, normal order the product of the two blocks. When a
+deletion from the first block meets a creation from the second, the
+anticommutation relation permits either a signed interchange or a
+scalar contraction. Summing the scalar for fields $i,j$ gives the
+expansion in $w/z$ of
+\[
+  \partial^{(i)}_z\partial^{(j)}_w\frac{1}{z-w}
+   =\frac{(-1)^i\binom{i+j}{i}}{(z-w)^{i+j+1}},
+\]
+since the undifferentiated contraction is
+$\sum_{r\ge0}z^{-r-1}w^r$. Thus the expansion is indexed by partial
+matchings between the blocks. Each summand is the product of the
+matched scalars times the normal product of the unmatched fields.
+Its sign is that of the permutation listing the matched pairs first,
+in first-field/second-field order within each pair, followed by the
+unmatched fields in their original order. In fact the sign for a
+contraction is the sign of bringing the two operators together.
+Moving the resulting pair as a block incurs no further sign.
+
+For the reversed product, use the same ordering of pairs and the
+same final order of the unmatched fields. Interchanging the original
+blocks contributes $(-1)^{m^2}$. Reversing the orientation of any
+pair contributes a further minus sign in the permutation, precisely
+canceled by reversing its rational kernel, since
+$(-1)^j/(w-z)^{i+j+1}=(-1)^{i+1}/(z-w)^{i+j+1}$. Consequently after
+multiplication by $(-1)^{m^2}$ the reversed summands expand the same
+rational kernels in $z/w$. For an incomplete matching an unmatched
+field in each block accounts for at least one unit of missing pole
+order. Its pole order is therefore at most $L$, and multiplication
+by $(z-w)^L$ makes the two expansions equal. For a full matching the
+pole order is $L+1$. Interleaving the two increasing lists contributes
+$(-1)^{\binom m2}$, permuting partners contributes the determinant
+sign, and the kernels contribute the remaining row signs in $C_{IJ}$.
+The two expansions of $1/(z-w)$ differ by
+$\sum_{s\in\mathbb Z}z^{-s-1}w^s$. This proves
+\eqref{eq:crossing-field}.
+
+We justify the formal products coefficientwise. Truncate the modes at
+$N$ and first
+perform the two normal-ordering expansions with their truncated scalar
+kernels. Fix input and output states and a monomial $z^b w^{b'}$.
+In the first product the intermediate energy is the input energy plus
+$b'+h'$. In the reversed product the increment is $b+h$. There are
+only finitely many states at either energy. Each individual normal
+block between specified states uses deletion modes from its input
+and creation modes from its output. Hence its matrix coefficient
+stabilizes as a Laurent polynomial. The same argument applies to
+the unmatched normal product, even in two variables. For each of its
+finitely many monomials, prescribing the total $w$-power bounds all
+contracted modes in the first expansion: a creation in mode $r$
+differentiated $j$ times has $w$-power $r-j\ge0$ whenever its
+coefficient is nonzero. The reversed expansion uses the $z$-power in
+the same way. Both Wick expansions therefore pass coefficientwise to
+the infinite-mode limit, where the rational-kernel cancellation above
+applies. Multiplication by the fixed polynomial $(z-w)^L$ preserves
+these limits. All coefficients are integers, including the divided
+derivatives, so reduction modulo $2$ also preserves the identity.
+
+\smallskip\noindent\emph{The factorizations.}
+Let $D(H)$ count the states of energy at most $H$, with $D(H)=0$ for
+$H<0$. Fix $H,E\ge1$ and an integer $s$. Use nonempty $I,J$ of
+energy at most $H$, and input and output states $\beta,\alpha$ of
+energy at most $E$. For a block of given $m,h,h'$ take
+$[z^{-s-1}w^s]$ in \eqref{eq:crossing-field}. For the multiplier
+monomial $z^{L-a}w^a$, $0\le a\le L$, the first product acts on
+$\beta$ first by $[w^{s-a}]Y_J$, reaching energy at most
+$E+h'+s-a\le E+H+s$. The reversed product acts first by
+$[z^{-s-1-L+a}]Y_I$, reaching energy at most
+$E-s-h'+a\le E+H-s$. Sum over intermediate states in each matrix
+product. This writes $C_{IJ}\mathbf 1_{\alpha=\beta}$ as a sum of
+two matrices, each factored over $\mathbb Z$. On the cut
+$(I,\alpha)\mid(J,\beta)$ the first factors through at most
+$(L+1)D(E+H+s)$ coordinates, indexed by $a$ and the intermediate
+state. On the cut $(I,\beta)\mid(J,\alpha)$ the second factors
+through at most $(L+1)D(E+H-s)$ coordinates. The integer coefficients
+of the multiplier and the sign of the reversed product can be placed
+on either factor.
+
+Extend each block by zero and sum over $m,h,h'$. The number of blocks
+and the largest $L+1$ are bounded by a polynomial in $H+1$, since
+all energies are half-integers and $m\le 2H$. Define $C_{IJ}=0$ for
+$|I|\ne |J|$. The resulting target is the full matrix
+$C\otimes\mathrm{Id}_{D(E)}$ on the four indices. The two factorizations
+have respective sizes at most
+\[
+  \operatorname{poly}(H+1)D(E+H+s),\qquad
+  \operatorname{poly}(H+1)D(E+H-s).
+\]
+To turn $C$ into an identity, let $P_{i\ell}=\binom{i}{\ell}$
+for nonnegative indices up to the largest mode under consideration.
+Vandermonde's identity gives
+$(PP^{\mathsf T})_{ij}=\sum_\ell\binom{i}{\ell}\binom{j}{\ell}
+=\binom{i+j}{i}$. For fixed $m$, let $P^{[m]}$ be the matrix of
+$m$-rowed minors restricted to sets of energy at most $H$ on both
+indices. A minor of $P$ vanishes unless its increasing column list
+is componentwise bounded by its increasing row list, since $P$ is
+lower triangular. Thus restricting to this energy downset discards
+no term of Cauchy--Binet, and the corresponding block of $C$ is
+$P^{[m]}(P^{[m]})^{\mathsf T}$ up to row signs. In lexicographic
+order $P^{[m]}$ is unit lower triangular. Every block is therefore
+unimodular, and applying $C^{-1}$ at the $I$ index gives the
+identity of dimension $D(H)-1$ without increasing either factorization
+size.
+
+\smallskip\noindent\emph{Counting the intermediate states.}
+Write $\ln$ for the
+natural logarithm. With
+$A=\int_0^\infty\ln(1+e^{-x})\,dx>0$, the partition function is
+\[
+  \mathcal Z(\lambda)=\prod_{i\ge0}(1+e^{-\lambda(i+1/2)}),
+  \qquad \ln\mathcal Z(\lambda)\sim A/\lambda
+  \quad(\lambda\downarrow0).
+\]
+Under probabilities proportional to $e^{-\lambda h(I)}$ the occupation
+variables are independent, with means $1/(e^{\lambda(i+1/2)}+1)$.
+The mean energy is asymptotic to
+$\lambda^{-2}\int_0^\infty x/(e^x+1)\,dx=A/\lambda^2$,
+by integration by parts. Its variance is $O(\lambda^{-3})$ by
+summing $(i+1/2)^2e^{-\lambda(i+1/2)}$. These Riemann-sum
+estimates have exponentially decreasing tails. From
+$D(H)\le e^{\lambda H}\mathcal Z(\lambda)$ at
+$\lambda=\sqrt{A/H}$ we obtain the upper asymptotic bound. For the
+lower bound take $0<\epsilon<1/2$ and
+$\lambda=\sqrt{A/((1-\epsilon)H)}$. Chebyshev's inequality puts
+probability $1-o(1)$ on energies between $(1-2\epsilon)H$ and $H$.
+The number of states in this interval is at least
+$(1-o(1))\mathcal Z(\lambda)e^{\lambda(1-2\epsilon)H}$.
+Letting $\epsilon\downarrow0$ gives
+\[
+     \log_2 D(H)\sim c\sqrt H,\qquad c=2\sqrt A/\ln 2 .
+\]
+Finally take $H=(nt/c)^2$, $E=(nu/c)^2$ and
+$s=\lfloor\delta n^2/c^2\rfloor$. Both shifted energy bounds are
+positive for large $n$. Set $d_X=D(H)-1$, $d_Y=D(E)$ and identify
+$(I,J,\alpha,\beta)$ with $(X_+,X_-,Y_+,Y_-)$. The polynomial
+factors cost $o(n)$ in the logarithms, proving the theorem.
+\end{proof}

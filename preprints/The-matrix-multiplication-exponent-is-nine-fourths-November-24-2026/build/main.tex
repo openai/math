@@ -1,0 +1,58 @@
+\documentclass[11pt]{article}
+\input{style}
+\articletitle{The matrix multiplication exponent \titlebreak is nine fourths}{The matrix multiplication exponent}
+\hypersetup{pdfsubject={The-matrix-multiplication-exponent-is-nine-fourths-November-24-2026}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We prove that the exponent of square matrix multiplication is \(9/4\) over
+every field. The upper bound was known. For each \(n\ge2\), a formal
+arithmetic circuit multiplying two \(n\times n\) matrices needs at least
+\(n^{9/4}/2\) multiplication or division gates. The proof shows that a smaller exponent would compress tensor networks
+enough to violate a lower bound for testing whether the entries in each
+of several independent lists are distinct.
+\end{abstract}
+
+\input{intro}
+
+\clearpage
+{\small\tableofcontents}
+\clearpage
+
+\input{obstruction}
+\input{consequences}
+\input{background}
+\input{list}
+
+\par\needspace{13\baselineskip}
+\part{Sphere tensors and their prices}\label{part:spheres}
+\input{prices}
+\input{valued}
+\input{motion}
+\input{boundary}
+\input{contact}
+\input{sync}
+\input{fermions}
+\input{sphere}
+\input{incidence}
+
+\par\needspace{13\baselineskip}
+\part{Sorting and table lookup}\label{part:sorting}
+\input{sorting}
+
+\par\needspace{13\baselineskip}
+\part{Concentrating arity on spheres}\label{part:local}
+\input{local}
+
+\par\needspace{13\baselineskip}
+\part{From arity to network volume}\label{part:volume}
+\input{rounds}
+\input{assembly}
+\input{shaving}
+
+\bibliographystyle{plainnat}
+\bookmarksetup{startatroot}
+\bibliography{references}
+\end{document}

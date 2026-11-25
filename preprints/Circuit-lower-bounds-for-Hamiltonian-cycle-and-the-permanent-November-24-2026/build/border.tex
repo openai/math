@@ -1,0 +1,114 @@
+\section{From the boundary value to the circuit lower bound}\label{sec:border}
+
+\begin{proof}[Proof of Theorem~\ref{thm:stretch}]
+Fix a characteristic admitting ports and the corresponding compressor
+identities and clocks. Suppose that at a sufficiently large $n$ the
+coefficient vector of $P_n^*$ lies in the degree-component border of
+circuits of size $m_0=\lfloor 2^{n^\sigma}\rfloor$. In positive
+characteristic use the given prime $p$. In characteristic zero apply
+Lemma~\ref{lem:descent-prime} to the parse table. It preserves the
+image-closure inclusion and the fixed rational compressor identities
+at a prime $p$ of polynomial bit length in $M$. This prime may
+depend on $n$. In both cases we evaluate compressor constants in
+$\mathbb F_p$.
+
+Apply Lemma~\ref{lem:pins} on the curve of
+Proposition~\ref{prop:descent-curve} with $L=R(2n-1)$. Write
+$W_\mu=W_{1,\mu}$, use the padded binary indexing, and choose an
+index $H_*$ at which $\Omega(H_*)\ne0$. All matrices, their entry
+procedure and its advice are now fixed. Include $H_*$, the advice,
+the size parameters and the public program in a description $D(H)$,
+reserving one field for a variable index $H$. Define
+\[
+ \begin{aligned}
+ Z(H)&=Z(D(H))\bmod p, & A_H&=A_{D(H)},\\
+ W(H)&=\sum_{|\mu|\le L}([X^\mu]A_H)\,W_\mu .
+ \end{aligned}
+\]
+For any choice of public program, $A_H=F_{D(H)}(Y(X))$ is regular on the
+chosen branch and has value $F_{D(H)}(c)=Z(H)$. By linearity in the
+coefficient in Lemma~\ref{lem:pins},
+\begin{equation}\label{eq:border-row}
+                   W(H)\Omega=Z(H)\Omega\qquad\text{for every }H .
+\end{equation}
+In particular, row $H$ of this identity computes $Z(H)\Omega(H)$.
+
+Choose the public program on input $D(H)$ to count, modulo $p$,
+\begin{equation}\label{eq:border-column}
+  \mathbf 1_{\{H=H_*\}}+\sum_I W(I)_{I,H}
+  =\mathbf 1_{\{H=H_*\}}+
+       \sum_{I,\mu}([X^\mu]A_I)(W_\mu)_{I,H}.
+\end{equation}
+One branch accepts precisely when $H=H_*$. The other guesses $I$ and
+a valid exponent vector $\mu$ in their canonical binary encodings and
+replaces $H$ by $I$ in a copy of the description. Supply the active
+words of $D(I)$ and the exponent vector $\mu$ as one input of at most
+$R$ words, with the unused words of $D(I)$ understood as zero.
+Lemma~\ref{lem:substitution} counts $[X^\mu]A_I$ from this input at
+the larger clock. Simulate it
+at the smaller clock with private jobs by Theorem~\ref{thm:gap}(2).
+On each completed path, evaluate its tallied compressor monomial in
+$\mathbb F_p$. A further binary guess smaller than its representative
+in $[0,p-1]$ gives exactly that many successes. Independently, run the
+entry procedure from Lemma~\ref{lem:pins} for $(W_\mu)_{I,H}$, requiring
+both procedures to accept. This multiplies their counts. Summing over
+the guesses gives \eqref{eq:border-column}.
+
+The fixed private machine determines the wiring generator before we
+choose the public program. The larger-clock procedure uses $D(I)$ as
+data for the pins and links of that wiring. The smaller-clock program
+constructs this input by copying its stored instructions and advice,
+changing only the field for the index. Thus the same code works at
+every $H$. The fixed code and the $M^{O(1)}$ bits of data fit within
+the reserved $R/10$ active words for large $n$. Apart from the
+$o(T_-)$ simulation and the $O(R)$ cost of copying the description,
+the prime-field computations and the entry path cost $M^{O(1)}=o(R)$
+ticks. The entire program therefore fits $T_-$.
+
+By Theorem~\ref{thm:gap}(1), the success count of this program equals
+$Z(H)$ in $\mathbb F_p$. Multiply \eqref{eq:border-column} by
+$\Omega(H)$ and sum over $H$. Interchanging the finite sums groups
+row $I$ with $\Omega$ in \eqref{eq:border-row}, giving
+\[
+ \sum_H Z(H)\Omega(H)
+ =\Omega(H_*)+\sum_I\bigl(W(I)\Omega\bigr)_I
+ =\Omega(H_*)+\sum_I Z(I)\Omega(I).
+\]
+Cancellation contradicts the choice of $H_*$. Hence
+$\bsz_F^{[n]}(P_n^*)>2^{n^\sigma}$ for all sufficiently large $n$
+in the chosen characteristic.
+
+To transfer the bound, use the signed verifier of
+Section~\ref{sec:model}. It accepts the paths with output $+1$ or
+$-1$, gives the negative-output bit weight $-1$, and attaches the
+selected variables $Z_{i,x_i}$ to its output bits. Its length is
+polynomial in $n$. Lemma~\ref{gadget:verifier} projects $\HC$ of order
+at most $A n^B$ to $P_n^*$, and supplies the same projection for
+$\Per$ outside characteristic two, for fixed $A,B>0$. At order $N$,
+take $n=\lfloor(N/A)^{1/B}\rfloor$ and pad the graph by a forced path
+or an identity block, respectively. As in Section~\ref{sec:comparison},
+extracting the degree-$N$ component of a size-$s$ approximant before
+projection costs $O((N+1)^2(s+1))$. The projection and the final
+degree-$n$ extraction preserve the closure. Consequently this polynomial
+overhead times $s+1$ must exceed $2^{n^\sigma}$. Taking any fixed
+$0<\varepsilon<\sigma/B$ gives the asserted $2^{N^\varepsilon}$
+lower bound for all sufficiently large $N$.
+
+Keeping a distinct variable on each edge of the verifier graph gives
+the port case of Corollary~\ref{cor:sparse-support}. Specializing those
+variables to the verifier weights gives precisely the projection above,
+and the padding preserves the degree bounds on the support.
+\end{proof}
+
+\begin{proof}[Completion of the proof of Theorem~\ref{thm:main}]
+In each characteristic without ports, the comparison in
+Section~\ref{sec:comparison} gives the lower bound
+$\exp\bigl(c(\log N)^2/(\log\log N)^2\bigr)$ with an absolute $c>0$.
+In each characteristic admitting ports, Theorem~\ref{thm:stretch}
+gives $2^{N^\varepsilon}$ for some $\varepsilon>0$ depending on that
+characteristic. This exceeds the first bound with the same absolute
+$c$ once $N$ is sufficiently large in the given characteristic.
+The two cases exhaust all characteristics, including zero. They give
+the stated bound for $\HC_N$ over every field and for $\Per_N$ over
+every field of characteristic different from two.
+\end{proof}
